@@ -32,7 +32,7 @@ jobs:
     - name: Build and Push Docker image
       uses: mr-smithers-excellent/docker-build-push@v6
       with:
-        image: repo/image
+        image: mykolatsyb/devrate-service
         tags: latest
         registry: docker.io
         dockerfile: Dockerfile
