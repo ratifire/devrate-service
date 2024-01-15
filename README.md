@@ -38,8 +38,19 @@ generate common code constructs such as getters, setters, constructors, and more
 conciseness.
 - **Artifact ID:** lombok
 - **Group ID:** org.projectlombok
-- **Version:** 1.18.30
-- **Scope:** Provided
+- **Scope:** annotationProcessor
+- **Links:** https://www.baeldung.com/intro-to-project-lombok
+
+### 6. H2 Database
+- **Description:** H2 is an open-source lightweight Java database. This database should be used exclusively for running
+automated tests, ensuring that our tests are fast, reliable, and do not interfere with production or development
+databases. Mainly, H2 database can be configured to run as in memory database, which means that data will not
+persist on the disk. Because of embedded database it is not used for production development, but mostly used for
+development and testing.
+- **Artifact ID:** h2
+- **Group ID:** com.h2database
+- **Scope:** test
+- **Links:** https://www.h2database.com/html/main.html : https://www.baeldung.com/spring-boot-h2-database
 
 ## Project Information
 
