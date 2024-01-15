@@ -49,7 +49,7 @@ and HTML format APIs. This documentation can be completed by comments using swag
 - **Artifact ID:** springdoc-openapi-starter-webmvc-ui
 - **Group ID:** org.springdoc
 - **URL:** https://springdoc.org
-- **Getting Started:** The Swagger UI page is available at `http://server:port/swagger-ui/index.html and`
+- **Getting Started:** The Swagger UI page is available at `http://server:port/swagger-ui/index.html` and
 the OpenAPI description is available at the following url for json format: `http://server:port/v3/api-docs`
     - Server: The server name or IP
     - Port: The server port
