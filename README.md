@@ -48,7 +48,6 @@ on spring configurations, class structure and various annotations. Automatically
 and HTML format APIs. This documentation can be completed by comments using swagger-api annotations.
 - **Artifact ID:** springdoc-openapi-starter-webmvc-ui
 - **Group ID:** org.springdoc
-- **Version:** 2.3.0
 - **URL:** https://springdoc.org
 - **Getting Started:** The Swagger UI page is available at `http://server:port/swagger-ui/index.html and`
 the OpenAPI description is available at the following url for json format: `http://server:port/v3/api-docs`
