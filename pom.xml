@@ -18,6 +18,7 @@
         <postgresql.version>42.7.1</postgresql.version>
     </properties>
     <dependencies>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
