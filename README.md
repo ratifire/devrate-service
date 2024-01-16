@@ -41,6 +41,20 @@ conciseness.
 - **Version:** 1.18.30
 - **Scope:** Provided
 
+### 6. SpringDoc OpenApi
+- **Description:** Springdoc-openapi java library helps to automate the generation of API documentation using 
+spring boot projects.Springdoc-openapi works by examining an application at runtime to infer API semantics based 
+on spring configurations, class structure and various annotations. Automatically generates documentation in JSON/YAML 
+and HTML format APIs. This documentation can be completed by comments using swagger-api annotations.
+- **Artifact ID:** springdoc-openapi-starter-webmvc-ui
+- **Group ID:** org.springdoc
+- **Version:** 2.3.0
+- **URL:** https://springdoc.org
+- **Getting Started:** The Swagger UI page is available at `http://server:port/swagger-ui/index.html and`
+the OpenAPI description is available at the following url for json format: `http://server:port/v3/api-docs`
+    - Server: The server name or IP
+    - Port: The server port
+
 ## Project Information
 
 - **Group ID:** com.ratifire
