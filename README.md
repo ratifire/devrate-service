@@ -30,6 +30,7 @@ database. It provides the necessary functionality to establish a connection, sen
 PostgreSQL database.
 - **Artifact ID:** postgresql
 - **Group ID:** org.postgresql
+- **Scope:** runtime
 - **Version:** 42.7.1
 
 ### 5. Project Lombok
