@@ -55,6 +55,16 @@ the OpenAPI description is available at the following url for json format: `http
     - Server: The server name or IP
     - Port: The server port
 
+### 7. MapStruct
+- **Description:** MapStruct is a Java-based code generation library that simplifies the process of mapping between 
+Java bean types. It is particularly useful when working with complex domain models or when converting between 
+different layers of an application, such as DTOs and entity classes.
+- **Artifact ID:** mapstruct
+- **Group ID:** org.mapstruct
+- **Version:** 1.5.5.Final
+- **Scope:** Provided
+- **Reference guide and usage guidelines:** https://mapstruct.org/documentation/reference-guide/
+
 ## Project Information
 
 - **Group ID:** com.ratifire
