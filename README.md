@@ -39,7 +39,7 @@ generate common code constructs such as getters, setters, constructors, and more
 conciseness.
 - **Artifact ID:** lombok
 - **Group ID:** org.projectlombok
-- **Scope:** annotationProcessor
+- **Scope:** provided
 - **Links:** https://www.baeldung.com/intro-to-project-lombok
 
 ### 6. H2 Database
