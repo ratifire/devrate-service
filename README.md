@@ -77,6 +77,13 @@ different layers of an application, such as DTOs and entity classes.
 - **Scope:** Provided
 - **Reference guide and usage guidelines:** https://mapstruct.org/documentation/reference-guide/
 
+### Spring Boot Actuator
+- **Description:** Spring Boot Actuator provides production-ready features to help you monitor and manage your application. 
+It exposes various endpoints for health checks, metrics, and other operational insights.
+- **Artifact ID:** spring-boot-starter-actuator
+- **Group ID:** org.springframework.boot
+- **Links:** [Spring Boot Actuator Documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html)
+
 ## Project Information
 
 - **Group ID:** com.ratifire
