@@ -77,7 +77,7 @@ different layers of an application, such as DTOs and entity classes.
 - **Scope:** Provided
 - **Reference guide and usage guidelines:** https://mapstruct.org/documentation/reference-guide/
 
-### 8. Liquibase
+### Liquibase
 
 - **Description:** [Liquibase](https://www.liquibase.org/) is an open-source database-independent library for tracking,
 - managing, and applying database schema changes. It provides a flexible and extensible framework for versioning your
