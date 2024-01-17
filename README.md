@@ -30,6 +30,7 @@ database. It provides the necessary functionality to establish a connection, sen
 PostgreSQL database.
 - **Artifact ID:** postgresql
 - **Group ID:** org.postgresql
+- **Scope:** runtime
 - **Version:** 42.7.1
 
 ### 5. Project Lombok
@@ -38,10 +39,21 @@ generate common code constructs such as getters, setters, constructors, and more
 conciseness.
 - **Artifact ID:** lombok
 - **Group ID:** org.projectlombok
-- **Version:** 1.18.30
-- **Scope:** Provided
+- **Scope:** provided
+- **Links:** https://www.baeldung.com/intro-to-project-lombok
 
-### 6. SpringDoc OpenApi
+### 6. H2 Database
+- **Description:** H2 is an open-source lightweight Java database. This database should be used exclusively for running
+automated tests, ensuring that our tests are fast, reliable, and do not interfere with production or development
+databases. Mainly, H2 database can be configured to run as in memory database, which means that data will not
+persist on the disk. Because of embedded database it is not used for production development, but mostly used for
+development and testing.
+- **Artifact ID:** h2
+- **Group ID:** com.h2database
+- **Scope:** test
+- **Links:** https://www.h2database.com/html/main.html : https://www.baeldung.com/spring-boot-h2-database
+
+### 7. SpringDoc OpenApi
 - **Description:** Springdoc-openapi java library helps to automate the generation of API documentation using 
 spring boot projects.Springdoc-openapi works by examining an application at runtime to infer API semantics based 
 on spring configurations, class structure and various annotations. Automatically generates documentation in JSON/YAML 
