@@ -41,6 +41,30 @@ conciseness.
 - **Version:** 1.18.30
 - **Scope:** Provided
 
+### 6. SpringDoc OpenApi
+- **Description:** Springdoc-openapi java library helps to automate the generation of API documentation using 
+spring boot projects.Springdoc-openapi works by examining an application at runtime to infer API semantics based 
+on spring configurations, class structure and various annotations. Automatically generates documentation in JSON/YAML 
+and HTML format APIs. This documentation can be completed by comments using swagger-api annotations.
+- **Artifact ID:** springdoc-openapi-starter-webmvc-ui
+- **Group ID:** org.springdoc
+- **Version:** 2.3.0
+- **URL:** https://springdoc.org
+- **Getting Started:** The Swagger UI page is available at `http://server:port/swagger-ui/index.html and`
+the OpenAPI description is available at the following url for json format: `http://server:port/v3/api-docs`
+    - Server: The server name or IP
+    - Port: The server port
+
+### 7. MapStruct
+- **Description:** MapStruct is a Java-based code generation library that simplifies the process of mapping between 
+Java bean types. It is particularly useful when working with complex domain models or when converting between 
+different layers of an application, such as DTOs and entity classes.
+- **Artifact ID:** mapstruct
+- **Group ID:** org.mapstruct
+- **Version:** 1.5.5.Final
+- **Scope:** Provided
+- **Reference guide and usage guidelines:** https://mapstruct.org/documentation/reference-guide/
+
 ### 8. Liquibase
 
 - **Description:** [Liquibase](https://www.liquibase.org/) is an open-source database-independent library for tracking,
