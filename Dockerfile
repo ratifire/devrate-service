@@ -7,7 +7,7 @@ COPY ./src ./src
 RUN ./mvnw_unix clean install
 
 FROM openjdk:21
-WORKDIR /app
+WORKDIR /devRate
 COPY --from=builder /devRate/target/*.jar /devRate/*.jar
 EXPOSE 8088
 ENTRYPOINT ["java", "-jar", "/devRate/*.jar"]
