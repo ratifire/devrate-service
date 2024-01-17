@@ -53,7 +53,7 @@ development and testing.
 - **Scope:** test
 - **Links:** https://www.h2database.com/html/main.html : https://www.baeldung.com/spring-boot-h2-database
 
-### 6. SpringDoc OpenApi
+### 7. SpringDoc OpenApi
 - **Description:** Springdoc-openapi java library helps to automate the generation of API documentation using 
 spring boot projects.Springdoc-openapi works by examining an application at runtime to infer API semantics based 
 on spring configurations, class structure and various annotations. Automatically generates documentation in JSON/YAML 
