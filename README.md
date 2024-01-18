@@ -128,6 +128,22 @@ This can be helpful for understanding the purpose behind it.
    Document each changelog file and change set with details on the purpose of the changes, any special considerations, 
 and potential rollback strategies.
 
+### Dockerfile. Нow to build and run the container
+**1. Build the Docker image:**
+- Open a terminal.
+- Enter: "docker build -t [enter tag-name for your Container] ."
+  (For example: "docker build -t devrate-container .")
+
+**2. Running the Container:**
+- docker run -p [free port local PC]:[free port in Container] [enter tag-name for your Container]
+  (For example: "docker run -p 8087:8088 devrate-container")
+
+**3. Stopping the Container**
+- Open a terminal.
+- docker stop $(docker ps -a -q --filter ancestor=[enter tag-name for your Container])
+  (For example: "docker stop $(docker ps -a -q --filter ancestor=devrate-container)")
+## Project Information
+
 ## Project Information
 
 - **Group ID:** com.ratifire
