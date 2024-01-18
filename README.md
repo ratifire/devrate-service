@@ -128,6 +128,13 @@ This can be helpful for understanding the purpose behind it.
    Document each changelog file and change set with details on the purpose of the changes, any special considerations, 
 and potential rollback strategies.
 
+### Spring Boot Actuator
+- **Description:** Spring Boot Actuator provides production-ready features to help you monitor and manage your application. 
+It exposes various endpoints for health checks, metrics, and other operational insights.
+- **Artifact ID:** spring-boot-starter-actuator
+- **Group ID:** org.springframework.boot
+- **Links:** [Spring Boot Actuator Documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html)
+
 ### Profiles
 
 Spring profiles are a feature in the Spring Framework that allows developers to define and group beans 
