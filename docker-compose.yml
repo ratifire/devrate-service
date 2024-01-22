@@ -6,10 +6,10 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - POSTGRES_HOST=db
-      - POSTGRES_DB_NAME=devrateDB
-      - POSTGRES_USERNAME=admin
-      - POSTGRES_PASSWORD=root
+      - PG_HOST=db
+      - PG_DATABASE=devrateDB
+      - PG_USERNAME=admin
+      - PG_PASSWORD=root
     depends_on:
       - db
     healthcheck:
