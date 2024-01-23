@@ -16,7 +16,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -29,12 +28,10 @@ jobs:
           cache: maven
       - name: Build with Maven
         run: mvn clean install
-      - name: Login to Google Cloud
-        uses: google-github-actions/auth@v0.4.0
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v0.4.0  # Use the latest version
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
       - name: Build and Push Docker image to Google Artifact Registry
         uses: docker/build-push-action@v3
         with:
