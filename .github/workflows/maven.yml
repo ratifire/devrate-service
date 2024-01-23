@@ -33,9 +33,6 @@ jobs:
         uses: google-github-actions/auth@v2  
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Set up Docker to use the gcloud command-line tool as a credential helper
-        run: gcloud auth configure-docker
         
       - name: Set up Docker to region
         run: gcloud auth configure-docker europe-west1-docker.pkg.dev 
