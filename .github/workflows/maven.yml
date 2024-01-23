@@ -42,6 +42,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service
+          tags: devrate-dev/europe-west1-docker.pkg.dev/dev-rate-service/dev-rate:latest
           file: Dockerfile
 
