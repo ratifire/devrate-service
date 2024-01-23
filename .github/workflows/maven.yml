@@ -39,6 +39,6 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: LOCATION-docker.pkg.dev/devrate-dev/dev-rate-service/devRate:latest
+          tags: europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/devRate:latest
           file: Dockerfile
 
