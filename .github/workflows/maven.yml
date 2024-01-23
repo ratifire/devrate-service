@@ -29,10 +29,8 @@ jobs:
       - name: Build with Maven
         run: mvn clean install
 
-      - name: Authenticate
-        uses: actions/checkout@v4
-
       - name: Authenticate to Google Cloud
+        uses: actions/checkout@v4
 
         uses: google-github-actions/auth@v2  # Use the latest version
         with:
