@@ -29,13 +29,13 @@ jobs:
       - name: Build with Maven
         run: mvn clean install
 
-      - name: Increase Node Memory Limit
-        run: echo "NODE_OPTIONS=--max-old-space-size=4096" >> $GITHUB_ENV
-
       - name: Authenticate to Google Cloud
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
         uses: google-github-actions/auth@v0.4.0  # Use the latest version
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
+
       - name: Build and Push Docker image to Google Artifact Registry
         uses: docker/build-push-action@v3
         with:
