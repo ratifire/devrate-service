@@ -30,7 +30,8 @@ jobs:
         run: mvn clean install
 
       - name: Increase Node Memory Limit
-        run: echo "NODE_OPTIONS=--max-old-space-size=4096" >> $GITHUB_ENV
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v0.4.0  # Use the latest version
