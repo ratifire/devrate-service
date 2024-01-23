@@ -36,6 +36,9 @@ jobs:
 
       - name: Set up Docker to use the gcloud command-line tool as a credential helper
         run: gcloud auth configure-docker
+        
+      - name: Set up Docker to region
+        run: gcloud auth configure-docker europe-west1-docker.pkg.dev 
 
       - name: Build and Push Docker image to Google Artifact Registry
         uses: docker/build-push-action@v3
