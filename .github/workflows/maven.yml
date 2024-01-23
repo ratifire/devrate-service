@@ -33,10 +33,13 @@ jobs:
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
-      - name: Build and Push Docker image to Google Artifact Registry
-        uses: docker/build-push-action@v3
-        with:
-          push: true
-          tags: europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest
-          file: Dockerfile
+      - name: Authenticate to Google Cloud and Push Docker Image
+          uses: actions/checkout@v4
+          run: |
+            # Authenticate to Google Cloud
+            echo ${{ secrets.GCP_SA_KEY }} | gcloud auth activate-service-account --key-file=-
+            # Build and Push Docker image
+            docker build -t europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest .
+            docker push europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest
+     
 
