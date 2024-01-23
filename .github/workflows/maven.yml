@@ -31,7 +31,7 @@ jobs:
 
       - name: Authenticate to Google Cloud
 
-        uses: google-github-actions/auth@v0.4.0  # Use the latest version
+        uses: google-github-actions/auth@v2  # Use the latest version
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
