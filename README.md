@@ -135,6 +135,70 @@ It exposes various endpoints for health checks, metrics, and other operational i
 - **Group ID:** org.springframework.boot
 - **Links:** [Spring Boot Actuator Documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html)
 
+### Dockerfile. Нow to build and run the container
+**1. Build the Docker image:**
+- Open a terminal.
+- Enter: "docker build -t [enter tag-name for your Container] ."
+  (For example: "docker build -t devrate-container .")
+
+**2. Running the Container:**
+- docker run -p [free port local PC]:[free port in Container] [enter tag-name for your Container]
+  (For example: "docker run -p 8087:8088 devrate-container")
+
+**3. Stopping the Container**
+- Open a terminal.
+- docker stop $(docker ps -a -q --filter ancestor=[enter tag-name for your Container])
+  (For example: "docker stop $(docker ps -a -q --filter ancestor=devrate-container)")
+## Project Information
+
+### Profiles
+
+Spring profiles are a feature in the Spring Framework that allows developers to define and group beans 
+and configuration settings based on different runtime environments or application states. 
+This enables the application to behave differently under different conditions, such as development, testing, 
+production, etc. Spring profiles provide a way to manage configuration and bean definitions for specific scenarios.
+
+Profiles in this project help manage different configurations for various environments. 
+By default, the project uses the 'default' and the 'local' profiles.
+
+#### Available Profiles
+
+1. Default Profile:
+Common configuration.
+2. Local Profile ('local'):
+Configuration suitable for local development.
+3. Development Profile ('dev'):
+Additional configurations for the development environment.
+
+#### Switching Profiles
+
+To switch between profiles, you can use the spring.profiles.active property. 
+For example, to run the application locally:
+spring.profiles.active=local
+
+Or you can use maven command line:
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
+
+#### Local profile environment variables
+
+1. PostgreSQL settings: 
+- **PG_HOST** - Host. Default value: 'localhost'
+- **PG_PORT** - Port number. Default value: '5432'
+- **PG_DATABASE** - Database name. Default value: 'devrate'
+- **PG_USERNAME** - User name. Default value: 'devrate'
+- **PG_PASSWORD** - Password. Default value: 'devrate'
+- **PG_SCHEMA** - Schema name. Default value: 'devrate'
+
+#### Dev profile environment variables
+
+1. PostgreSQL settings: 
+- **PG_HOST** - Host
+- **PG_PORT** - Port number
+- **PG_DATABASE** - Database name
+- **PG_USERNAME** - User name
+- **PG_PASSWORD** - Password
+- **PG_SCHEMA** - Schema name
+
 ## Code style check
 
 Checkstyle is a tool used to help ensure that Java code adheres to a coding standard. It automates
