@@ -21,10 +21,10 @@
     <maven-compiler-plugin>3.12.1</maven-compiler-plugin>
     <mapstruct.version>1.5.5.Final</mapstruct.version>
     <lombok-mapstruct-binding>0.2.0</lombok-mapstruct-binding>
-    <maven-checkstyle-plugin>3.3.1</maven-checkstyle-plugin>
-    <checkstyle>10.12.7</checkstyle>
-    <report.location>target/checkstyle-reports</report.location>
-    <check.style.config.location>src/main/resources/checkstyle</check.style.config.location>
+    <maven-checkstyle-plugin.version>3.3.1</maven-checkstyle-plugin.version>
+    <checkstyle.version>10.12.7</checkstyle.version>
+    <checkstyle.reports.location>target/checkstyle-reports</checkstyle.reports.location>
+    <checkstyle.config.location>src/main/resources/checkstyle</checkstyle.config.location>
   </properties>
   <dependencies>
 
@@ -122,7 +122,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${maven-checkstyle-plugin}</version>
+        <version>${maven-checkstyle-plugin.version}</version>
         <executions>
           <execution>
             <id>checkstyle</id>
@@ -136,16 +136,16 @@
           <dependency>
             <groupId>com.puppycrawl.tools</groupId>
             <artifactId>checkstyle</artifactId>
-            <version>${checkstyle}</version>
+            <version>${checkstyle.version}</version>
           </dependency>
         </dependencies>
         <configuration>
           <configLocation>
-            ${check.style.config.location}/java-google-style.xml
+            ${checkstyle.config.location}/java-google-style.xml
           </configLocation>
           <consoleOutput>true</consoleOutput>
           <failsOnError>true</failsOnError>
-          <outputFile>${report.location}/checkstyle-report.xml</outputFile>
+          <outputFile>${checkstyle.reports.location}/checkstyle-report.xml</outputFile>
           <includeTestSourceDirectory>true</includeTestSourceDirectory>
         </configuration>
       </plugin>
