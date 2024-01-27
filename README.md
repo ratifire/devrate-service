@@ -149,7 +149,17 @@ It exposes various endpoints for health checks, metrics, and other operational i
 - Open a terminal.
 - docker stop $(docker ps -a -q --filter ancestor=[enter tag-name for your Container])
   (For example: "docker stop $(docker ps -a -q --filter ancestor=devrate-container)")
-## Project Information
+
+### Docker-compose. Нow to start the project
+**Getting Started**
+- Start the services using Docker Compose: `docker-compose up`
+- To check the status and logs of the running containers, use the following command: `docker-compose ps`
+
+**Stopping the Services**
+- To stop the services and remove the containers, run the following command:`docker-compose down`
+
+**Cleaning Up**
+- To remove the data volume as well, you can use the following command:`docker-compose down -v`
 
 ### Profiles
 
