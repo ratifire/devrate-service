@@ -12,14 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/alive")
 public class PiplineController {
 
-
-    /**
-     * Returns a string representing the status of the API.
-     *
-     * @return a string indicating the status of the API
-     */
-    @GetMapping
-    public String alive(){
-        return "what is the time complexity of put method in HashMap?";
-    }
+  /**
+   * Returns a string representing the status of the API.
+   *
+   * @return a string indicating the status of the API
+   */
+  @GetMapping
+  public String alive() {
+    return "what is the time complexity of put method in HashMap?";
+  }
 }
