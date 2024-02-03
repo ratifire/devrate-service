@@ -43,6 +43,7 @@ jobs:
           push: true
           tags: europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest
           file: Dockerfile
+
       # New step for deploying using GCP
       - name: Deploy to GCP VM
         run: |
@@ -64,4 +65,4 @@ jobs:
             -e PG_PASSWORD='$PG_PASSWORD' \
             -e PG_SCHEMA='$PG_SCHEMA' \
             europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate"
-      
+
