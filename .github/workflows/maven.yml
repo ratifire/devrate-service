@@ -52,11 +52,11 @@ jobs:
 
           # Commands to SSH into the VM and run the Docker commands
           gcloud compute ssh instance-1 --zone europe-west1-b --command "\
-            docker pull europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest && \
-            docker stop dev-rate-container || true && \
-            docker rm dev-rate-container || true && \
-            docker run -d --name dev-rate-container europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest && \
-            docker run -d --name dev-rate-container -p 80:8080 \
+            sudo docker pull europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest && \
+            sudo docker stop dev-rate-container || true && \
+            sudo docker rm dev-rate-container || true && \
+            sudo docker run -d --name dev-rate-container europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest && \
+            sudo docker run -d --name dev-rate-container -p 80:8080 \
             -e ACTIVE_PROFILE='$ACTIVE_PROFILE' \
             -e PG_HOST='$PG_HOST' \
             -e PG_PORT='$PG_PORT' \
