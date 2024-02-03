@@ -57,12 +57,12 @@ jobs:
             sudo docker rm dev-rate-container || true && \
             sudo docker run -d --name dev-rate-container europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest && \
             sudo docker run -d --name dev-rate-container -p 80:8080 \
-            -e ACTIVE_PROFILE='$ACTIVE_PROFILE' \
-            -e PG_HOST='$PG_HOST' \
-            -e PG_PORT='$PG_PORT' \
-            -e PG_DATABASE='$PG_DATABASE' \
-            -e PG_USERNAME='$PG_USERNAME' \
-            -e PG_PASSWORD='$PG_PASSWORD' \
-            -e PG_SCHEMA='$PG_SCHEMA' \
+            -e ACTIVE_PROFILE= $ACTIVE_PROFILE \
+            -e PG_HOST= $PG_HOST \
+            -e PG_PORT= $PG_PORT \
+            -e PG_DATABASE= $PG_DATABASE \
+            -e PG_USERNAME= $PG_USERNAME \
+            -e PG_PASSWORD= $PG_PASSWORD \
+            -e PG_SCHEMA= $PG_SCHEMA \
             europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate"
 
