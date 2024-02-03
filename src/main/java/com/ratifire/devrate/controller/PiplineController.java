@@ -19,6 +19,8 @@ public class PiplineController {
    */
   @GetMapping
   public String alive() {
-    return "what is the time complexity of put method in HashMap? and If you can reverse the tree in O(1) complexity";
+    return "what is the time complexity of put method in HashMap?"
+            +
+            " and If you can reverse the tree in O(1) complexity";
   }
 }
