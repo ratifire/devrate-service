@@ -50,8 +50,8 @@ jobs:
           # Authenticate with gcloud
           gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
 
-          # Commands to SSH into the VM and run the Docker commands
-          gcloud compute ssh instance-1 --zone europe-west1-b --command "\
+          # Commands to SSH into the VM and run the Docker commands 
+          gcloud compute ssh dev-rate-api --zone europe-west1-b --command "\ 
             source ~/.bashrc && \
             sudo docker pull europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest && \
             sudo docker stop dev-rate-container || true && \
