@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 09-02-2024_02_create-table-user-role
+      author: Dmytro Abalmas
+      changes:
+        - sqlFile:
+            dbms: postgres
+            relativeToChangelogFile: true
+            path: 09-02-2024_02_create-table-user-role.sql

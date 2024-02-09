@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 09-02-2024_04_add-foreign-keys-user-security-table
+      author: Dmytro Abalmas
+      changes:
+        - sqlFile:
+            dbms: postgres
+            relativeToChangelogFile: true
+            path: 09-02-2024_04_add-foreign-keys-user-security-table.sql
