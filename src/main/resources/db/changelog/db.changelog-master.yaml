@@ -1,5 +1,4 @@
 databaseChangeLog:
   - includeAll:
-      #TODO: Add a directory when create the first changelog
-      path: db/changelog/changes/
+      path: db/changelog/changes/02-2024/
       errorIfMissingOrEmpty: false
