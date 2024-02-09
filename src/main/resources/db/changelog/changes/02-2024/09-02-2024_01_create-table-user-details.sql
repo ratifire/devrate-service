@@ -1,3 +1,5 @@
+--liquibase formatted sql
+--changeset Dmytro Abalmas:09-02-2024_01_create-table-user-details
 CREATE TABLE IF NOT EXISTS user_details
 (
     id            BIGSERIAL PRIMARY KEY,

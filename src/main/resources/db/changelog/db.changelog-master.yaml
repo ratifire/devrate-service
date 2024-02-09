@@ -1,4 +1,4 @@
 databaseChangeLog:
   - includeAll:
-      path: db/changelog/changes/02-2024/
+      path: db/changelog/changes/
       errorIfMissingOrEmpty: false

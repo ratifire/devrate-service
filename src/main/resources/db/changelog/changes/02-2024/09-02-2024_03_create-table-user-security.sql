@@ -1,3 +1,5 @@
+--liquibase formatted sql
+--changeset Dmytro Abalmas:09-02-2024_03_create-table-user-security
 CREATE TABLE IF NOT EXISTS user_security
 (
     id           BIGSERIAL PRIMARY KEY,

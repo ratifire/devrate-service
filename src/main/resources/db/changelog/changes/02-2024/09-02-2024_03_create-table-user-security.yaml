@@ -1,9 +1,0 @@
-databaseChangeLog:
-  - changeSet:
-      id: 09-02-2024_03_create-table-user-security
-      author: Dmytro Abalmas
-      changes:
-        - sqlFile:
-            dbms: postgres
-            relativeToChangelogFile: true
-            path: 09-02-2024_03_create-table-user-security.sql
