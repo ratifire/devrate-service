@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 11-02-2024_01
+      author: ovoskresenskyy
+      changes:
+        - insert:
+            tableName: user_role
+            columns:
+              - column:
+                  name: name
+                  value: 'ROLE_USER'
+              - column:
+                  name: description
+                  value: 'User role'
