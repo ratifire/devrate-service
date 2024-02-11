@@ -5,7 +5,6 @@ import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.UserAlreadyExistException;
 import com.ratifire.devrate.service.RegistrationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,18 +27,15 @@ public class RegistrationController {
    * user.
    *
    * @param signUpDto DTO containing new user's details such as username, password, etc.
-   * @return ResponseEntity with HTTP status 200 (OK) and newly created user's details upon
-   * successful registration. Throws UserAlreadyExistException with HTTP status 409 (Conflict) if
-   * inputted email is already registered.
+   * @return The registered User entity if successful, or null if the registration fails.
    */
   @PostMapping
   @ResponseStatus
-  public ResponseEntity<User> registerUser(@RequestBody SignUpDto signUpDto) {
+  public User registerUser(@RequestBody SignUpDto signUpDto) {
     if (registrationService.isUserExistByEmail(signUpDto.getEmail())) {
       throw new UserAlreadyExistException("User is already registered!");
     }
 
-    User registeredUser = registrationService.registerUser(signUpDto);
-    return ResponseEntity.ok().body(registeredUser);
+    return registrationService.registerUser(signUpDto);
   }
 }
