@@ -19,6 +19,16 @@ public class UserService {
   private final UserRepository userRepository;
 
   /**
+   * Checks if a user with the given email exists in the system.
+   *
+   * @param email The email address of the user to check.
+   * @return True if a user with the given email exists, false otherwise.
+   */
+  public boolean isUserExistByEmail(String email) {
+    return userRepository.existsByEmail(email);
+  }
+
+  /**
    * Saves the user entity.
    *
    * @param user The user entity to save.
