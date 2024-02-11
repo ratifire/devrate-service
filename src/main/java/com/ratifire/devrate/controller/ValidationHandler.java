@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestControllerAdvice
+//@RestControllerAdvice
 public class ValidationHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
