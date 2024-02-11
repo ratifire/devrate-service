@@ -10,12 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class RoleNotFoundException extends RuntimeException {
 
-  /**
-   * Constructs a new RoleNotFoundException with the specified error message.
-   *
-   * @param name Name of the role that was not found.
-   */
-  public RoleNotFoundException(String name) {
-    super("Role " + name + " is not found!");
+  public RoleNotFoundException(String message) {
+    super(message);
   }
 }
