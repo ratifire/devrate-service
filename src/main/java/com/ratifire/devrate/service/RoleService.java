@@ -26,6 +26,7 @@ public class RoleService {
    * @return The role entity with the specified name, or null if not found.
    */
   public Role getRoleByName(String name) {
-    return roleRepository.findByName(name).orElseThrow(() -> new RoleNotFoundException(name));
+    return roleRepository.findByName(name)
+        .orElseThrow(() -> new RoleNotFoundException("Role " + name + " is not found!"));
   }
 }
