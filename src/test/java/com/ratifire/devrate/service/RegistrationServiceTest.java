@@ -1,12 +1,15 @@
 package com.ratifire.devrate.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.ratifire.devrate.dto.SignUpDto;
+import com.ratifire.devrate.entity.Role;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.repository.UserRepository;
-import java.util.Optional;
+import com.ratifire.devrate.entity.UserSecurity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +24,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public class RegistrationServiceTest {
 
   @Mock
-  private UserRepository userRepository;
+  private UserService userService;
+
+  @Mock
+  private UserSecurityService userSecurityService;
+
+  @Mock
+  private RoleService roleService;
 
   @InjectMocks
   private RegistrationService registrationService;
@@ -34,7 +43,7 @@ public class RegistrationServiceTest {
   @Test
   public void testUserExistsByEmail_ReturnsTrue() {
     String existingEmail = "existing@example.com";
-    when(userRepository.findByEmail(existingEmail)).thenReturn(Optional.of(User.builder().build()));
+    when(userService.isUserExistByEmail(any())).thenReturn(true);
     boolean isExist = registrationService.isUserExistByEmail(existingEmail);
     assertTrue(isExist);
   }
@@ -47,8 +56,33 @@ public class RegistrationServiceTest {
   @Test
   public void testUserExistsByEmail_ReturnsFalse() {
     String notExistingEmail = "notexisting@example.com";
-    when(userRepository.findByEmail(notExistingEmail)).thenReturn(Optional.empty());
+    when(userService.isUserExistByEmail(any())).thenReturn(false);
     boolean isExist = registrationService.isUserExistByEmail(notExistingEmail);
     assertFalse(isExist);
+  }
+
+  /**
+   * Test case to verify successful user registration. - A valid email and password are provided. -
+   * The user should be successfully registered.
+   */
+  @Test
+  public void testRegisterUser_SuccessfulRegistration() {
+    SignUpDto testSignUpDto = SignUpDto.builder()
+        .email("test@gmail.com")
+        .build();
+
+    User testUser = User.builder()
+        .email("test@gmail.com")
+        .build();
+
+    Role testRole = Role.builder()
+        .id(1L)
+        .build();
+
+    when(userService.save(any())).thenReturn(testUser);
+    when(roleService.getRoleByName(any())).thenReturn(testRole);
+    when(userSecurityService.save(any())).thenReturn(UserSecurity.builder().build());
+    User expectedUser = registrationService.registerUser(testSignUpDto);
+    assertEquals(expectedUser, testUser);
   }
 }

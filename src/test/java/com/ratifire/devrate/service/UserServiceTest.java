@@ -1,13 +1,14 @@
 package com.ratifire.devrate.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.repository.UserRepository;
 import java.time.LocalDateTime;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,23 +27,30 @@ public class UserServiceTest {
   @InjectMocks
   private UserService userService;
 
-  private User testUser;
+  /**
+   * Test method for checking if a user exists by email when the user exists. This method verifies
+   * that the RegistrationService correctly returns true when a user with the specified email exists
+   * in the database.
+   */
+  @Test
+  public void testUserExistsByEmail_ReturnsTrue() {
+    String existingEmail = "existing@example.com";
+    when(userRepository.existsByEmail(any())).thenReturn(true);
+    boolean isExist = userService.isUserExistByEmail(existingEmail);
+    assertTrue(isExist);
+  }
 
   /**
-   * Initializes the test environment for the RegistrationControllerTest class. This method is
-   * executed before each test method in the class.
+   * Test method for checking if a user exists by email when the user does not exist. This method
+   * verifies that the RegistrationService correctly returns false when no user with the specified
+   * email exists in the database.
    */
-  @BeforeEach
-  public void init() {
-    testUser = User.builder()
-        .email("test@gmail.com")
-        .firstName("Test first name")
-        .lastName("Test last name")
-        .country("Test country")
-        .isVerified(true)
-        .isSubscribed(true)
-        .createdAt(LocalDateTime.now())
-        .build();
+  @Test
+  public void testUserExistsByEmail_ReturnsFalse() {
+    String notExistingEmail = "notexisting@example.com";
+    when(userRepository.existsByEmail(any())).thenReturn(false);
+    boolean isExist = userService.isUserExistByEmail(notExistingEmail);
+    assertFalse(isExist);
   }
 
   /**
@@ -51,6 +59,16 @@ public class UserServiceTest {
    */
   @Test
   public void testSaveUser() {
+    User testUser = User.builder()
+        .email("test@gmail.com")
+        .firstName("Test first name")
+        .lastName("Test last name")
+        .country("Test country")
+        .isVerified(true)
+        .isSubscribed(true)
+        .createdAt(LocalDateTime.now())
+        .build();
+
     when(userRepository.save(any())).thenReturn(testUser);
     User expectedUser = userService.save(User.builder().build());
     assertEquals(expectedUser, testUser);
