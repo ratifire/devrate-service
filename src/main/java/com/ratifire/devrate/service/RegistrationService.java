@@ -3,10 +3,9 @@ package com.ratifire.devrate.service;
 import com.ratifire.devrate.dto.SignUpDto;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.UserSecurity;
-import com.ratifire.devrate.repository.UserRepository;
-import com.ratifire.devrate.repository.UserSecurityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class responsible for user registration logic. This service handles the registration
@@ -17,9 +16,9 @@ import org.springframework.stereotype.Service;
 public class RegistrationService {
 
   /**
-   * Repository for accessing user data in the database.
+   * Service responsible for user management operations.
    */
-  private final UserRepository userRepository;
+  private final UserService userService;
 
   /**
    * Service responsible for role management operations.
@@ -27,9 +26,9 @@ public class RegistrationService {
   private final RoleService roleService;
 
   /**
-   * Repository for accessing user security data in the database.
+   * Service responsible for user security management operations.
    */
-  private final UserSecurityRepository userSecurityRepository;
+  private final UserSecurityService userSecurityService;
 
   /**
    * Checks if a user with the given email address exists.
@@ -38,26 +37,26 @@ public class RegistrationService {
    * @return True if a user with the specified email address exists, false otherwise.
    */
   public boolean isUserExistByEmail(String email) {
-    return userRepository.findByEmail(email).isPresent();
+    return userService.isUserExistByEmail(email);
   }
 
   /**
-   * Method for registering a new user.
-   * This method validates the sign-up request, creates a new user entity,
-   * and persists it to the database.
+   * Method for registering a new user. This method validates the sign-up request, creates a new
+   * user entity, and persists it to the database.
    *
    * @param signUpDto DTO containing user sign-up data.
    * @return The registered User object.
    */
+  @Transactional
   public User registerUser(SignUpDto signUpDto) {
-    User user = userRepository.save(signUpDto.toUser());
+    User user = userService.save(signUpDto.toUser());
 
     UserSecurity userSecurity = UserSecurity.builder()
         .password(signUpDto.getPassword())
         .userId(user.getId())
         .userRoleId(roleService.getRoleByName("ROLE_USER").getId())
         .build();
-    userSecurityRepository.save(userSecurity);
+    userSecurityService.save(userSecurity);
 
     return user;
   }
