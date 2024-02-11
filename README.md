@@ -2,21 +2,29 @@
 
 ## Dependencies
 
-### 1. Spring Boot Starter Web
+### Spring Boot Starter Web
 - **Description:** Spring Boot Starter Web is a fundamental dependency for developing web applications using the Spring 
 Framework. It includes everything needed to set up a basic web application, handling HTTP requests, and providing 
 essential web-related functionalities.
 - **Artifact ID:** spring-boot-starter-web
 - **Group ID:** org.springframework.boot
 
-### 2. Spring Boot Starter Data JPA
+### Spring Boot Starter Data JPA
 - **Description:** Spring Boot Starter Data JPA is a powerful dependency for simplifying the implementation of JPA-based 
 repositories in Spring applications. It seamlessly integrates Spring Data JPA with Hibernate, providing easy and 
 efficient data access through Java Persistence API (JPA).
 - **Artifact ID:** spring-boot-starter-data-jpa
 - **Group ID:** org.springframework.boot
 
-### 3. Spring Boot Starter Test
+### Spring Boot Starter Validation
+- **Description:** Spring Boot Starter Validation is a powerful component within the Spring Boot framework designed to 
+- streamline and enhance the validation process in your Java applications. Although Spring Boot Starter Validation 
+- integration with custom validators, the de-facto standard for performing validation is Hibernate Validator.
+- **Artifact ID:** spring-boot-starter-validation
+- **Group ID:** org.springframework.boot
+- **Links** https://www.baeldung.com/spring-boot-bean-validation
+
+### Spring Boot Starter Test
 - **Description:** Spring Boot Starter Test is a testing-centric dependency for Spring Boot applications. It includes 
 essential testing frameworks like JUnit, Hamcrest, and Mockito, making it easy to write and execute tests for Spring Boot 
 project.
@@ -24,7 +32,7 @@ project.
 - **Group ID:** org.springframework.boot
 - **Scope:** Test
 
-### 4. PostgreSQL JDBC Driver
+### PostgreSQL JDBC Driver
 - **Description:** PostgreSQL JDBC Driver is an essential component for connecting your Java application to a PostgreSQL
 database. It provides the necessary functionality to establish a connection, send queries, and retrieve results from the
 PostgreSQL database.
@@ -33,7 +41,7 @@ PostgreSQL database.
 - **Scope:** runtime
 - **Version:** 42.7.1
 
-### 5. Project Lombok
+### Project Lombok
 - **Description:** Lombok is a Java library that helps reduce boilerplate code by providing annotations to automatically 
 generate common code constructs such as getters, setters, constructors, and more. It enhances code readability and 
 conciseness.
@@ -42,7 +50,7 @@ conciseness.
 - **Scope:** provided
 - **Links:** https://www.baeldung.com/intro-to-project-lombok
 
-### 6. H2 Database
+### H2 Database
 - **Description:** H2 is an open-source lightweight Java database. This database should be used exclusively for running
 automated tests, ensuring that our tests are fast, reliable, and do not interfere with production or development
 databases. Mainly, H2 database can be configured to run as in memory database, which means that data will not
@@ -53,7 +61,7 @@ development and testing.
 - **Scope:** test
 - **Links:** https://www.h2database.com/html/main.html : https://www.baeldung.com/spring-boot-h2-database
 
-### 7. SpringDoc OpenApi
+### SpringDoc OpenApi
 - **Description:** Springdoc-openapi java library helps to automate the generation of API documentation using 
 spring boot projects.Springdoc-openapi works by examining an application at runtime to infer API semantics based 
 on spring configurations, class structure and various annotations. Automatically generates documentation in JSON/YAML 
@@ -67,7 +75,7 @@ the OpenAPI description is available at the following url for json format: `http
     - Server: The server name or IP
     - Port: The server port
 
-### 7. MapStruct
+### MapStruct
 - **Description:** MapStruct is a Java-based code generation library that simplifies the process of mapping between 
 Java bean types. It is particularly useful when working with complex domain models or when converting between 
 different layers of an application, such as DTOs and entity classes.
