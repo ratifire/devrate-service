@@ -30,7 +30,6 @@ public class RegistrationController {
    * @return The registered User entity if successful, or null if the registration fails.
    */
   @PostMapping
-  @ResponseStatus
   public User registerUser(@RequestBody SignUpDto signUpDto) {
     if (registrationService.isUserExistByEmail(signUpDto.getEmail())) {
       throw new UserAlreadyExistException("User is already registered!");
