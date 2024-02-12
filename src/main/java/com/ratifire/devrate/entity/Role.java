@@ -23,21 +23,12 @@ import lombok.NoArgsConstructor;
 @Table(name = "user_role")
 public class Role {
 
-  /**
-   * The unique identifier for the role.
-   */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  /**
-   * The name of the role.
-   */
   @Column(nullable = false, unique = true)
   private String name;
 
-  /**
-   * A brief description of the role.
-   */
   private String description;
 }

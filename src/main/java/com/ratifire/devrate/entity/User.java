@@ -24,50 +24,26 @@ import lombok.NoArgsConstructor;
 @Table(name = "user_details")
 public class User {
 
-  /**
-   * The unique identifier for the user.
-   */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  /**
-   * The email address of the user.
-   */
   @Column(nullable = false, unique = true)
   private String email;
 
-  /**
-   * The first name of the user.
-   */
   @Column(nullable = false)
   private String firstName;
 
-  /**
-   * The last name of the user.
-   */
   @Column(nullable = false)
   private String lastName;
 
-  /**
-   * The country of the user.
-   */
   @Column(nullable = false)
   private String country;
 
-  /**
-   * Flag indicating whether the user has subscribed to newsletters or updates.
-   */
   private boolean isSubscribed;
 
-  /**
-   * Flag indicating whether the user's email address has been verified.
-   */
   private boolean isVerified;
 
-  /**
-   * The timestamp representing when the user account was created.
-   */
   @Column(nullable = false)
   private LocalDateTime createdAt;
 }

@@ -23,28 +23,16 @@ import lombok.NoArgsConstructor;
 @Table(name = "user_security")
 public class UserSecurity {
 
-  /**
-   * The unique identifier for the user security information.
-   */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  /**
-   * The password of the user.
-   */
   @Column(nullable = false)
   private String password;
 
-  /**
-   * The unique identifier of the user associated with this security information.
-   */
   @Column(name = "user_id", nullable = false)
   private long userId;
 
-  /**
-   * The role identifier of the user associated with this security information.
-   */
   @Column(name = "user_role_id", nullable = false)
   private long userRoleId;
 }

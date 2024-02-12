@@ -13,39 +13,18 @@ import lombok.Getter;
 @Getter
 public class SignUpDto {
 
-  /**
-   * The email chosen by the user for their account.
-   */
   private String email;
 
-  /**
-   * The first name inputted by user.
-   */
   private String firstName;
 
-  /**
-   * The last name inputted by user.
-   */
   private String lastName;
 
-  /**
-   * The country chosen by the user for their account.
-   */
   private String country;
 
-  /**
-   * Flag indicating whether the user has subscribed to newsletters or updates.
-   */
   private boolean isSubscribed;
 
-  /**
-   * Flag indicating whether the user's email address has been verified.
-   */
   private boolean isVerified;
 
-  /**
-   * The password chosen by the user for their account.
-   */
   private String password;
 
   /**
