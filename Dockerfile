@@ -1,4 +1,5 @@
 FROM openjdk:21
 EXPOSE 8080
-ADD target/devRate-*.jar devRate.jar
+ENV JAR_FILE=target/devRate-*.jar
+COPY ${JAR_FILE} /devRate.jar
 ENTRYPOINT ["java", "-jar", "/devRate.jar"]
