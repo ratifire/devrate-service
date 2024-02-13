@@ -2,8 +2,8 @@ package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.SignUpDto;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.exception.UserAlreadyExistException;
 import com.ratifire.devrate.service.RegistrationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,11 +29,7 @@ public class RegistrationController {
    * @return The registered User entity if successful, or null if the registration fails.
    */
   @PostMapping
-  public User registerUser(@RequestBody SignUpDto signUpDto) {
-    if (registrationService.isUserExistByEmail(signUpDto.getEmail())) {
-      throw new UserAlreadyExistException("User is already registered!");
-    }
-
+  public User registerUser(@RequestBody @Valid SignUpDto signUpDto) {
     return registrationService.registerUser(signUpDto);
   }
 }
