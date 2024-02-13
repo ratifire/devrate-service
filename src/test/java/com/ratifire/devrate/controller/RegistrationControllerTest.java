@@ -75,23 +75,4 @@ public class RegistrationControllerTest {
         .andExpect(status().isOk())
         .andDo(print());
   }
-
-  /**
-   * Unit test for {@link RegistrationController#registerUser(SignUpDto)}.
-   *
-   * <p>Test method for verifying that the sign-up endpoint ("/signup") returns 409 Conflict status
-   * when attempting to sign up with an already existing email address.
-   *
-   * @throws Exception if an error occurs during the test.
-   */
-  @Test
-  public void testSignUpShouldReturn409Conflict() throws Exception {
-    Mockito.when(registrationService.isUserExistByEmail(any())).thenReturn(true);
-
-    mockMvc.perform(post(END_POINT_PATH + "/signup")
-            .contentType("application/json")
-            .content(objectMapper.writeValueAsString(signUpDto)))
-        .andExpect(status().is4xxClientError())
-        .andDo(print());
-  }
 }

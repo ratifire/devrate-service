@@ -2,18 +2,22 @@ package com.ratifire.devrate.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.SignUpDto;
 import com.ratifire.devrate.entity.Role;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.UserSecurity;
+import com.ratifire.devrate.exception.UserAlreadyExistException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
@@ -87,10 +91,30 @@ public class RegistrationServiceTest {
         .id(1L)
         .build();
 
+    when(registrationService.isUserExistByEmail(any())).thenReturn(false);
     when(userService.save(any())).thenReturn(testUser);
     when(roleService.getRoleByName(any())).thenReturn(testRole);
     when(userSecurityService.save(any())).thenReturn(UserSecurity.builder().build());
     User expectedUser = registrationService.registerUser(testSignUpDto);
     assertEquals(expectedUser, testUser);
+  }
+
+  /**
+   * Unit test for {@link RegistrationService#registerUser(SignUpDto)}.
+   *
+   * <p>Test case to verify successful user registration. A not valid email and password are
+   * provided. UserAlreadyExistException have to be thrown.
+   */
+  @Test
+  public void testRegisterUser_ThrowUserAlreadyExistException() {
+    SignUpDto testSignUpDto = SignUpDto.builder()
+        .email("test@gmail.com")
+        .build();
+
+    Mockito.when(registrationService.isUserExistByEmail(any())).thenReturn(true);
+
+    assertThrows(UserAlreadyExistException.class, () -> {
+      registrationService.registerUser(testSignUpDto);
+    });
   }
 }
