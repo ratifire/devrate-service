@@ -44,7 +44,7 @@ jobs:
           tags: europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest
           file: Dockerfile
 
-      # New step for deploying using GCP       dfg
+      # New step for deploying using GCP
       - name: Deploy to GCP VM
         run: |
           # Authenticate with gcloud
@@ -53,7 +53,7 @@ jobs:
           # Commands to SSH into the VM and run the Docker commands 
           gcloud compute ssh dev-rate-api --zone europe-west1-b --command "\ 
             source ~/.bashrc && \
-            sudo docker pull europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest && \
+            sudo docker pull europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest || true && \
             sudo docker stop dev-rate-container || true && \
             sudo docker rm dev-rate-container || true && \
             sudo docker run -d --name dev-rate-container -p 80:8080 \
