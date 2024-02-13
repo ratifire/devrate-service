@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.repository.UserRepository;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
+ * Test class for the {@link UserService}.
+ * <p>
  * Unit tests for the UserService class. This class tests the behavior of the UserService methods.
  */
 @ExtendWith(MockitoExtension.class)
@@ -28,6 +31,8 @@ public class UserServiceTest {
   private UserService userService;
 
   /**
+   * Unit test for {@link UserService#isUserExistByEmail(String)}.
+   * <p>
    * Test method for checking if a user exists by email when the user exists. This method verifies
    * that the RegistrationService correctly returns true when a user with the specified email exists
    * in the database.
@@ -41,6 +46,8 @@ public class UserServiceTest {
   }
 
   /**
+   * Unit test for {@link UserService#isUserExistByEmail(String)}.
+   * <p>
    * Test method for checking if a user exists by email when the user does not exist. This method
    * verifies that the RegistrationService correctly returns false when no user with the specified
    * email exists in the database.
@@ -54,6 +61,8 @@ public class UserServiceTest {
   }
 
   /**
+   * Unit test for {@link UserService#save(User)}.
+   * <p>
    * Test method for saving a user entity into the database. This method verifies that the
    * UserService correctly saves a user entity into the database.
    */

@@ -17,6 +17,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
+ * Test class for the {@link RegistrationService}.
+ * <p>
  * Unit tests for the RegistrationService class. This class tests the behavior of the
  * RegistrationService methods.
  */
@@ -36,6 +38,8 @@ public class RegistrationServiceTest {
   private RegistrationService registrationService;
 
   /**
+   * Unit test for {@link RegistrationService#isUserExistByEmail(String)}.
+   * <p>
    * Test method for checking if a user exists by email when the user exists. This method verifies
    * that the RegistrationService correctly returns true when a user with the specified email exists
    * in the database.
@@ -49,6 +53,8 @@ public class RegistrationServiceTest {
   }
 
   /**
+   * Unit test for {@link RegistrationService#isUserExistByEmail(String)}.
+   * <p>
    * Test method for checking if a user exists by email when the user does not exist. This method
    * verifies that the RegistrationService correctly returns false when no user with the specified
    * email exists in the database.
@@ -62,6 +68,8 @@ public class RegistrationServiceTest {
   }
 
   /**
+   * Unit test for {@link RegistrationService#registerUser(SignUpDto)}.
+   * <p>
    * Test case to verify successful user registration. - A valid email and password are provided. -
    * The user should be successfully registered.
    */

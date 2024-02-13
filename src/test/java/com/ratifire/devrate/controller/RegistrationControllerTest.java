@@ -19,8 +19,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
- * Unit tests for the RegistrationController class. This class tests the behavior of the
- * RegistrationController endpoints.
+ * Test class for the {@link RegistrationController}.
+ * <p>
+ * This class tests the behavior of the RegistrationController endpoints.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -56,6 +57,8 @@ public class RegistrationControllerTest {
   }
 
   /**
+   * Test for {@link RegistrationController#registerUser(SignUpDto)}.
+   * <p>
    * Test method for verifying that the sign-up endpoint ("/signup") returns OK status. This method
    * verifies that the sign-up endpoint returns HTTP status 200 (OK) when accessed.
    *
@@ -73,6 +76,8 @@ public class RegistrationControllerTest {
   }
 
   /**
+   * Unit test for {@link RegistrationController#registerUser(SignUpDto)}.
+   * <p>
    * Test method for verifying that the sign-up endpoint ("/signup") returns 409 Conflict status
    * when attempting to sign up with an already existing email address.
    *
