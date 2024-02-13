@@ -40,9 +40,9 @@ jobs:
       - name: Build and Push Docker image to Google Artifact Registry
         uses: docker/build-push-action@v3
         with:
+          context: .
           push: true
           tags: europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest
-          file: Dockerfile
 
       # New step for deploying using GCP
       - name: Deploy to GCP VM
@@ -51,7 +51,7 @@ jobs:
           gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
 
           # Commands to SSH into the VM and run the Docker commands 
-          gcloud compute ssh dev-rate-api --zone europe-west1-b --command "\ 
+          gcloud compute ssh dev-rate-api --zone europe-west1-b --command " 
             source ~/.bashrc && \
             sudo docker pull europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest && \
             sudo docker stop dev-rate-container || true && \
