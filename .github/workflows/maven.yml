@@ -44,7 +44,7 @@ jobs:
           tags: europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest
           file: Dockerfile
 
-      # New step for deploying using GCP
+      # New step for deploying using GCP       dfg
       - name: Deploy to GCP VM
         run: |
           # Authenticate with gcloud
