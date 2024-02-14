@@ -50,8 +50,8 @@ public class RegistrationControllerTest {
         .firstName("Test first name")
         .lastName("Test last name")
         .country("Test country")
-        .isVerified(true)
-        .isSubscribed(true)
+        .verified(true)
+        .subscribed(true)
         .password("TestPassword123")
         .build();
   }

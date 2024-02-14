@@ -40,9 +40,11 @@ public class User {
   @Column(nullable = false)
   private String country;
 
-  private boolean isSubscribed;
+  @Column(name = "is_subscribed", nullable = false)
+  private boolean subscribed;
 
-  private boolean isVerified;
+  @Column(name = "is_verified", nullable = false)
+  private boolean verified;
 
   @Column(nullable = false)
   private LocalDateTime createdAt;

@@ -4,6 +4,7 @@ import com.ratifire.devrate.dto.SignUpDto;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.UserAlreadyExistException;
+import com.ratifire.devrate.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,8 @@ public class RegistrationService {
    */
   private final UserSecurityService userSecurityService;
 
+  private final UserMapper userMapper;
+
   /**
    * Checks if a user with the given email address exists.
    *
@@ -54,7 +57,7 @@ public class RegistrationService {
       throw new UserAlreadyExistException("User is already registered!");
     }
 
-    User user = userService.save(signUpDto.toUser());
+    User user = userService.save(userMapper.toEntity(signUpDto));
 
     UserSecurity userSecurity = UserSecurity.builder()
         .password(signUpDto.getPassword())

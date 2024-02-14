@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.SignUpDto;
@@ -13,6 +12,7 @@ import com.ratifire.devrate.entity.Role;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.UserAlreadyExistException;
+import com.ratifire.devrate.mapper.UserMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -37,6 +37,9 @@ public class RegistrationServiceTest {
 
   @Mock
   private RoleService roleService;
+
+  @Mock
+  private UserMapper userMapper;
 
   @InjectMocks
   private RegistrationService registrationService;
@@ -92,6 +95,7 @@ public class RegistrationServiceTest {
         .build();
 
     when(registrationService.isUserExistByEmail(any())).thenReturn(false);
+    when(userMapper.toEntity(any())).thenReturn(testUser);
     when(userService.save(any())).thenReturn(testUser);
     when(roleService.getRoleByName(any())).thenReturn(testRole);
     when(userSecurityService.save(any())).thenReturn(UserSecurity.builder().build());
@@ -113,8 +117,7 @@ public class RegistrationServiceTest {
 
     Mockito.when(registrationService.isUserExistByEmail(any())).thenReturn(true);
 
-    assertThrows(UserAlreadyExistException.class, () -> {
-      registrationService.registerUser(testSignUpDto);
-    });
+    assertThrows(UserAlreadyExistException.class,
+        () -> registrationService.registerUser(testSignUpDto));
   }
 }
