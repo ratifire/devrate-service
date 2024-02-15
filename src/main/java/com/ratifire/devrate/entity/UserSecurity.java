@@ -34,7 +34,6 @@ public class UserSecurity {
 
   @NotEmpty
   @Max(245)
-  @Pattern(regexp = "")
   @Column(nullable = false)
   private String password;
 
