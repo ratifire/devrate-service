@@ -22,8 +22,7 @@ efficient data access through Java Persistence API (JPA).
 - **Description:** Spring Boot Starter Test is a testing-centric dependency for Spring Boot applications. It includes 
 essential testing frameworks like JUnit, Hamcrest, and Mockito, making it easy to write and execute tests for Spring Boot 
 project.
-- **Scope:** Test
-- 
+
 ### PostgreSQL JDBC Driver
 - **Description:** PostgreSQL JDBC Driver is an essential component for connecting your Java application to a PostgreSQL
 database. It provides the necessary functionality to establish a connection, send queries, and retrieve results from the
@@ -51,8 +50,8 @@ and HTML format APIs. This documentation can be completed by comments using swag
 - **URL:** https://springdoc.org
 - **Getting Started:** The Swagger UI page is available at `http://server:port/swagger-ui/index.html and`
 the OpenAPI description is available at the following url for json format: `http://server:port/v3/api-docs`
-    - Server: The server name or IP
-    - Port: The server port
+- Server: The server name or IP
+- Port: The server port
 
 ### MapStruct
 - **Description:** MapStruct is a Java-based code generation library that simplifies the process of mapping between 
