@@ -34,7 +34,7 @@ import static javax.mail.Message.RecipientType.TO;
 public class GMailSendService {
 
     private final Gmail service;
-    private final static String CREDENTIALS_ID = "/client_secret_870550738890-o28uukvccgj509orhigo031c09og2o5u.apps.googleusercontent.com.json";
+    private static String CREDENTIALS_ID = "/client_secret_870550738890-o28uukvccgj509orhigo031c09og2o5u.apps.googleusercontent.com.json";
 
     public GMailSendService() throws Exception {
         NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();

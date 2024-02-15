@@ -75,6 +75,7 @@ public class RegistrationService {
 
         return user;
     }
+
     /**
      * Method for sending the message to the user about successful registration.
      */
