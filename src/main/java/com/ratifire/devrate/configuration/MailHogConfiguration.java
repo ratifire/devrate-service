@@ -42,4 +42,17 @@ public class MailHogConfiguration {
 
     return mailSender;
   }
+
+  /**
+    * Creates and configures a {@link SimpleMailMessage} template to be used as a base for
+    * sending emails throughout the application.
+    */
+  @Bean
+  public SimpleMailMessage emailTemplate() {
+
+    SimpleMailMessage message = new SimpleMailMessage();
+    message.setFrom("ratifire@devrate.com");
+
+    return message;
+  }
 }
