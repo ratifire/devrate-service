@@ -1,7 +1,6 @@
 package com.ratifire.devrate.controller;
 
 
-import java.rmi.ServerError;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
@@ -32,9 +31,16 @@ public class HandlerException {
     return errors;
   }
 
+  /**
+   * Controller advice method to handle exceptions of type Exception. Responds with an HTTP status
+   * of INTERNAL_SERVER_ERROR and returns the error message from the exception.
+   *
+   * @param ex The exception to be handled.
+   * @return A String containing the error message from the exception.
+   */
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   @ExceptionHandler(Exception.class)
-  public String handleArgumentErrors(Exception ex) {
+  public String handleExceptionErrors(Exception ex) {
     return ex.getMessage();
   }
 
