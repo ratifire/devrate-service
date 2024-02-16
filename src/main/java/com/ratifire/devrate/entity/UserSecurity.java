@@ -6,6 +6,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,12 +31,17 @@ public class UserSecurity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
+
+  @NotEmpty
+  @Max(245)
   @Column(nullable = false)
   private String password;
 
+  @NotNull
   @Column(name = "user_id", nullable = false)
   private long userId;
 
+  @NotNull
   @Column(name = "user_role_id", nullable = false)
   private long userRoleId;
 }
