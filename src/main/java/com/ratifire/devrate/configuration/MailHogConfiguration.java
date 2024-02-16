@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
@@ -41,5 +42,18 @@ public class MailHogConfiguration {
     props.put("mail.debug", "true");
 
     return mailSender;
+  }
+
+  /**
+    * Creates and configures a {@link SimpleMailMessage} template to be used as a base for
+    * sending emails throughout the application.
+    */
+  @Bean
+  public SimpleMailMessage emailTemplate() {
+
+    SimpleMailMessage message = new SimpleMailMessage();
+    message.setFrom("ratifire@devrate.com");
+
+    return message;
   }
 }
