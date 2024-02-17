@@ -62,6 +62,7 @@ different layers of an application, such as DTOs and entity classes.
 ### Spring Boot Mail Starter
 - **Description:** The Spring Boot Mail Starter enables easy integration of email functionalities.
   It automatically configures the necessary beans for sending emails, simplifying the process of integrating email capabilities.
+- **URL:** [Baeldung](https://www.baeldung.com/spring-email)
 
 ### Liquibase
 
