@@ -37,7 +37,7 @@ public class RegistrationService {
   /**
    * Service responsible for sending message to the user.
    */
-  private final GMailSendService gmailSendService;
+  private final GmailSendService gmailSendService;
 
   /**
    * Checks if a user with the given email address exists.
