@@ -16,7 +16,6 @@ import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Message;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Service;
-
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -26,7 +25,6 @@ import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.Set;
-
 import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;
 import static javax.mail.Message.RecipientType.TO;
 
@@ -34,7 +32,7 @@ import static javax.mail.Message.RecipientType.TO;
 public class GmailSendService {
 
   private final Gmail service;
-  private static String CREDENTIALS_ID = "/client_secret_870550738890-o28uukvccgj509orhigo031c09og2o5u.apps.googleusercontent.com.json";
+  private static final String CREDENTIALS_ID = "/client_secret_870550738890-o28uukvccgj509orhigo031c09og2o5u.apps.googleusercontent.com.json";
 
   public GmailSendService() throws Exception {
     NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
