@@ -14,7 +14,6 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Message;
 import org.apache.commons.codec.binary.Base64;
-import org.springframework.stereotype.Service;
 
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
@@ -28,6 +27,8 @@ import java.util.Set;
 
 import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;
 import static javax.mail.Message.RecipientType.TO;
+
+import org.springframework.stereotype.Service;
 
 
 @Service
