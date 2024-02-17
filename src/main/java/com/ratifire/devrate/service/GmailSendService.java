@@ -1,6 +1,5 @@
 package com.ratifire.devrate.service;
 
-
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -29,6 +28,7 @@ import java.util.Set;
 
 import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;
 import static javax.mail.Message.RecipientType.TO;
+
 
 @Service
 public class GmailSendService {
