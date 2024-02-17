@@ -3,6 +3,8 @@ package com.ratifire.devrate.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class HandlerException {
 
+  private static final Logger log = LogManager.getLogger(HandlerException.class);
+
   /**
    * Handles MethodArgumentNotValidException by returning a map of field errors with their
    * corresponding error messages.
@@ -25,6 +29,7 @@ public class HandlerException {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public Map<String, String> handleArgumentErrors(MethodArgumentNotValidException ex) {
+    log.error("Handling MethodArgumentNotValidException: {}", ex.getMessage(), ex);
     Map<String, String> errors = new HashMap<>();
     ex.getBindingResult().getFieldErrors()
         .forEach((error -> errors.put(error.getField(), error.getDefaultMessage())));
@@ -41,7 +46,8 @@ public class HandlerException {
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   @ExceptionHandler(Exception.class)
   public String handleExceptionErrors(Exception ex) {
-    return ex.getMessage();
+    log.error("Handling Exception: {}", ex.getMessage(), ex);
+    return "Oops! Something went wrong:( We're working to fix it! Please try again later:)";
   }
 
 }
