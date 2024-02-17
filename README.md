@@ -59,6 +59,11 @@ Java bean types. It is particularly useful when working with complex domain mode
 different layers of an application, such as DTOs and entity classes.
 - **Reference guide and usage guidelines:** https://mapstruct.org/documentation/reference-guide/
 
+### Spring Boot Mail Starter
+- **Description:** The Spring Boot Mail Starter enables easy integration of email functionalities.
+  It automatically configures the necessary beans for sending emails, simplifying the process of integrating email capabilities.
+- **URL:** [Baeldung](https://www.baeldung.com/spring-email)
+
 ### Liquibase
 
 - **Description:** [Liquibase](https://www.liquibase.org/) is an open-source database-independent library for tracking,
@@ -324,6 +329,17 @@ configuration steps:
 ### Tips for Code Compliance
 
 - Always run Checkstyle before committing your code to ensure it meets our coding standards.
+
+### MailHog
+- **Description:** MailHog is an email testing tool for developers that allows you to capture and view emails sent by your application in a web interface. 
+It is an ideal tool for development environments, making it easy to test email notifications without sending them to actual email addresses.
+- **URL:** [MailHog GitHub](https://github.com/mailhog/MailHog).
+- **Getting Started:**
+  - MailHog has been integrated into our Docker Compose setup to simplify email testing in development environments. 
+  This integration ensures that MailHog is automatically launched when you run the Docker Compose file.
+  - URL for MailHog UI: http://localhost:8025
+  - The MailHog web interface allows you to view and manage emails sent by your application. Simply navigate to the URL in your web browser to access the MailHog UI.
+  - MailHog is configured to be available only when using the local Spring profile.
 
 
 ## Project Information
