@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 16-02-2024_02_add-foreign-key-email-confirmation-code
+      author: Ivan Ivashchenko
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: email_confirmation_code
+            baseColumnNames: user_id
+            constraintName: fk_email_confirmation_code_user
+            referencedTableName: user_details
+            referencedColumnNames: id
