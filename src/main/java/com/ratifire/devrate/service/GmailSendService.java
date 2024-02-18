@@ -36,9 +36,11 @@ public class GmailSendService {
 
   private final Gmail service;
   private static final String CREDENTIALS_ID = "/clients_credentials_id.json";
+
   /**
    * Constructor for the GmailSendService class.
    * Initializes the Gmail service for sending messages.
+   *
    * @throws Exception if an error occurs during service initialization.
    */
   public GmailSendService() throws Exception {
