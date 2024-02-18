@@ -3,6 +3,7 @@ package com.ratifire.devrate.controller;
 import com.ratifire.devrate.dto.SignUpDto;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.service.registration.RegistrationService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,6 +44,8 @@ public class RegistrationController {
    * @return {@code true} if the email confirmation code is successfully confirmed;
    *         {@code false} otherwise.
    */
+  @Operation(summary = "Email confirmation",
+      description = "Confirming the user's email by matching the code", tags = {"Registration"})
   @GetMapping("/{id}/{code}")
   public boolean confirm(@PathVariable Long id, @PathVariable String code) {
     return registrationService.isCodeConfirmed(id, code);

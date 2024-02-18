@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
@@ -120,14 +119,13 @@ public class RegistrationServiceTest {
     when(userSecurityService.save(any())).thenReturn(UserSecurity.builder().build());
     when(emailConfirmationCodeService.save(anyLong()))
             .thenReturn(EmailConfirmationCode.builder().build());
-    doNothing().when(emailService).sendEmail(anyString(), anyString(), anyString(), anyBoolean());
+    doNothing().when(emailService).sendEmail(any(), anyBoolean());
 
     User expectedUser = registrationService.registerUser(testSignUpDto);
 
     assertEquals(expectedUser, testUser);
     verify(emailConfirmationCodeService, times(1)).save(anyLong());
-    verify(emailService, times(1))
-            .sendEmail(anyString(), anyString(), anyString(), anyBoolean());
+    verify(emailService, times(1)).sendEmail(any(), anyBoolean());
   }
 
   /**

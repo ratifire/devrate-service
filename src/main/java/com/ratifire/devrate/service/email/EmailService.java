@@ -1,10 +1,12 @@
 package com.ratifire.devrate.service.email;
 
-import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.mail.MailSendException;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -21,29 +23,35 @@ public class EmailService implements EmailSender {
   private JavaMailSender mailSender;
 
   /**
-   * Sends an email with the specified content to the provided email address.
+   * Sends an email using the provided {@link SimpleMailMessage}.
+   * This method creates a MimeMessage and uses MimeMessageHelper to set the email's text,
+   * recipient, and subject. The email is sent using the configured mail sender.
    *
-   * @param subject   The email subject.
-   * @param to   The email address to which the email should be sent.
-   * @param text The message text.
-   * @param html {@code true} the param 'text' will be html content
-   *             {@code false} the param 'text' will be plain text content
-   * @throws IllegalStateException If an error occurs while sending the email.
+   * @param simpleMailMessage The SimpleMailMessage containing email details.
+   * @param html              A boolean indicating whether the email content is HTML.
+   * @throws IllegalArgumentException If any of the required parameters in SimpleMailMessage are
+   *                                  null.
+   * @throws MailSendException    If an exception occurs and the email cannot be sent.
+   * @see SimpleMailMessage
+   * @see MimeMessage
+   * @see MimeMessageHelper
    */
-  public void sendEmail(String subject, String to, String text, boolean html) {
+  public void sendEmail(SimpleMailMessage simpleMailMessage, boolean html) {
     try {
       MimeMessage mimeMessage = mailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
-      helper.setText(text, html);
-      helper.setTo(to);
-      helper.setSubject(subject);
+      helper.setText(Objects.requireNonNull(simpleMailMessage.getText()), html);
+      helper.setTo(Objects.requireNonNull(simpleMailMessage.getTo()));
+      helper.setSubject(Objects.requireNonNull(simpleMailMessage.getSubject()));
 
       mailSender.send(mimeMessage);
 
-      log.info("The email sent successfully to '{}'. Subject: '{}'", to, subject);
-    } catch (MessagingException ex) {
-      log.error("Failed to send the email to '{}'. Subject: '{}'", to, subject, ex);
-      throw new IllegalStateException("failed to send email");
+      log.info("The email sent successfully to '{}'. Subject: '{}'", simpleMailMessage.getTo(),
+          simpleMailMessage.getSubject());
+    } catch (Exception ex) {
+      log.error("Failed to send the email to '{}'. Subject: '{}'", simpleMailMessage.getTo(),
+          simpleMailMessage.getSubject(), ex);
+      throw new MailSendException("Failed to send email");
     }
   }
 }

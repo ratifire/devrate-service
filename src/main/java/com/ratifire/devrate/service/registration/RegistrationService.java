@@ -13,6 +13,7 @@ import com.ratifire.devrate.service.UserService;
 import com.ratifire.devrate.service.email.EmailService;
 import liquibase.util.StringUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,8 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class RegistrationService {
-
-  public static final String EMAIL_CONFIRMATION_SUBJECT = "Confirm your email";
 
   /**
    * Service responsible for user management operations.
@@ -83,19 +82,12 @@ public class RegistrationService {
     EmailConfirmationCode savedEmailConfirmationCode =
             emailConfirmationCodeService.save(user.getId());
 
-    String messageText = buildConfirmationEmailText(user.getEmail(),
-            savedEmailConfirmationCode.getCode());
+    SimpleMailMessage confirmationMessage  = emailConfirmationCodeService
+        .createMessage(user.getEmail(), savedEmailConfirmationCode.getCode());
 
-    emailService.sendEmail(EMAIL_CONFIRMATION_SUBJECT, user.getEmail(), messageText, false);
+    emailService.sendEmail(confirmationMessage, true);
 
     return user;
-  }
-
-  private String buildConfirmationEmailText(String email, String code) {
-    return String.format("""
-            Hi %s,
-            Thank you for registering. Please use the code below to activate your account:
-            Activation code: %s""", email, code);
   }
 
   /**
@@ -111,6 +103,10 @@ public class RegistrationService {
    */
   @Transactional
   public boolean isCodeConfirmed(long userId, String code) {
+    if (StringUtil.isEmpty(code)) {
+      throw new IllegalArgumentException("The confirmation code is a required argument");
+    }
+
     EmailConfirmationCode emailConfirmationCode = emailConfirmationCodeService
             .getEmailConfirmationCodeByUserId(userId);
 
