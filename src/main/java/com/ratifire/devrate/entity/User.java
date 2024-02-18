@@ -7,9 +7,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,22 +33,22 @@ public class User {
   private long id;
 
   @Email
-  @Max(100)
+  @Size(max = 100)
   @Column(nullable = false, unique = true)
   private String email;
 
   @NotEmpty
-  @Max(100)
+  @Size(max = 100)
   @Column(nullable = false)
   private String firstName;
 
   @NotEmpty
-  @Max(100)
+  @Size(max = 100)
   @Column(nullable = false)
   private String lastName;
 
   @NotEmpty
-  @Max(100)
+  @Size(max = 100)
   @Column(nullable = false)
   private String country;
 
