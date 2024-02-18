@@ -52,7 +52,7 @@ public class EmailConfirmationCodeService {
    *
    * @return A randomly generated 6-digit confirmation code as a string.
    */
-  private static String generateConfirmationCode() {
+  protected String generateConfirmationCode() {
     return String.format("%06d", new SecureRandom().nextInt(BOUND));
   }
 
@@ -63,7 +63,7 @@ public class EmailConfirmationCodeService {
    * @param code      The confirmation code to include in the email.
    * @return A SimpleMailMessage configured with the confirmation email details.
    */
-  public SimpleMailMessage createMessage(String userEmail, String code) {
+  protected SimpleMailMessage createMessage(String userEmail, String code) {
     SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
     simpleMailMessage.setSubject("Your DevRate Confirmation Code - " + code);
     simpleMailMessage.setText(buildConfirmationEmailText(userEmail, code));
@@ -79,7 +79,7 @@ public class EmailConfirmationCodeService {
    * @param code  The confirmation code.
    * @return The confirmation email text.
    */
-  public String buildConfirmationEmailText(String email, String code) {
+  private String buildConfirmationEmailText(String email, String code) {
     Context context = new Context();
     context.setVariable("email", email);
     context.setVariable("code", code);

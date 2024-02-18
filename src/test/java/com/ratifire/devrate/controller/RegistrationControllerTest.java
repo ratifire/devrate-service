@@ -1,8 +1,12 @@
 package com.ratifire.devrate.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +32,7 @@ import org.springframework.test.web.servlet.MockMvc;
 public class RegistrationControllerTest {
 
   private static final String END_POINT_PATH = "/signup";
+  private static final String END_POINT_CONFIRM_PATH = "/signup/1/123";
   @Autowired
   private MockMvc mockMvc;
 
@@ -74,5 +79,23 @@ public class RegistrationControllerTest {
             .content(objectMapper.writeValueAsString(signUpDto)))
         .andExpect(status().isOk())
         .andDo(print());
+  }
+
+  @Test
+  public void testConfirmShouldReturnTrue() throws Exception {
+    Mockito.when(registrationService.isCodeConfirmed(anyLong(), anyString())).thenReturn(true);
+
+    mockMvc.perform(get(END_POINT_CONFIRM_PATH))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").value(true));
+  }
+
+  @Test
+  public void testConfirmShouldReturnFalse() throws Exception {
+    Mockito.when(registrationService.isCodeConfirmed(anyLong(), anyString())).thenReturn(false);
+
+    mockMvc.perform(get(END_POINT_CONFIRM_PATH))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").value(false));
   }
 }

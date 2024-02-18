@@ -1,7 +1,6 @@
 package com.ratifire.devrate.service.email;
 
 import jakarta.mail.internet.MimeMessage;
-import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,9 +39,9 @@ public class EmailService implements EmailSender {
     try {
       MimeMessage mimeMessage = mailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
-      helper.setText(Objects.requireNonNull(simpleMailMessage.getText()), html);
-      helper.setTo(Objects.requireNonNull(simpleMailMessage.getTo()));
-      helper.setSubject(Objects.requireNonNull(simpleMailMessage.getSubject()));
+      helper.setText(simpleMailMessage.getText(), html);
+      helper.setTo(simpleMailMessage.getTo());
+      helper.setSubject(simpleMailMessage.getSubject());
 
       mailSender.send(mimeMessage);
 
