@@ -9,6 +9,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 /**
  * Service implementation for sending emails using JavaMailSender.
@@ -37,6 +38,10 @@ public class EmailService implements EmailSender {
    */
   public void sendEmail(SimpleMailMessage simpleMailMessage, boolean html) {
     try {
+      Assert.notNull(simpleMailMessage.getText(), "The text must not be null");
+      Assert.notNull(simpleMailMessage.getTo(), "To address array must not be null");
+      Assert.notNull(simpleMailMessage.getSubject(), "Subject must not be null");
+
       MimeMessage mimeMessage = mailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
       helper.setText(simpleMailMessage.getText(), html);
