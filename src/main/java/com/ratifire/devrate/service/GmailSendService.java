@@ -28,26 +28,31 @@ import javax.mail.internet.MimeMessage;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Service;
 
-
+/**
+ * Service responsible for sending emails using the Gmail API.
+ */
 @Service
 public class GmailSendService {
 
   private final Gmail service;
-  private static final String CREDENTIALS_ID = "/client_secret_870550738890-o28uukvccgj509orhigo031c09og2o5u.apps.googleusercontent.com.json";
+  private static final String CREDENTIALS_ID = "/clients_credentials_id.json";
 
   public GmailSendService() throws Exception {
     NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     GsonFactory jsonFactory = GsonFactory.getDefaultInstance();
-    service = new Gmail.Builder(httpTransport, jsonFactory, getCredentials(httpTransport, jsonFactory))
+    service = new Gmail.Builder(
+        httpTransport, jsonFactory, getCredentials(httpTransport, jsonFactory))
             .setApplicationName("DR")
             .build();
   }
 
-  private static Credential getCredentials(final NetHttpTransport httpTransport, GsonFactory jsonFactory)
+  private static Credential getCredentials(
+      final NetHttpTransport httpTransport, GsonFactory jsonFactory)
           throws IOException {
     GoogleClientSecrets clientSecrets =
             GoogleClientSecrets.load(jsonFactory,
-                    new InputStreamReader(GmailSendService.class.getResourceAsStream(CREDENTIALS_ID)));
+                new InputStreamReader(
+                    GmailSendService.class.getResourceAsStream(CREDENTIALS_ID)));
 
     GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
             httpTransport, jsonFactory, clientSecrets, Set.of(GMAIL_SEND))
@@ -59,6 +64,14 @@ public class GmailSendService {
     return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
   }
 
+  /**
+   * Sends an email message using the Gmail API.
+   *
+   * @param subject The subject of the email message.
+   * @param message The content of the email message.
+   * @param mail    The email address of the recipient.
+   * @throws IOException If an error occurs while sending the email.
+   */
   public void sendMail(String subject, String message, String mail) throws Exception {
     Properties props = new Properties();
     Session session = Session.getDefaultInstance(props, null);
