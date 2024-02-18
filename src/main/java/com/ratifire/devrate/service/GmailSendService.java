@@ -1,5 +1,8 @@
 package com.ratifire.devrate.service;
 
+import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;
+import static javax.mail.Message.RecipientType.TO;
+
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -13,21 +16,16 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Message;
-import org.apache.commons.codec.binary.Base64;
-
-import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.Set;
-
-import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;
-import static javax.mail.Message.RecipientType.TO;
-
+import javax.mail.Session;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Service;
 
 
