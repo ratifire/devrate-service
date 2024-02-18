@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.dto.SignUpDto;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.service.RegistrationService;
+import com.ratifire.devrate.service.registration.RegistrationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

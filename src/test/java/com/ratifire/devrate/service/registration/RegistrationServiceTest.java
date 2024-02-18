@@ -1,24 +1,36 @@
-package com.ratifire.devrate.service;
+package com.ratifire.devrate.service.registration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.SignUpDto;
+import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.Role;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.UserAlreadyExistException;
 import com.ratifire.devrate.mapper.UserMapper;
+import com.ratifire.devrate.service.RoleService;
+import com.ratifire.devrate.service.UserSecurityService;
+import com.ratifire.devrate.service.UserService;
+import com.ratifire.devrate.service.email.EmailService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.TestPropertySource;
 
 /**
  * Test class for the {@link RegistrationService}.
@@ -27,6 +39,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * RegistrationService methods.
  */
 @ExtendWith(MockitoExtension.class)
+@TestPropertySource(locations = "classpath:application.properties")
 public class RegistrationServiceTest {
 
   @Mock
@@ -40,6 +53,12 @@ public class RegistrationServiceTest {
 
   @Mock
   private UserMapper userMapper;
+
+  @Mock
+  private EmailConfirmationCodeService emailConfirmationCodeService;
+
+  @Mock
+  private EmailService emailService;
 
   @InjectMocks
   private RegistrationService registrationService;
@@ -99,8 +118,16 @@ public class RegistrationServiceTest {
     when(userService.save(any())).thenReturn(testUser);
     when(roleService.getRoleByName(any())).thenReturn(testRole);
     when(userSecurityService.save(any())).thenReturn(UserSecurity.builder().build());
+    when(emailConfirmationCodeService.save(anyLong()))
+            .thenReturn(EmailConfirmationCode.builder().build());
+    doNothing().when(emailService).sendEmail(anyString(), anyString(), anyString(), anyBoolean());
+
     User expectedUser = registrationService.registerUser(testSignUpDto);
+
     assertEquals(expectedUser, testUser);
+    verify(emailConfirmationCodeService, times(1)).save(anyLong());
+    verify(emailService, times(1))
+            .sendEmail(anyString(), anyString(), anyString(), anyBoolean());
   }
 
   /**

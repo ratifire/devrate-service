@@ -30,7 +30,6 @@ public class UserSecurity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-
   @NotEmpty
   @Size(max = 245)
   @Column(nullable = false)
