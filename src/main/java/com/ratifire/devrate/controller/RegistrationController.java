@@ -1,12 +1,12 @@
 package com.ratifire.devrate.controller;
 
-import com.ratifire.devrate.dto.EmailConfirmationCodeDto;
 import com.ratifire.devrate.dto.SignUpDto;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.service.registration.RegistrationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,13 +38,13 @@ public class RegistrationController {
   /**
    * Endpoint to confirm the email using the provided confirmation code.
    *
-   * @param emailConfirmationCodeDto The DTO containing the email confirmation code.
-   *                                 It should be a valid and properly formatted DTO.
+   * @param id   The unique identifier of the user for whom the email is being confirmed.
+   * @param code The confirmation code to be checked against the stored code.
    * @return {@code true} if the email confirmation code is successfully confirmed;
    *         {@code false} otherwise.
    */
-  @GetMapping(path = "/confirm")
-  public boolean confirm(@RequestBody @Valid EmailConfirmationCodeDto emailConfirmationCodeDto) {
-    return registrationService.isCodeConfirmed(emailConfirmationCodeDto);
+  @GetMapping("/{id}/{code}")
+  public boolean confirm(@PathVariable Long id, @PathVariable String code) {
+    return registrationService.isCodeConfirmed(id, code);
   }
 }
