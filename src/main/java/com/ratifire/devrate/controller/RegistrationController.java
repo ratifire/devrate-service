@@ -29,8 +29,6 @@ public class RegistrationController {
    * @param signUpDto DTO containing new user's details such as username, password, etc.
    * @return The registered User entity if successful, or null if the registration fails.
    */
-  @Operation(summary = "Register user",
-      description = "Registers a new user with the provided information", tags = {"Registration"})
   @PostMapping
   public User registerUser(@RequestBody @Valid SignUpDto signUpDto) {
     return registrationService.registerUser(signUpDto);
