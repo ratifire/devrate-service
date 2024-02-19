@@ -10,6 +10,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 /**
  * Service implementation for sending emails using JavaMailSender.
@@ -48,11 +49,12 @@ public class EmailService implements EmailSender {
 
       mailSender.send(mimeMessage);
 
-      log.info("The email sent successfully to '{}'. Subject: '{}'", simpleMailMessage.getTo(),
-          simpleMailMessage.getSubject());
+      log.info("The email sent successfully to '{}'. Subject: '{}'",
+          formatEmailAddresses(simpleMailMessage.getTo()), simpleMailMessage.getSubject());
     } catch (Exception ex) {
-      throw new MailSendException("Failed to send the email to '" + simpleMailMessage.getTo()
-          + "'. Subject: '" + simpleMailMessage.getSubject() + "'");
+      throw new MailSendException("Failed to send the email to '"
+          + formatEmailAddresses(simpleMailMessage.getTo()) + "'."
+          + " Subject: '" + simpleMailMessage.getSubject() + "'");
     }
   }
 
@@ -64,5 +66,9 @@ public class EmailService implements EmailSender {
     Assert.notNull(simpleMailMessage.getText(), "The text must not be null");
     Assert.notNull(simpleMailMessage.getTo(), "To address array must not be null");
     Assert.notNull(simpleMailMessage.getSubject(), "Subject must not be null");
+  }
+
+  private String formatEmailAddresses(String[] emailAddresses) {
+    return StringUtils.arrayToCommaDelimitedString(emailAddresses);
   }
 }
