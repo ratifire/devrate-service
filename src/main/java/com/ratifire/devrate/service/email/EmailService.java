@@ -17,7 +17,7 @@ import org.springframework.util.StringUtils;
  */
 @AllArgsConstructor
 @Service
-public class EmailService implements EmailSender {
+public class EmailService {
 
   private static final Logger log = LogManager.getLogger(EmailService.class);
 
