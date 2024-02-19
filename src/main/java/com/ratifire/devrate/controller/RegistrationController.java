@@ -3,7 +3,6 @@ package com.ratifire.devrate.controller;
 import com.ratifire.devrate.dto.SignUpDto;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.service.RegistrationService;
-import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
