@@ -38,9 +38,7 @@ public class EmailService implements EmailSender {
    */
   public void sendEmail(SimpleMailMessage simpleMailMessage, boolean html) {
     try {
-      Assert.notNull(simpleMailMessage.getText(), "The text must not be null");
-      Assert.notNull(simpleMailMessage.getTo(), "To address array must not be null");
-      Assert.notNull(simpleMailMessage.getSubject(), "Subject must not be null");
+      validateSimpleMailMessage(simpleMailMessage);
 
       MimeMessage mimeMessage = mailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
@@ -53,9 +51,18 @@ public class EmailService implements EmailSender {
       log.info("The email sent successfully to '{}'. Subject: '{}'", simpleMailMessage.getTo(),
           simpleMailMessage.getSubject());
     } catch (Exception ex) {
-      log.error("Failed to send the email to '{}'. Subject: '{}'", simpleMailMessage.getTo(),
-          simpleMailMessage.getSubject(), ex);
-      throw new MailSendException("Failed to send email");
+      throw new MailSendException("Failed to send the email to '" + simpleMailMessage.getTo()
+          + "'. Subject: '" + simpleMailMessage.getSubject() + "'");
     }
+  }
+
+  private void validateSimpleMailMessage(SimpleMailMessage simpleMailMessage) {
+    if (simpleMailMessage == null) {
+      throw new IllegalArgumentException("The argument must not be null");
+    }
+
+    Assert.notNull(simpleMailMessage.getText(), "The text must not be null");
+    Assert.notNull(simpleMailMessage.getTo(), "To address array must not be null");
+    Assert.notNull(simpleMailMessage.getSubject(), "Subject must not be null");
   }
 }
