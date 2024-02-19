@@ -10,8 +10,10 @@ services:
       - PG_DATABASE=devrateDB
       - PG_USERNAME=admin
       - PG_PASSWORD=root
+      - SPRING_PROFILES_ACTIVE=local
     depends_on:
       - db
+      - mailhog
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
       interval: 30s
@@ -32,6 +34,16 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "1025" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
   postgres_data:
