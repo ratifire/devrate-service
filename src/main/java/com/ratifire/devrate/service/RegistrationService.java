@@ -62,7 +62,7 @@ public class RegistrationService {
     UserSecurity userSecurity = UserSecurity.builder()
         .password(signUpDto.getPassword())
         .userId(user.getId())
-        .userRoleId(roleService.getRoleByName("ROLE_USER").getId())
+        .role(roleService.getRoleByName("ROLE_USER"))
         .build();
     userSecurityService.save(userSecurity);
 

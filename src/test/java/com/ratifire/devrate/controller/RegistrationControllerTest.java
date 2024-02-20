@@ -60,8 +60,7 @@ public class RegistrationControllerTest {
    * Test for {@link RegistrationController#registerUser(SignUpDto)}.
    *
    * <p>Test method for verifying that the sign-up endpoint ("/signup") returns OK status. This
-   * method
-   * verifies that the sign-up endpoint returns HTTP status 200 (OK) when accessed.
+   * method verifies that the sign-up endpoint returns HTTP status 200 (OK) when accessed.
    *
    * @throws Exception if an error occurs during the test.
    */
