@@ -29,7 +29,7 @@ public class EmailService {
    * recipient, and subject. The email is sent using the configured mail sender.
    *
    * @param simpleMailMessage The SimpleMailMessage containing email details.
-   * @param html              A boolean indicating whether the email content is HTML.
+   * @param isHtmlFormat              A boolean indicating whether the email content is HTML.
    * @throws IllegalArgumentException If any of the required parameters in SimpleMailMessage are
    *                                  null.
    * @throws MailSendException    If an exception occurs and the email cannot be sent.
@@ -37,13 +37,13 @@ public class EmailService {
    * @see MimeMessage
    * @see MimeMessageHelper
    */
-  public void sendEmail(SimpleMailMessage simpleMailMessage, boolean html) {
+  public void sendEmail(SimpleMailMessage simpleMailMessage, boolean isHtmlFormat) {
     try {
       validateSimpleMailMessage(simpleMailMessage);
 
       MimeMessage mimeMessage = mailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
-      helper.setText(simpleMailMessage.getText(), html);
+      helper.setText(simpleMailMessage.getText(), isHtmlFormat);
       helper.setTo(simpleMailMessage.getTo());
       helper.setSubject(simpleMailMessage.getSubject());
 
