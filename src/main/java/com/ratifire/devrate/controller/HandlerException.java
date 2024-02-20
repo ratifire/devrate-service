@@ -6,6 +6,8 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailSendException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -48,6 +50,23 @@ public class HandlerException {
   public String handleExceptionErrors(Exception ex) {
     log.error("Handling Exception: {}", ex.getMessage(), ex);
     return "Oops! Something went wrong:( We're working to fix it! Please try again later:)";
+  }
+
+  /**
+   * Exception handler method for handling MailSendException.
+   *
+   * <p>Handles instances of MailSendException by responding with an HTTP status
+   * of BAD_REQUEST and returning the error message from the exception. Logs the
+   * exception details for debugging purposes.</p>
+   *
+   * @param ex The MailSendException to be handled.
+   * @return A ResponseEntity containing the error message from the exception
+   *         with an HTTP status of BAD_REQUEST.
+   */
+  @ExceptionHandler(MailSendException.class)
+  public ResponseEntity<String> handleMailSendException(MailSendException ex) {
+    log.error("Handling MailSendException: {}", ex.getMessage(), ex);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
   }
 
 }
