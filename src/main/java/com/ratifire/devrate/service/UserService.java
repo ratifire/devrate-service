@@ -1,6 +1,7 @@
 package com.ratifire.devrate.service;
 
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -37,6 +38,17 @@ public class UserService {
    */
   public User save(User user) {
     return userRepository.save(user);
+  }
+
+  /**
+   * Get the user entity by id.
+   *
+   * @param id The user id.
+   * @return The user entity that has been found.
+   */
+  public User getById(long id) {
+    return userRepository.findById(id)
+            .orElseThrow(() -> new UserNotFoundException("The user cannot be found."));
   }
 
   /**
