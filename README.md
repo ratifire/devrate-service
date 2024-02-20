@@ -341,6 +341,28 @@ It is an ideal tool for development environments, making it easy to test email n
   - The MailHog web interface allows you to view and manage emails sent by your application. Simply navigate to the URL in your web browser to access the MailHog UI.
   - MailHog is configured to be available only when using the local Spring profile.
 
+### Spring Boot Starter Security
+
+- **Description:** Spring Boot Starter Security is a module within the Spring Boot framework that
+  provides comprehensive security features for Java applications. It enables developers to easily
+  implement authentication, authorization, and other security mechanisms to protect their
+  applications from unauthorized access and attacks. Spring Boot Starter Security integrates with
+  Spring Security, a powerful and highly customizable security framework for Java applications. With
+  Spring Boot Starter Security, developers can quickly configure security settings, define access
+  control rules, and secure endpoints using various authentication methods such as form-based login,
+  HTTP Basic authentication, OAuth, and JWT authentication. It also provides support for role-based
+  access control, user authentication, password encryption, and session management.
+
+### Spring Security Test
+
+- **Description:** Spring Security Test is a testing-centric dependency for Spring Security
+  applications. It provides utilities and tools for testing Spring Security configurations,
+  authentication mechanisms, and access control rules. With Spring Security Test, developers can
+  write comprehensive and reliable tests to ensure the security of their applications. It includes
+  support for writing integration tests, unit tests, and end-to-end tests for Spring Security
+  configurations. Spring Security Test integrates seamlessly with popular testing frameworks like
+  JUnit, Hamcrest, and Mockito, making it easy to write and execute tests for Spring Security
+  projects.
 
 ## Project Information
 
