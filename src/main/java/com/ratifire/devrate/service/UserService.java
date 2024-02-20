@@ -3,6 +3,7 @@ package com.ratifire.devrate.service;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -36,5 +37,16 @@ public class UserService {
    */
   public User save(User user) {
     return userRepository.save(user);
+  }
+
+  /**
+   * Finds a user by email.
+   *
+   * @param email The email address of the user to find.
+   * @return The user entity if found, otherwise throws UsernameNotFoundException.
+   * @throws UsernameNotFoundException if the user with the given email is not found.
+   */
+  public User findUserByEmail(String email) throws UsernameNotFoundException {
+    return userRepository.findByEmail(email).orElseThrow();
   }
 }
