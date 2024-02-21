@@ -42,7 +42,10 @@ public class SecurityConfiguration {
         .authorizeHttpRequests((authorize) -> authorize
             .requestMatchers("/**").permitAll()
             .anyRequest().authenticated()
-        ).build();
+        )
+        .formLogin(form -> form
+            .permitAll())
+        .build();
   }
 
   @Autowired
