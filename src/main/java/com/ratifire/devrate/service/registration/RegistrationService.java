@@ -14,6 +14,7 @@ import com.ratifire.devrate.service.email.EmailService;
 import liquibase.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,7 +74,7 @@ public class RegistrationService {
     User user = userService.save(userMapper.toEntity(signUpDto));
 
     UserSecurity userSecurity = UserSecurity.builder()
-        .password(signUpDto.getPassword())
+        .password(new BCryptPasswordEncoder().encode(signUpDto.getPassword()))
         .userId(user.getId())
         .role(roleService.getRoleByName("ROLE_USER"))
         .build();

@@ -102,6 +102,7 @@ public class RegistrationServiceTest {
   public void testRegisterUser_SuccessfulRegistration() {
     SignUpDto testSignUpDto = SignUpDto.builder()
         .email("test@gmail.com")
+        .password("somepassword")
         .build();
 
     User testUser = User.builder()
