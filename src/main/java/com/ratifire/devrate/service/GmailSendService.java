@@ -35,7 +35,7 @@ import org.springframework.stereotype.Service;
 public class GmailSendService {
 
   private final Gmail service;
-  private static final String CREDENTIALS_ID = "/clients_credentials_id.json";
+  private static final String CREDENTIALS_ID = System.getenv("CREDENTIALS_ID");
 
   /**
    * Constructor for the GmailSendService class.
