@@ -1,0 +1,120 @@
+openapi: 3.0.3
+info:
+  title: DevRate Platform API
+  description: API endpoints for managing user registration, interview processes, and candidate evaluations on the Devrate platform.
+  termsOfService: DevRate
+  contact:
+    name: DevRate
+    url: https://devrate.com
+    email: devrate@gmail.com
+  license:
+    name: DevRate
+    url: https://devrate.com
+  version: 0.0.1-SNAPSHOT
+servers:
+  - url: http://localhost:8080
+    description: Local environment
+  - url: https://devrate.com
+    description: Production environment
+tags:
+  - name: registration
+    description: endpoint for user registration
+paths:
+  /signup:
+    post:
+      tags:
+        - registration
+      description: Register a new user
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignUpDto'
+      responses:
+        '200':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    SignUpDto:
+      type: object
+      description: Required information for registering a new user
+      properties:
+        email:
+          type: string
+          format: email
+          description: The email chosen by the user for their account
+        firstName:
+          type: string
+          description: The first name inputted by the user
+        lastName:
+          type: string
+          description: The last name inputted by the user
+        country:
+          type: string
+          description: The country chosen by the user for their account
+        subscribed:
+          type: boolean
+          description: Flag indicating whether the user is subscribed to the newsletter
+        verified:
+          type: boolean
+          description: Flag indicating whether the user's email is verified
+        password:
+          type: string
+          description: The password chosen by the user for their account
+        createdAt:
+          type: string
+          format: date-time
+          description: The timestamp when the user account was created
+      required:
+        - email
+        - firstName
+        - lastName
+        - country
+        - password
+        - createdAt
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+        lastName:
+          type: string
+        country:
+          type: string
+        subscribed:
+          type: boolean
+        verified:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: The error message
