@@ -1,6 +1,5 @@
 package com.ratifire.devrate.service;
 
-import com.ratifire.devrate.entity.CustomUserDetails;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.UserSecurity;
 import java.util.List;
@@ -24,12 +23,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
     User user = userService.findUserByEmail(email);
     UserSecurity userSecurity = userSecurityService.findByUserId(user.getId());
-
-    return CustomUserDetails.builder()
-        .userName(user.getEmail())
-        .password(userSecurity.getPassword())
-        .roles(List.of(userSecurity.getRole()))
-        .enable(user.isVerified())
-        .build();
+    return new org.springframework.security.core.userdetails.User(
+        user.getEmail(),
+        userSecurity.getPassword(),
+        List.of(userSecurity.getRole()));
   }
 }
