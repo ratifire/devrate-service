@@ -68,5 +68,7 @@ jobs:
             -e PG_USERNAME=\$PG_USERNAME \
             -e PG_PASSWORD=\$PG_PASSWORD \
             -e PG_SCHEMA=\$PG_SCHEMA \
+            -e CLIENT_ID=\$CLIENT_ID \
+            -e CLIENT_SECRET=\$CLIENT_SECRET \
             europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest"
 
