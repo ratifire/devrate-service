@@ -14,7 +14,7 @@ import com.ratifire.devrate.service.email.EmailService;
 import liquibase.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +47,8 @@ public class RegistrationService {
 
   private final EmailService emailService;
 
+  private final PasswordEncoder passwordEncoder;
+
   /**
    * Checks if a user with the given email address exists.
    *
@@ -74,7 +76,7 @@ public class RegistrationService {
     User user = userService.save(userMapper.toEntity(signUpDto));
 
     UserSecurity userSecurity = UserSecurity.builder()
-        .password(new BCryptPasswordEncoder().encode(signUpDto.getPassword()))
+        .password(passwordEncoder.encode(signUpDto.getPassword()))
         .userId(user.getId())
         .role(roleService.getRoleByName("ROLE_USER"))
         .build();
