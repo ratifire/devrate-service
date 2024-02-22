@@ -50,6 +50,10 @@ jobs:
           # Authenticate with gcloud
           gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
 
+          # Set up environment variables for Gmail API
+          export CLIENT_ID=${{ secrets.CLIENT_ID }}
+          export CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}
+          
           # Commands to SSH into the VM and run the Docker commands 
           gcloud compute ssh dev-rate-api --zone europe-west1-b --command " 
             source ~/.bashrc && \
