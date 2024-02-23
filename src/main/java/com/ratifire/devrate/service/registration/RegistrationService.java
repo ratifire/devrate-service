@@ -49,7 +49,7 @@ public class RegistrationService {
 
   private final PasswordEncoder passwordEncoder;
 
-  private static final String ROLE_USER = "ROLE_USER";
+  public static final String ROLE_USER = "ROLE_USER";
 
   /**
    * Checks if a user with the given email address exists.
