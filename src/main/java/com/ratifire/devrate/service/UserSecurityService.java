@@ -23,4 +23,14 @@ public class UserSecurityService {
   public UserSecurity save(UserSecurity userSecurity) {
     return userSecurityRepository.save(userSecurity);
   }
+
+  /**
+   * Finds user security data by user ID.
+   *
+   * @param userId The ID of the user.
+   * @return The user security data if found, null otherwise.
+   */
+  public UserSecurity findByUserId(long userId) {
+    return userSecurityRepository.findByUserId(userId);
+  }
 }

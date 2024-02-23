@@ -4,6 +4,7 @@ import com.ratifire.devrate.dto.SignUpDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.UserSecurity;
+import com.ratifire.devrate.enums.AccessLevel;
 import com.ratifire.devrate.exception.EmailConfirmationCodeException;
 import com.ratifire.devrate.exception.UserAlreadyExistException;
 import com.ratifire.devrate.mapper.UserMapper;
@@ -14,6 +15,7 @@ import com.ratifire.devrate.service.email.EmailService;
 import liquibase.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +48,8 @@ public class RegistrationService {
 
   private final EmailService emailService;
 
+  private final PasswordEncoder passwordEncoder;
+
   /**
    * Checks if a user with the given email address exists.
    *
@@ -71,11 +75,12 @@ public class RegistrationService {
     }
 
     User user = userService.save(userMapper.toEntity(signUpDto));
+    String roleName = AccessLevel.getDefault().getRoleName();
 
     UserSecurity userSecurity = UserSecurity.builder()
-        .password(signUpDto.getPassword())
+        .password(passwordEncoder.encode(signUpDto.getPassword()))
         .userId(user.getId())
-        .userRoleId(roleService.getRoleByName("ROLE_USER").getId())
+        .role(roleService.getRoleByName(roleName))
         .build();
     userSecurityService.save(userSecurity);
 

@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.entity.Role;
+import com.ratifire.devrate.enums.AccessLevel;
 import com.ratifire.devrate.exception.RoleNotFoundException;
 import com.ratifire.devrate.repository.RoleRepository;
 import java.util.Optional;
@@ -40,7 +41,7 @@ public class RoleServiceTest {
   @BeforeEach
   public void init() {
     testUserRole = Role.builder()
-        .name("ROLE_USER")
+        .name(AccessLevel.USER.getRoleName())
         .build();
   }
 

@@ -29,6 +29,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -52,6 +53,9 @@ public class RegistrationServiceTest {
 
   @Mock
   private UserMapper userMapper;
+
+  @Mock
+  private PasswordEncoder passwordEncoder;
 
   @Mock
   private EmailConfirmationCodeService emailConfirmationCodeService;
@@ -100,8 +104,11 @@ public class RegistrationServiceTest {
    */
   @Test
   public void testRegisterUser_SuccessfulRegistration() {
+    String testPassword = "somepassword";
+
     SignUpDto testSignUpDto = SignUpDto.builder()
         .email("test@gmail.com")
+        .password(testPassword)
         .build();
 
     User testUser = User.builder()
@@ -118,8 +125,9 @@ public class RegistrationServiceTest {
     when(roleService.getRoleByName(any())).thenReturn(testRole);
     when(userSecurityService.save(any())).thenReturn(UserSecurity.builder().build());
     when(emailConfirmationCodeService.save(anyLong()))
-            .thenReturn(EmailConfirmationCode.builder().build());
+        .thenReturn(EmailConfirmationCode.builder().build());
     doNothing().when(emailService).sendEmail(any(), anyBoolean());
+    when(passwordEncoder.encode(any())).thenReturn(testPassword);
 
     User expectedUser = registrationService.registerUser(testSignUpDto);
 

@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
  * Entity class representing a role in the system. A role defines a set of permissions or privileges
@@ -23,7 +24,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user_role")
-public class Role {
+public class Role implements GrantedAuthority {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +35,11 @@ public class Role {
   @Column(nullable = false, unique = true)
   private String name;
 
-
   @NotEmpty
   private String description;
+
+  @Override
+  public String getAuthority() {
+    return name;
+  }
 }
