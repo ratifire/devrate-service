@@ -4,6 +4,7 @@ import com.ratifire.devrate.dto.SignUpDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.UserSecurity;
+import com.ratifire.devrate.enums.AccessLevel;
 import com.ratifire.devrate.exception.EmailConfirmationCodeException;
 import com.ratifire.devrate.exception.UserAlreadyExistException;
 import com.ratifire.devrate.mapper.UserMapper;
@@ -49,8 +50,6 @@ public class RegistrationService {
 
   private final PasswordEncoder passwordEncoder;
 
-  public static final String ROLE_USER = "ROLE_USER";
-
   /**
    * Checks if a user with the given email address exists.
    *
@@ -76,11 +75,12 @@ public class RegistrationService {
     }
 
     User user = userService.save(userMapper.toEntity(signUpDto));
+    String roleName = AccessLevel.getDefault().getRoleName();
 
     UserSecurity userSecurity = UserSecurity.builder()
         .password(passwordEncoder.encode(signUpDto.getPassword()))
         .userId(user.getId())
-        .role(roleService.getRoleByName(ROLE_USER))
+        .role(roleService.getRoleByName(roleName))
         .build();
     userSecurityService.save(userSecurity);
 
