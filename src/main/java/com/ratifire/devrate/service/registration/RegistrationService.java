@@ -49,6 +49,8 @@ public class RegistrationService {
 
   private final PasswordEncoder passwordEncoder;
 
+  private static final String ROLE_USER = "ROLE_USER";
+
   /**
    * Checks if a user with the given email address exists.
    *
@@ -78,7 +80,7 @@ public class RegistrationService {
     UserSecurity userSecurity = UserSecurity.builder()
         .password(passwordEncoder.encode(signUpDto.getPassword()))
         .userId(user.getId())
-        .role(roleService.getRoleByName("ROLE_USER"))
+        .role(roleService.getRoleByName(ROLE_USER))
         .build();
     userSecurityService.save(userSecurity);
 
