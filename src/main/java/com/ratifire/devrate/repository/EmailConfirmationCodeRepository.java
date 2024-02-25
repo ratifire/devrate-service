@@ -20,4 +20,19 @@ public interface EmailConfirmationCodeRepository
    * @return The optional of the {@link EmailConfirmationCode} entity with the specified name.
    */
   Optional<EmailConfirmationCode> findByUserId(long userId);
+
+  /**
+   * Retrieves an {@link EmailConfirmationCode} by code.
+   *
+   * @param code The code associated with the email confirmation code.
+   * @return The optional of the {@link EmailConfirmationCode} entity with the specified code.
+   */
+  Optional<EmailConfirmationCode> findByCode(String code);
+
+  /**
+   * Deletes {@link EmailConfirmationCode} entities by user ID.
+   *
+   * @param userId The ID of the user associated with the email confirmation code.
+   */
+  void deleteByUserId(Long userId);
 }
