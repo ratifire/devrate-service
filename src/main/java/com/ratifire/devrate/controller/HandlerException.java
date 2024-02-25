@@ -3,6 +3,8 @@ package com.ratifire.devrate.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.ratifire.devrate.exception.InvalidCodeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -66,6 +68,22 @@ public class HandlerException {
   @ExceptionHandler(MailSendException.class)
   public ResponseEntity<String> handleMailSendException(MailSendException ex) {
     log.error("Handling MailSendException: {}", ex.getMessage(), ex);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+  }
+  /**
+   * Exception handler method for handling InvalidCodeException.
+   *
+   * <p>Handles instances of InvalidCodeException by responding with an HTTP status
+   * of BAD_REQUEST and returning the error message from the exception. Logs the
+   * exception details for debugging purposes.</p>
+   *
+   * @param ex The InvalidCodeException to be handled.
+   * @return A ResponseEntity containing the error message from the exception
+   *         with an HTTP status of BAD_REQUEST.
+   */
+  @ExceptionHandler(InvalidCodeException.class)
+  public ResponseEntity<String> handleInvalidCodeException(InvalidCodeException ex) {
+    log.error("Invalid code: {}", ex.getMessage());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
   }
 
