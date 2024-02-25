@@ -1,0 +1,134 @@
+package com.ratifire.devrate.service.resetPassword;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+import com.ratifire.devrate.entity.EmailConfirmationCode;
+import com.ratifire.devrate.exception.InvalidCodeException;
+import com.ratifire.devrate.repository.EmailConfirmationCodeRepository;
+import com.ratifire.devrate.service.email.EmailService;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+
+@ExtendWith(SpringExtension.class)
+public class EmailConfirmationUUIDServiceTest {
+
+    @Mock
+    private EmailConfirmationCodeRepository emailConfirmationCodeRepository;
+
+    @Mock
+    private EmailService emailService;
+
+    @InjectMocks
+    private EmailConfirmationUUIDService emailConfirmationUUIDService;
+
+    /**
+     * Tests generating and persisting a UUID code for a given user ID.
+     */
+    @Test
+    public void generateAndPersistUUIDCode_GeneratesAndSavesCode() {
+        Long userId = 1L;
+        when(emailConfirmationCodeRepository.save(any(EmailConfirmationCode.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        String code = emailConfirmationUUIDService.generateAndPersistUUIDCode(userId);
+
+        assertNotNull(code, "Generated code should not be null");
+        verify(emailConfirmationCodeRepository).deleteByUserId(userId);
+        verify(emailConfirmationCodeRepository).save(any(EmailConfirmationCode.class));
+    }
+
+    /**
+     * Tests finding a UUID code when the code is valid.
+     */
+    @Test
+    public void findUUIDCode_WithValidCode_ReturnsCode() {
+        String validCode = UUID.randomUUID().toString();
+        EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode.builder()
+                .code(validCode)
+                .userId(1L)
+                .createdAt(LocalDateTime.now().plusHours(12))
+                .build();
+
+        when(emailConfirmationCodeRepository.findByCode(validCode))
+                .thenReturn(Optional.of(emailConfirmationCode));
+
+        EmailConfirmationCode result = emailConfirmationUUIDService.findUUIDCode(validCode);
+
+        assertEquals(validCode, result.getCode(), "Should return the correct code");
+    }
+
+    /**
+     * Tests behavior when a UUID code is invalid.
+     */
+    @Test
+    public void findUUIDCode_WithInvalidCode_ThrowsInvalidCodeException() {
+        String invalidCode = "invalid_code";
+        when(emailConfirmationCodeRepository.findByCode(invalidCode))
+                .thenReturn(Optional.empty());
+
+        assertThrows(InvalidCodeException.class,
+                () -> emailConfirmationUUIDService.findUUIDCode(invalidCode),
+                "Should throw InvalidCodeException for an invalid code");
+    }
+
+    /**
+     * Tests sending a password reset email.
+     */
+    @Test
+    public void sendPasswordResetEmail_SendsEmailWithResetLink() {
+        String userEmail = "test@example.com";
+        String code = UUID.randomUUID().toString();
+        boolean result = emailConfirmationUUIDService.sendPasswordResetEmail(userEmail, code);
+
+        assertTrue(result, "Should indicate successful email send");
+        verify(emailService).sendEmail(argThat(mailMessage ->
+                Objects.requireNonNull(mailMessage.getTo())[0].equals(userEmail) &&
+                        "Password Reset".equals(mailMessage.getSubject()) &&
+                        Objects.requireNonNull(mailMessage.getText()).contains("https://devrate.com/reset-password/" + code)), eq(false));
+    }
+
+    /**
+     * Tests sending a password change confirmation email.
+     */
+    @Test
+    public void sendPasswordChangeConfirmation_SendsConfirmationEmail() {
+        String userEmail = "test@example.com";
+        boolean result = emailConfirmationUUIDService.sendPasswordChangeConfirmation(userEmail);
+
+        assertTrue(result, "Should indicate successful email send");
+        verify(emailService).sendEmail(argThat(mailMessage ->
+                Objects.requireNonNull(mailMessage.getTo())[0].equals(userEmail) &&
+                        "Password Successfully Reset".equals(mailMessage.getSubject())), eq(false));
+    }
+
+    /**
+     * Tests deleting confirmed codes by user ID.
+     */
+    @Test
+    public void deleteConfirmedCodesByUserId_DeletesCodes() {
+        Long userId = 1L;
+        emailConfirmationUUIDService.deleteConfirmedCodesByUserId(userId);
+        verify(emailConfirmationCodeRepository).deleteByUserId(userId);
+    }
+
+    /**
+     * Tests creating a unique UUID.
+     */
+    @Test
+    public void createUniqueUUID_CreatesValidUUID() {
+        String uuid = emailConfirmationUUIDService.createUniqueUUID();
+        assertNotNull(uuid, "UUID should not be null");
+        assertTrue(uuid.matches("[a-f0-9\\-]{36}"), "UUID should match the UUID format");
+    }
+}
+
