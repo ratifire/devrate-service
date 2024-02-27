@@ -1,7 +1,6 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.SignUpDto;
-import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.service.registration.RegistrationService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -32,7 +31,7 @@ public class RegistrationController {
    * @return The registered User entity if successful, or null if the registration fails.
    */
   @PostMapping
-  public User registerUser(@RequestBody @Valid SignUpDto signUpDto) {
+  public SignUpDto registerUser(@RequestBody @Valid SignUpDto signUpDto) {
     return registrationService.registerUser(signUpDto);
   }
 

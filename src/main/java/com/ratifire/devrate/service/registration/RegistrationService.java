@@ -2,20 +2,17 @@ package com.ratifire.devrate.service.registration;
 
 import com.ratifire.devrate.dto.SignUpDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
+import com.ratifire.devrate.entity.Role;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.entity.UserSecurity;
-import com.ratifire.devrate.enums.AccessLevel;
 import com.ratifire.devrate.exception.EmailConfirmationCodeException;
 import com.ratifire.devrate.exception.UserAlreadyExistException;
 import com.ratifire.devrate.mapper.UserMapper;
 import com.ratifire.devrate.service.RoleService;
-import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.UserService;
 import com.ratifire.devrate.service.email.EmailService;
 import liquibase.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,23 +29,13 @@ public class RegistrationService {
    */
   private final UserService userService;
 
-  /**
-   * Service responsible for role management operations.
-   */
   private final RoleService roleService;
-
-  /**
-   * Service responsible for user security management operations.
-   */
-  private final UserSecurityService userSecurityService;
 
   private final UserMapper userMapper;
 
   private final EmailConfirmationCodeService emailConfirmationCodeService;
 
   private final EmailService emailService;
-
-  private final PasswordEncoder passwordEncoder;
 
   /**
    * Checks if a user with the given email address exists.
@@ -61,50 +48,48 @@ public class RegistrationService {
   }
 
   /**
-   * Method for registering a new user. This method validates the sign-up request, creates a new
-   * user entity persists it to the database, generate email confirmation code, and send it by
-   * email.
+   * Registers a new user.
    *
-   * @param signUpDto DTO containing user sign-up data.
-   * @return The registered User object.
+   * <p>This method registers a new user based on the provided SignUpDto. It checks if the user
+   * already exists by email, throws an exception if the user is already registered, creates a new
+   * user entity, sends an email confirmation code for user verification, and returns the registered
+   * user information.
+   *
+   * @param signUpDto The SignUpDto containing the user information to be registered.
+   * @return SignUpDto representing the registered user information.
+   * @throws UserAlreadyExistException If a user with the provided email already exists.
    */
   @Transactional
-  public User registerUser(SignUpDto signUpDto) {
+  public SignUpDto registerUser(SignUpDto signUpDto) {
     if (isUserExistByEmail(signUpDto.getEmail())) {
       throw new UserAlreadyExistException("User is already registered!");
     }
 
-    User user = userService.save(userMapper.toEntity(signUpDto));
-    String roleName = AccessLevel.getDefault().getRoleName();
+    Role role = roleService.getDefaultRole();
+    User user = userService.save(userMapper.toEntity(signUpDto, role));
 
-    UserSecurity userSecurity = UserSecurity.builder()
-        .password(passwordEncoder.encode(signUpDto.getPassword()))
-        .userId(user.getId())
-        .role(roleService.getRoleByName(roleName))
-        .build();
-    userSecurityService.save(userSecurity);
+    EmailConfirmationCode savedEmailConfirmationCode = emailConfirmationCodeService.save(
+        user.getId());
 
-    EmailConfirmationCode savedEmailConfirmationCode =
-            emailConfirmationCodeService.save(user.getId());
-
-    SimpleMailMessage confirmationMessage  = emailConfirmationCodeService
-        .createMessage(user.getEmail(), savedEmailConfirmationCode.getCode());
+    SimpleMailMessage confirmationMessage = emailConfirmationCodeService.createMessage(
+        user.getEmail(),
+        savedEmailConfirmationCode.getCode());
 
     emailService.sendEmail(confirmationMessage, true);
 
-    return user;
+    return userMapper.toDto(user);
   }
 
   /**
-   * Checks if the provided confirmation code matches the stored confirmation code for the
-   * user and marks the user as verified if the codes match.
+   * Checks if the provided confirmation code matches the stored confirmation code for the user and
+   * marks the user as verified if the codes match.
    *
    * @param userId The unique identifier of the user for whom the confirmation code is checked.
    * @param code   The confirmation code to be checked against the stored code.
    * @return {@code true} if the confirmation code matches and the user is marked as verified,
    *         {@code false} otherwise.
-   * @throws EmailConfirmationCodeException If there are issues with the confirmation code
-   *                                        such as missing or invalid codes.
+   * @throws EmailConfirmationCodeException If there are issues with the confirmation code such as
+   *                                        missing or invalid codes.
    */
   @Transactional
   public boolean isCodeConfirmed(long userId, String code) {
@@ -113,11 +98,11 @@ public class RegistrationService {
     }
 
     EmailConfirmationCode emailConfirmationCode = emailConfirmationCodeService
-            .getEmailConfirmationCodeByUserId(userId);
+        .getEmailConfirmationCodeByUserId(userId);
 
     if (StringUtil.isEmpty(emailConfirmationCode.getCode())) {
       throw new EmailConfirmationCodeException("The confirmation code for user ID \""
-              + userId + " is missing or empty.");
+          + userId + " is missing or empty.");
     }
 
     if (emailConfirmationCode.getCode().equals(code)) {
