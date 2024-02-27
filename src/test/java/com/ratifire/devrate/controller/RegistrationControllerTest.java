@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.dto.SignUpDto;
-import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.service.registration.RegistrationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -71,7 +70,9 @@ public class RegistrationControllerTest {
    */
   @Test
   public void testSignUpShouldReturnOk() throws Exception {
-    Mockito.when(registrationService.registerUser(any())).thenReturn(User.builder().build());
+    SignUpDto testDto = SignUpDto.builder().build();
+
+    Mockito.when(registrationService.registerUser(any())).thenReturn(testDto);
 
     mockMvc.perform(post(END_POINT_PATH)
             .contentType("application/json")

@@ -16,11 +16,9 @@ import com.ratifire.devrate.dto.SignUpDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.Role;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.UserAlreadyExistException;
 import com.ratifire.devrate.mapper.UserMapper;
 import com.ratifire.devrate.service.RoleService;
-import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.UserService;
 import com.ratifire.devrate.service.email.EmailService;
 import org.junit.jupiter.api.Test;
@@ -29,7 +27,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -46,16 +43,10 @@ public class RegistrationServiceTest {
   private UserService userService;
 
   @Mock
-  private UserSecurityService userSecurityService;
-
-  @Mock
   private RoleService roleService;
 
   @Mock
   private UserMapper userMapper;
-
-  @Mock
-  private PasswordEncoder passwordEncoder;
 
   @Mock
   private EmailConfirmationCodeService emailConfirmationCodeService;
@@ -104,10 +95,11 @@ public class RegistrationServiceTest {
    */
   @Test
   public void testRegisterUser_SuccessfulRegistration() {
+    String testEmail = "test@gmail.com";
     String testPassword = "somepassword";
 
     SignUpDto testSignUpDto = SignUpDto.builder()
-        .email("test@gmail.com")
+        .email(testEmail)
         .password(testPassword)
         .build();
 
@@ -119,19 +111,19 @@ public class RegistrationServiceTest {
         .id(1L)
         .build();
 
-    when(registrationService.isUserExistByEmail(any())).thenReturn(false);
-    when(userMapper.toEntity(any())).thenReturn(testUser);
+    when(roleService.getDefaultRole()).thenReturn(testRole);
     when(userService.save(any())).thenReturn(testUser);
-    when(roleService.getRoleByName(any())).thenReturn(testRole);
-    when(userSecurityService.save(any())).thenReturn(UserSecurity.builder().build());
+    when(userMapper.toEntity(any(), any())).thenReturn(testUser);
+    when(userMapper.toDto(any())).thenReturn(testSignUpDto);
+
+    when(registrationService.isUserExistByEmail(any())).thenReturn(false);
     when(emailConfirmationCodeService.save(anyLong()))
         .thenReturn(EmailConfirmationCode.builder().build());
     doNothing().when(emailService).sendEmail(any(), anyBoolean());
-    when(passwordEncoder.encode(any())).thenReturn(testPassword);
 
-    User expectedUser = registrationService.registerUser(testSignUpDto);
+    SignUpDto expected = registrationService.registerUser(testSignUpDto);
 
-    assertEquals(expectedUser, testUser);
+    assertEquals(expected, testSignUpDto);
     verify(emailConfirmationCodeService, times(1)).save(anyLong());
     verify(emailService, times(1)).sendEmail(any(), anyBoolean());
   }
