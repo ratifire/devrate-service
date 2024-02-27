@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.containsString;
 
 import com.ratifire.devrate.exception.InvalidCodeException;
 
-import com.ratifire.devrate.service.resetPassword.PasswordResetService;
+import com.ratifire.devrate.service.resetpassword.PasswordResetService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

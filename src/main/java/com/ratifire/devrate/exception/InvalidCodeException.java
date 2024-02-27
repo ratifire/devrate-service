@@ -5,8 +5,7 @@ package com.ratifire.devrate.exception;
  * This exception indicates that the specified token is invalid.
  */
 public class InvalidCodeException extends RuntimeException {
-
-    public InvalidCodeException(String message) {
-        super(message);
-    }
+  public InvalidCodeException(String message) {
+    super(message);
+  }
 }

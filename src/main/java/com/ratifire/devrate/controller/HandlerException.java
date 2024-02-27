@@ -3,7 +3,6 @@ package com.ratifire.devrate.controller;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import com.ratifire.devrate.exception.InvalidCodeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -70,6 +69,7 @@ public class HandlerException {
     log.error("Handling MailSendException: {}", ex.getMessage(), ex);
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
   }
+
   /**
    * Exception handler method for handling InvalidCodeException.
    *
@@ -86,5 +86,4 @@ public class HandlerException {
     log.error("Invalid code: {}", ex.getMessage());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
   }
-
 }
