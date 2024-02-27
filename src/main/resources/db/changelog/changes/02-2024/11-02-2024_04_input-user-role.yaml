@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: 11-02-2024_04_input-user-role
+      author: O. Voskresenskyy
+      changes:
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: 'Admin'
+              - column:
+                  name: description
+                  value: 'Admin role'
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: 'User'
+              - column:
+                  name: description
+                  value: 'User role'
