@@ -98,11 +98,11 @@ public class RegistrationService {
     }
 
     EmailConfirmationCode emailConfirmationCode = emailConfirmationCodeService
-        .getEmailConfirmationCodeByUserId(userId);
+            .getEmailConfirmationCodeByUserId(userId);
 
     if (StringUtil.isEmpty(emailConfirmationCode.getCode())) {
       throw new EmailConfirmationCodeException("The confirmation code for user ID \""
-          + userId + " is missing or empty.");
+              + userId + " is missing or empty.");
     }
 
     if (emailConfirmationCode.getCode().equals(code)) {
