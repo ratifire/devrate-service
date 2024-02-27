@@ -68,12 +68,11 @@ public class RegistrationService {
     Role role = roleService.getDefaultRole();
     User user = userService.save(userMapper.toEntity(signUpDto, role));
 
-    EmailConfirmationCode savedEmailConfirmationCode = emailConfirmationCodeService.save(
-        user.getId());
+    EmailConfirmationCode savedEmailConfirmationCode =
+            emailConfirmationCodeService.save(user.getId());
 
-    SimpleMailMessage confirmationMessage = emailConfirmationCodeService.createMessage(
-        user.getEmail(),
-        savedEmailConfirmationCode.getCode());
+    SimpleMailMessage confirmationMessage = emailConfirmationCodeService
+        .createMessage(user.getEmail(), savedEmailConfirmationCode.getCode());
 
     emailService.sendEmail(confirmationMessage, true);
 
