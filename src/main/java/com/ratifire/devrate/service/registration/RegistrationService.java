@@ -81,15 +81,15 @@ public class RegistrationService {
   }
 
   /**
-   * Checks if the provided confirmation code matches the stored confirmation code for the user and
-   * marks the user as verified if the codes match.
+   * Checks if the provided confirmation code matches the stored confirmation code for the
+   * user and marks the user as verified if the codes match.
    *
    * @param userId The unique identifier of the user for whom the confirmation code is checked.
    * @param code   The confirmation code to be checked against the stored code.
    * @return {@code true} if the confirmation code matches and the user is marked as verified,
    *         {@code false} otherwise.
-   * @throws EmailConfirmationCodeException If there are issues with the confirmation code such as
-   *                                        missing or invalid codes.
+   * @throws EmailConfirmationCodeException If there are issues with the confirmation code
+   *                                        such as missing or invalid codes.
    */
   @Transactional
   public boolean isCodeConfirmed(long userId, String code) {
