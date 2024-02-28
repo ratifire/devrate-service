@@ -91,13 +91,13 @@ public class EmailConfirmationUuidServiceTest {
   public void sendPasswordResetEmail_SendsEmailWithResetLink() {
     String userEmail = "test@example.com";
     String code = UUID.randomUUID().toString();
-    boolean result = emailConfirmationUuidService.sendPasswordResetEmail(userEmail, code);
 
-    assertTrue(result, "Should indicate successful email send");
+    emailConfirmationUuidService.sendPasswordResetEmail(userEmail, code);
+
     verify(emailService).sendEmail(argThat(mailMessage ->
             Objects.requireNonNull(mailMessage.getTo())[0].equals(userEmail) &&
                     "Password Reset".equals(mailMessage.getSubject()) &&
-                    Objects.requireNonNull(mailMessage.getText()).contains("https://devrate.com/reset-password/" + code)), eq(false));
+                    Objects.requireNonNull(mailMessage.getText()).contains("#" + code)), eq(false));
   }
 
   /**
@@ -106,9 +106,9 @@ public class EmailConfirmationUuidServiceTest {
   @Test
   public void sendPasswordChangeConfirmation_SendsConfirmationEmail() {
     String userEmail = "test@example.com";
-    boolean result = emailConfirmationUuidService.sendPasswordChangeConfirmation(userEmail);
 
-    assertTrue(result, "Should indicate successful email send");
+    emailConfirmationUuidService.sendPasswordChangeConfirmation(userEmail);
+
     verify(emailService).sendEmail(argThat(mailMessage ->
             Objects.requireNonNull(mailMessage.getTo())[0].equals(userEmail) &&
                     "Password Successfully Reset".equals(mailMessage.getSubject())), eq(false));
