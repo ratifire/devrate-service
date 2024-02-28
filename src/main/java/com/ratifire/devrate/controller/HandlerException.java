@@ -82,8 +82,8 @@ public class HandlerException {
    *         with an HTTP status of BAD_REQUEST.
    */
   @ExceptionHandler(InvalidCodeException.class)
-  public ResponseEntity<String> handleInvalidCodeException(InvalidCodeException ex) {
+  public ResponseEntity<?> handleInvalidCodeException(InvalidCodeException ex) {
     log.error("Invalid code: {}", ex.getMessage());
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("invalid_code");
   }
 }
