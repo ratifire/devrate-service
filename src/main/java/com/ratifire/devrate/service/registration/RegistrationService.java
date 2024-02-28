@@ -1,6 +1,6 @@
 package com.ratifire.devrate.service.registration;
 
-import com.ratifire.devrate.dto.SignUpDto;
+import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.Role;
 import com.ratifire.devrate.entity.User;
@@ -55,18 +55,18 @@ public class RegistrationService {
    * user entity, sends an email confirmation code for user verification, and returns the registered
    * user information.
    *
-   * @param signUpDto The SignUpDto containing the user information to be registered.
+   * @param userDto The SignUpDto containing the user information to be registered.
    * @return SignUpDto representing the registered user information.
    * @throws UserAlreadyExistException If a user with the provided email already exists.
    */
   @Transactional
-  public SignUpDto registerUser(SignUpDto signUpDto) {
-    if (isUserExistByEmail(signUpDto.getEmail())) {
+  public UserDto registerUser(UserDto userDto) {
+    if (isUserExistByEmail(userDto.getEmail())) {
       throw new UserAlreadyExistException("User is already registered!");
     }
 
     Role role = roleService.getDefaultRole();
-    User user = userService.save(userMapper.toEntity(signUpDto, role));
+    User user = userService.save(userMapper.toEntity(userDto, role));
 
     EmailConfirmationCode savedEmailConfirmationCode =
             emailConfirmationCodeService.save(user.getId());

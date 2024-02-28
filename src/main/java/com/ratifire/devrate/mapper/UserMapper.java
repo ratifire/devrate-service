@@ -1,6 +1,6 @@
 package com.ratifire.devrate.mapper;
 
-import com.ratifire.devrate.dto.SignUpDto;
+import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.Role;
 import com.ratifire.devrate.entity.User;
 import org.mapstruct.Mapper;
@@ -15,7 +15,7 @@ public interface UserMapper {
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
   @Mapping(target = "password", qualifiedByName = {"PasswordEncoderMapper", "encode"})
-  User toEntity(SignUpDto signUpDto, Role role);
+  User toEntity(UserDto userDto, Role role);
 
-  SignUpDto toDto(User user);
+  UserDto toDto(User user);
 }

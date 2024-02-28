@@ -5,12 +5,11 @@ import lombok.Builder;
 import lombok.Getter;
 
 /**
- * Data Transfer Object (DTO) representing the user details required for sign up or registration.
- * This DTO encapsulates the necessary information needed to create a new user account.
+ * Data Transfer Object (DTO) representing the user.
  */
 @Builder
 @Getter
-public class SignUpDto {
+public class UserDto {
 
   private String email;
 
