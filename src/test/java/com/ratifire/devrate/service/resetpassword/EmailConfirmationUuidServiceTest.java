@@ -5,23 +5,30 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.argThat;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.exception.InvalidCodeException;
 import com.ratifire.devrate.repository.EmailConfirmationCodeRepository;
 import com.ratifire.devrate.service.email.EmailService;
+import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-
+/**
+ * Tests for {@link EmailConfirmationUuidService}.
+ * Includes tests for generating and persisting UUID codes, finding UUID codes,
+ * sending password reset and change confirmation emails, and deleting confirmed codes.
+ */
 @ExtendWith(SpringExtension.class)
 public class EmailConfirmationUuidServiceTest {
 
@@ -41,7 +48,7 @@ public class EmailConfirmationUuidServiceTest {
   public void generateAndPersistUuidCode_GeneratesAndSavesCode() {
     Long userId = 1L;
     when(emailConfirmationCodeRepository.save(any(EmailConfirmationCode.class)))
-            .thenAnswer(invocation -> invocation.getArgument(0));
+        .thenAnswer(invocation -> invocation.getArgument(0));
 
     String code = emailConfirmationUuidService.generateAndPersistUuidCode(userId);
 
@@ -57,13 +64,13 @@ public class EmailConfirmationUuidServiceTest {
   public void findUuidCode_WithValidCode_ReturnsCode() {
     String validCode = UUID.randomUUID().toString();
     EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode.builder()
-            .code(validCode)
-            .userId(1L)
-            .createdAt(LocalDateTime.now().plusHours(12))
-            .build();
+        .code(validCode)
+        .userId(1L)
+        .createdAt(LocalDateTime.now().plusHours(12))
+        .build();
 
     when(emailConfirmationCodeRepository.findByCode(validCode))
-            .thenReturn(Optional.of(emailConfirmationCode));
+        .thenReturn(Optional.of(emailConfirmationCode));
 
     EmailConfirmationCode result = emailConfirmationUuidService.findUuidCode(validCode);
 
@@ -77,11 +84,11 @@ public class EmailConfirmationUuidServiceTest {
   public void findUuidCode_WithInvalidCode_ThrowsInvalidCodeException() {
     String invalidCode = "invalid_code";
     when(emailConfirmationCodeRepository.findByCode(invalidCode))
-            .thenReturn(Optional.empty());
+        .thenReturn(Optional.empty());
 
     assertThrows(InvalidCodeException.class,
-            () -> emailConfirmationUuidService.findUuidCode(invalidCode),
-            "Should throw InvalidCodeException for an invalid code");
+        () -> emailConfirmationUuidService.findUuidCode(invalidCode),
+        "Should throw InvalidCodeException for an invalid code");
   }
 
   /**
@@ -95,9 +102,10 @@ public class EmailConfirmationUuidServiceTest {
     emailConfirmationUuidService.sendPasswordResetEmail(userEmail, code);
 
     verify(emailService).sendEmail(argThat(mailMessage ->
-            Objects.requireNonNull(mailMessage.getTo())[0].equals(userEmail) &&
-                    "Password Reset".equals(mailMessage.getSubject()) &&
-                    Objects.requireNonNull(mailMessage.getText()).contains("#" + code)), eq(false));
+        Objects.requireNonNull(mailMessage.getTo())[0].equals(userEmail)
+            && "Password Reset".equals(mailMessage.getSubject())
+            && Objects.requireNonNull(mailMessage.getText())
+            .contains("#" + code)), eq(false));
   }
 
   /**
@@ -110,8 +118,8 @@ public class EmailConfirmationUuidServiceTest {
     emailConfirmationUuidService.sendPasswordChangeConfirmation(userEmail);
 
     verify(emailService).sendEmail(argThat(mailMessage ->
-            Objects.requireNonNull(mailMessage.getTo())[0].equals(userEmail) &&
-                    "Password Successfully Reset".equals(mailMessage.getSubject())), eq(false));
+        Objects.requireNonNull(mailMessage.getTo())[0].equals(userEmail)
+            && "Password Successfully Reset".equals(mailMessage.getSubject())), eq(false));
   }
 
   /**

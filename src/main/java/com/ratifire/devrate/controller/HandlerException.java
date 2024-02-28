@@ -1,9 +1,8 @@
 package com.ratifire.devrate.controller;
 
-
+import com.ratifire.devrate.exception.InvalidCodeException;
 import java.util.HashMap;
 import java.util.Map;
-import com.ratifire.devrate.exception.InvalidCodeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;

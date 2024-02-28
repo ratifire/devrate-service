@@ -3,7 +3,9 @@ package com.ratifire.devrate.service.resetpassword;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.User;
@@ -21,7 +23,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-
+/**
+ * Tests for the PasswordResetService class. Verifies behavior for password reset requests,
+ * including sending a reset link with a valid email, throwing exceptions for invalid emails,
+ * successfully updating the password with a valid code, and handling invalid codes.
+ * Utilizes Mockito to mock dependencies for isolated testing.
+ */
 @ExtendWith(MockitoExtension.class)
 public class PasswordResetServiceTest {
 
@@ -67,9 +74,11 @@ public class PasswordResetServiceTest {
   @Test
   void requestPasswordReset_WithInvalidEmail_ThrowsException() {
     String email = "invalid@example.com";
-    when(userService.findUserByEmail(email)).thenThrow(new UsernameNotFoundException("User not found"));
+    when(userService.findUserByEmail(email))
+        .thenThrow(new UsernameNotFoundException("User not found"));
 
-    assertThrows(UsernameNotFoundException.class, () -> passwordResetService.requestPasswordReset(email));
+    assertThrows(UsernameNotFoundException.class, () -> passwordResetService
+        .requestPasswordReset(email));
   }
 
   /**
@@ -80,7 +89,8 @@ public class PasswordResetServiceTest {
     String code = "validCode";
     String newPassword = "newPassword";
     User user = User.builder().id(1L).build();
-    EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode.builder().userId(user.getId()).build();
+    EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode.builder()
+        .userId(user.getId()).build();
     UserSecurity userSecurity = new UserSecurity();
 
     when(emailConfirmationUuidService.findUuidCode(code)).thenReturn(emailConfirmationCode);
@@ -101,9 +111,11 @@ public class PasswordResetServiceTest {
   @Test
   void resetPassword_WithInvalidCode_ThrowsException() {
     String code = "invalidCode";
-    when(emailConfirmationUuidService.findUuidCode(code)).thenThrow(new InvalidCodeException("Invalid or expired password reset code."));
+    when(emailConfirmationUuidService.findUuidCode(code))
+        .thenThrow(new InvalidCodeException("Invalid or expired password reset code."));
 
-    assertThrows(InvalidCodeException.class, () -> passwordResetService.resetPassword(code, "newPassword"));
+    assertThrows(InvalidCodeException.class, () -> passwordResetService
+        .resetPassword(code, "newPassword"));
   }
 
 
@@ -117,7 +129,8 @@ public class PasswordResetServiceTest {
     String newPassword = "newPassword";
     String encodedPassword = "encodedPassword";
     User user = User.builder().id(1L).build();
-    EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode.builder().userId(user.getId()).build();
+    EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode
+        .builder().userId(user.getId()).build();
     UserSecurity userSecurity = UserSecurity.builder().id(1L).userId(user.getId()).build();
 
     when(emailConfirmationUuidService.findUuidCode(code)).thenReturn(emailConfirmationCode);
@@ -132,6 +145,7 @@ public class PasswordResetServiceTest {
     verify(userSecurityService).save(userSecurityCaptor.capture());
 
     UserSecurity savedUserSecurity = userSecurityCaptor.getValue();
-    assertEquals(encodedPassword, savedUserSecurity.getPassword(), "The password should be encoded and saved");
+    assertEquals(encodedPassword, savedUserSecurity
+        .getPassword(), "The password should be encoded and saved");
   }
 }
