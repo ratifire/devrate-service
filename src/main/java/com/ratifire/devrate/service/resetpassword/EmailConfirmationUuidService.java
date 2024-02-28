@@ -84,7 +84,7 @@ public class EmailConfirmationUuidService {
    * @param email The user's email address.
    * @param code  The unique password reset code.
    */
-  public boolean sendPasswordResetEmail(String email, String code) {
+  public void sendPasswordResetEmail(String email, String code) {
     // Temporarily removed password reset URL
     String resetLink = "#" + code;
     SimpleMailMessage resetEmail = new SimpleMailMessage();
@@ -92,7 +92,6 @@ public class EmailConfirmationUuidService {
     resetEmail.setSubject("Password Reset");
     resetEmail.setText("To reset your password, please click the link below:\n" + resetLink);
     emailService.sendEmail(resetEmail, false);
-    return true;
   }
 
   /**
@@ -100,7 +99,7 @@ public class EmailConfirmationUuidService {
    *
    * @param email The user's email address.
    */
-  public boolean sendPasswordChangeConfirmation(String email) {
+  public void sendPasswordChangeConfirmation(String email) {
     SimpleMailMessage message = new SimpleMailMessage();
     message.setTo(email);
     message.setSubject("Password Successfully Reset");
@@ -109,7 +108,6 @@ public class EmailConfirmationUuidService {
     String text = "Your password has been successfully changed on " + formattedDateTime + ".";
     message.setText(text);
     emailService.sendEmail(message, false);
-    return true;
   }
 
   /**
