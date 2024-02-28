@@ -4,8 +4,8 @@ package com.ratifire.devrate.enums;
  * Enum representing different access levels in the system.
  */
 public enum AccessLevel {
-  ADMIN("ROLE_ADMIN"),
-  USER("ROLE_USER");
+  ADMIN("Admin"),
+  USER("User");
 
   /**
    * Returns the default access level.
