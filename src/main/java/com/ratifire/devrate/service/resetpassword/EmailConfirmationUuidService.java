@@ -85,7 +85,8 @@ public class EmailConfirmationUuidService {
    * @param code  The unique password reset code.
    */
   public boolean sendPasswordResetEmail(String email, String code) {
-    String resetLink = "https://devrate.com/reset-password/" + code;
+    // Temporarily removed password reset URL
+    String resetLink = "#" + code;
     SimpleMailMessage resetEmail = new SimpleMailMessage();
     resetEmail.setTo(email);
     resetEmail.setSubject("Password Reset");
