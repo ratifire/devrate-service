@@ -23,7 +23,7 @@ import org.springframework.security.core.GrantedAuthority;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user_role")
+@Table(name = "roles")
 public class Role implements GrantedAuthority {
 
   @Id

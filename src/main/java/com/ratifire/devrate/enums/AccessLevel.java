@@ -8,12 +8,12 @@ public enum AccessLevel {
   USER("User");
 
   /**
-   * Returns the default access level.
+   * Returns the name of default access level.
    *
    * @return The default access level (USER)
    */
-  public static AccessLevel getDefault() {
-    return USER;
+  public static String getDefaultRole() {
+    return USER.getRoleName();
   }
 
   private final String roleName;

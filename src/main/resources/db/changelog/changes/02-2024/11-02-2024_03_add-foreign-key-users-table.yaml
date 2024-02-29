@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 11-02-2024_03_add-foreign-key-users-table
+      author: Dmytro Abalmas
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: users
+            baseColumnNames: role_id
+            constraintName: fk_user_role
+            referencedTableName: roles
+            referencedColumnNames: id

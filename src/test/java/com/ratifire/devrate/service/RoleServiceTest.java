@@ -70,4 +70,14 @@ public class RoleServiceTest {
     when(roleRepository.findByName(any())).thenThrow(RoleNotFoundException.class);
     assertThrows(RoleNotFoundException.class, () -> roleService.getRoleByName(any()));
   }
+
+  /**
+   * Unit test for {@link RoleService#getDefaultRole()}.
+   */
+  @Test
+  public void testGetDefaultRole() {
+    when(roleRepository.findByName(any())).thenReturn(Optional.of(testUserRole));
+    Role expectedRole = roleService.getDefaultRole();
+    assertEquals(expectedRole, testUserRole);
+  }
 }
