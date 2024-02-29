@@ -12,15 +12,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ratifire.devrate.dto.SignUpDto;
+import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.Role;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.UserAlreadyExistException;
 import com.ratifire.devrate.mapper.UserMapper;
 import com.ratifire.devrate.service.RoleService;
-import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.UserService;
 import com.ratifire.devrate.service.email.EmailService;
 import org.junit.jupiter.api.Test;
@@ -29,7 +27,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -46,16 +43,10 @@ public class RegistrationServiceTest {
   private UserService userService;
 
   @Mock
-  private UserSecurityService userSecurityService;
-
-  @Mock
   private RoleService roleService;
 
   @Mock
   private UserMapper userMapper;
-
-  @Mock
-  private PasswordEncoder passwordEncoder;
 
   @Mock
   private EmailConfirmationCodeService emailConfirmationCodeService;
@@ -97,17 +88,18 @@ public class RegistrationServiceTest {
   }
 
   /**
-   * Unit test for {@link RegistrationService#registerUser(SignUpDto)}.
+   * Unit test for {@link RegistrationService#registerUser(UserDto)}.
    *
    * <p>Test case to verify successful user registration. A valid email and password are provided.
    * The user should be successfully registered.
    */
   @Test
   public void testRegisterUser_SuccessfulRegistration() {
+    String testEmail = "test@gmail.com";
     String testPassword = "somepassword";
 
-    SignUpDto testSignUpDto = SignUpDto.builder()
-        .email("test@gmail.com")
+    UserDto testUserDto = UserDto.builder()
+        .email(testEmail)
         .password(testPassword)
         .build();
 
@@ -119,38 +111,38 @@ public class RegistrationServiceTest {
         .id(1L)
         .build();
 
-    when(registrationService.isUserExistByEmail(any())).thenReturn(false);
-    when(userMapper.toEntity(any())).thenReturn(testUser);
+    when(roleService.getDefaultRole()).thenReturn(testRole);
     when(userService.save(any())).thenReturn(testUser);
-    when(roleService.getRoleByName(any())).thenReturn(testRole);
-    when(userSecurityService.save(any())).thenReturn(UserSecurity.builder().build());
+    when(userMapper.toEntity(any(), any())).thenReturn(testUser);
+    when(userMapper.toDto(any())).thenReturn(testUserDto);
+
+    when(registrationService.isUserExistByEmail(any())).thenReturn(false);
     when(emailConfirmationCodeService.save(anyLong()))
         .thenReturn(EmailConfirmationCode.builder().build());
     doNothing().when(emailService).sendEmail(any(), anyBoolean());
-    when(passwordEncoder.encode(any())).thenReturn(testPassword);
 
-    User expectedUser = registrationService.registerUser(testSignUpDto);
+    UserDto expected = registrationService.registerUser(testUserDto);
 
-    assertEquals(expectedUser, testUser);
+    assertEquals(expected, testUserDto);
     verify(emailConfirmationCodeService, times(1)).save(anyLong());
     verify(emailService, times(1)).sendEmail(any(), anyBoolean());
   }
 
   /**
-   * Unit test for {@link RegistrationService#registerUser(SignUpDto)}.
+   * Unit test for {@link RegistrationService#registerUser(UserDto)}.
    *
    * <p>Test case to verify successful user registration. A not valid email and password are
    * provided. UserAlreadyExistException have to be thrown.
    */
   @Test
   public void testRegisterUser_ThrowUserAlreadyExistException() {
-    SignUpDto testSignUpDto = SignUpDto.builder()
+    UserDto testUserDto = UserDto.builder()
         .email("test@gmail.com")
         .build();
 
     Mockito.when(registrationService.isUserExistByEmail(any())).thenReturn(true);
 
     assertThrows(UserAlreadyExistException.class,
-        () -> registrationService.registerUser(testSignUpDto));
+        () -> registrationService.registerUser(testUserDto));
   }
 }

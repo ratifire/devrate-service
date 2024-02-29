@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: 11-02-2024_01_create-table-user-details
+      id: 11-02-2024_01_create-table-users
       author: Dmytro Abalmas
       changes:
         - createTable:
-            tableName: user_details
+            tableName: users
             columns:
               - column:
                   name: id
@@ -46,5 +46,15 @@ databaseChangeLog:
                   name: created_at
                   type: TIMESTAMP
                   defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: VARCHAR(245)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: BIGINT
                   constraints:
                     nullable: false

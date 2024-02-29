@@ -10,8 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ratifire.devrate.dto.SignUpDto;
-import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.service.registration.RegistrationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +41,7 @@ public class RegistrationControllerTest {
   @MockBean
   private RegistrationService registrationService;
 
-  private SignUpDto signUpDto;
+  private UserDto userDto;
 
   /**
    * Initializes the test environment for the RegistrationControllerTest class. This method is
@@ -50,7 +49,7 @@ public class RegistrationControllerTest {
    */
   @BeforeEach
   public void init() {
-    signUpDto = SignUpDto.builder()
+    userDto = UserDto.builder()
         .email("test@gmail.com")
         .firstName("Test first name")
         .lastName("Test last name")
@@ -62,7 +61,7 @@ public class RegistrationControllerTest {
   }
 
   /**
-   * Test for {@link RegistrationController#registerUser(SignUpDto)}.
+   * Test for {@link RegistrationController#registerUser(UserDto)}.
    *
    * <p>Test method for verifying that the sign-up endpoint ("/signup") returns OK status. This
    * method verifies that the sign-up endpoint returns HTTP status 200 (OK) when accessed.
@@ -71,11 +70,13 @@ public class RegistrationControllerTest {
    */
   @Test
   public void testSignUpShouldReturnOk() throws Exception {
-    Mockito.when(registrationService.registerUser(any())).thenReturn(User.builder().build());
+    UserDto testDto = UserDto.builder().build();
+
+    Mockito.when(registrationService.registerUser(any())).thenReturn(testDto);
 
     mockMvc.perform(post(END_POINT_PATH)
             .contentType("application/json")
-            .content(objectMapper.writeValueAsString(signUpDto)))
+            .content(objectMapper.writeValueAsString(userDto)))
         .andExpect(status().isOk())
         .andDo(print());
   }

@@ -7,5 +7,5 @@ databaseChangeLog:
             baseTableName: email_confirmation_code
             baseColumnNames: user_id
             constraintName: fk_email_confirmation_code_user
-            referencedTableName: user_details
+            referencedTableName: users
             referencedColumnNames: id

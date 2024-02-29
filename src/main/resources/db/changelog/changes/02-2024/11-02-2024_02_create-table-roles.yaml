@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: 11-02-2024_02_create-table-user-role
+      id: 11-02-2024_02_create-table-roles
       author: Dmytro Abalmas
       changes:
         - createTable:
-            tableName: user_role
+            tableName: roles
             columns:
               - column:
                   name: id

@@ -1,6 +1,7 @@
 package com.ratifire.devrate.service;
 
 import com.ratifire.devrate.entity.Role;
+import com.ratifire.devrate.enums.AccessLevel;
 import com.ratifire.devrate.exception.RoleNotFoundException;
 import com.ratifire.devrate.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +29,14 @@ public class RoleService {
   public Role getRoleByName(String name) {
     return roleRepository.findByName(name)
         .orElseThrow(() -> new RoleNotFoundException("Role " + name + " is not found!"));
+  }
+
+  /**
+   * Retrieves the default role.
+   *
+   * @return the default role
+   */
+  public Role getDefaultRole() {
+    return getRoleByName(AccessLevel.getDefaultRole());
   }
 }
