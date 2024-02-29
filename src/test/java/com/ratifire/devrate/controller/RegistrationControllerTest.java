@@ -30,8 +30,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc
 public class RegistrationControllerTest {
 
-  private static final String END_POINT_PATH = "/signup";
-  private static final String END_POINT_CONFIRM_PATH = "/signup/1/123";
+  private static final String END_POINT_PATH = "/auth/signup";
+  private static final String END_POINT_CONFIRM_PATH = "/auth/signup/1/123";
   @Autowired
   private MockMvc mockMvc;
 

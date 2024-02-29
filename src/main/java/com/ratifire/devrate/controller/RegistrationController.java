@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * endpoints for user registration.
  */
 @RestController
-@RequestMapping("/signup")
+@RequestMapping("/auth/signup")
 @RequiredArgsConstructor
 public class RegistrationController {
 
