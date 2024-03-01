@@ -18,9 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
  * - Resetting passwords with a unique code (UUID).
  */
 
-@SuppressWarnings("checkstyle:Indentation")
 @RestController
-@RequestMapping("/api/auth/password-reset")
+@RequestMapping("/auth/password-reset")
 @RequiredArgsConstructor
 public class PasswordResetController {
 

@@ -60,7 +60,7 @@ public class PasswordResetControllerTest {
 
     when(passwordResetService.resetPassword(eq(code), anyString())).thenReturn(true);
 
-    mockMvc.perform(post("/api/auth/password-reset/{code}", code)
+    mockMvc.perform(post("/auth/password-reset/{code}", code)
             .contentType("application/json")
             .content(newPassword))
         .andExpect(status().isOk())
@@ -80,7 +80,7 @@ public class PasswordResetControllerTest {
     doThrow(new InvalidCodeException("Invalid or expired password reset code."))
         .when(passwordResetService).resetPassword(eq(invalidCode), anyString());
 
-    mockMvc.perform(post("/api/auth/password-reset/{code}", invalidCode)
+    mockMvc.perform(post("/auth/password-reset/{code}", invalidCode)
             .contentType("application/json")
             .content(newPassword))
         .andExpect(status().isBadRequest())
