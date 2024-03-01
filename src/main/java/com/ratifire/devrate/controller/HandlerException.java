@@ -83,7 +83,6 @@ public class HandlerException {
   @ExceptionHandler(InvalidCodeException.class)
   public ResponseEntity<?> handleInvalidCodeException(InvalidCodeException ex) {
     log.error("Invalid code: {}", ex.getMessage());
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-        .body("Invalid or expired password reset code.");
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("invalid_code");
   }
 }
