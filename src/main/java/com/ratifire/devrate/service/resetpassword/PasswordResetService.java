@@ -2,8 +2,6 @@ package com.ratifire.devrate.service.resetpassword;
 
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.entity.UserSecurity;
-import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +17,6 @@ import org.springframework.stereotype.Service;
 public class PasswordResetService {
 
   private final UserService userService;
-  private final UserSecurityService userSecurityService;
   private final EmailConfirmationUuidService emailConfirmationUuidService;
   private final PasswordEncoder passwordEncoder;
 
@@ -48,15 +45,11 @@ public class PasswordResetService {
   public boolean resetPassword(String code, String newPassword) {
     EmailConfirmationCode emailConfirmationCode = emailConfirmationUuidService.findUuidCode(code);
     User user = userService.getById(emailConfirmationCode.getUserId());
-    UserSecurity userSecurity = userSecurityService.findByUserId(user.getId());
 
     String encodedPassword = passwordEncoder.encode(newPassword);
 
-    UserSecurity updatedUserSecurity = userSecurity.toBuilder()
-            .password(encodedPassword)
-            .build();
-
-    userSecurityService.save(updatedUserSecurity);
+    user.setPassword(encodedPassword);
+    userService.save(user);
 
     emailConfirmationUuidService.deleteConfirmedCodesByUserId(user.getId());
     emailConfirmationUuidService.sendPasswordChangeConfirmation(user.getEmail());

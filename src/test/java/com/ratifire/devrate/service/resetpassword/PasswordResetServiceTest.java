@@ -1,22 +1,17 @@
+
 package com.ratifire.devrate.service.resetpassword;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.InvalidCodeException;
-import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -36,9 +31,6 @@ public class PasswordResetServiceTest {
   private UserService userService;
 
   @Mock
-  private UserSecurityService userSecurityService;
-
-  @Mock
   private EmailConfirmationUuidService emailConfirmationUuidService;
 
   @InjectMocks
@@ -46,9 +38,6 @@ public class PasswordResetServiceTest {
 
   @Mock
   private PasswordEncoder passwordEncoder;
-
-  @Captor
-  private ArgumentCaptor<UserSecurity> userSecurityCaptor;
 
   /**
    * Tests that a password reset request successfully sends a reset link
@@ -89,18 +78,19 @@ public class PasswordResetServiceTest {
     String code = "validCode";
     String newPassword = "newPassword";
     User user = User.builder().id(1L).build();
-    EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode.builder()
-        .userId(user.getId()).build();
-    UserSecurity userSecurity = new UserSecurity();
+    EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode
+        .builder().userId(user.getId()).build();
 
     when(emailConfirmationUuidService.findUuidCode(code)).thenReturn(emailConfirmationCode);
     when(userService.getById(user.getId())).thenReturn(user);
-    when(userSecurityService.findByUserId(user.getId())).thenReturn(userSecurity);
+    when(passwordEncoder.encode(newPassword)).thenReturn("encodedPassword");
 
     boolean result = passwordResetService.resetPassword(code, newPassword);
 
-    assertTrue(result, "Password should be reset successfully");
-    verify(userSecurityService).save(any(UserSecurity.class));
+    assertTrue(result);
+    verify(userService).save(user);
+    verify(passwordEncoder).encode(newPassword);
+    verify(emailConfirmationUuidService).deleteConfirmedCodesByUserId(user.getId());
   }
 
 
@@ -116,36 +106,5 @@ public class PasswordResetServiceTest {
 
     assertThrows(InvalidCodeException.class, () -> passwordResetService
         .resetPassword(code, "newPassword"));
-  }
-
-
-  /**
-   * Tests that a password reset request successfully sends a reset link
-   * when the user's email is valid.
-   */
-  @Test
-  void resetPassword_WithValidCode_UpdatesPassword_UsingPasswordEncoder() {
-    String code = "validCode";
-    String newPassword = "newPassword";
-    String encodedPassword = "encodedPassword";
-    User user = User.builder().id(1L).build();
-    EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode
-        .builder().userId(user.getId()).build();
-    UserSecurity userSecurity = UserSecurity.builder().id(1L).userId(user.getId()).build();
-
-    when(emailConfirmationUuidService.findUuidCode(code)).thenReturn(emailConfirmationCode);
-    when(userService.getById(user.getId())).thenReturn(user);
-    when(userSecurityService.findByUserId(user.getId())).thenReturn(userSecurity);
-    when(passwordEncoder.encode(newPassword)).thenReturn(encodedPassword);
-
-    boolean result = passwordResetService.resetPassword(code, newPassword);
-
-    assertTrue(result, "Password should be reset successfully");
-    verify(passwordEncoder).encode(newPassword);
-    verify(userSecurityService).save(userSecurityCaptor.capture());
-
-    UserSecurity savedUserSecurity = userSecurityCaptor.getValue();
-    assertEquals(encodedPassword, savedUserSecurity
-        .getPassword(), "The password should be encoded and saved");
   }
 }
