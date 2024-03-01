@@ -43,8 +43,8 @@ public class PasswordResetControllerTest {
     String email = "user@example.com";
 
     when(passwordResetService.requestPasswordReset(anyString())).thenReturn(true);
-
     mockMvc.perform(post("/auth/password-reset/request")
+
             .param("email", email))
         .andExpect(status().isOk());
   }

@@ -58,6 +58,7 @@ public class EmailConfirmationUuidService {
    * @param userId ID of the user to generate the code for.
    * @return Generated UUID confirmation code.
    */
+
   public String generateAndPersistUuidCode(Long userId) {
     deleteConfirmedCodesByUserId(userId);
     String code = createUniqueUuid();
@@ -72,6 +73,7 @@ public class EmailConfirmationUuidService {
    *
    * @param userId The ID of the user whose email code is to be deleted.
    */
+
   public void deleteConfirmedCodesByUserId(Long userId) {
     emailConfirmationCodeRepository.deleteByUserId(userId);
   }

@@ -1,4 +1,3 @@
-
 package com.ratifire.devrate.service.resetpassword;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
