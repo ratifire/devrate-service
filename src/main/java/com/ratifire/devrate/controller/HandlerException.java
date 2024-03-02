@@ -1,6 +1,6 @@
 package com.ratifire.devrate.controller;
 
-
+import com.ratifire.devrate.exception.InvalidCodeException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
@@ -69,4 +69,21 @@ public class HandlerException {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
   }
 
+  /**
+   * Exception handler method for handling InvalidCodeException.
+   *
+   * <p>Handles instances of InvalidCodeException by responding with an HTTP status
+   * of BAD_REQUEST and returning the error message from the exception. Logs the
+   * exception details for debugging purposes.</p>
+   *
+   * @param ex The InvalidCodeException to be handled.
+   * @return A ResponseEntity containing the error message from the exception
+   *         with an HTTP status of BAD_REQUEST.
+   */
+  @ExceptionHandler(InvalidCodeException.class)
+  public ResponseEntity<?> handleInvalidCodeException(InvalidCodeException ex) {
+    log.error("Invalid code: {}", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body("Invalid or expired password reset code.");
+  }
 }
