@@ -33,7 +33,7 @@ public class PasswordResetController {
    * @return true if successful, false otherwise.
    */
 
-  @PostMapping("/request")
+  @PostMapping()
   public boolean requestPasswordReset(@RequestParam String email) {
     return passwordResetService.requestPasswordReset(email);
   }
