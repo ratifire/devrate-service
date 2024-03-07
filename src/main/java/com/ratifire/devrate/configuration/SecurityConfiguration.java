@@ -25,6 +25,17 @@ public class SecurityConfiguration {
 
   private final UserDetailsService userDetailsService;
 
+  private static final String[] WHITELIST = {
+      // -- health-check
+      "/actuator/**",
+      // -- authentication
+      "/auth/**",
+      // -- swagger ui
+      "/swagger-ui/**",
+      "/swagger-config.yaml",
+      "/v3/api-docs/**",
+  };
+
   @Bean
   public static PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
@@ -48,7 +59,7 @@ public class SecurityConfiguration {
     return http
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests((authorize) -> authorize
-            .requestMatchers("/auth/**").permitAll()
+            .requestMatchers(WHITELIST).permitAll()
             .anyRequest().authenticated()
         )
         .build();
