@@ -1,4 +1,7 @@
 #!/bin/bash
+echo "build service"
+mvn clean install
+
 echo "Stop current services"
 docker-compose down
 
