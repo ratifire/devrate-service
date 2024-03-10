@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 10-03-2024_01_add-state-city-users-table
+      author: Ivan Ivashchenko
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: state
+                  type: VARCHAR(100)
+              - column:
+                  name: city
+                  type: VARCHAR(100)

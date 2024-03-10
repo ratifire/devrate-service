@@ -61,6 +61,12 @@ public class User implements UserDetails {
   @Column(nullable = false)
   private String country;
 
+  @Size(max = 100)
+  private String state;
+
+  @Size(max = 100)
+  private String city;
+
   @NotNull
   @Column(name = "is_subscribed", nullable = false)
   private boolean subscribed;

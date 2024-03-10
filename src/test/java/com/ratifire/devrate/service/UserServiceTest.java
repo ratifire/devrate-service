@@ -73,6 +73,8 @@ public class UserServiceTest {
         .firstName("Test first name")
         .lastName("Test last name")
         .country("Test country")
+        .state("Test state")
+        .city("Test city")
         .verified(true)
         .subscribed(true)
         .createdAt(LocalDateTime.now())
