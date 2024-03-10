@@ -19,6 +19,8 @@ servers:
 tags:
   - name: registration
     description: endpoint for user registration
+  - name: Notification
+    description: Operations related to sending notifications
 paths:
   /signup:
     post:
@@ -51,6 +53,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /notify/{login}:
+    post:
+      tags:
+        - Notification
+      summary: Send a notification to a specific user
+      description: Sends a notification to a specific user identified by their login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+      parameters:
+        - in: path
+          name: login
+          required: true
+          schema:
+            type: string
+          description: The login of the user to send the notification to
+      responses:
+        '200':
+          description: Notification sent successfully
+        '400':
+          description: Bad request, invalid parameters
+        '404':
+          description: User not found
+        '500':
+          description: Internal server error
 components:
   schemas:
     SignUpDto:
@@ -118,3 +148,9 @@ components:
         message:
           type: string
           description: The error message
+    Notification:
+      type: object
+      properties:
+        text:
+          type: string
+          description: The text of the notification
