@@ -19,6 +19,10 @@ servers:
 tags:
   - name: registration
     description: endpoint for user registration
+  - name: authentication
+    description: Endpoints for user authentication
+  - name: password-reset
+    description: Endpoints for password reset functionality
 paths:
   /signup:
     post:
@@ -47,6 +51,112 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /password-reset:
+    post:
+      tags:
+        - password-reset
+      summary: Request Password Reset Link
+      description: Requests a password reset link to be sent to the given email.
+      operationId: requestPasswordReset
+      parameters:
+        - in: query
+          name: email
+          required: true
+          schema:
+            type: string
+            format: email
+          description: The email address of the user requesting a password reset.
+      responses:
+        '200':
+          description: Password reset link sent successfully.
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Bad request, e.g., invalid email format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /password-reset/{code}:
+    post:
+      tags:
+        - password-reset
+      summary: Reset Password
+      description: Resets the user's password using a unique code received in the password reset link.
+      operationId: resetPassword
+      parameters:
+        - in: path
+          name: code
+          required: true
+          schema:
+            type: string
+          description: The unique code received in the password reset link.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+              description: The new password to be set for the user account.
+      responses:
+        '200':
+          description: Password reset successfully.
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Bad request, e.g., invalid code or password format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /signin:
+    post:
+      tags:
+        - authentication
+      summary: Authenticate user
+      description: Authenticates a user based on the provided login credentials.
+      operationId: authenticateUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginDto'
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized, e.g., invalid email or password
           content:
             application/json:
               schema:
@@ -118,3 +228,17 @@ components:
         message:
           type: string
           description: The error message
+    LoginDto:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email address of the user
+        password:
+          type: string
+          format: password
+          description: Password of the user
+      required:
+        - email
+        - password
