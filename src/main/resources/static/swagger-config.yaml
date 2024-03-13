@@ -24,7 +24,7 @@ tags:
   - name: password-reset
     description: Endpoints for password reset functionality
 paths:
-  /signup:
+  /auth/signup:
     post:
       tags:
         - registration
@@ -55,7 +55,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /password-reset:
+  /auth/password-reset:
     post:
       tags:
         - password-reset
@@ -89,7 +89,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /password-reset/{code}:
+  /auth/password-reset/{code}:
     post:
       tags:
         - password-reset
@@ -129,7 +129,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /signin:
+  /auth/signin:
     post:
       tags:
         - authentication
@@ -157,6 +157,12 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
         '401':
           description: Unauthorized, e.g., invalid email or password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
           content:
             application/json:
               schema:
