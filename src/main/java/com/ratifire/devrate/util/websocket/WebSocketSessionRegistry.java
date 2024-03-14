@@ -1,4 +1,4 @@
-package com.ratifire.devrate.service;
+package com.ratifire.devrate.util.websocket;
 
 import com.ratifire.devrate.exception.WebSocketSessionNotFoundException;
 import java.io.IOException;

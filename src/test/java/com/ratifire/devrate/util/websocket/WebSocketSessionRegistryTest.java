@@ -1,4 +1,4 @@
-package com.ratifire.devrate.service;
+package com.ratifire.devrate.util.websocket;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.exception.WebSocketSessionNotFoundException;
+import com.ratifire.devrate.util.websocket.WebSocketSessionRegistry;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
