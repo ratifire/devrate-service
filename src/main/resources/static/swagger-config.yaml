@@ -281,6 +281,10 @@ components:
           type: string
           format: date-time
           description: Timestamp of account creation.
+        password:
+          type: string
+          format: password
+          description: Hashed password of the user.
         role:
           $ref: '#/components/schemas/Role'
     Role:
