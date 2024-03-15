@@ -84,7 +84,7 @@ public class User implements UserDetails {
   @JoinColumn(name = "role_id")
   private Role role;
 
-  @OneToMany(fetch = FetchType.EAGER)
+  @OneToMany(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
   private List<Education> educations;
 

@@ -6,8 +6,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,24 +30,20 @@ public class Education {
 
   @NotEmpty
   @Size(max = 100)
-  @Column(nullable = false)
   private String educationType;
+
 
   @NotEmpty
   @Size(max = 100)
-  @Column(nullable = false)
   private String educationName;
 
   @NotEmpty
-  @Column(nullable = false)
   private String description;
 
-  @NotEmpty
-  @Column(nullable = false)
+  @PositiveOrZero
   private int startYear;
 
-  @NotEmpty
-  @Column(nullable = false)
+  @PositiveOrZero
   private int endYear;
 
   @NotNull

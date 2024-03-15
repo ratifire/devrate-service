@@ -9,7 +9,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: BIGINT
+                  type: BIGSERIAL
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -40,7 +40,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: user_id
-                  type: BIGINT
+                  type: BIGSERIAL
                   constraints:
                     nullable: false
 

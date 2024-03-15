@@ -3,8 +3,10 @@ package com.ratifire.devrate.service;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.exception.EducationNotFoundException;
+import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.EducationMapper;
 import com.ratifire.devrate.repository.EducationRepository;
+import com.ratifire.devrate.repository.UserRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class EducationService {
 
   private final EducationRepository educationRepository;
+
+  private final UserRepository userRepository;
 
   private final EducationMapper educationMapper;
 
@@ -30,8 +34,12 @@ public class EducationService {
 
   @Transactional
   public EducationDto create(long userId, EducationDto educationDto) {
+    userRepository.findById(userId)
+        .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
+
     Education education = educationMapper.toEntity(educationDto);
-    education.setId(userId);
+    education.setUserId(userId);
+
     return educationMapper.toDto(educationRepository.save(education));
   }
 
@@ -40,7 +48,9 @@ public class EducationService {
     Education education = educationRepository.findById(id)
         .orElseThrow(() -> new EducationNotFoundException(
             "Education not found with id: " + id));
+
     educationMapper.toUpdate(educationDto, education);
+
     return educationMapper.toDto(educationRepository.save(education));
   }
 
