@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 15-03-2024_02_add-foreign-key-educations-table
+      author: V. Hubersky
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: educations
+            baseColumnNames: user_id
+            constraintName: fk_education_user
+            referencedTableName: users
+            referencedColumnNames: id

@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: 15-03-2024_01_create-table-educations
+      author: V. Hubersky
+      changes:
+        - createTable:
+            tableName: educations
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: education_type
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: education_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: start_year
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: end_year
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+

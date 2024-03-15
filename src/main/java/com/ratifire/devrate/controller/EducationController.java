@@ -1,8 +1,8 @@
 package com.ratifire.devrate.controller;
 
-
 import com.ratifire.devrate.dto.EducationDto;
-import com.ratifire.devrate.entity.Education;
+import com.ratifire.devrate.service.EducationService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,32 +15,33 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user/education")
+@RequestMapping("/educations")
 public class EducationController {
 
+  private final EducationService educationService;
+
   @GetMapping
-  public EducationDto get(){
-    // TODO
-    return null;
-
+  public List<EducationDto> getAll() {
+    return educationService.getAll();
   }
 
-  @PostMapping
-  public EducationDto create(@RequestBody EducationDto educationDto){
-    // TODO
-    return null;
+  @GetMapping("/{id}")
+  public EducationDto getById(@PathVariable long id) {
+    return educationService.getById(id);
   }
 
-  @PutMapping
-  public EducationDto update(@RequestBody EducationDto educationDto){
-    // TODO
-    return null;
+  @PostMapping("/{id}")
+  public EducationDto create(@PathVariable int id, @RequestBody EducationDto educationDto) {
+    return educationService.create(id, educationDto);
+  }
+
+  @PutMapping("/{id}")
+  public EducationDto update(@PathVariable int id, @RequestBody EducationDto educationDto) {
+    return educationService.update(id, educationDto);
   }
 
   @DeleteMapping("/{id}")
-  public void delete(@PathVariable long id){
-    // TODO
+  public void delete(@PathVariable long id) {
+    educationService.delete(id);
   }
-
-
 }

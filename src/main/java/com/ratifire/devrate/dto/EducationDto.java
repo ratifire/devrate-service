@@ -8,7 +8,9 @@ import lombok.Getter;
 public class EducationDto {
 
   private long id;
-  private String university;
-  private String courses;
-  private String events;
+  private String educationType;
+  private String educationName;
+  private String description;
+  private int startYear;
+  private int endYear;
 }
