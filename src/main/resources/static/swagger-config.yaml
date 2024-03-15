@@ -243,6 +243,7 @@ components:
           type: string
           format: date-time
           description: The timestamp when the user account was created
+          readOnly: true
       required:
         - email
         - firstName
