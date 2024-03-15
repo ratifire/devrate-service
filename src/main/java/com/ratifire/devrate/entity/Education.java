@@ -31,7 +31,6 @@ public class Education {
   @Size(max = 100)
   private String educationType;
 
-
   @NotEmpty
   @Size(max = 100)
   private String educationName;
