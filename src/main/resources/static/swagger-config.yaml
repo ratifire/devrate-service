@@ -44,7 +44,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserDto'
         '400':
           description: Bad request
           content:
@@ -89,7 +89,6 @@ paths:
     get:
       tags:
         - registration
-      summary: Email confirmation
       description: Confirming the user's email by matching the code
       operationId: confirmEmail
       parameters:
@@ -274,65 +273,13 @@ components:
           type: string
           format: date-time
           description: The timestamp when the user account was created
+          readOnly: true
       required:
         - email
         - firstName
         - lastName
         - country
         - password
-        - createdAt
-    User:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          description: Unique identifier for the user.
-        email:
-          type: string
-          format: email
-          description: User's email address.
-        firstName:
-          type: string
-          description: User's first name.
-        lastName:
-          type: string
-          description: User's last name.
-        country:
-          type: string
-          description: Country associated with the user.
-        subscribed:
-          type: boolean
-          description: Indicates if user is subscribed to newsletters.
-        verified:
-          type: boolean
-          description: Indicates if user's email is verified.
-        createdAt:
-          type: string
-          format: date-time
-          description: Timestamp of account creation.
-        password:
-          type: string
-          format: password
-          description: Hashed password of the user.
-        role:
-          $ref: '#/components/schemas/Role'
-    Role:
-      type: object
-      required:
-        - name
-        - description
-      properties:
-        id:
-          type: integer
-          format: int64
-          description: Unique identifier of the role
-        name:
-          type: string
-          description: Name of the role
-        description:
-          type: string
-          description: Description of the role
     ErrorResponse:
       type: object
       properties:
