@@ -29,6 +29,9 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 
+/**
+ * Unit tests for the EducationController class.
+ */
 @WebMvcTest(EducationController.class)
 public class EducationControllerTest {
 
@@ -45,6 +48,9 @@ public class EducationControllerTest {
 
   private List<EducationDto> educations;
 
+  /**
+   * Setup method executed before each test method.
+   */
   @BeforeEach
   public void before() {
     educationDto = EducationDto.builder()
@@ -87,7 +93,7 @@ public class EducationControllerTest {
   public void createTest() throws Exception {
     EducationDto educationDto1 = educationDto;
     when(educationService.create(anyLong(), any())).thenReturn(educationDto1);
-    mockMvc.perform(post("/educations/{id}", 1)
+    mockMvc.perform(post("/educations/{userId}", 1)
             .with(SecurityMockMvcRequestPostProcessors.user("Hubersky").roles("USER"))
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)

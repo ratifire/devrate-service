@@ -6,6 +6,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+/**
+ * Mapper interface for mapping between Education and EducationDto objects.
+ */
 @Mapper(componentModel = "spring")
 public interface EducationMapper {
 

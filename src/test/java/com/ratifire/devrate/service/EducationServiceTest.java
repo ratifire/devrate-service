@@ -14,7 +14,6 @@ import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.EducationNotFoundException;
-import com.ratifire.devrate.exception.RoleNotFoundException;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.EducationMapper;
 import com.ratifire.devrate.repository.EducationRepository;
@@ -28,6 +27,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+/**
+ * Unit tests for the EducationService class.
+ */
 @ExtendWith(MockitoExtension.class)
 public class EducationServiceTest {
 
@@ -54,6 +56,9 @@ public class EducationServiceTest {
   private User user;
 
 
+  /**
+   * Setup method executed before each test method.
+   */
   @BeforeEach
   public void before() {
     user = User.builder().id(1).build();

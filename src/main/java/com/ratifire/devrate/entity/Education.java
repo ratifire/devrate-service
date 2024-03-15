@@ -15,6 +15,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entity class representing an education in the system.
+ */
 @Data
 @Entity
 @Builder

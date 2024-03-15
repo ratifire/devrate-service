@@ -239,7 +239,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /educations/{id}:
+  /educations/{userId}:
     post:
       tags:
         - education
@@ -249,6 +249,7 @@ paths:
       parameters:
         - in: path
           name: user_id
+          description: The ID of the user for whom the education is being created.
           required: true
           schema:
             type: integer
@@ -277,6 +278,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /educations/{id}:
     get:
       tags:
         - education
@@ -286,6 +288,7 @@ paths:
       parameters:
         - in: path
           name: id
+          description: The ID of the education to retrieve.
           required: true
           schema:
             type: integer
@@ -318,6 +321,7 @@ paths:
       parameters:
         - in: path
           name: id
+          description: The ID of the education to update.
           required: true
           schema:
             type: integer
@@ -356,6 +360,7 @@ paths:
       parameters:
         - in: path
           name: id
+          description: The ID of the education to delete.
           required: true
           schema:
             type: integer
@@ -440,8 +445,8 @@ components:
         id:
           type: integer
           format: int64
-          readOnly: true
           description: The unique identifier for the education
+          readOnly: true
         educationType:
           type: string
           description: The type of education
