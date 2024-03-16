@@ -32,11 +32,11 @@ public class Education {
 
   @NotEmpty
   @Size(max = 100)
-  private String educationType;
+  private String type;
 
   @NotEmpty
   @Size(max = 100)
-  private String educationName;
+  private String name;
 
   @NotEmpty
   private String description;

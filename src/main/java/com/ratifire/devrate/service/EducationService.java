@@ -7,7 +7,6 @@ import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.EducationMapper;
 import com.ratifire.devrate.repository.EducationRepository;
 import com.ratifire.devrate.repository.UserRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,15 +24,6 @@ public class EducationService {
   private final UserRepository userRepository;
 
   private final EducationMapper educationMapper;
-
-  /**
-   * Retrieves all education entities.
-   *
-   * @return List of EducationDto representing all education entities.
-   */
-  public List<EducationDto> getAll() {
-    return educationRepository.findAll().stream().map(educationMapper::toDto).toList();
-  }
 
   /**
    * Retrieves an education entity by its ID.
@@ -57,8 +47,9 @@ public class EducationService {
    */
   @Transactional
   public EducationDto create(long userId, EducationDto educationDto) {
-    userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
+    if (!userRepository.existsById(userId)) {
+      throw new UserNotFoundException("User not found with id: " + userId);
+    }
 
     Education education = educationMapper.toEntity(educationDto);
     education.setUserId(userId);

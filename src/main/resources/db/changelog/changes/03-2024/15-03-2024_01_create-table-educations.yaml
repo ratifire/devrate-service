@@ -14,12 +14,12 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: education_type
+                  name: type
                   type: VARCHAR(100)
                   constraints:
                     nullable: false
               - column:
-                  name: education_name
+                  name: name
                   type: VARCHAR(100)
                   constraints:
                     nullable: false

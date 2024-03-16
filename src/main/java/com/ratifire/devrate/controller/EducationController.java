@@ -2,7 +2,6 @@ package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.service.EducationService;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,16 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class EducationController {
 
   private final EducationService educationService;
-
-  /**
-   * Retrieves all education entities.
-   *
-   * @return List of EducationDto representing all education entities.
-   */
-  @GetMapping
-  public List<EducationDto> getAll() {
-    return educationService.getAll();
-  }
 
   /**
    * Retrieves an education entity by its ID.

@@ -12,13 +12,11 @@ import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.entity.Education;
-import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.EducationNotFoundException;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.EducationMapper;
 import com.ratifire.devrate.repository.EducationRepository;
 import com.ratifire.devrate.repository.UserRepository;
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,23 +43,15 @@ public class EducationServiceTest {
   @InjectMocks
   private EducationService educationService;
 
-  private List<EducationDto> educationsDto;
-
   private EducationDto educationDto;
 
-  private List<Education> educations;
-
   private Education education;
-
-  private User user;
-
 
   /**
    * Setup method executed before each test method.
    */
   @BeforeEach
   public void before() {
-    user = User.builder().id(1).build();
 
     educationDto = EducationDto.builder()
         .id(1)
@@ -81,20 +71,6 @@ public class EducationServiceTest {
         .endYear(2013)
         .userId(1)
         .build();
-
-    educationsDto = List.of(educationDto);
-    educations = List.of(education);
-
-  }
-
-  @Test
-  public void getAllTest() {
-    when(educationRepository.findAll()).thenReturn(educations);
-    when(educationMapper.toDto(education)).thenReturn(educationDto);
-
-    List<EducationDto> result = educationService.getAll();
-
-    assertEquals(educationsDto, result);
   }
 
   @Test
@@ -115,10 +91,10 @@ public class EducationServiceTest {
 
   @Test
   public void crateTest() {
-    when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
+    when(userRepository.existsById(anyLong())).thenReturn(true);
     when(educationRepository.save(any())).thenReturn(education);
     when(educationMapper.toEntity(any())).thenReturn(education);
-    when(educationMapper.toDto(any())).thenReturn(educationDto);
+    when(educationMapper.toDto(education)).thenReturn(educationDto);
 
     EducationDto result = educationService.create(anyLong(), educationDto);
 
@@ -127,7 +103,7 @@ public class EducationServiceTest {
 
   @Test
   public void crateWithUnExpectedUserIdTest() {
-    when(userRepository.findById(anyLong())).thenThrow(UserNotFoundException.class);
+    when(userRepository.existsById(anyLong())).thenThrow(UserNotFoundException.class);
     assertThrows(UserNotFoundException.class,
         () -> educationService.create(anyLong(), educationDto));
   }
@@ -137,12 +113,11 @@ public class EducationServiceTest {
     when(educationRepository.findById(anyLong())).thenReturn(Optional.ofNullable(education));
     when(educationRepository.save(any())).thenReturn(education);
     doNothing().when(educationMapper).toUpdate(any(), any());
-    when(educationMapper.toDto(any())).thenReturn(educationDto);
+    when(educationMapper.toDto(education)).thenReturn(educationDto);
 
     EducationDto result = educationService.update(anyLong(), educationDto);
 
     assertEquals(educationDto, result);
-
   }
 
   @Test

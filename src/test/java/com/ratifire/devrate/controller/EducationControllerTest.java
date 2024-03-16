@@ -46,8 +46,6 @@ public class EducationControllerTest {
 
   private EducationDto educationDto;
 
-  private List<EducationDto> educations;
-
   /**
    * Setup method executed before each test method.
    */
@@ -61,20 +59,6 @@ public class EducationControllerTest {
         .startYear(2013)
         .endYear(2013)
         .build();
-
-    educations = List.of(educationDto);
-  }
-
-  @Test
-  @WithMockUser(username = "Hubersky", roles = {"USER", "ADMIN"})
-  public void getAllTest() throws Exception {
-    when(educationService.getAll()).thenReturn(educations);
-    mockMvc.perform(get("/educations"))
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$").isArray())
-        .andDo(print());
-    verify(educationService, times(1)).getAll();
   }
 
   @Test

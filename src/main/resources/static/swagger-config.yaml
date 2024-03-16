@@ -211,34 +211,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /educations:
-    get:
-      tags:
-        - education
-      summary: Get All Educations
-      description: Returns a list of all educations in the system.
-      operationId: getAllEducations
-      responses:
-        '200':
-          description: A list of educations
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/EducationDto'
-        '400':
-          description: Bad request, e.g., missing or invalid parameters
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Internal server error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
   /educations/{userId}:
     post:
       tags:
@@ -408,6 +380,12 @@ components:
         password:
           type: string
           description: The password chosen by the user for their account
+        educations:
+          type: array
+          description: List of education history of the user
+          items:
+            $ref: '#/components/schemas/EducationDto'
+          readOnly: true
         createdAt:
           type: string
           format: date-time
@@ -447,10 +425,10 @@ components:
           format: int64
           description: The unique identifier for the education
           readOnly: true
-        educationType:
+        type:
           type: string
           description: The type of education
-        educationName:
+        name:
           type: string
           description: The name of the education
         description:
@@ -463,8 +441,8 @@ components:
           type: integer
           description: The ending year of the education
       required:
-        - educationType
-        - educationName
+        - type
+        - name
         - description
         - startYear
         - endYear

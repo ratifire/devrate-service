@@ -11,8 +11,8 @@ import lombok.Getter;
 public class EducationDto {
 
   private long id;
-  private String educationType;
-  private String educationName;
+  private String type;
+  private String name;
   private String description;
   private int startYear;
   private int endYear;
