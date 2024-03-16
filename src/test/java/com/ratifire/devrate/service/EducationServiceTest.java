@@ -55,8 +55,8 @@ public class EducationServiceTest {
 
     educationDto = EducationDto.builder()
         .id(1)
-        .educationType("Course")
-        .educationName("Hillel")
+        .type("Course")
+        .name("Hillel")
         .description("I learned a lot of knowledge")
         .startYear(2013)
         .endYear(2013)
@@ -64,8 +64,8 @@ public class EducationServiceTest {
 
     education = Education.builder()
         .id(1)
-        .educationType("Course")
-        .educationName("Hillel")
+        .type("Course")
+        .name("Hillel")
         .description("I learned a lot of knowledge")
         .startYear(2013)
         .endYear(2013)

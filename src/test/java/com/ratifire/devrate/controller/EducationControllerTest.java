@@ -18,7 +18,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.service.EducationService;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +52,8 @@ public class EducationControllerTest {
   public void before() {
     educationDto = EducationDto.builder()
         .id(1)
-        .educationType("Course")
-        .educationName("Hillel")
+        .type("Course")
+        .name("Hillel")
         .description("I learned a lot of knowledge")
         .startYear(2013)
         .endYear(2013)
