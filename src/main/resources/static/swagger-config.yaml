@@ -380,12 +380,6 @@ components:
         password:
           type: string
           description: The password chosen by the user for their account
-        educations:
-          type: array
-          description: List of education history of the user
-          items:
-            $ref: '#/components/schemas/EducationDto'
-          readOnly: true
         createdAt:
           type: string
           format: date-time

@@ -47,6 +47,7 @@ public class Education {
   @PositiveOrZero
   private int endYear;
 
+  //Migration to the user_personal_info
   @NotNull
   @Column(name = "user_id", nullable = false)
   private long userId;
