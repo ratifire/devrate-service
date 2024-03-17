@@ -2,6 +2,14 @@ databaseChangeLog:
   - changeSet:
       id: 11-02-2024_04_input-user-role
       author: O. Voskresenskyy
+      preConditions:
+        - onFail: MARK_RAN
+          comments: |
+            Checks if 'Admin' and 'User' roles already exist in the "roles" table.
+            Marks the changeSet as executed without inserting roles if any exist.
+          sqlCheck:
+            sql: "SELECT COUNT(*) FROM roles WHERE name IN ('Admin', 'User')"
+            expectedResult: 0
       changes:
         - insert:
             tableName: roles

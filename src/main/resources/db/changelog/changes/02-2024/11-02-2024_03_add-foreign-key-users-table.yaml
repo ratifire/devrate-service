@@ -2,6 +2,16 @@ databaseChangeLog:
   - changeSet:
       id: 11-02-2024_03_add-foreign-key-users-table
       author: Dmytro Abalmas
+      preConditions:
+        - onFail: MARK_RAN
+          comments: |
+            Checks if the foreign key constraint 'fk_user_role' does not already exist 
+            on the "users" table.
+            Marks the changeSet as executed if the foreign key constraint exists.
+          not:
+            foreignKeyConstraintExists:
+              foreignKeyName: fk_user_role
+              baseTableName: users
       changes:
         - addForeignKeyConstraint:
             baseTableName: users
