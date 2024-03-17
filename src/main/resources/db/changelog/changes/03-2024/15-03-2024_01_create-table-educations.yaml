@@ -5,7 +5,6 @@ databaseChangeLog:
       changes:
         - createTable:
             tableName: educations
-            ifNotExists: true
             columns:
               - column:
                   name: id
