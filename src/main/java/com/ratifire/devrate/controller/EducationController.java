@@ -42,7 +42,7 @@ public class EducationController {
    * @return EducationDto representing the newly created education entity.
    */
   @PostMapping("/{userId}")
-  public EducationDto create(@PathVariable int userId, @RequestBody EducationDto educationDto) {
+  public EducationDto create(@PathVariable long userId, @RequestBody EducationDto educationDto) {
     return educationService.create(userId, educationDto);
   }
 
@@ -54,7 +54,7 @@ public class EducationController {
    * @return EducationDto representing the updated education entity.
    */
   @PutMapping("/{id}")
-  public EducationDto update(@PathVariable int id, @RequestBody EducationDto educationDto) {
+  public EducationDto update(@PathVariable long id, @RequestBody EducationDto educationDto) {
     return educationService.update(id, educationDto);
   }
 
