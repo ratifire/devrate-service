@@ -1,0 +1,70 @@
+package com.ratifire.devrate.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+/**
+ * Entity class representing an entity for storing user personal information.
+ */
+@Entity
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "user_personal_info")
+public class UserPersonalInfo {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
+
+  @NotEmpty
+  @Size(max = 100)
+  @Column(nullable = false)
+  private String firstName;
+
+  @NotEmpty
+  @Size(max = 100)
+  @Column(nullable = false)
+  private String lastName;
+
+  @Size(max = 50)
+  private String position;
+
+  @NotEmpty
+  @Size(max = 100)
+  @Column(nullable = false)
+  private String country;
+
+  @Size(max = 100)
+  private String state;
+
+  @NotEmpty
+  @Size(max = 100)
+  @Column(nullable = false)
+  private String city;
+
+  @NotNull
+  @Column(name = "is_subscribed", nullable = false)
+  private boolean subscribed;
+
+  @NotEmpty
+  private String description;
+
+  @NotNull
+  @Column(name = "user_registration_id", nullable = false)
+  private long userId;
+}
