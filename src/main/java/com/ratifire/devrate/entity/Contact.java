@@ -16,6 +16,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entity class representing a contact in the system.
+ */
 @Data
 @Builder
 @AllArgsConstructor
@@ -38,7 +41,6 @@ public class Contact {
   private String value;
 
   //TODO: Need to migrate migrate to the entity personal_info
-  @NotEmpty
   @Column(name = "user_id", nullable = false)
   private long userId;
 
