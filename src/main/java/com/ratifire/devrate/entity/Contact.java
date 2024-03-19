@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,8 +32,7 @@ public class Contact {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @NotEmpty
-  @Size(max = 100)
+  @NotNull
   @Enumerated(EnumType.STRING)
   private ContactType type;
 
