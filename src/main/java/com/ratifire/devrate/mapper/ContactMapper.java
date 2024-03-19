@@ -12,12 +12,10 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface ContactMapper {
 
-
   ContactDto toDto(Contact contact);
 
   Contact toEntity(ContactDto contactDto);
 
-  @Mapping(target = "id", ignore = true)
   void toUpdate(ContactDto contactDto, @MappingTarget Contact contact);
 
 }
