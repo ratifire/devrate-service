@@ -25,4 +25,6 @@ public class UserPersonalInfoDto {
   private boolean subscribed;
 
   private String description;
+
+  private long userId;
 }

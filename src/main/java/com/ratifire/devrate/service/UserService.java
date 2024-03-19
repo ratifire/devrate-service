@@ -61,4 +61,14 @@ public class UserService {
   public User findUserByEmail(String email) throws UsernameNotFoundException {
     return userRepository.findByEmail(email).orElseThrow();
   }
+
+  /**
+   * Checks if a user exists by their ID.
+   *
+   * @param id The ID of the user to check for existence.
+   * @return {@code true} if a user with the specified ID exists, {@code false} otherwise.
+   */
+  public boolean isUserExistsById(long id) {
+    return userRepository.existsById(id);
+  }
 }

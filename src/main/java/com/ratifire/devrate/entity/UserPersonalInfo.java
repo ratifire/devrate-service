@@ -64,7 +64,7 @@ public class UserPersonalInfo {
   @NotEmpty
   private String description;
 
-  @NotNull
+  @NotEmpty
   @Column(name = "user_registration_id", nullable = false)
   private long userId;
 }

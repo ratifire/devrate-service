@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.entity.User;
@@ -81,5 +82,35 @@ public class UserServiceTest {
     when(userRepository.save(any())).thenReturn(testUser);
     User expectedUser = userService.save(User.builder().build());
     assertEquals(expectedUser, testUser);
+  }
+
+  /**
+   * Unit test for {@link UserService#isUserExistsById(long)}.
+   *
+   * <p>Test method for checking if a user exists by id. This method verifies that the user
+   * exists in the database and returns true.
+   */
+  @Test
+  public void testIsUserExistsById_ReturnsTrue() {
+    when(userRepository.existsById(any())).thenReturn(true);
+
+    boolean isExist = userService.isUserExistsById(anyLong());
+
+    assertTrue(isExist);
+  }
+
+  /**
+   * Unit test for {@link UserService#isUserExistsById(long)}.
+   *
+   * <p>Test method for checking if a user doesn't exist by id. This method verifies that the user
+   * doesn't exist in the database and returns false.
+   */
+  @Test
+  public void testIsUserExistsById_ReturnsFalse() {
+    when(userRepository.existsById(any())).thenReturn(false);
+
+    boolean isExist = userService.isUserExistsById(anyLong());
+
+    assertFalse(isExist);
   }
 }
