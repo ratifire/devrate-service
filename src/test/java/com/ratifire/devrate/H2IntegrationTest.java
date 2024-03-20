@@ -1,6 +1,5 @@
 package com.ratifire.devrate;
 
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.sql.DataSource;

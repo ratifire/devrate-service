@@ -8,8 +8,8 @@ databaseChangeLog:
             Checks if the "educations" table already exists.
             Marks the changeSet as executed if the table exists.
           not:
-          tableExists:
-          tableName: educations
+            tableExists:
+              tableName: educations
       changes:
         - createTable:
             tableName: educations
