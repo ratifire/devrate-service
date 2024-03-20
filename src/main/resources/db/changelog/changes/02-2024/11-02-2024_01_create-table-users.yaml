@@ -2,6 +2,14 @@ databaseChangeLog:
   - changeSet:
       id: 11-02-2024_01_create-table-users
       author: Dmytro Abalmas
+      preConditions:
+        - onFail: MARK_RAN
+          comments: |
+            Checks if the "users" table already exists.
+            Marks the changeSet as executed if the table exists.
+          not:
+            tableExists:
+              tableName: users
       changes:
         - createTable:
             tableName: users
