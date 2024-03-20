@@ -6,7 +6,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -31,12 +30,10 @@ public class UserInfo {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @NotEmpty
   @Size(max = 100)
   @Column(nullable = false)
   private String firstName;
 
-  @NotEmpty
   @Size(max = 100)
   @Column(nullable = false)
   private String lastName;
@@ -44,7 +41,6 @@ public class UserInfo {
   @Size(max = 50)
   private String position;
 
-  @NotEmpty
   @Size(max = 100)
   @Column(nullable = false)
   private String country;
@@ -56,7 +52,6 @@ public class UserInfo {
   @Column(nullable = false)
   private String city;
 
-  @NotNull
   @Column(name = "is_subscribed", nullable = false)
   private boolean subscribed;
 

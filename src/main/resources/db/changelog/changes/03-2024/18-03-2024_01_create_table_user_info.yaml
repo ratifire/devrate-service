@@ -23,21 +23,15 @@ databaseChangeLog:
               - column:
                   name: first_name
                   type: VARCHAR(100)
-                  constraints:
-                    nullable: false
               - column:
                   name: last_name
                   type: VARCHAR(100)
-                  constraints:
-                    nullable: false
               - column:
                   name: position
                   type: VARCHAR(50)
               - column:
                   name: country
                   type: VARCHAR(100)
-                  constraints:
-                    nullable: false
               - column:
                   name: state
                   type: VARCHAR(100)
@@ -47,8 +41,6 @@ databaseChangeLog:
               - column:
                   name: is_subscribed
                   type: BOOLEAN
-                  constraints:
-                    nullable: false
               - column:
                   name: description
                   type: TEXT
