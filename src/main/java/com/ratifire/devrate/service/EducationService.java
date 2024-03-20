@@ -3,25 +3,19 @@ package com.ratifire.devrate.service;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.exception.EducationNotFoundException;
-import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.EducationMapper;
 import com.ratifire.devrate.repository.EducationRepository;
-import com.ratifire.devrate.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class for performing operations related to Education entities.
  */
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class EducationService {
 
   private final EducationRepository educationRepository;
-
-  private final UserRepository userRepository;
 
   private final EducationMapper educationMapper;
 
@@ -43,14 +37,8 @@ public class EducationService {
    * @param userId       The ID of the user to whom the education belongs.
    * @param educationDto The data representing the education entity to be created.
    * @return EducationDto representing the newly created education entity.
-   * @throws UserNotFoundException If no user is found with the given ID.
    */
-  @Transactional
   public EducationDto create(long userId, EducationDto educationDto) {
-    if (!userRepository.existsById(userId)) {
-      throw new UserNotFoundException("User not found with id: " + userId);
-    }
-
     Education education = educationMapper.toEntity(educationDto);
     education.setUserId(userId);
 
@@ -65,7 +53,6 @@ public class EducationService {
    * @return EducationDto representing the updated education entity.
    * @throws EducationNotFoundException If no education entity is found with the given ID.
    */
-  @Transactional
   public EducationDto update(long id, EducationDto educationDto) {
     Education education = educationRepository.findById(id)
         .orElseThrow(() -> new EducationNotFoundException(
@@ -81,7 +68,6 @@ public class EducationService {
    *
    * @param id The ID of the education entity to be deleted.
    */
-  @Transactional
   public void delete(long id) {
     educationRepository.deleteById(id);
   }

@@ -13,10 +13,8 @@ import static org.mockito.Mockito.when;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.exception.EducationNotFoundException;
-import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.EducationMapper;
 import com.ratifire.devrate.repository.EducationRepository;
-import com.ratifire.devrate.repository.UserRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,9 +31,6 @@ public class EducationServiceTest {
 
   @Mock
   private EducationRepository educationRepository;
-
-  @Mock
-  private UserRepository userRepository;
 
   @Mock
   private EducationMapper educationMapper;
@@ -91,7 +86,6 @@ public class EducationServiceTest {
 
   @Test
   public void crateTest() {
-    when(userRepository.existsById(anyLong())).thenReturn(true);
     when(educationRepository.save(any())).thenReturn(education);
     when(educationMapper.toEntity(any())).thenReturn(education);
     when(educationMapper.toDto(education)).thenReturn(educationDto);
@@ -99,13 +93,6 @@ public class EducationServiceTest {
     EducationDto result = educationService.create(anyLong(), educationDto);
 
     assertEquals(educationDto, result);
-  }
-
-  @Test
-  public void crateWithUnExpectedUserIdTest() {
-    when(userRepository.existsById(anyLong())).thenThrow(UserNotFoundException.class);
-    assertThrows(UserNotFoundException.class,
-        () -> educationService.create(anyLong(), educationDto));
   }
 
   @Test
