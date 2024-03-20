@@ -10,14 +10,12 @@ import com.ratifire.devrate.repository.UserInfoRepository;
 import com.ratifire.devrate.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class for performing operations related to {@link UserInfo} entities.
  */
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class UserInfoService {
 
   private final UserInfoRepository userInfoRepository;
@@ -31,7 +29,7 @@ public class UserInfoService {
    * @return the user's personal information as a DTO
    * @throws UserInfoNotFoundException if user personal information is not found
    */
-  public UserInfoDto getById(long userId) {
+  public UserInfoDto findByUserId(long userId) {
     return userInfoRepository.findByUserId(userId).map(userInfoMapper::toDto)
         .orElseThrow(() -> new UserInfoNotFoundException("The user's personal information "
             + "could not be found with the user id \"" + userId + "\""));
@@ -40,14 +38,13 @@ public class UserInfoService {
   /**
    * Creates user personal information.
    *
-   * @param userId              the ID of the user
    * @param userInfoDto the user's personal information as a DTO
    * @return the created user personal information as a DTO
    * @throws UserNotFoundException if the user does not exist
    * @throws UserInfoAlreadyExistsException if the user personal info already exists
    */
-  @Transactional
-  public UserInfoDto create(long userId, UserInfoDto userInfoDto) {
+  public UserInfoDto create(UserInfoDto userInfoDto) {
+    long userId = userInfoDto.getUserId();
     if (!userService.isUserExistsById(userId)) {
       throw new UserNotFoundException("The user could not be found with the id \"" + userId + "\"");
     }
@@ -66,14 +63,13 @@ public class UserInfoService {
   /**
    * Updates user personal information.
    *
-   * @param userId              the ID of the user
    * @param userInfoDto the updated user's personal information as a DTO
    * @return the updated user personal information as a DTO
    * @throws UserNotFoundException if the user does not exist
    * @throws UserInfoNotFoundException if the user personal info does not exist by user id
    */
-  @Transactional
-  public UserInfoDto update(long userId, UserInfoDto userInfoDto) {
+  public UserInfoDto update(UserInfoDto userInfoDto) {
+    long userId = userInfoDto.getUserId();
     if (!userService.isUserExistsById(userId)) {
       throw new UserNotFoundException("The user could not be found with the id \"" + userId + "\"");
     }
@@ -94,7 +90,6 @@ public class UserInfoService {
    * @throws UserNotFoundException             if the user does not exist
    * @throws UserInfoNotFoundException if user personal information is not found
    */
-  @Transactional
   public void delete(long userId) {
     if (!userService.isUserExistsById(userId)) {
       throw new UserNotFoundException("The user could not be found with the id \"" + userId + "\"");

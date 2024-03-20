@@ -29,34 +29,30 @@ public class UserInfoController {
    * @return the user's personal information as a DTO
    */
   @GetMapping("/{userId}")
-  public UserInfoDto getByUserId(@PathVariable long userId) {
-    return userInfoService.getById(userId);
+  public UserInfoDto findByUserId(@PathVariable long userId) {
+    return userInfoService.findByUserId(userId);
   }
 
   /**
    * Creates user personal information by user ID.
    *
-   * @param userId              the ID of the user
    * @param userInfoDto the user's personal information as a DTO
    * @return the created user personal information as a DTO
    */
-  @PostMapping("/{userId}")
-  public UserInfoDto create(@PathVariable long userId,
-      @RequestBody UserInfoDto userInfoDto) {
-    return userInfoService.create(userId, userInfoDto);
+  @PostMapping()
+  public UserInfoDto create(@RequestBody UserInfoDto userInfoDto) {
+    return userInfoService.create(userInfoDto);
   }
 
   /**
    * Updates user personal information by user ID.
    *
-   * @param userId              the ID of the user
    * @param userInfoDto the updated user's personal information as a DTO
    * @return the updated user personal information as a DTO
    */
-  @PutMapping("/{userId}")
-  public UserInfoDto update(@PathVariable long userId,
-      @RequestBody UserInfoDto userInfoDto) {
-    return userInfoService.update(userId, userInfoDto);
+  @PutMapping()
+  public UserInfoDto update(@RequestBody UserInfoDto userInfoDto) {
+    return userInfoService.update(userInfoDto);
   }
 
   /**

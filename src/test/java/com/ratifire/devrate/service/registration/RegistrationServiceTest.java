@@ -122,6 +122,7 @@ public class RegistrationServiceTest {
     when(userService.save(any())).thenReturn(testUser);
     when(userMapper.toEntity(any(), any())).thenReturn(testUser);
     when(userMapper.toDto(any())).thenReturn(testUserDto);
+    when(userInfoService.create(any(UserInfoDto.class))).thenReturn(UserInfoDto.builder().build());
 
     when(registrationService.isUserExistByEmail(any())).thenReturn(false);
     when(emailConfirmationCodeService.save(anyLong()))
@@ -132,6 +133,7 @@ public class RegistrationServiceTest {
 
     assertEquals(expected, testUserDto);
     verify(emailConfirmationCodeService, times(1)).save(anyLong());
+    verify(userInfoService, times(1)).create(any(UserInfoDto.class));
     verify(emailService, times(1)).sendEmail(any(), anyBoolean());
   }
 
@@ -167,9 +169,6 @@ public class RegistrationServiceTest {
     User user = new User();
     when(userService.getById(userId)).thenReturn(user);
     when(userService.save(user)).thenReturn(null);
-
-    when(userInfoService.create(anyLong(), any(UserInfoDto.class)))
-        .thenReturn(UserInfoDto.builder().build());
 
     doNothing().when(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
 

@@ -5,7 +5,7 @@ databaseChangeLog:
       changes:
         - addForeignKeyConstraint:
             baseTableName: user_info
-            baseColumnNames: user_registration_id
-            constraintName: fk_user_registration_personal_info
+            baseColumnNames: user_id
+            constraintName: fk_user_info
             referencedTableName: users
             referencedColumnNames: id

@@ -63,6 +63,6 @@ public class UserInfo {
   private String description;
 
   @NotNull
-  @Column(name = "user_registration_id", nullable = false)
+  @Column(name = "user_id", nullable = false)
   private long userId;
 }

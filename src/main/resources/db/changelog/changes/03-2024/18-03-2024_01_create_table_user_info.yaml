@@ -53,7 +53,7 @@ databaseChangeLog:
                   name: description
                   type: TEXT
               - column:
-                  name: user_registration_id
+                  name: user_id
                   type: BIGINT
                   constraints:
                     nullable: false
