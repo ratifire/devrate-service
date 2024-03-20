@@ -1,7 +1,7 @@
 package com.ratifire.devrate.util.websocket;
 
+import com.ratifire.devrate.exception.LoginNotFoundException;
 import java.security.Principal;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -21,15 +21,15 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
 
   @Override
   public void afterConnectionEstablished(@NonNull WebSocketSession session) {
-    Optional<String> login = extractLogin(session);
-    login.ifPresent(s -> sessionRegistry.registerSession(s, session));
+    String login = extractLogin(session);
+    sessionRegistry.registerSession(login, session);
   }
 
   @Override
   public void afterConnectionClosed(@NonNull WebSocketSession session,
       @NonNull CloseStatus closeStatus) {
-    Optional<String> login = extractLogin(session);
-    login.ifPresent(sessionRegistry::removeSession);
+    String login = extractLogin(session);
+    sessionRegistry.closeRemoveSession(login, session);
   }
 
   @Override
@@ -38,11 +38,18 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
     session.sendMessage(message);
   }
 
-  private Optional<String> extractLogin(WebSocketSession session) {
+  /**
+   * Extracts the login associated with the given WebSocket session.
+   *
+   * @param session the WebSocket session
+   * @return the login associated with the session
+   * @throws LoginNotFoundException if the login is not found in the session
+   */
+  private String extractLogin(WebSocketSession session) {
     Principal principal = session.getPrincipal();
     if (principal == null) {
-      return Optional.empty();
+      throw new LoginNotFoundException("Login not found.");
     }
-    return Optional.of(principal.getName());
+    return principal.getName();
   }
 }
