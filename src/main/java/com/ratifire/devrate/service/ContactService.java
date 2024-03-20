@@ -37,7 +37,7 @@ public class ContactService {
   public ContactDto findById(long id) {
     return contactRepository.findById(id)
         .map(contactMapper::toDto)
-        .orElseThrow(() -> new ContactNotFoundException("Contact with id " + id + " not found"));
+        .orElseThrow(() -> new ContactNotFoundException(id));
   }
 
   /**
@@ -70,7 +70,7 @@ public class ContactService {
   @Transactional
   public ContactDto update(long id, ContactDto contactDto) {
     Contact contact = contactRepository.findById(id)
-        .orElseThrow(() -> new ContactNotFoundException("Contact with id " + id + " not found"));
+        .orElseThrow(() -> new ContactNotFoundException(id));
     contactMapper.toUpdate(contactDto, contact);
     contactRepository.save(contact);
     return contactMapper.toDto(contact);
@@ -84,7 +84,7 @@ public class ContactService {
   @Transactional
   public void delete(long id) {
     if (!contactRepository.existsById(id)) {
-      throw new ContactNotFoundException("Contact with id " + id + " not found");
+      throw new ContactNotFoundException(id);
     }
     contactRepository.deleteById(id);
   }

@@ -3,7 +3,6 @@ package com.ratifire.devrate.mapper;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.entity.Contact;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 /**

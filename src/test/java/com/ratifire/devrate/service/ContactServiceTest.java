@@ -44,9 +44,9 @@ class ContactServiceTest {
 
   private Contact contact;
 
-  private final long USER_ID = 1;
+  private long userId = 1;
 
-  private final long ID = 1;
+  private long id = 1;
 
   @BeforeEach
   void setUp() {
@@ -56,34 +56,34 @@ class ContactServiceTest {
 
   @Test
   void findByIdTest() {
-    when(contactRepository.findById(ID)).thenReturn(Optional.of(contact));
+    when(contactRepository.findById(id)).thenReturn(Optional.of(contact));
     when(contactMapper.toDto(contact)).thenReturn(contactDto);
 
-    ContactDto result = contactService.findById(ID);
+    ContactDto result = contactService.findById(id);
 
     assertEquals(contactDto, result);
-    verify(contactRepository).findById(ID);
+    verify(contactRepository).findById(id);
     verify(contactMapper).toDto(contact);
   }
 
   @Test
   void findByIdThrowContactNotFoundExceptionTest() {
-    when(contactRepository.findById(ID)).thenReturn(Optional.empty());
+    when(contactRepository.findById(id)).thenReturn(Optional.empty());
 
-    assertThrows(ContactNotFoundException.class, () -> contactService.findById(ID));
+    assertThrows(ContactNotFoundException.class, () -> contactService.findById(id));
   }
 
   @Test
   void createTest() {
-    when(userRepository.existsById(USER_ID)).thenReturn(true);
+    when(userRepository.existsById(userId)).thenReturn(true);
     when(contactMapper.toEntity(contactDto)).thenReturn(contact);
     when(contactRepository.save(contact)).thenReturn(contact);
     when(contactMapper.toDto(contact)).thenReturn(contactDto);
 
-    ContactDto contactDtoCreated = contactService.create(USER_ID, contactDto);
+    ContactDto contactDtoCreated = contactService.create(userId, contactDto);
 
     assertEquals(contactDto, contactDtoCreated);
-    verify(userRepository).existsById(USER_ID);
+    verify(userRepository).existsById(userId);
     verify(contactMapper).toEntity(contactDto);
     verify(contactRepository).save(contact);
     verify(contactMapper).toDto(contact);
@@ -91,23 +91,23 @@ class ContactServiceTest {
 
   @Test
   void createThrowUserNotFoundExceptionTest() {
-    when(userRepository.existsById(USER_ID)).thenReturn(false);
+    when(userRepository.existsById(userId)).thenReturn(false);
 
-    assertThrows(UserNotFoundException.class, () -> contactService.create(USER_ID, contactDto));
+    assertThrows(UserNotFoundException.class, () -> contactService.create(userId, contactDto));
   }
 
 
   @Test
   void updateTest() {
-    when(contactRepository.findById(ID)).thenReturn(Optional.of(contact));
+    when(contactRepository.findById(id)).thenReturn(Optional.of(contact));
     doNothing().when(contactMapper).toUpdate(any(ContactDto.class), any(Contact.class));
     when(contactRepository.save(any(Contact.class))).thenReturn(contact);
     when(contactMapper.toDto(any(Contact.class))).thenReturn(contactDto);
 
-    ContactDto contactDtoUpdated = contactService.update(ID, contactDto);
+    ContactDto contactDtoUpdated = contactService.update(id, contactDto);
 
     assertEquals(contactDto, contactDtoUpdated);
-    verify(contactRepository).findById(ID);
+    verify(contactRepository).findById(id);
     verify(contactRepository).save(any(Contact.class));
     verify(contactMapper).toUpdate(any(ContactDto.class), any(Contact.class));
     verify(contactMapper).toDto(any(Contact.class));
@@ -116,26 +116,26 @@ class ContactServiceTest {
 
   @Test
   void updateThrowContactNotFoundExceptionTest() {
-    when(contactRepository.findById(ID)).thenReturn(Optional.empty());
+    when(contactRepository.findById(id)).thenReturn(Optional.empty());
 
-    assertThrows(ContactNotFoundException.class, () -> contactService.update(ID, contactDto));
+    assertThrows(ContactNotFoundException.class, () -> contactService.update(id, contactDto));
   }
 
   @Test
   void deleteTest() {
-    when(contactRepository.existsById(ID)).thenReturn(true);
+    when(contactRepository.existsById(id)).thenReturn(true);
 
-    contactService.delete(ID);
+    contactService.delete(id);
 
-    verify(contactRepository).existsById(ID);
-    verify(contactRepository).deleteById(ID);
+    verify(contactRepository).existsById(id);
+    verify(contactRepository).deleteById(id);
   }
 
   @Test
   void deleteThrowContactNotFoundExceptionTest() {
-    when(contactRepository.existsById(ID)).thenReturn(false);
+    when(contactRepository.existsById(id)).thenReturn(false);
 
-    assertThrows(ContactNotFoundException.class, () -> contactService.delete(ID));
+    assertThrows(ContactNotFoundException.class, () -> contactService.delete(id));
   }
 
 }

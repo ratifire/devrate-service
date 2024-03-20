@@ -6,8 +6,10 @@ package com.ratifire.devrate.exception;
  */
 public class ContactNotFoundException extends RuntimeException {
 
-  public ContactNotFoundException(String message) {
-    super(message);
+  private static final String MESSAGE_NOT_FOUND_FORMAT = "Contact with id %d not found";
+
+  public ContactNotFoundException(long id) {
+    super(String.format(MESSAGE_NOT_FOUND_FORMAT, id));
   }
 
 }

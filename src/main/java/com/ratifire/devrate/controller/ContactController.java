@@ -30,7 +30,7 @@ public class ContactController {
    * @return ContactDto representing the contact entity.
    */
   @GetMapping("/{id}")
-  public ContactDto getById(@PathVariable long id) {
+  public ContactDto findById(@PathVariable long id) {
     return contactService.findById(id);
   }
 

@@ -48,9 +48,9 @@ class ContactControllerTest {
   @Autowired
   private ObjectMapper objectMapper;
 
-  private final long CONTACT_ID = 1;
+  private long contactId = 1;
 
-  private final long USER_ID = 1;
+  private long userId = 1;
 
   private ContactDto contactDto;
 
@@ -73,8 +73,8 @@ class ContactControllerTest {
   @Test
   @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
   void findByIdTest() throws Exception {
-    when(contactService.findById(CONTACT_ID)).thenReturn(contactDto);
-    mockMvc.perform(get("/contacts/{id}", CONTACT_ID))
+    when(contactService.findById(contactId)).thenReturn(contactDto);
+    mockMvc.perform(get("/contacts/{id}", contactId))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.type").value(contactDto.getType().toString()))
@@ -87,7 +87,7 @@ class ContactControllerTest {
   void createTest() throws Exception {
     String requestBody = objectMapper.writeValueAsString(contactDto);
     when(contactService.create(anyLong(), any(ContactDto.class))).thenReturn(contactDto);
-    mockMvc.perform(post("/contacts/{userId}", USER_ID)
+    mockMvc.perform(post("/contacts/{userId}", userId)
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestBody))
         .andExpect(status().isOk())
@@ -102,7 +102,7 @@ class ContactControllerTest {
   void updateTest() throws Exception {
     String requestBody = objectMapper.writeValueAsString(contactDtoUpdated);
     when(contactService.update(anyLong(), any(ContactDto.class))).thenReturn(contactDtoUpdated);
-    mockMvc.perform(put("/contacts/{id}", CONTACT_ID)
+    mockMvc.perform(put("/contacts/{id}", contactId)
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestBody))
         .andExpect(status().isOk())
@@ -116,7 +116,7 @@ class ContactControllerTest {
   @Test
   @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
   void deleteTest() throws Exception {
-    mockMvc.perform(delete("/contacts/{id}", CONTACT_ID))
+    mockMvc.perform(delete("/contacts/{id}", contactId))
         .andExpect(status().isOk());
   }
 
