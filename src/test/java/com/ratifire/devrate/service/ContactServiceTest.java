@@ -10,10 +10,8 @@ import static org.mockito.Mockito.when;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.exception.ContactNotFoundException;
-import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.ContactMapper;
 import com.ratifire.devrate.repository.ContactRepository;
-import com.ratifire.devrate.repository.UserRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,9 +31,6 @@ class ContactServiceTest {
 
   @Mock
   private ContactRepository contactRepository;
-
-  @Mock
-  private UserRepository userRepository;
 
   @Mock
   private ContactMapper contactMapper;
@@ -75,7 +70,6 @@ class ContactServiceTest {
 
   @Test
   void createTest() {
-    when(userRepository.existsById(userId)).thenReturn(true);
     when(contactMapper.toEntity(contactDto)).thenReturn(contact);
     when(contactRepository.save(contact)).thenReturn(contact);
     when(contactMapper.toDto(contact)).thenReturn(contactDto);
@@ -83,19 +77,10 @@ class ContactServiceTest {
     ContactDto contactDtoCreated = contactService.create(userId, contactDto);
 
     assertEquals(contactDto, contactDtoCreated);
-    verify(userRepository).existsById(userId);
     verify(contactMapper).toEntity(contactDto);
     verify(contactRepository).save(contact);
     verify(contactMapper).toDto(contact);
   }
-
-  @Test
-  void createThrowUserNotFoundExceptionTest() {
-    when(userRepository.existsById(userId)).thenReturn(false);
-
-    assertThrows(UserNotFoundException.class, () -> contactService.create(userId, contactDto));
-  }
-
 
   @Test
   void updateTest() {
