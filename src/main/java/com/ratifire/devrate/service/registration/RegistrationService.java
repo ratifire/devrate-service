@@ -1,6 +1,7 @@
 package com.ratifire.devrate.service.registration;
 
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.dto.UserInfoDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.Role;
 import com.ratifire.devrate.entity.User;
@@ -10,6 +11,7 @@ import com.ratifire.devrate.mapper.UserMapper;
 import com.ratifire.devrate.service.RoleService;
 import com.ratifire.devrate.service.UserService;
 import com.ratifire.devrate.service.email.EmailService;
+import com.ratifire.devrate.service.userinfo.UserInfoService;
 import liquibase.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
@@ -36,6 +38,8 @@ public class RegistrationService {
   private final EmailConfirmationCodeService emailConfirmationCodeService;
 
   private final EmailService emailService;
+
+  private final UserInfoService userInfoService;
 
   /**
    * Checks if a user with the given email address exists.
@@ -105,9 +109,9 @@ public class RegistrationService {
     }
 
     if (emailConfirmationCode.getCode().equals(code)) {
-      User user = userService.getById(userId);
-      user.setVerified(true);
-      userService.save(user);
+      User user = saveUser(userId);
+
+      createUserPersonalInfo(user);
 
       emailConfirmationCodeService.deleteConfirmedCode(emailConfirmationCode.getId());
 
@@ -115,5 +119,23 @@ public class RegistrationService {
     }
 
     throw new EmailConfirmationCodeException("The confirmation code is invalid.");
+  }
+
+  private User saveUser(long userId) {
+    User user = userService.getById(userId);
+    user.setVerified(true);
+    userService.save(user);
+    return user;
+  }
+
+  private void createUserPersonalInfo(User user) {
+    UserInfoDto userInfoDto = UserInfoDto.builder()
+        .firstName(user.getFirstName())
+        .lastName(user.getLastName())
+        .country(user.getCountry())
+        .subscribed(user.isSubscribed())
+        .userId(user.getId())
+        .build();
+    userInfoService.create(user.getId(), userInfoDto);
   }
 }

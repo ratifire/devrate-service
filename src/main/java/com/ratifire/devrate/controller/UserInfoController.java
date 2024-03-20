@@ -1,7 +1,7 @@
 package com.ratifire.devrate.controller;
 
-import com.ratifire.devrate.dto.UserPersonalInfoDto;
-import com.ratifire.devrate.service.userinfo.UserPersonalInfoService;
+import com.ratifire.devrate.dto.UserInfoDto;
+import com.ratifire.devrate.service.userinfo.UserInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
  * Controller class responsible for handling requests related to user personal information.
  */
 @RestController
-@RequestMapping("/personal-info")
+@RequestMapping("/user")
 @RequiredArgsConstructor
-public class UserPersonalInfoController {
+public class UserInfoController {
 
-  private final UserPersonalInfoService userPersonalInfoService;
+  private final UserInfoService userInfoService;
 
   /**
    * Retrieves user personal information by user ID.
@@ -29,34 +29,34 @@ public class UserPersonalInfoController {
    * @return the user's personal information as a DTO
    */
   @GetMapping("/{userId}")
-  public UserPersonalInfoDto getByUserId(@PathVariable long userId) {
-    return userPersonalInfoService.getById(userId);
+  public UserInfoDto getByUserId(@PathVariable long userId) {
+    return userInfoService.getById(userId);
   }
 
   /**
    * Creates user personal information by user ID.
    *
    * @param userId              the ID of the user
-   * @param userPersonalInfoDto the user's personal information as a DTO
+   * @param userInfoDto the user's personal information as a DTO
    * @return the created user personal information as a DTO
    */
   @PostMapping("/{userId}")
-  public UserPersonalInfoDto create(@PathVariable long userId,
-      @RequestBody UserPersonalInfoDto userPersonalInfoDto) {
-    return userPersonalInfoService.create(userId, userPersonalInfoDto);
+  public UserInfoDto create(@PathVariable long userId,
+      @RequestBody UserInfoDto userInfoDto) {
+    return userInfoService.create(userId, userInfoDto);
   }
 
   /**
    * Updates user personal information by user ID.
    *
    * @param userId              the ID of the user
-   * @param userPersonalInfoDto the updated user's personal information as a DTO
+   * @param userInfoDto the updated user's personal information as a DTO
    * @return the updated user personal information as a DTO
    */
   @PutMapping("/{userId}")
-  public UserPersonalInfoDto update(@PathVariable long userId,
-      @RequestBody UserPersonalInfoDto userPersonalInfoDto) {
-    return userPersonalInfoService.update(userId, userPersonalInfoDto);
+  public UserInfoDto update(@PathVariable long userId,
+      @RequestBody UserInfoDto userInfoDto) {
+    return userInfoService.update(userId, userInfoDto);
   }
 
   /**
@@ -66,6 +66,6 @@ public class UserPersonalInfoController {
    */
   @DeleteMapping("/{userId}")
   public void delete(@PathVariable long userId) {
-    userPersonalInfoService.delete(userId);
+    userInfoService.delete(userId);
   }
 }

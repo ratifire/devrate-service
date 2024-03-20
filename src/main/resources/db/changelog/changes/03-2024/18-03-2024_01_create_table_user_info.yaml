@@ -1,18 +1,18 @@
 databaseChangeLog:
   - changeSet:
-      id: 18-03-2024_01_create-table-user_personal_info
+      id: 18-03-2024_01_create-table-user_info
       author: Ivan Ivashchenko
       preConditions:
         - onFail: MARK_RAN
           comments: |
-            Checks if the "user_personal_info" table already exists.
+            Checks if the "user_info" table already exists.
             Marks the changeSet as executed if the table exists.
           not:
             tableExists:
-              tableName: user_personal_info
+              tableName: user_info
       changes:
         - createTable:
-            tableName: user_personal_info
+            tableName: user_info
             columns:
               - column:
                   name: id
@@ -44,8 +44,6 @@ databaseChangeLog:
               - column:
                   name: city
                   type: VARCHAR(100)
-                  constraints:
-                    nullable: false
               - column:
                   name: is_subscribed
                   type: BOOLEAN
@@ -54,8 +52,6 @@ databaseChangeLog:
               - column:
                   name: description
                   type: TEXT
-                  constraints:
-                    nullable: false
               - column:
                   name: user_registration_id
                   type: BIGINT

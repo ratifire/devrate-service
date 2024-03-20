@@ -8,7 +8,7 @@ import lombok.Getter;
  */
 @Builder
 @Getter
-public class UserPersonalInfoDto {
+public class UserInfoDto {
 
   private String firstName;
 

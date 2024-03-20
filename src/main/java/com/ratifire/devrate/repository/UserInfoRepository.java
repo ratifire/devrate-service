@@ -1,6 +1,6 @@
 package com.ratifire.devrate.repository;
 
-import com.ratifire.devrate.entity.UserPersonalInfo;
+import com.ratifire.devrate.entity.UserInfo;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -11,9 +11,9 @@ import org.springframework.stereotype.Repository;
  * database.
  */
 @Repository
-public interface UserPersonalInfoRepository extends JpaRepository<UserPersonalInfo, Long> {
+public interface UserInfoRepository extends JpaRepository<UserInfo, Long> {
 
-  Optional<UserPersonalInfo> findByUserId(long userId);
+  Optional<UserInfo> findByUserId(long userId);
 
   boolean existsByUserId(long userId);
 

@@ -24,8 +24,8 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user_personal_info")
-public class UserPersonalInfo {
+@Table(name = "user_info")
+public class UserInfo {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,7 +52,6 @@ public class UserPersonalInfo {
   @Size(max = 100)
   private String state;
 
-  @NotEmpty
   @Size(max = 100)
   @Column(nullable = false)
   private String city;
@@ -61,10 +60,9 @@ public class UserPersonalInfo {
   @Column(name = "is_subscribed", nullable = false)
   private boolean subscribed;
 
-  @NotEmpty
   private String description;
 
-  @NotEmpty
+  @NotNull
   @Column(name = "user_registration_id", nullable = false)
   private long userId;
 }
