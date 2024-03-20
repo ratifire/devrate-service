@@ -46,7 +46,7 @@ public class UserInfo {
   private String country;
 
   @Size(max = 100)
-  private String state;
+  private String region;
 
   @Size(max = 100)
   @Column(nullable = false)

@@ -33,7 +33,7 @@ databaseChangeLog:
                   name: country
                   type: VARCHAR(100)
               - column:
-                  name: state
+                  name: region
                   type: VARCHAR(100)
               - column:
                   name: city

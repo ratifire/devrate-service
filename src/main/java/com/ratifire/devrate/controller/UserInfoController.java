@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Controller class responsible for handling requests related to user personal information.
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserInfoController {
 
@@ -39,7 +39,7 @@ public class UserInfoController {
    * @param userInfoDto the user's personal information as a DTO
    * @return the created user personal information as a DTO
    */
-  @PostMapping()
+  @PostMapping
   public UserInfoDto create(@RequestBody UserInfoDto userInfoDto) {
     return userInfoService.create(userInfoDto);
   }
@@ -50,7 +50,7 @@ public class UserInfoController {
    * @param userInfoDto the updated user's personal information as a DTO
    * @return the updated user personal information as a DTO
    */
-  @PutMapping()
+  @PutMapping
   public UserInfoDto update(@RequestBody UserInfoDto userInfoDto) {
     return userInfoService.update(userInfoDto);
   }

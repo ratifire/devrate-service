@@ -58,7 +58,7 @@ class UserInfoControllerTest {
         .lastName("lastName")
         .position("position")
         .country("country")
-        .state("state")
+        .region("region")
         .city("city")
         .subscribed(true)
         .description("description")
@@ -70,14 +70,14 @@ class UserInfoControllerTest {
   @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
   void findByUserIdTest() throws Exception {
     when(userInfoService.findByUserId(USER_ID)).thenReturn(userInfoDto);
-    mockMvc.perform(get("/user/{userId}", USER_ID))
+    mockMvc.perform(get("/users/{userId}", USER_ID))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.firstName").value(userInfoDto.getFirstName()))
         .andExpect(jsonPath("$.lastName").value(userInfoDto.getLastName()))
         .andExpect(jsonPath("$.position").value(userInfoDto.getPosition()))
         .andExpect(jsonPath("$.country").value(userInfoDto.getCountry()))
-        .andExpect(jsonPath("$.state").value(userInfoDto.getState()))
+        .andExpect(jsonPath("$.region").value(userInfoDto.getRegion()))
         .andExpect(jsonPath("$.city").value(userInfoDto.getCity()))
         .andExpect(jsonPath("$.subscribed").value(userInfoDto.isSubscribed()))
         .andExpect(jsonPath("$.description").value(userInfoDto.getDescription()))
@@ -91,7 +91,7 @@ class UserInfoControllerTest {
   void createTest() throws Exception {
     String requestBody = objectMapper.writeValueAsString(userInfoDto);
     when(userInfoService.create(any(UserInfoDto.class))).thenReturn(userInfoDto);
-    mockMvc.perform(post("/user")
+    mockMvc.perform(post("/users")
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestBody))
         .andExpect(status().isOk())
@@ -100,7 +100,7 @@ class UserInfoControllerTest {
         .andExpect(jsonPath("$.lastName").value(userInfoDto.getLastName()))
         .andExpect(jsonPath("$.position").value(userInfoDto.getPosition()))
         .andExpect(jsonPath("$.country").value(userInfoDto.getCountry()))
-        .andExpect(jsonPath("$.state").value(userInfoDto.getState()))
+        .andExpect(jsonPath("$.region").value(userInfoDto.getRegion()))
         .andExpect(jsonPath("$.city").value(userInfoDto.getCity()))
         .andExpect(jsonPath("$.subscribed").value(userInfoDto.isSubscribed()))
         .andExpect(jsonPath("$.description").value(userInfoDto.getDescription()))
@@ -114,7 +114,7 @@ class UserInfoControllerTest {
   void updateTest() throws Exception {
     String requestBody = objectMapper.writeValueAsString(userInfoDto);
     when(userInfoService.update(any(UserInfoDto.class))).thenReturn(userInfoDto);
-    mockMvc.perform(put("/user")
+    mockMvc.perform(put("/users")
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestBody))
         .andExpect(status().isOk())
@@ -123,7 +123,7 @@ class UserInfoControllerTest {
         .andExpect(jsonPath("$.lastName").value(userInfoDto.getLastName()))
         .andExpect(jsonPath("$.position").value(userInfoDto.getPosition()))
         .andExpect(jsonPath("$.country").value(userInfoDto.getCountry()))
-        .andExpect(jsonPath("$.state").value(userInfoDto.getState()))
+        .andExpect(jsonPath("$.region").value(userInfoDto.getRegion()))
         .andExpect(jsonPath("$.city").value(userInfoDto.getCity()))
         .andExpect(jsonPath("$.subscribed").value(userInfoDto.isSubscribed()))
         .andExpect(jsonPath("$.description").value(userInfoDto.getDescription()))
@@ -135,7 +135,7 @@ class UserInfoControllerTest {
   @Test
   @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
   void deleteTest() throws Exception {
-    mockMvc.perform(delete("/user/{userId}", USER_ID))
+    mockMvc.perform(delete("/users/{userId}", USER_ID))
         .andExpect(status().isOk());
   }
 }

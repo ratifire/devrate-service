@@ -213,7 +213,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /user/{userId}:
+  /users/{userId}:
     get:
       tags:
         - user info
@@ -276,7 +276,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /user:
+  /users:
     put:
       tags:
         - user info
@@ -383,9 +383,9 @@ components:
         country:
           type: string
           description: The country chosen by the user for their account
-        state:
+        region:
           type: string
-          description: The state chosen by the user for their account
+          description: The region chosen by the user for their account
         city:
           type: string
           description: The city chosen by the user for their account

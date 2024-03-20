@@ -18,7 +18,7 @@ public class UserInfoDto {
 
   private String country;
 
-  private String state;
+  private String region;
 
   private String city;
 
