@@ -72,6 +72,15 @@ public class RegistrationService {
     Role role = roleService.getDefaultRole();
     User user = userService.save(userMapper.toEntity(userDto, role));
 
+    UserInfoDto userInfoDto = UserInfoDto.builder()
+        .firstName(user.getFirstName())
+        .lastName(user.getLastName())
+        .country(user.getCountry())
+        .subscribed(user.isSubscribed())
+        .userId(user.getId())
+        .build();
+    userInfoService.create(userInfoDto);
+
     EmailConfirmationCode savedEmailConfirmationCode =
             emailConfirmationCodeService.save(user.getId());
 
@@ -109,9 +118,9 @@ public class RegistrationService {
     }
 
     if (emailConfirmationCode.getCode().equals(code)) {
-      User user = saveUser(userId);
-
-      createUserPersonalInfo(user);
+      User user = userService.getById(userId);
+      user.setVerified(true);
+      userService.save(user);
 
       emailConfirmationCodeService.deleteConfirmedCode(emailConfirmationCode.getId());
 
@@ -119,23 +128,5 @@ public class RegistrationService {
     }
 
     throw new EmailConfirmationCodeException("The confirmation code is invalid.");
-  }
-
-  private User saveUser(long userId) {
-    User user = userService.getById(userId);
-    user.setVerified(true);
-    userService.save(user);
-    return user;
-  }
-
-  private void createUserPersonalInfo(User user) {
-    UserInfoDto userInfoDto = UserInfoDto.builder()
-        .firstName(user.getFirstName())
-        .lastName(user.getLastName())
-        .country(user.getCountry())
-        .subscribed(user.isSubscribed())
-        .userId(user.getId())
-        .build();
-    userInfoService.create(user.getId(), userInfoDto);
   }
 }
