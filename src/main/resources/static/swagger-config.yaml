@@ -23,6 +23,8 @@ tags:
     description: Endpoints for user authentication
   - name: password-reset
     description: Endpoints for password reset functionality
+  - name: user info
+    description: Endpoints for user personal info functionality
 paths:
   /auth/signup:
     post:
@@ -211,6 +213,101 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /user/{userId}:
+    get:
+      tags:
+        - user info
+      summary: Get user info by user ID
+      description: Retrieve a specific user personal info based on the user ID
+      operationId: findByUserId
+      parameters:
+        - in: path
+          name: id
+          description: The user ID of the user personal info to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfoDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - user info
+      summary: Delete user info by user ID
+      description: Delete a specific user personal info based on the user ID
+      operationId: delete
+      parameters:
+        - in: path
+          name: id
+          description: The user ID of the user personal info to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /user:
+    put:
+      tags:
+        - user info
+      summary: Update user info by user ID
+      description: Update an existing user personal info based on the user ID
+      operationId: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInfoDto'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfoDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     UserDto:
@@ -270,3 +367,36 @@ components:
       required:
         - email
         - password
+    UserInfoDto:
+      type: object
+      description: Required information for registering a new user
+      properties:
+        firstName:
+          type: string
+          description: The first name inputted by the user
+        lastName:
+          type: string
+          description: The last name inputted by the user
+        position:
+          type: string
+          description: The position inputted by the user
+        country:
+          type: string
+          description: The country chosen by the user for their account
+        state:
+          type: string
+          description: The state chosen by the user for their account
+        city:
+          type: string
+          description: The city chosen by the user for their account
+        subscribed:
+          type: boolean
+          description: Flag indicating whether the user is subscribed to the newsletter
+        description:
+          type: string
+          description: The description by the user for their account
+        userId:
+          type: integer
+          description: The user ID that the user received upon registration
+      required:
+        - userId
