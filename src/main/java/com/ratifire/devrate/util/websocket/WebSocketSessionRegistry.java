@@ -3,6 +3,7 @@ package com.ratifire.devrate.util.websocket;
 import com.ratifire.devrate.exception.WebSocketSessionNotFoundException;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
@@ -13,7 +14,7 @@ import org.springframework.web.socket.WebSocketSession;
 @Component
 public class WebSocketSessionRegistry {
 
-  private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
+  private final Map<String, Set<WebSocketSession>> sessions = new ConcurrentHashMap<>();
 
   /**
    * Registers a WebSocket session for the specified login.
@@ -22,16 +23,24 @@ public class WebSocketSessionRegistry {
    * @param session the WebSocket session to register
    */
   public void registerSession(String login, WebSocketSession session) {
-    sessions.put(login, session);
+    Set<WebSocketSession> roomSessions = sessions.computeIfAbsent(login,
+        k -> ConcurrentHashMap.newKeySet());
+    roomSessions.add(session);
   }
 
   /**
-   * Removes a WebSocket session for the specified login.
+   * Closes the specified WebSocket session associated with the given login and removes it from the
+   * session registry.
    *
-   * @param login the login of the user
+   * @param login   the login of the user whose session is to be removed
+   * @param session the WebSocket session to close and remove
    */
-  public void removeSession(String login) {
-    closeSession(sessions.remove(login));
+  public void closeRemoveSession(String login, WebSocketSession session) {
+    closeSession(session);
+    Set<WebSocketSession> userSessions = sessions.get(login);
+    if (userSessions != null) {
+      userSessions.remove(session);
+    }
   }
 
   /**
@@ -50,20 +59,13 @@ public class WebSocketSessionRegistry {
   }
 
   /**
-   * Gets the WebSocket session for the specified login.
+   * Retrieves the WebSocket sessions associated with the specified user login.
    *
-   * @param login the login of the user
-   * @return the WebSocket session
-   * @throws WebSocketSessionNotFoundException if the session is not found or not open
+   * @param login the login of the user whose WebSocket sessions are to be retrieved
+   * @return a set of WebSocket sessions associated with the specified user login.
    */
-  public WebSocketSession getSession(String login) {
-    WebSocketSession session = sessions.get(login);
-    if (isExistAndOpen(session)) {
-      return session;
-    }
-
-    throw new WebSocketSessionNotFoundException(
-        "WebSocket session not found or is not open for user: " + login);
+  public Set<WebSocketSession> getUserSessions(String login) {
+    return sessions.get(login);
   }
 
   /**
@@ -72,7 +74,7 @@ public class WebSocketSessionRegistry {
    * @param session the WebSocket session to check
    * @return true if the session exists and is open, otherwise false
    */
-  private boolean isExistAndOpen(WebSocketSession session) {
+  public boolean isExistAndOpen(WebSocketSession session) {
     return session != null && session.isOpen();
   }
 }
