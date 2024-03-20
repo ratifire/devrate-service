@@ -2,6 +2,14 @@ databaseChangeLog:
   - changeSet:
       id: 15-03-2024_01_create-table-educations
       author: V. Hubersky
+      preConditions:
+        - onFail: MARK_RAN
+          comments: |
+            Checks if the "educations" table already exists.
+            Marks the changeSet as executed if the table exists.
+          not:
+          tableExists:
+          tableName: educations
       changes:
         - createTable:
             tableName: educations
