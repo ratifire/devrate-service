@@ -1,13 +1,17 @@
 package com.ratifire.devrate.util.websocket;
 
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import com.ratifire.devrate.exception.LoginNotFoundException;
 import java.security.Principal;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.socket.CloseStatus;
@@ -33,42 +37,41 @@ public class WebSocketHandlerTest {
   private final String testLogin = "test@example.com";
 
   @Test
-  void afterConnectionEstablished_UserAuthenticated_SessionRegistered() {
-    Mockito.when(principal.getName()).thenReturn(testLogin);
-    Mockito.when(session.getPrincipal()).thenReturn(principal);
+  void afterConnectionEstablished_LoginFound_CallsRegisterSession() {
+    when(session.getPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(testLogin);
+    doNothing().when(sessionRegistry).registerSession(any(), any());
 
     webSocketHandler.afterConnectionEstablished(session);
 
-    verify(sessionRegistry).registerSession(testLogin, session);
+    verify(sessionRegistry, times(1)).registerSession(testLogin, session);
   }
 
   @Test
-  void afterConnectionEstablished_UserNotAuthenticated_SessionNotRegistered() {
-    Mockito.when(session.getPrincipal()).thenReturn(null);
+  void afterConnectionEstablished_LoginNotFound_ThrowsLoginNotFoundException() {
+    when(session.getPrincipal()).thenReturn(null);
 
-    webSocketHandler.afterConnectionEstablished(session);
-
-    verify(sessionRegistry, Mockito.never()).registerSession(anyString(),
-        Mockito.any(WebSocketSession.class));
+    assertThrows(LoginNotFoundException.class, () ->
+        webSocketHandler.afterConnectionEstablished(session));
   }
 
   @Test
-  void afterConnectionClosed_UserAuthenticated_SessionRemoved() {
-    Mockito.when(principal.getName()).thenReturn(testLogin);
-    Mockito.when(session.getPrincipal()).thenReturn(principal);
+  void afterConnectionClosed_LoginFound_CallsCloseRemoveSession() {
+    when(session.getPrincipal()).thenReturn(principal);
+    when(principal.getName()).thenReturn(testLogin);
+    doNothing().when(sessionRegistry).closeRemoveSession(any(), any());
 
     webSocketHandler.afterConnectionClosed(session, CloseStatus.NORMAL);
 
-    verify(sessionRegistry).removeSession(testLogin);
+    verify(sessionRegistry, times(1)).closeRemoveSession(testLogin, session);
   }
 
   @Test
-  void afterConnectionClosed_UserNotAuthenticated_SessionNotRemoved() {
-    Mockito.when(session.getPrincipal()).thenReturn(null);
+  void afterConnectionClosed_LoginNotFound_ThrowsLoginNotFoundException() {
+    when(session.getPrincipal()).thenReturn(null);
 
-    webSocketHandler.afterConnectionClosed(session, CloseStatus.NORMAL);
-
-    verify(sessionRegistry, Mockito.never()).removeSession(Mockito.anyString());
+    assertThrows(LoginNotFoundException.class, () ->
+        webSocketHandler.afterConnectionClosed(session, CloseStatus.NORMAL));
   }
 
   @Test
