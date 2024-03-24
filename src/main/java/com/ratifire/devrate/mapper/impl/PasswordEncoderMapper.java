@@ -1,4 +1,4 @@
-package com.ratifire.devrate.mapper;
+package com.ratifire.devrate.mapper.impl;
 
 
 import lombok.RequiredArgsConstructor;
