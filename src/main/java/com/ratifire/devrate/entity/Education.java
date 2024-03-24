@@ -30,25 +30,17 @@ public class Education {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @NotEmpty
-  @Size(max = 100)
   private String type;
 
-  @NotEmpty
-  @Size(max = 100)
   private String name;
 
-  @NotEmpty
   private String description;
 
-  @PositiveOrZero
   private int startYear;
 
-  @PositiveOrZero
   private int endYear;
 
   //Migration to the user_personal_info
-  @NotNull
   @Column(name = "user_id", nullable = false)
   private long userId;
 

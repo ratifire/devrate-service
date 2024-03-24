@@ -2,6 +2,7 @@ package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.service.EducationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Controller class for handling HTTP requests related to education entities.
- * Acts as an interface between HTTP requests and the EducationService.
+ * Controller class for handling HTTP requests related to education entities. Acts as an interface
+ * between HTTP requests and the EducationService.
  */
 @RestController
 @RequiredArgsConstructor
@@ -37,12 +38,13 @@ public class EducationController {
   /**
    * Creates a new education entity.
    *
-   * @param userId           The ID of the user to whom the education belongs.
+   * @param userId       The ID of the user to whom the education belongs.
    * @param educationDto The data representing the education entity to be created.
    * @return EducationDto representing the newly created education entity.
    */
   @PostMapping("/{userId}")
-  public EducationDto create(@PathVariable long userId, @RequestBody EducationDto educationDto) {
+  public EducationDto create(@PathVariable long userId,
+      @RequestBody @Valid EducationDto educationDto) {
     return educationService.create(userId, educationDto);
   }
 
