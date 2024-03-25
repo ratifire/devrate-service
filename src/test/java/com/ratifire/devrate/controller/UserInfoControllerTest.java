@@ -68,9 +68,9 @@ class UserInfoControllerTest {
 
   @Test
   @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
-  void findByUserIdTest() throws Exception {
-    when(userInfoService.findByUserId(USER_ID)).thenReturn(userInfoDto);
-    mockMvc.perform(get("/users/{userId}", USER_ID))
+  void findByIdTest() throws Exception {
+    when(userInfoService.findById(USER_ID)).thenReturn(userInfoDto);
+    mockMvc.perform(get("/users/{id}", USER_ID))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.firstName").value(userInfoDto.getFirstName()))
@@ -83,7 +83,7 @@ class UserInfoControllerTest {
         .andExpect(jsonPath("$.description").value(userInfoDto.getDescription()))
         .andExpect(jsonPath("$.userId").value(userInfoDto.getUserId()));
 
-    verify(userInfoService, times(1)).findByUserId(anyLong());
+    verify(userInfoService, times(1)).findById(anyLong());
   }
 
   @Test
@@ -135,7 +135,7 @@ class UserInfoControllerTest {
   @Test
   @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
   void deleteTest() throws Exception {
-    mockMvc.perform(delete("/users/{userId}", USER_ID))
+    mockMvc.perform(delete("/users/{id}", USER_ID))
         .andExpect(status().isOk());
   }
 }

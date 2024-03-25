@@ -243,13 +243,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /users/{userId}:
+  /users/{id}:
     get:
       tags:
         - user info
       summary: Get user info by user ID
       description: Retrieve a specific user personal info based on the user ID
-      operationId: findByUserId
+      operationId: findById
       parameters:
         - in: path
           name: id

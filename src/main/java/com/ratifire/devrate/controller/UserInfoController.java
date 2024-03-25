@@ -25,12 +25,12 @@ public class UserInfoController {
   /**
    * Retrieves user personal information by user ID.
    *
-   * @param userId the ID of the user
+   * @param id the ID of the user
    * @return the user's personal information as a DTO
    */
-  @GetMapping("/{userId}")
-  public UserInfoDto findByUserId(@PathVariable long userId) {
-    return userInfoService.findByUserId(userId);
+  @GetMapping("/{id}")
+  public UserInfoDto findById(@PathVariable long id) {
+    return userInfoService.findById(id);
   }
 
   /**
@@ -58,10 +58,10 @@ public class UserInfoController {
   /**
    * Deletes user personal information by user ID.
    *
-   * @param userId the ID of the user whose personal information is to be deleted
+   * @param id the ID of the user
    */
-  @DeleteMapping("/{userId}")
-  public void delete(@PathVariable long userId) {
-    userInfoService.delete(userId);
+  @DeleteMapping("/{id}")
+  public void delete(@PathVariable long id) {
+    userInfoService.delete(id);
   }
 }

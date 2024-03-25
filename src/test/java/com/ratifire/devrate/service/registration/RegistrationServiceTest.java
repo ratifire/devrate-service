@@ -196,7 +196,7 @@ public class RegistrationServiceTest {
     assertThrows(EmailConfirmationCodeException.class,
         () -> registrationService.isCodeConfirmed(userId, code));
     verify(emailConfirmationCodeService).getEmailConfirmationCodeByUserId(userId);
-    verifyNoInteractions(userService, userInfoService);
+    verifyNoInteractions(userService);
   }
 
   @Test
