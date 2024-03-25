@@ -9,9 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,16 +29,12 @@ public class Contact {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @NotNull
   @Enumerated(EnumType.STRING)
   private ContactType type;
 
-  @NotEmpty
-  @Size(max = 100)
   private String value;
 
-  //TODO: Need to migrate migrate to the entity personal_info
-  @Column(name = "user_id", nullable = false)
+  @Column(name = "user_info_id", nullable = false)
   private long userId;
 
 }
