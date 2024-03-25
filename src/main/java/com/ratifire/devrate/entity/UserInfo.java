@@ -6,8 +6,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,25 +28,19 @@ public class UserInfo {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @Size(max = 100)
   @Column(nullable = false)
   private String firstName;
 
-  @Size(max = 100)
   @Column(nullable = false)
   private String lastName;
 
-  @Size(max = 50)
   private String position;
 
-  @Size(max = 100)
   @Column(nullable = false)
   private String country;
 
-  @Size(max = 100)
   private String region;
 
-  @Size(max = 100)
   @Column(nullable = false)
   private String city;
 
@@ -57,7 +49,6 @@ public class UserInfo {
 
   private String description;
 
-  @NotNull
   @Column(name = "user_id", nullable = false)
   private long userId;
 }
