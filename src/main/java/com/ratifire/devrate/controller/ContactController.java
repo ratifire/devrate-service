@@ -2,6 +2,7 @@ package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.service.ContactService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,7 +43,7 @@ public class ContactController {
    * @return contactDto the created contact data
    */
   @PostMapping("/{userId}")
-  public ContactDto create(@PathVariable long userId, @RequestBody ContactDto contactDto) {
+  public ContactDto create(@PathVariable long userId, @Valid @RequestBody ContactDto contactDto) {
     return contactService.create(userId, contactDto);
   }
 
@@ -54,7 +55,7 @@ public class ContactController {
    * @return contactDto the updated contact data
    */
   @PutMapping("/{id}")
-  public ContactDto update(@PathVariable long id, @RequestBody ContactDto contactDto) {
+  public ContactDto update(@PathVariable long id, @Valid @RequestBody ContactDto contactDto) {
     return contactService.update(id, contactDto);
   }
 
