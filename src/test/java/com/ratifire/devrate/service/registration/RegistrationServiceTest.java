@@ -10,17 +10,21 @@ import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.dto.UserInfoDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.Role;
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.exception.EmailConfirmationCodeException;
 import com.ratifire.devrate.exception.UserAlreadyExistException;
 import com.ratifire.devrate.mapper.UserMapper;
 import com.ratifire.devrate.service.RoleService;
 import com.ratifire.devrate.service.UserService;
 import com.ratifire.devrate.service.email.EmailService;
+import com.ratifire.devrate.service.userinfo.UserInfoService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -53,6 +57,9 @@ public class RegistrationServiceTest {
 
   @Mock
   private EmailService emailService;
+
+  @Mock
+  private UserInfoService userInfoService;
 
   @InjectMocks
   private RegistrationService registrationService;
@@ -115,6 +122,7 @@ public class RegistrationServiceTest {
     when(userService.save(any())).thenReturn(testUser);
     when(userMapper.toEntity(any(), any())).thenReturn(testUser);
     when(userMapper.toDto(any())).thenReturn(testUserDto);
+    when(userInfoService.create(any(UserInfoDto.class))).thenReturn(UserInfoDto.builder().build());
 
     when(registrationService.isUserExistByEmail(any())).thenReturn(false);
     when(emailConfirmationCodeService.save(anyLong()))
@@ -125,6 +133,7 @@ public class RegistrationServiceTest {
 
     assertEquals(expected, testUserDto);
     verify(emailConfirmationCodeService, times(1)).save(anyLong());
+    verify(userInfoService, times(1)).create(any(UserInfoDto.class));
     verify(emailService, times(1)).sendEmail(any(), anyBoolean());
   }
 
@@ -144,5 +153,64 @@ public class RegistrationServiceTest {
 
     assertThrows(UserAlreadyExistException.class,
         () -> registrationService.registerUser(testUserDto));
+  }
+
+  @Test
+  public void testIsCodeConfirmed_Success() {
+    long userId = 1L;
+    String code = "123456";
+
+    EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode.builder()
+        .code(code)
+        .build();
+    when(emailConfirmationCodeService.getEmailConfirmationCodeByUserId(userId))
+        .thenReturn(emailConfirmationCode);
+
+    User user = new User();
+    when(userService.getById(userId)).thenReturn(user);
+    when(userService.save(user)).thenReturn(null);
+
+    doNothing().when(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
+
+    boolean result = registrationService.isCodeConfirmed(userId, code);
+
+    assertTrue(result);
+    assertTrue(user.isVerified());
+    verify(emailConfirmationCodeService).getEmailConfirmationCodeByUserId(userId);
+    verify(userService).getById(userId);
+    verify(userService).save(user);
+    verify(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
+  }
+
+  @Test
+  public void testIsCodeConfirmed_InvalidCode() {
+    long userId = 1L;
+    String code = "123456";
+    String wrongCode = "654321";
+
+    EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode.builder()
+            .code(wrongCode).build();
+    when(emailConfirmationCodeService.getEmailConfirmationCodeByUserId(userId))
+        .thenReturn(emailConfirmationCode);
+
+    assertThrows(EmailConfirmationCodeException.class,
+        () -> registrationService.isCodeConfirmed(userId, code));
+    verify(emailConfirmationCodeService).getEmailConfirmationCodeByUserId(userId);
+    verifyNoInteractions(userService);
+  }
+
+  @Test
+  public void testIsCodeConfirmed_RequestEmptyCode() {
+    assertThrows(IllegalArgumentException.class,
+        () -> registrationService.isCodeConfirmed(1L, ""));
+  }
+
+  @Test
+  public void testIsCodeConfirmed_EmptyEmailConfirmationCode() {
+    when(emailConfirmationCodeService.getEmailConfirmationCodeByUserId(anyLong()))
+        .thenReturn(new EmailConfirmationCode());
+
+    assertThrows(EmailConfirmationCodeException.class,
+        () -> registrationService.isCodeConfirmed(1L, "123456"));
   }
 }

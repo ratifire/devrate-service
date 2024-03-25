@@ -2,6 +2,14 @@ databaseChangeLog:
   - changeSet:
       id: 16-02-2024_01_create-table-email-confirmation-code
       author: Ivan Ivashchenko
+      preConditions:
+        - onFail: MARK_RAN
+          comments: |
+            Checks if the "email_confirmation_code" table already exists.
+            Marks the changeSet as executed if the table exists.
+          not:
+            tableExists:
+              tableName: email_confirmation_code
       changes:
         - createTable:
             tableName: email_confirmation_code
