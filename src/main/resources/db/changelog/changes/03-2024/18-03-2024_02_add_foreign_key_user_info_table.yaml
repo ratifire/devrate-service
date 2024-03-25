@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 18-03-2024_02_add_foreign_key_user_info_table
+      author: Ivan Ivashchenko
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: user_info
+            baseColumnNames: user_id
+            constraintName: fk_user_info
+            referencedTableName: users
+            referencedColumnNames: id
