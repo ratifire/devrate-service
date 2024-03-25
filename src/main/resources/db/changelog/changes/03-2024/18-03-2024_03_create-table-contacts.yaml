@@ -31,7 +31,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: user_id
+                  name: user_info_id
                   type: BIGINT
                   constraints:
                     nullable: false
