@@ -13,6 +13,7 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface EducationMapper {
 
+  @Mapping(target = "userInfoId", ignore = true)
   Education toEntity(EducationDto educationDto);
 
   EducationDto toDto(Education education);
@@ -20,6 +21,7 @@ public interface EducationMapper {
   List<EducationDto> toDto(List<Education> educations);
 
   @Mapping(target = "id", ignore = true)
+  @Mapping(target = "userInfoId", ignore = true)
   void toUpdate(EducationDto educationDto, @MappingTarget Education education);
 
 }
