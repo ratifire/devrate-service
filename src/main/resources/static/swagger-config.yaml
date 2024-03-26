@@ -19,10 +19,16 @@ servers:
 tags:
   - name: registration
     description: endpoint for user registration
+  - name: Notification
+    description: Operations related to sending notifications
   - name: authentication
     description: Endpoints for user authentication
   - name: password-reset
     description: Endpoints for password reset functionality
+  - name: user info
+    description: Endpoints for user personal info functionality
+  - name: contact
+    description: Endpoints for user contact management
 paths:
   /auth/signup:
     post:
@@ -55,6 +61,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /notify/{login}:
+    post:
+      tags:
+        - Notification
+      summary: Send a notification to a specific user
+      description: Sends a notification to a specific user identified by their login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+      parameters:
+        - in: path
+          name: login
+          required: true
+          schema:
+            type: string
+          description: The login of the user to send the notification to
+      responses:
+        '200':
+          description: Notification sent successfully
+        '400':
+          description: Bad request, invalid parameters
+        '404':
+          description: User not found
+        '500':
+          description: Internal server error
   /auth/signup/{id}/{code}:
     get:
       tags:
@@ -211,6 +245,242 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /users/{id}:
+    get:
+      tags:
+        - user info
+      summary: Get user info by user ID
+      description: Retrieve a specific user personal info based on the user ID
+      operationId: findById
+      parameters:
+        - in: path
+          name: id
+          description: The user ID of the user personal info to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfoDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - user info
+      summary: Delete user info by user ID
+      description: Delete a specific user personal info based on the user ID
+      operationId: delete
+      parameters:
+        - in: path
+          name: id
+          description: The user ID of the user personal info to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /users:
+    put:
+      tags:
+        - user info
+      summary: Update user info by user ID
+      description: Update an existing user personal info based on the user ID
+      operationId: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInfoDto'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfoDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /contacts/{id}:
+    get:
+      tags:
+        - contact
+      summary: Get contact by its ID
+      description: Retrieve a specific contact based on the provided contact ID
+      operationId: findById
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the contact to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - contact
+      summary: Update contact by its ID
+      description: Updates an existing contact with provided data
+      operationId: update
+      parameters:
+        - in: path
+          name: id
+          description: Unique identifier of the contact to be updated
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactDto'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - contact
+      summary: Delete contact by its ID
+      description: Deletes a contact from the system based on the provided contact ID
+      operationId: delete
+      parameters:
+        - in: path
+          name: id
+          description: Unique identifier of the contact to be deleted
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /educations/{userId}:
+    post:
+      tags:
+        - contact
+      summary: Create a new contact
+      description: Create a new contact of the specified user
+      operationId: create
+      parameters:
+        - in: path
+          name: userId
+          description: The ID of the user to associate the new contact with
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactDto'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     UserDto:
@@ -256,6 +526,12 @@ components:
         message:
           type: string
           description: The error message
+    Notification:
+      type: object
+      properties:
+        text:
+          type: string
+          description: The text of the notification
     LoginDto:
       type: object
       properties:
@@ -270,3 +546,55 @@ components:
       required:
         - email
         - password
+    UserInfoDto:
+      type: object
+      description: Required information for registering a new user
+      properties:
+        firstName:
+          type: string
+          description: The first name inputted by the user
+        lastName:
+          type: string
+          description: The last name inputted by the user
+        position:
+          type: string
+          description: The position inputted by the user
+        country:
+          type: string
+          description: The country chosen by the user for their account
+        region:
+          type: string
+          description: The region chosen by the user for their account
+        city:
+          type: string
+          description: The city chosen by the user for their account
+        subscribed:
+          type: boolean
+          description: Flag indicating whether the user is subscribed to the newsletter
+        description:
+          type: string
+          description: The description by the user for their account
+        userId:
+          type: integer
+          description: The user ID that the user received upon registration
+      required:
+        - userId
+    ContactDto:
+      type: object
+      properties:
+        type:
+          type: string
+          description: "The type of the contact. The type can only be one of the following: 
+          EMAIL, PHONE_NUMBER, TELEGRAM_LINK, LINKEDIN_LINK, GITHUB_LINK."
+          enum:
+            - EMAIL
+            - PHONE_NUMBER
+            - TELEGRAM_LINK
+            - LINKEDIN_LINK
+            - GITHUB_LINK
+        value:
+          type: string
+          description: The value of the contact
+      required:
+        - type
+        - value
