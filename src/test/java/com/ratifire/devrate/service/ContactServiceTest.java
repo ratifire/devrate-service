@@ -85,7 +85,7 @@ class ContactServiceTest {
   @Test
   void updateTest() {
     when(contactRepository.findById(id)).thenReturn(Optional.of(contact));
-    doNothing().when(contactMapper).updateEntity(any(ContactDto.class), any(Contact.class));
+    when(contactMapper.updateEntity(any(), any())).thenReturn(contact);
     when(contactRepository.save(any(Contact.class))).thenReturn(contact);
     when(contactMapper.toDto(any(Contact.class))).thenReturn(contactDto);
 

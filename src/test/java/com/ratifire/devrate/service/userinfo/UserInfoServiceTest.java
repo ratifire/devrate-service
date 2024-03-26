@@ -2,6 +2,7 @@ package com.ratifire.devrate.service.userinfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -92,7 +93,7 @@ class UserInfoServiceTest {
     UserInfo userInfo = new UserInfo();
 
     when(userInfoRepository.findById(userId)).thenReturn(Optional.of(userInfo));
-    doNothing().when(userInfoMapper).updateEntity(userInfoDto, userInfo);
+    when(userInfoMapper.updateEntity(any(), any())).thenReturn(userInfo);
     when(userInfoRepository.save(userInfo)).thenReturn(userInfo);
     when(userInfoMapper.toDto(userInfo)).thenReturn(userInfoDto);
 
