@@ -1,6 +1,5 @@
 package com.ratifire.devrate.dto;
 
-import com.ratifire.devrate.entity.Education;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.List;

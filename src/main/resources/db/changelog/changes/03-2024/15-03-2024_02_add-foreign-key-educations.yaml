@@ -17,5 +17,5 @@ databaseChangeLog:
             baseTableName: educations
             baseColumnNames: user_info_id
             constraintName: fk_education_user_info
-            referencedTableName: users_info
+            referencedTableName: user_info
             referencedColumnNames: id

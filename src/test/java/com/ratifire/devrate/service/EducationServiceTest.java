@@ -64,7 +64,7 @@ public class EducationServiceTest {
         .description("I learned a lot of knowledge")
         .startYear(2013)
         .endYear(2013)
-        .userId(1)
+        .userInfoId(1)
         .build();
   }
 

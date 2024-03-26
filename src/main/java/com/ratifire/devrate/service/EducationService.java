@@ -40,7 +40,7 @@ public class EducationService {
    */
   public EducationDto create(long userId, EducationDto educationDto) {
     Education education = educationMapper.toEntity(educationDto);
-    education.setUserId(userId);
+    education.setUserInfoId(userId);
 
     return educationMapper.toDto(educationRepository.save(education));
   }
