@@ -11,7 +11,7 @@ databaseChangeLog:
           not:
             foreignKeyConstraintExists:
               foreignKeyName: fk_user_info_contact
-              baseTableName: user_info
+              baseTableName: contacts
       changes:
         - addForeignKeyConstraint:
             baseTableName: contacts
