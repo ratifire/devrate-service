@@ -5,17 +5,18 @@ databaseChangeLog:
       preConditions:
         - onFail: MARK_RAN
           comments: |
-            Checks if the foreign key constraint 'fk_education_user' does not 
+            Checks if the foreign key constraint 'fk_education_user_info' does not 
             already exist on the "educations" table.
             Marks the changeSet as executed if the foreign key constraint exists.
           not:
             foreignKeyConstraintExists:
               foreignKeyName: fk_education_user_info
               baseTableName: educations
+              referencedTableName: user_info
       changes:
         - addForeignKeyConstraint:
             baseTableName: educations
             baseColumnNames: user_info_id
-            constraintName: fk_education_user_info
             referencedTableName: user_info
             referencedColumnNames: id
+            constraintName: fk_education_user_info
