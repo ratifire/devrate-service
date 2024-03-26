@@ -10,7 +10,7 @@ import com.ratifire.devrate.dto.UserInfoDto;
 import com.ratifire.devrate.entity.UserInfo;
 import com.ratifire.devrate.exception.UserInfoAlreadyExistsException;
 import com.ratifire.devrate.exception.UserInfoNotFoundException;
-import com.ratifire.devrate.mapper.UserInfoMapper;
+import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.UserInfoRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ class UserInfoServiceTest {
   private UserInfoService userInfoService;
 
   @Mock
-  private UserInfoMapper userInfoMapper;
+  private DataMapper<UserInfoDto, UserInfo> userInfoMapper;
 
   @Mock
   private UserInfoRepository userInfoRepository;
@@ -92,7 +92,7 @@ class UserInfoServiceTest {
     UserInfo userInfo = new UserInfo();
 
     when(userInfoRepository.findById(userId)).thenReturn(Optional.of(userInfo));
-    doNothing().when(userInfoMapper).updateEntityFromDto(userInfoDto, userInfo);
+    doNothing().when(userInfoMapper).updateEntity(userInfoDto, userInfo);
     when(userInfoRepository.save(userInfo)).thenReturn(userInfo);
     when(userInfoMapper.toDto(userInfo)).thenReturn(userInfoDto);
 
@@ -101,7 +101,7 @@ class UserInfoServiceTest {
     assertEquals(userInfoDto.getUserId(), updatedUserInfoDto.getUserId());
     verify(userInfoRepository).findById(userId);
     verify(userInfoRepository).save(userInfo);
-    verify(userInfoMapper).updateEntityFromDto(userInfoDto, userInfo);
+    verify(userInfoMapper).updateEntity(userInfoDto, userInfo);
     verify(userInfoMapper).toDto(userInfo);
   }
 

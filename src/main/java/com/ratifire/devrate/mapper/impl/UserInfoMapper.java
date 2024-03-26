@@ -1,7 +1,8 @@
-package com.ratifire.devrate.mapper;
+package com.ratifire.devrate.mapper.impl;
 
 import com.ratifire.devrate.dto.UserInfoDto;
 import com.ratifire.devrate.entity.UserInfo;
+import com.ratifire.devrate.mapper.DataMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
@@ -9,11 +10,6 @@ import org.mapstruct.MappingTarget;
  * Interface for mapping UserPersonalInfoDto to UserPersonalInfo entities.
  */
 @Mapper(componentModel = "spring")
-public interface UserInfoMapper {
+public abstract class UserInfoMapper implements DataMapper<UserInfoDto, UserInfo> {
 
-  UserInfo toEntity(UserInfoDto userInfoDto);
-
-  UserInfoDto toDto(UserInfo userInfo);
-
-  void updateEntityFromDto(UserInfoDto userInfoDto, @MappingTarget UserInfo userInfo);
 }
