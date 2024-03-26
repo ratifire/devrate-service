@@ -12,7 +12,6 @@ databaseChangeLog:
             foreignKeyConstraintExists:
               foreignKeyName: fk_user_info
               baseTableName: user_info
-              referencedTableName: users
       changes:
         - addForeignKeyConstraint:
             baseTableName: user_info

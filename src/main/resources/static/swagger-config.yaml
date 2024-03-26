@@ -679,6 +679,8 @@ components:
         educations:
           type: array
           description: An array containing educational records associated with the user
+          items:
+            $ref: '#/components/schemas/EducationDto'
           readOnly: true
         userId:
           type: integer
