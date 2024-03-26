@@ -4,7 +4,6 @@ import com.ratifire.devrate.dto.UserInfoDto;
 import com.ratifire.devrate.entity.UserInfo;
 import com.ratifire.devrate.mapper.DataMapper;
 import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
 
 /**
  * Interface for mapping UserPersonalInfoDto to UserPersonalInfo entities.
