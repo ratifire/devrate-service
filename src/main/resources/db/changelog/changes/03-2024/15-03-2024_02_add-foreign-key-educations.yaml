@@ -10,12 +10,12 @@ databaseChangeLog:
             Marks the changeSet as executed if the foreign key constraint exists.
           not:
             foreignKeyConstraintExists:
-              foreignKeyName: fk_education_user
+              foreignKeyName: fk_education_user_info
               baseTableName: educations
       changes:
         - addForeignKeyConstraint:
             baseTableName: educations
-            baseColumnNames: user_id
-            constraintName: fk_education_user
-            referencedTableName: users
+            baseColumnNames: user_info_id
+            constraintName: fk_education_user_info
+            referencedTableName: users_info
             referencedColumnNames: id

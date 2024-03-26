@@ -36,8 +36,7 @@ public class Education {
 
   private int endYear;
 
-  //Migration to the user_personal_info
-  @Column(name = "user_id", nullable = false)
-  private long userId;
+  @Column(name = "user_info_id", nullable = false)
+  private long userInfoId;
 
 }

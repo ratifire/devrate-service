@@ -1,7 +1,9 @@
 package com.ratifire.devrate.dto;
 
+import com.ratifire.devrate.entity.Education;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -33,6 +35,8 @@ public class UserInfoDto {
   private boolean subscribed;
 
   private String description;
+
+  private List<EducationDto> educations;
 
   @NotNull
   private long userId;
