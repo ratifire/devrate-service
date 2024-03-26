@@ -27,6 +27,8 @@ tags:
     description: Endpoints for password reset functionality
   - name: user info
     description: Endpoints for user personal info functionality
+  - name: contact
+    description: Endpoints for user contact management
 paths:
   /auth/signup:
     post:
@@ -338,6 +340,147 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /contacts/{id}:
+    get:
+      tags:
+        - contact
+      summary: Get contact by its ID
+      description: Retrieve a specific contact based on the provided contact ID
+      operationId: findById
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the contact to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - contact
+      summary: Update contact by its ID
+      description: Updates an existing contact with provided data
+      operationId: update
+      parameters:
+        - in: path
+          name: id
+          description: Unique identifier of the contact to be updated
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactDto'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - contact
+      summary: Delete contact by its ID
+      description: Deletes a contact from the system based on the provided contact ID
+      operationId: delete
+      parameters:
+        - in: path
+          name: id
+          description: Unique identifier of the contact to be deleted
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /educations/{userId}:
+    post:
+      tags:
+        - contact
+      summary: Create a new contact
+      description: Create a new contact of the specified user
+      operationId: create
+      parameters:
+        - in: path
+          name: userId
+          description: The ID of the user to associate the new contact with
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactDto'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     UserDto:
@@ -436,3 +579,22 @@ components:
           description: The user ID that the user received upon registration
       required:
         - userId
+    ContactDto:
+      type: object
+      properties:
+        type:
+          type: string
+          description: "The type of the contact. The type can only be one of the following: 
+          EMAIL, PHONE_NUMBER, TELEGRAM_LINK, LINKEDIN_LINK, GITHUB_LINK."
+          enum:
+            - EMAIL
+            - PHONE_NUMBER
+            - TELEGRAM_LINK
+            - LINKEDIN_LINK
+            - GITHUB_LINK
+        value:
+          type: string
+          description: The value of the contact
+      required:
+        - type
+        - value
