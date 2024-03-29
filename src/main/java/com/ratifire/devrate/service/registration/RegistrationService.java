@@ -5,6 +5,7 @@ import com.ratifire.devrate.dto.UserInfoDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.Role;
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserAlreadyExistException;
 import com.ratifire.devrate.mapper.UserMapper;
@@ -12,6 +13,8 @@ import com.ratifire.devrate.service.RoleService;
 import com.ratifire.devrate.service.UserService;
 import com.ratifire.devrate.service.email.EmailService;
 import com.ratifire.devrate.service.userinfo.UserInfoService;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import liquibase.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
@@ -26,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RegistrationService {
 
+  private static final long CONFIRM_CODE_EXPIRATION_HOURS  = 24;
   /**
    * Service responsible for user management operations.
    */
@@ -98,9 +102,10 @@ public class RegistrationService {
    *
    * @param confirmationCode The confirmation code provided by the user.
    * @return The ID of the user whose registration has been confirmed
-   * @throws IllegalArgumentException If the provided confirmation code is empty or null.
+   * @throws EmailConfirmationCodeRequestException If the provided confirmation code is empty or
+   *                                               null.
+   * @throws EmailConfirmationCodeExpiredException If the confirmation code is expired.
    */
-  @Transactional
   public long confirmRegistration(String confirmationCode) {
     if (StringUtil.isEmpty(confirmationCode)) {
       throw new EmailConfirmationCodeRequestException("The confirmation code is a required "
@@ -109,6 +114,15 @@ public class RegistrationService {
 
     EmailConfirmationCode emailConfirmationCode = emailConfirmationCodeService
         .findEmailConfirmationCode(confirmationCode);
+
+    // Check if the confirmation code has expired
+    LocalDateTime createdAt = emailConfirmationCode.getCreatedAt();
+    LocalDateTime currentDateTime = LocalDateTime.now();
+    long hoursSinceCreation = ChronoUnit.HOURS.between(createdAt, currentDateTime);
+    if (hoursSinceCreation >= CONFIRM_CODE_EXPIRATION_HOURS) {
+      emailConfirmationCodeService.deleteConfirmedCode(emailConfirmationCode.getId());
+      throw new EmailConfirmationCodeExpiredException("The confirmation code has expired");
+    }
 
     User user = userService.getById(emailConfirmationCode.getUserId());
     user.setVerified(true);

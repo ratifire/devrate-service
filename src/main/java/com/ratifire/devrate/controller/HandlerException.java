@@ -1,6 +1,7 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.exception.EmailConfirmationCodeException;
+import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.InvalidCodeException;
 import java.util.HashMap;
@@ -114,5 +115,19 @@ public class HandlerException {
       EmailConfirmationCodeRequestException ex) {
     log.error("Invalid request: {}", ex.getMessage(), ex);
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+  }
+
+  /**
+   * Handles the {@link EmailConfirmationCodeExpiredException} thrown when attempting to confirm
+   * registration with an expired email confirmation code.
+   *
+   * @param ex The {@link EmailConfirmationCodeExpiredException} thrown.
+   * @return A {@link ResponseEntity} with an appropriate HTTP status code and error message.
+   */
+  @ExceptionHandler(EmailConfirmationCodeExpiredException.class)
+  public ResponseEntity<String> handleEmailConfirmationCodeExpiredException(
+      EmailConfirmationCodeExpiredException ex) {
+    log.error("Email confirmation code: {}", ex.getMessage(), ex);
+    return ResponseEntity.status(HttpStatus.GONE).body(ex.getMessage());
   }
 }
