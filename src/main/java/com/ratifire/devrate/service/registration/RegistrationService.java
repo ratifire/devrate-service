@@ -5,7 +5,6 @@ import com.ratifire.devrate.dto.UserInfoDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.Role;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.exception.EmailConfirmationCodeException;
 import com.ratifire.devrate.exception.UserAlreadyExistException;
 import com.ratifire.devrate.mapper.UserMapper;
 import com.ratifire.devrate.service.RoleService;
@@ -96,37 +95,25 @@ public class RegistrationService {
    * Checks if the provided confirmation code matches the stored confirmation code for the
    * user and marks the user as verified if the codes match.
    *
-   * @param userId The unique identifier of the user for whom the confirmation code is checked.
-   * @param code   The confirmation code to be checked against the stored code.
-   * @return {@code true} if the confirmation code matches and the user is marked as verified,
-   *         {@code false} otherwise.
-   * @throws EmailConfirmationCodeException If there are issues with the confirmation code
-   *                                        such as missing or invalid codes.
+   * @param confirmationCode The confirmation code provided by the user.
+   * @return The ID of the user whose registration has been confirmed
+   * @throws IllegalArgumentException If the provided confirmation code is empty or null.
    */
   @Transactional
-  public boolean isCodeConfirmed(long userId, String code) {
-    if (StringUtil.isEmpty(code)) {
+  public long confirmRegistration(String confirmationCode) {
+    if (StringUtil.isEmpty(confirmationCode)) {
       throw new IllegalArgumentException("The confirmation code is a required argument");
     }
 
     EmailConfirmationCode emailConfirmationCode = emailConfirmationCodeService
-            .getEmailConfirmationCodeByUserId(userId);
+        .findEmailConfirmationCode(confirmationCode);
 
-    if (StringUtil.isEmpty(emailConfirmationCode.getCode())) {
-      throw new EmailConfirmationCodeException("The confirmation code for user ID \""
-              + userId + " is missing or empty.");
-    }
+    User user = userService.getById(emailConfirmationCode.getUserId());
+    user.setVerified(true);
+    userService.save(user);
 
-    if (emailConfirmationCode.getCode().equals(code)) {
-      User user = userService.getById(userId);
-      user.setVerified(true);
-      userService.save(user);
+    emailConfirmationCodeService.deleteConfirmedCode(emailConfirmationCode.getId());
 
-      emailConfirmationCodeService.deleteConfirmedCode(emailConfirmationCode.getId());
-
-      return true;
-    }
-
-    throw new EmailConfirmationCodeException("The confirmation code is invalid.");
+    return user.getId();
   }
 }

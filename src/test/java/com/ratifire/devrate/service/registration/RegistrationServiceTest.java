@@ -10,7 +10,6 @@ import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.UserDto;
@@ -18,7 +17,6 @@ import com.ratifire.devrate.dto.UserInfoDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.Role;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.exception.EmailConfirmationCodeException;
 import com.ratifire.devrate.exception.UserAlreadyExistException;
 import com.ratifire.devrate.mapper.UserMapper;
 import com.ratifire.devrate.service.RoleService;
@@ -156,61 +154,37 @@ public class RegistrationServiceTest {
   }
 
   @Test
-  public void testIsCodeConfirmed_Success() {
+  public void testConfirmRegistration_Success() {
     long userId = 1L;
     String code = "123456";
 
     EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode.builder()
         .code(code)
+        .userId(userId)
         .build();
-    when(emailConfirmationCodeService.getEmailConfirmationCodeByUserId(userId))
+    when(emailConfirmationCodeService.findEmailConfirmationCode(code))
         .thenReturn(emailConfirmationCode);
 
     User user = new User();
+    user.setId(userId);
     when(userService.getById(userId)).thenReturn(user);
     when(userService.save(user)).thenReturn(null);
 
     doNothing().when(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
 
-    boolean result = registrationService.isCodeConfirmed(userId, code);
+    long actualUserId = registrationService.confirmRegistration(code);
 
-    assertTrue(result);
+    assertEquals(userId, actualUserId);
     assertTrue(user.isVerified());
-    verify(emailConfirmationCodeService).getEmailConfirmationCodeByUserId(userId);
+    verify(emailConfirmationCodeService).findEmailConfirmationCode(code);
     verify(userService).getById(userId);
     verify(userService).save(user);
     verify(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
   }
 
   @Test
-  public void testIsCodeConfirmed_InvalidCode() {
-    long userId = 1L;
-    String code = "123456";
-    String wrongCode = "654321";
-
-    EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode.builder()
-            .code(wrongCode).build();
-    when(emailConfirmationCodeService.getEmailConfirmationCodeByUserId(userId))
-        .thenReturn(emailConfirmationCode);
-
-    assertThrows(EmailConfirmationCodeException.class,
-        () -> registrationService.isCodeConfirmed(userId, code));
-    verify(emailConfirmationCodeService).getEmailConfirmationCodeByUserId(userId);
-    verifyNoInteractions(userService);
-  }
-
-  @Test
-  public void testIsCodeConfirmed_RequestEmptyCode() {
+  public void testConfirmRegistration_RequestEmptyCode() {
     assertThrows(IllegalArgumentException.class,
-        () -> registrationService.isCodeConfirmed(1L, ""));
-  }
-
-  @Test
-  public void testIsCodeConfirmed_EmptyEmailConfirmationCode() {
-    when(emailConfirmationCodeService.getEmailConfirmationCodeByUserId(anyLong()))
-        .thenReturn(new EmailConfirmationCode());
-
-    assertThrows(EmailConfirmationCodeException.class,
-        () -> registrationService.isCodeConfirmed(1L, "123456"));
+        () -> registrationService.confirmRegistration(""));
   }
 }

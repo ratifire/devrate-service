@@ -1,10 +1,9 @@
 package com.ratifire.devrate.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,7 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 public class RegistrationControllerTest {
 
   private static final String END_POINT_PATH = "/auth/signup";
-  private static final String END_POINT_CONFIRM_PATH = "/auth/signup/1/123";
+  private static final String END_POINT_CONFIRM_PATH = "/auth/signup/123";
   @Autowired
   private MockMvc mockMvc;
 
@@ -82,20 +81,11 @@ public class RegistrationControllerTest {
   }
 
   @Test
-  public void testConfirmShouldReturnTrue() throws Exception {
-    Mockito.when(registrationService.isCodeConfirmed(anyLong(), anyString())).thenReturn(true);
+  public void testConfirmShouldReturnUserId() throws Exception {
+    Mockito.when(registrationService.confirmRegistration(anyString())).thenReturn(1L);
 
-    mockMvc.perform(get(END_POINT_CONFIRM_PATH))
+    mockMvc.perform(put(END_POINT_CONFIRM_PATH))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$").value(true));
-  }
-
-  @Test
-  public void testConfirmShouldReturnFalse() throws Exception {
-    Mockito.when(registrationService.isCodeConfirmed(anyLong(), anyString())).thenReturn(false);
-
-    mockMvc.perform(get(END_POINT_CONFIRM_PATH))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$").value(false));
+        .andExpect(jsonPath("$").value(1L));
   }
 }
