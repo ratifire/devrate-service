@@ -1,6 +1,5 @@
 package com.ratifire.devrate.mapper;
 
-
 import java.util.List;
 import org.mapstruct.MappingTarget;
 
