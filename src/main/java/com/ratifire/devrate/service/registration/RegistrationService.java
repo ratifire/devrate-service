@@ -5,6 +5,7 @@ import com.ratifire.devrate.dto.UserInfoDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.Role;
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserAlreadyExistException;
 import com.ratifire.devrate.mapper.UserMapper;
 import com.ratifire.devrate.service.RoleService;
@@ -102,7 +103,8 @@ public class RegistrationService {
   @Transactional
   public long confirmRegistration(String confirmationCode) {
     if (StringUtil.isEmpty(confirmationCode)) {
-      throw new IllegalArgumentException("The confirmation code is a required argument");
+      throw new EmailConfirmationCodeRequestException("The confirmation code is a required "
+          + "argument");
     }
 
     EmailConfirmationCode emailConfirmationCode = emailConfirmationCodeService

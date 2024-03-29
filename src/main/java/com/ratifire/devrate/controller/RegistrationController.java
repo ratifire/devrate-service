@@ -4,6 +4,8 @@ import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.service.registration.RegistrationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -37,11 +39,13 @@ public class RegistrationController {
   /**
    * Endpoint to confirm the email using the provided confirmation code.
    *
-   * @param code The confirmation code provided by the user.
-   * @return The ID of the user whose code was confirmed
+   * @param code Unique code used for confirming user registration.
+   * @return ResponseEntity with the user ID and HTTP status CREATED (201) upon successful
+   *         confirmation, or the corresponding error HTTP status in case of failure.
    */
   @PutMapping("/{code}")
-  public long confirm(@PathVariable String code) {
-    return registrationService.confirmRegistration(code);
+  public ResponseEntity<Long> confirm(@PathVariable String code) {
+    long userId = registrationService.confirmRegistration(code);
+    return ResponseEntity.status(HttpStatus.CREATED).body(userId);
   }
 }

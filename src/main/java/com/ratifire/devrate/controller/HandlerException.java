@@ -1,5 +1,7 @@
 package com.ratifire.devrate.controller;
 
+import com.ratifire.devrate.exception.EmailConfirmationCodeException;
+import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.InvalidCodeException;
 import java.util.HashMap;
 import java.util.Map;
@@ -85,5 +87,25 @@ public class HandlerException {
     log.error("Invalid code: {}", ex.getMessage());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body("Invalid or expired password reset code.");
+  }
+
+  /**
+   * Exception handler method for handling EmailConfirmationCodeException.
+   * This method is responsible for handling exceptions related to invalid email confirmation codes.
+   *
+   * @param ex The EmailConfirmationCodeException that has been thrown.
+   * @return ResponseEntity with an error message and HTTP status NOT_FOUND (404).
+   */
+  @ExceptionHandler(EmailConfirmationCodeException.class)
+  public ResponseEntity<String> handleConfirmationCodeException(EmailConfirmationCodeException ex) {
+    log.error("Invalid email confirmation code: {}", ex.getMessage(), ex);
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+  }
+
+  @ExceptionHandler(EmailConfirmationCodeRequestException.class)
+  public ResponseEntity<String> handleEmailConfirmationCodeRequestException(
+      EmailConfirmationCodeRequestException ex) {
+    log.error("Invalid request: {}", ex.getMessage(), ex);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
   }
 }

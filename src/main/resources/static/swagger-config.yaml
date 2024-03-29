@@ -89,19 +89,13 @@ paths:
           description: User not found
         '500':
           description: Internal server error
-  /auth/signup/{id}/{code}:
-    get:
+  /auth/signup/{code}:
+    put:
       tags:
         - registration
       description: Confirming the user's email by matching the code
       operationId: confirmEmail
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: The unique identifier of the user for whom the email is being confirmed.
         - in: path
           name: code
           required: true
@@ -109,20 +103,21 @@ paths:
             type: string
           description: The confirmation code to be checked against the stored code.
       responses:
-        '200':
+        '201':
           description: Email confirmation code successfully confirmed
           content:
             application/json:
               schema:
-                type: boolean
+                type: integer
+                description: The registered user ID.
         '400':
-          description: Bad request, e.g., invalid ID or code
+          description: Bad request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
-          description: User or code not found
+          description: Code not found
           content:
             application/json:
               schema:

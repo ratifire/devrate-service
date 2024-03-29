@@ -17,6 +17,7 @@ import com.ratifire.devrate.dto.UserInfoDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.Role;
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserAlreadyExistException;
 import com.ratifire.devrate.mapper.UserMapper;
 import com.ratifire.devrate.service.RoleService;
@@ -184,7 +185,7 @@ public class RegistrationServiceTest {
 
   @Test
   public void testConfirmRegistration_RequestEmptyCode() {
-    assertThrows(IllegalArgumentException.class,
+    assertThrows(EmailConfirmationCodeRequestException.class,
         () -> registrationService.confirmRegistration(""));
   }
 }
