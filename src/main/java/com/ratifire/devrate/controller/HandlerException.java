@@ -102,6 +102,13 @@ public class HandlerException {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
   }
 
+  /**
+   * Exception handler method for handling {@code EmailConfirmationCodeRequestException}.
+   * This method handles exceptions related to invalid email confirmation code requests.
+   *
+   * @param ex The {@code EmailConfirmationCodeRequestException} that has been thrown.
+   * @return ResponseEntity with an error message and HTTP status BAD_REQUEST (400).
+   */
   @ExceptionHandler(EmailConfirmationCodeRequestException.class)
   public ResponseEntity<String> handleEmailConfirmationCodeRequestException(
       EmailConfirmationCodeRequestException ex) {

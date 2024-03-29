@@ -154,6 +154,12 @@ public class RegistrationServiceTest {
         () -> registrationService.registerUser(testUserDto));
   }
 
+  /**
+   * Unit test for {@link RegistrationService#confirmRegistration(String)}.
+   *
+   * <p>This test verifies the behavior of the confirmRegistration method in RegistrationService
+   * when a valid confirmation code is provided and the registration is successful.
+   */
   @Test
   public void testConfirmRegistration_Success() {
     long userId = 1L;
@@ -183,6 +189,13 @@ public class RegistrationServiceTest {
     verify(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
   }
 
+  /**
+   * Unit test for {@link RegistrationService#confirmRegistration(String)}.
+   *
+   * <p>This test verifies the behavior of the confirmRegistration method in RegistrationService
+   * when an empty confirmation code is provided, and it expects an
+   * EmailConfirmationCodeRequestException to be thrown.
+   */
   @Test
   public void testConfirmRegistration_RequestEmptyCode() {
     assertThrows(EmailConfirmationCodeRequestException.class,
