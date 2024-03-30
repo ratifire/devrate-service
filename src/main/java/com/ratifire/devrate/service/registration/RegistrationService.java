@@ -5,13 +5,16 @@ import com.ratifire.devrate.dto.UserInfoDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.Role;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.exception.EmailConfirmationCodeException;
+import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
+import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserAlreadyExistException;
 import com.ratifire.devrate.mapper.UserMapper;
 import com.ratifire.devrate.service.RoleService;
 import com.ratifire.devrate.service.UserService;
 import com.ratifire.devrate.service.email.EmailService;
 import com.ratifire.devrate.service.userinfo.UserInfoService;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import liquibase.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
@@ -26,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RegistrationService {
 
+  private static final long CONFIRM_CODE_EXPIRATION_HOURS  = 24;
   /**
    * Service responsible for user management operations.
    */
@@ -96,37 +100,36 @@ public class RegistrationService {
    * Checks if the provided confirmation code matches the stored confirmation code for the
    * user and marks the user as verified if the codes match.
    *
-   * @param userId The unique identifier of the user for whom the confirmation code is checked.
-   * @param code   The confirmation code to be checked against the stored code.
-   * @return {@code true} if the confirmation code matches and the user is marked as verified,
-   *         {@code false} otherwise.
-   * @throws EmailConfirmationCodeException If there are issues with the confirmation code
-   *                                        such as missing or invalid codes.
+   * @param confirmationCode The confirmation code provided by the user.
+   * @return The ID of the user whose registration has been confirmed
+   * @throws EmailConfirmationCodeRequestException If the provided confirmation code is empty or
+   *                                               null.
+   * @throws EmailConfirmationCodeExpiredException If the confirmation code is expired.
    */
-  @Transactional
-  public boolean isCodeConfirmed(long userId, String code) {
-    if (StringUtil.isEmpty(code)) {
-      throw new IllegalArgumentException("The confirmation code is a required argument");
+  public long confirmRegistration(String confirmationCode) {
+    if (StringUtil.isEmpty(confirmationCode)) {
+      throw new EmailConfirmationCodeRequestException("The confirmation code is a required "
+          + "argument");
     }
 
     EmailConfirmationCode emailConfirmationCode = emailConfirmationCodeService
-            .getEmailConfirmationCodeByUserId(userId);
+        .findEmailConfirmationCode(confirmationCode);
 
-    if (StringUtil.isEmpty(emailConfirmationCode.getCode())) {
-      throw new EmailConfirmationCodeException("The confirmation code for user ID \""
-              + userId + " is missing or empty.");
-    }
-
-    if (emailConfirmationCode.getCode().equals(code)) {
-      User user = userService.getById(userId);
-      user.setVerified(true);
-      userService.save(user);
-
+    // Check if the confirmation code has expired
+    LocalDateTime createdAt = emailConfirmationCode.getCreatedAt();
+    LocalDateTime currentDateTime = LocalDateTime.now();
+    long hoursSinceCreation = ChronoUnit.HOURS.between(createdAt, currentDateTime);
+    if (hoursSinceCreation >= CONFIRM_CODE_EXPIRATION_HOURS) {
       emailConfirmationCodeService.deleteConfirmedCode(emailConfirmationCode.getId());
-
-      return true;
+      throw new EmailConfirmationCodeExpiredException("The confirmation code has expired");
     }
 
-    throw new EmailConfirmationCodeException("The confirmation code is invalid.");
+    User user = userService.getById(emailConfirmationCode.getUserId());
+    user.setVerified(true);
+    userService.save(user);
+
+    emailConfirmationCodeService.deleteConfirmedCode(emailConfirmationCode.getId());
+
+    return user.getId();
   }
 }

@@ -88,16 +88,15 @@ public class EmailConfirmationCodeService {
   }
 
   /**
-   * Retrieves the {@link EmailConfirmationCode} entity for a given user ID.
+   * Retrieves the {@link EmailConfirmationCode} entity for a requested code.
    *
-   * @param userId The ID of the user for whom to retrieve the email confirmation code.
    * @return The {@link EmailConfirmationCode} entity associated with the specified user ID.
    * @throws EmailConfirmationCodeException If the confirmation code for the user ID is not found.
    */
-  public EmailConfirmationCode getEmailConfirmationCodeByUserId(long userId) {
-    return emailConfirmationCodeRepository.findByUserId(userId)
-        .orElseThrow(() -> new EmailConfirmationCodeException("The confirmation code for the "
-            + "user ID \"" + userId + "\" could not be found."));
+  public EmailConfirmationCode findEmailConfirmationCode(String code) {
+    return emailConfirmationCodeRepository.findByCode(code)
+        .orElseThrow(() -> new EmailConfirmationCodeException("The confirmation code "
+            + "\"" + code + "\" could not be found."));
   }
 
   /**

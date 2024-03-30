@@ -8,9 +8,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.UserDto;
@@ -18,13 +18,15 @@ import com.ratifire.devrate.dto.UserInfoDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.Role;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.exception.EmailConfirmationCodeException;
+import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
+import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserAlreadyExistException;
 import com.ratifire.devrate.mapper.UserMapper;
 import com.ratifire.devrate.service.RoleService;
 import com.ratifire.devrate.service.UserService;
 import com.ratifire.devrate.service.email.EmailService;
 import com.ratifire.devrate.service.userinfo.UserInfoService;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -155,62 +157,78 @@ public class RegistrationServiceTest {
         () -> registrationService.registerUser(testUserDto));
   }
 
+  /**
+   * Unit test for {@link RegistrationService#confirmRegistration(String)}.
+   *
+   * <p>This test verifies the behavior of the confirmRegistration method in RegistrationService
+   * when a valid confirmation code is provided and the registration is successful.
+   */
   @Test
-  public void testIsCodeConfirmed_Success() {
+  public void testConfirmRegistration_Success() {
     long userId = 1L;
     String code = "123456";
 
     EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode.builder()
         .code(code)
+        .userId(userId)
+        .createdAt(LocalDateTime.now())
         .build();
-    when(emailConfirmationCodeService.getEmailConfirmationCodeByUserId(userId))
+    when(emailConfirmationCodeService.findEmailConfirmationCode(code))
         .thenReturn(emailConfirmationCode);
 
     User user = new User();
+    user.setId(userId);
     when(userService.getById(userId)).thenReturn(user);
     when(userService.save(user)).thenReturn(null);
 
     doNothing().when(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
 
-    boolean result = registrationService.isCodeConfirmed(userId, code);
+    long actualUserId = registrationService.confirmRegistration(code);
 
-    assertTrue(result);
+    assertEquals(userId, actualUserId);
     assertTrue(user.isVerified());
-    verify(emailConfirmationCodeService).getEmailConfirmationCodeByUserId(userId);
+    verify(emailConfirmationCodeService).findEmailConfirmationCode(code);
     verify(userService).getById(userId);
     verify(userService).save(user);
     verify(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
   }
 
+  /**
+   * Unit test for {@link RegistrationService#confirmRegistration(String)}.
+   *
+   * <p>This test verifies the behavior of the confirmRegistration method in RegistrationService
+   * when an empty confirmation code is provided, and it expects an
+   * EmailConfirmationCodeRequestException to be thrown.
+   */
   @Test
-  public void testIsCodeConfirmed_InvalidCode() {
-    long userId = 1L;
-    String code = "123456";
-    String wrongCode = "654321";
+  public void testConfirmRegistration_RequestEmptyCode() {
+    assertThrows(EmailConfirmationCodeRequestException.class,
+        () -> registrationService.confirmRegistration(""));
+  }
 
+  /**
+   * Unit test for {@link RegistrationService#confirmRegistration(String)}.
+   *
+   * <p>Tests the confirmation of registration with an expired confirmation code.
+   * Verifies that an {@link EmailConfirmationCodeExpiredException} is thrown
+   * and that neither the {@link UserService} nor the {@link EmailConfirmationCodeService}
+   * are invoked for further actions.
+   */
+  @Test
+  void testConfirmRegistrationExpiredCode() {
+    String code = "123456";
     EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode.builder()
-            .code(wrongCode).build();
-    when(emailConfirmationCodeService.getEmailConfirmationCodeByUserId(userId))
+        .code(code)
+        .userId(1L)
+        .createdAt(LocalDateTime.now().minusHours(25))
+        .build();
+    when(emailConfirmationCodeService.findEmailConfirmationCode(code))
         .thenReturn(emailConfirmationCode);
 
-    assertThrows(EmailConfirmationCodeException.class,
-        () -> registrationService.isCodeConfirmed(userId, code));
-    verify(emailConfirmationCodeService).getEmailConfirmationCodeByUserId(userId);
-    verifyNoInteractions(userService);
-  }
+    assertThrows(EmailConfirmationCodeExpiredException.class,
+        () -> registrationService.confirmRegistration(code));
 
-  @Test
-  public void testIsCodeConfirmed_RequestEmptyCode() {
-    assertThrows(IllegalArgumentException.class,
-        () -> registrationService.isCodeConfirmed(1L, ""));
-  }
-
-  @Test
-  public void testIsCodeConfirmed_EmptyEmailConfirmationCode() {
-    when(emailConfirmationCodeService.getEmailConfirmationCodeByUserId(anyLong()))
-        .thenReturn(new EmailConfirmationCode());
-
-    assertThrows(EmailConfirmationCodeException.class,
-        () -> registrationService.isCodeConfirmed(1L, "123456"));
+    verify(userService, never()).getById(anyLong());
+    verify(emailConfirmationCodeService, times(1)).deleteConfirmedCode(anyLong());
   }
 }
