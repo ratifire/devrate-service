@@ -14,14 +14,6 @@ public interface EmailConfirmationCodeRepository
         extends JpaRepository<EmailConfirmationCode, Long> {
 
   /**
-   * Retrieves an {@link EmailConfirmationCode} by user ID.
-   *
-   * @param userId The ID of the user associated with the email confirmation code.
-   * @return The optional of the {@link EmailConfirmationCode} entity with the specified name.
-   */
-  Optional<EmailConfirmationCode> findByUserId(long userId);
-
-  /**
    * Retrieves an {@link EmailConfirmationCode} by code.
    *
    * @param code The code associated with the email confirmation code.

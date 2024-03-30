@@ -54,31 +54,33 @@ class EmailConfirmationCodeServiceTest {
   }
 
   @Test
-  void testGetEmailConfirmationCodeByUserId() {
+  void testFindEmailConfirmationCode_Success() {
     long userId = 1L;
+    String confirmationCode = "123456";
     EmailConfirmationCode expectedCode = EmailConfirmationCode.builder()
-        .code("123456")
+        .code(confirmationCode)
         .createdAt(LocalDateTime.now())
         .userId(userId)
         .build();
 
-    when(emailConfirmationCodeRepository.findByUserId(userId))
+    when(emailConfirmationCodeRepository.findByCode(confirmationCode))
         .thenReturn(Optional.of(expectedCode));
 
     EmailConfirmationCode actualCode =
-        emailConfirmationCodeService.getEmailConfirmationCodeByUserId(userId);
+        emailConfirmationCodeService.findEmailConfirmationCode(confirmationCode);
 
     assertEquals(expectedCode, actualCode);
   }
 
   @Test
-  void testGetEmailConfirmationCodeByUserIdNotFound_ShouldThrowEmailConfirmationCodeException() {
-    long userId = 1L;
+  void testFindEmailConfirmationCode_CodeNotFound_ShouldThrowEmailConfirmationCodeException() {
+    String confirmationCode = "123456";
 
-    when(emailConfirmationCodeRepository.findByUserId(userId)).thenReturn(Optional.empty());
+    when(emailConfirmationCodeRepository.findByCode(confirmationCode))
+        .thenReturn(Optional.empty());
 
     assertThrows(EmailConfirmationCodeException.class,
-        () -> emailConfirmationCodeService.getEmailConfirmationCodeByUserId(userId));
+        () -> emailConfirmationCodeService.findEmailConfirmationCode(confirmationCode));
   }
 
   @Test
