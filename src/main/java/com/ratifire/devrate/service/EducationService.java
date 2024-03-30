@@ -3,7 +3,7 @@ package com.ratifire.devrate.service;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.exception.EducationNotFoundException;
-import com.ratifire.devrate.mapper.EducationMapper;
+import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.EducationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class EducationService {
 
   private final EducationRepository educationRepository;
 
-  private final EducationMapper educationMapper;
+  private final DataMapper<EducationDto, Education> mapper;
 
   /**
    * Retrieves an education entity by its ID.
@@ -27,22 +27,22 @@ public class EducationService {
    * @throws EducationNotFoundException If no education entity is found with the given ID.
    */
   public EducationDto getById(long id) {
-    return educationRepository.findById(id).map(educationMapper::toDto)
+    return educationRepository.findById(id).map(mapper::toDto)
         .orElseThrow(() -> new EducationNotFoundException("Education not found with id: " + id));
   }
 
   /**
    * Creates a new education entity.
    *
-   * @param userInfoId       The ID of the user to whom the education belongs.
+   * @param userInfoId   The ID of the user to whom the education belongs.
    * @param educationDto The data representing the education entity to be created.
    * @return EducationDto representing the newly created education entity.
    */
   public EducationDto create(long userInfoId, EducationDto educationDto) {
-    Education education = educationMapper.toEntity(educationDto);
+    Education education = mapper.toEntity(educationDto);
     education.setUserInfoId(userInfoId);
 
-    return educationMapper.toDto(educationRepository.save(education));
+    return mapper.toDto(educationRepository.save(education));
   }
 
   /**
@@ -58,9 +58,9 @@ public class EducationService {
         .orElseThrow(() -> new EducationNotFoundException(
             "Education not found with id: " + id));
 
-    educationMapper.toUpdate(educationDto, education);
+    mapper.updateEntity(educationDto, education);
 
-    return educationMapper.toDto(educationRepository.save(education));
+    return mapper.toDto(educationRepository.save(education));
   }
 
   /**
