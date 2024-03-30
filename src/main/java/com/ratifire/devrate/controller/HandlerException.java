@@ -1,5 +1,8 @@
 package com.ratifire.devrate.controller;
 
+import com.ratifire.devrate.exception.EmailConfirmationCodeException;
+import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
+import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.InvalidCodeException;
 import java.util.HashMap;
 import java.util.Map;
@@ -85,5 +88,46 @@ public class HandlerException {
     log.error("Invalid code: {}", ex.getMessage());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body("Invalid or expired password reset code.");
+  }
+
+  /**
+   * Exception handler method for handling EmailConfirmationCodeException.
+   * This method is responsible for handling exceptions related to invalid email confirmation codes.
+   *
+   * @param ex The EmailConfirmationCodeException that has been thrown.
+   * @return ResponseEntity with an error message and HTTP status NOT_FOUND (404).
+   */
+  @ExceptionHandler(EmailConfirmationCodeException.class)
+  public ResponseEntity<String> handleConfirmationCodeException(EmailConfirmationCodeException ex) {
+    log.error("Invalid email confirmation code: {}", ex.getMessage(), ex);
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+  }
+
+  /**
+   * Exception handler method for handling {@code EmailConfirmationCodeRequestException}.
+   * This method handles exceptions related to invalid email confirmation code requests.
+   *
+   * @param ex The {@code EmailConfirmationCodeRequestException} that has been thrown.
+   * @return ResponseEntity with an error message and HTTP status BAD_REQUEST (400).
+   */
+  @ExceptionHandler(EmailConfirmationCodeRequestException.class)
+  public ResponseEntity<String> handleEmailConfirmationCodeRequestException(
+      EmailConfirmationCodeRequestException ex) {
+    log.error("Invalid request: {}", ex.getMessage(), ex);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+  }
+
+  /**
+   * Handles the {@link EmailConfirmationCodeExpiredException} thrown when attempting to confirm
+   * registration with an expired email confirmation code.
+   *
+   * @param ex The {@link EmailConfirmationCodeExpiredException} thrown.
+   * @return A {@link ResponseEntity} with an appropriate HTTP status code and error message.
+   */
+  @ExceptionHandler(EmailConfirmationCodeExpiredException.class)
+  public ResponseEntity<String> handleEmailConfirmationCodeExpiredException(
+      EmailConfirmationCodeExpiredException ex) {
+    log.error("Email confirmation code: {}", ex.getMessage(), ex);
+    return ResponseEntity.status(HttpStatus.GONE).body(ex.getMessage());
   }
 }

@@ -1,16 +1,17 @@
 package com.ratifire.devrate.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.exception.EmailConfirmationCodeException;
+import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.service.registration.RegistrationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ import org.springframework.test.web.servlet.MockMvc;
 public class RegistrationControllerTest {
 
   private static final String END_POINT_PATH = "/auth/signup";
-  private static final String END_POINT_CONFIRM_PATH = "/auth/signup/1/123";
+  private static final String END_POINT_CONFIRM_PATH = "/auth/signup/123";
   @Autowired
   private MockMvc mockMvc;
 
@@ -81,21 +82,56 @@ public class RegistrationControllerTest {
         .andDo(print());
   }
 
+  /**
+   * Test for {@link RegistrationController#confirm(String)}.
+   *
+   * <p>Test method for verifying that the sign-up endpoint ("/signup") returns OK status. This
+   * method verifies that the sign-up endpoint returns HTTP status 200 (OK) when accessed.
+   *
+   * @throws Exception if an error occurs during the test.
+   */
   @Test
-  public void testConfirmShouldReturnTrue() throws Exception {
-    Mockito.when(registrationService.isCodeConfirmed(anyLong(), anyString())).thenReturn(true);
+  public void testConfirmShouldReturnUserId() throws Exception {
+    Mockito.when(registrationService.confirmRegistration(anyString())).thenReturn(1L);
 
-    mockMvc.perform(get(END_POINT_CONFIRM_PATH))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$").value(true));
+    mockMvc.perform(put(END_POINT_CONFIRM_PATH))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$").value(1L));
   }
 
+  /**
+   * Test for {@link RegistrationController#confirm(String)}.
+   *
+   * <p>This test ensures that the {@code confirmRegistration} method in {@code RegistrationService}
+   * throws {@code EmailConfirmationCodeException}, and the controller returns HTTP status code 404
+   * (NOT FOUND) in response.
+   *
+   * @throws Exception if an error occurs during the test execution
+   */
   @Test
-  public void testConfirmShouldReturnFalse() throws Exception {
-    Mockito.when(registrationService.isCodeConfirmed(anyLong(), anyString())).thenReturn(false);
+  public void testConfirm_InvalidCode_ShouldReturnStatusCode404() throws Exception {
+    Mockito.when(registrationService.confirmRegistration(anyString()))
+        .thenThrow(EmailConfirmationCodeException.class);
 
-    mockMvc.perform(get(END_POINT_CONFIRM_PATH))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$").value(false));
+    mockMvc.perform(put(END_POINT_CONFIRM_PATH))
+        .andExpect(status().isNotFound());
+  }
+
+  /**
+   * Test for {@link RegistrationController#confirm(String)}.
+   *
+   * <p>This test ensures that the {@code confirmRegistration} method in {@code RegistrationService}
+   * throws {@code EmailConfirmationCodeRequestException}, and the controller returns HTTP status
+   * code 400 (BAD REQUEST) in response.
+   *
+   * @throws Exception if an error occurs during the test execution
+   */
+  @Test
+  public void testConfirm_InvalidRequest_ShouldReturnStatusCode400() throws Exception {
+    Mockito.when(registrationService.confirmRegistration(anyString()))
+        .thenThrow(EmailConfirmationCodeRequestException.class);
+
+    mockMvc.perform(put(END_POINT_CONFIRM_PATH))
+        .andExpect(status().isBadRequest());
   }
 }
