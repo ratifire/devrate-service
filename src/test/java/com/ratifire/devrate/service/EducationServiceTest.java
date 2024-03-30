@@ -13,7 +13,7 @@ import static org.mockito.Mockito.when;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.exception.EducationNotFoundException;
-import com.ratifire.devrate.mapper.EducationMapper;
+import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.EducationRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +33,7 @@ public class EducationServiceTest {
   private EducationRepository educationRepository;
 
   @Mock
-  private EducationMapper educationMapper;
+  private DataMapper<EducationDto, Education> mapper;
 
   @InjectMocks
   private EducationService educationService;
@@ -71,7 +71,7 @@ public class EducationServiceTest {
   @Test
   public void getByIdTest() {
     when(educationRepository.findById(anyLong())).thenReturn(Optional.ofNullable(education));
-    when(educationMapper.toDto(education)).thenReturn(educationDto);
+    when(mapper.toDto(education)).thenReturn(educationDto);
 
     EducationDto result = educationService.getById(anyLong());
 
@@ -87,8 +87,8 @@ public class EducationServiceTest {
   @Test
   public void crateTest() {
     when(educationRepository.save(any())).thenReturn(education);
-    when(educationMapper.toEntity(any())).thenReturn(education);
-    when(educationMapper.toDto(education)).thenReturn(educationDto);
+    when(mapper.toEntity(educationDto)).thenReturn(education);
+    when(mapper.toDto(education)).thenReturn(educationDto);
 
     EducationDto result = educationService.create(anyLong(), educationDto);
 
@@ -99,8 +99,8 @@ public class EducationServiceTest {
   public void updateTest() {
     when(educationRepository.findById(anyLong())).thenReturn(Optional.ofNullable(education));
     when(educationRepository.save(any())).thenReturn(education);
-    doNothing().when(educationMapper).toUpdate(any(), any());
-    when(educationMapper.toDto(education)).thenReturn(educationDto);
+    when(mapper.updateEntity(any(), any())).thenReturn(education);
+    when(mapper.toDto(education)).thenReturn(educationDto);
 
     EducationDto result = educationService.update(anyLong(), educationDto);
 

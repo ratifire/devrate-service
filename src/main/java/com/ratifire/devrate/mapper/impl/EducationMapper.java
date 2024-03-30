@@ -20,6 +20,6 @@ public abstract class EducationMapper implements DataMapper<EducationDto, Educat
 
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "userInfoId", ignore = true)
-  public abstract void updateEntity(EducationDto educationDto, @MappingTarget Education education);
-
+  public abstract Education updateEntity(EducationDto educationDto,
+      @MappingTarget Education education);
 }

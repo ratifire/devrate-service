@@ -19,5 +19,5 @@ public interface DataMapper<D, E> {
 
   List<D> toDto(List<E> entity);
 
-  void updateEntity(D dto, @MappingTarget E entity);
+  E updateEntity(D dto, @MappingTarget E entity);
 }
