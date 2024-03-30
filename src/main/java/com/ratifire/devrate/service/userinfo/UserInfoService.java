@@ -4,7 +4,7 @@ import com.ratifire.devrate.dto.UserInfoDto;
 import com.ratifire.devrate.entity.UserInfo;
 import com.ratifire.devrate.exception.UserInfoAlreadyExistsException;
 import com.ratifire.devrate.exception.UserInfoNotFoundException;
-import com.ratifire.devrate.mapper.UserInfoMapper;
+import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.UserInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class UserInfoService {
 
   private final UserInfoRepository userInfoRepository;
-  private final UserInfoMapper userInfoMapper;
+  private final DataMapper<UserInfoDto, UserInfo> userInfoMapper;
 
   /**
    * Retrieves user personal information by user ID.
@@ -65,7 +65,7 @@ public class UserInfoService {
         .orElseThrow(() -> new UserInfoNotFoundException("The user's personal information "
             + "could not be found with the user id \"" + userId + "\""));
 
-    userInfoMapper.updateEntityFromDto(userInfoDto, userInfo);
+    userInfoMapper.updateEntity(userInfoDto, userInfo);
 
     return userInfoMapper.toDto(userInfoRepository.save(userInfo));
   }

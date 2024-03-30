@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.exception.ContactNotFoundException;
-import com.ratifire.devrate.mapper.ContactMapper;
+import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.ContactRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +33,7 @@ class ContactServiceTest {
   private ContactRepository contactRepository;
 
   @Mock
-  private ContactMapper contactMapper;
+  private DataMapper<ContactDto, Contact> contactMapper;
 
   private ContactDto contactDto;
 
@@ -85,7 +85,7 @@ class ContactServiceTest {
   @Test
   void updateTest() {
     when(contactRepository.findById(id)).thenReturn(Optional.of(contact));
-    doNothing().when(contactMapper).toUpdate(any(ContactDto.class), any(Contact.class));
+    when(contactMapper.updateEntity(any(), any())).thenReturn(contact);
     when(contactRepository.save(any(Contact.class))).thenReturn(contact);
     when(contactMapper.toDto(any(Contact.class))).thenReturn(contactDto);
 
@@ -94,7 +94,7 @@ class ContactServiceTest {
     assertEquals(contactDto, contactDtoUpdated);
     verify(contactRepository).findById(id);
     verify(contactRepository).save(any(Contact.class));
-    verify(contactMapper).toUpdate(any(ContactDto.class), any(Contact.class));
+    verify(contactMapper).updateEntity(any(ContactDto.class), any(Contact.class));
     verify(contactMapper).toDto(any(Contact.class));
   }
 

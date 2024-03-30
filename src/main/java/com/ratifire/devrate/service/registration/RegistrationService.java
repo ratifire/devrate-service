@@ -8,7 +8,7 @@ import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserAlreadyExistException;
-import com.ratifire.devrate.mapper.UserMapper;
+import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.service.RoleService;
 import com.ratifire.devrate.service.UserService;
 import com.ratifire.devrate.service.email.EmailService;
@@ -37,7 +37,7 @@ public class RegistrationService {
 
   private final RoleService roleService;
 
-  private final UserMapper userMapper;
+  private final DataMapper<UserDto, User> userMapper;
 
   private final EmailConfirmationCodeService emailConfirmationCodeService;
 
@@ -73,8 +73,10 @@ public class RegistrationService {
       throw new UserAlreadyExistException("User is already registered!");
     }
 
-    Role role = roleService.getDefaultRole();
-    User user = userService.save(userMapper.toEntity(userDto, role));
+    User entity = userMapper.toEntity(userDto);
+    entity.setRole(roleService.getDefaultRole());
+
+    User user = userService.save(entity);
 
     UserInfoDto userInfoDto = UserInfoDto.builder()
         .firstName(user.getFirstName())

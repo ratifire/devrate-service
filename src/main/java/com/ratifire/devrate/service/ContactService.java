@@ -3,7 +3,7 @@ package com.ratifire.devrate.service;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.exception.ContactNotFoundException;
-import com.ratifire.devrate.mapper.ContactMapper;
+import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.ContactRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class ContactService {
 
   private final ContactRepository contactRepository;
 
-  private final ContactMapper contactMapper;
+  private final DataMapper<ContactDto, Contact> contactMapper;
 
   /**
    * Retrieves a contact by its ID and converts it to a ContactDto. If the contact is not found, a
@@ -59,7 +59,7 @@ public class ContactService {
   public ContactDto update(long id, ContactDto contactDto) {
     Contact contact = contactRepository.findById(id)
         .orElseThrow(() -> new ContactNotFoundException(id));
-    contactMapper.toUpdate(contactDto, contact);
+    contactMapper.updateEntity(contactDto, contact);
     contactRepository.save(contact);
     return contactMapper.toDto(contact);
   }
