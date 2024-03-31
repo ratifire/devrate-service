@@ -16,7 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -34,9 +33,6 @@ public class WebSocketSenderTest {
 
   @Mock
   private ObjectMapper objectMapper;
-
-  @Mock
-  private Logger logger;
 
   @Mock
   private WebSocketSession session;
