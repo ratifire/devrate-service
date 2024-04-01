@@ -5,17 +5,17 @@ databaseChangeLog:
       preConditions:
         - onFail: MARK_RAN
           comments: |
-            Checks if the foreign key constraint 'fk_notification_user' does not already exist 
+            Checks if the foreign key constraint 'fk_notification_user_info' does not already exist 
             on the "notifications" table.
             Marks the changeSet as executed if the foreign key constraint exists.
           not:
             foreignKeyConstraintExists:
-              foreignKeyName: fk_notification_user
+              foreignKeyName: fk_notification_user_info
               baseTableName: notifications
       changes:
         - addForeignKeyConstraint:
             baseTableName: notifications
-            baseColumnNames: user_id
-            constraintName: fk_notification_user
-            referencedTableName: users
+            baseColumnNames: user_info_id
+            constraintName: fk_notification_user_info
+            referencedTableName: user_info
             referencedColumnNames: id
