@@ -37,8 +37,8 @@ public class Notification {
   private boolean read;
 
   @OneToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "user_id")
-  private User user;
+  @JoinColumn(name = "user_info_id")
+  private UserInfo user;
 
   @Column(nullable = false)
   private LocalDateTime createdAt;
