@@ -235,32 +235,14 @@ The following accounts have been added for application testing:
 
 1. **User 1**
     - Email: dev1@test.com
-    - First Name: Dev1
-    - Last Name: Rate1
-    - Country: Ukraine
-    - Subscribed: Yes
-    - Verified Email: Yes
-    - Created At: Current Time
     - Password: 12345678
 
 2. **User 2**
     - Email: dev2@test.com
-    - First Name: Dev2
-    - Last Name: Rate2
-    - Country: Ukraine
-    - Subscribed: Yes
-    - Verified Email: Yes
-    - Created At: Current Time
     - Password: 12345678
 
 3. **User 3**
     - Email: dev3@test.com
-    - First Name: Dev3
-    - Last Name: Rate3
-    - Country: Ukraine
-    - Subscribed: Yes
-    - Verified Email: Yes
-    - Created At: Current Time
     - Password: 12345678
 
 
