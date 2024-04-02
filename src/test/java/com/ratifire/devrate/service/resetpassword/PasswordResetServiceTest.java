@@ -6,7 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.entity.EmailConfirmationCode;
-import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.InvalidCodeException;
 import com.ratifire.devrate.service.UserService;
 import org.junit.jupiter.api.Test;
@@ -45,9 +45,10 @@ public class PasswordResetServiceTest {
   @Test
   void requestPasswordReset_WithValidEmail_SendsResetLink() {
     String email = "user@example.com";
-    User user = User.builder().id(1L).build();
-    when(userService.findUserByEmail(email)).thenReturn(user);
-    when(emailConfirmationUuidService.generateAndPersistUuidCode(user.getId())).thenReturn("code");
+    UserSecurity userSecurity = UserSecurity.builder().id(1L).build();
+    when(userService.findUserByEmail(email)).thenReturn(userSecurity);
+    when(emailConfirmationUuidService.generateAndPersistUuidCode(userSecurity.getId()))
+        .thenReturn("code");
 
     boolean result = passwordResetService.requestPasswordReset(email);
 
@@ -76,20 +77,20 @@ public class PasswordResetServiceTest {
   void resetPassword_WithValidCode_UpdatesPassword() {
     String code = "validCode";
     String newPassword = "newPassword";
-    User user = User.builder().id(1L).build();
+    UserSecurity userSecurity = UserSecurity.builder().id(1L).build();
     EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode
-        .builder().userId(user.getId()).build();
+        .builder().userId(userSecurity.getId()).build();
 
     when(emailConfirmationUuidService.findUuidCode(code)).thenReturn(emailConfirmationCode);
-    when(userService.getById(user.getId())).thenReturn(user);
+    when(userService.getById(userSecurity.getId())).thenReturn(userSecurity);
     when(passwordEncoder.encode(newPassword)).thenReturn("encodedPassword");
 
     boolean result = passwordResetService.resetPassword(code, newPassword);
 
     assertTrue(result);
-    verify(userService).save(user);
+    verify(userService).save(userSecurity);
     verify(passwordEncoder).encode(newPassword);
-    verify(emailConfirmationUuidService).deleteConfirmedCodesByUserId(user.getId());
+    verify(emailConfirmationUuidService).deleteConfirmedCodesByUserId(userSecurity.getId());
   }
 
 

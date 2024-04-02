@@ -1,7 +1,7 @@
 package com.ratifire.devrate.service.resetpassword;
 
 import com.ratifire.devrate.entity.EmailConfirmationCode;
-import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +27,9 @@ public class PasswordResetService {
    */
   @Transactional
   public boolean requestPasswordReset(String email) {
-    User user = userService.findUserByEmail(email);
+    UserSecurity userSecurity = userService.findUserByEmail(email);
 
-    String code = emailConfirmationUuidService.generateAndPersistUuidCode(user.getId());
+    String code = emailConfirmationUuidService.generateAndPersistUuidCode(userSecurity.getId());
 
     emailConfirmationUuidService.sendPasswordResetEmail(email, code);
     return true;
@@ -44,15 +44,15 @@ public class PasswordResetService {
   @Transactional
   public boolean resetPassword(String code, String newPassword) {
     EmailConfirmationCode emailConfirmationCode = emailConfirmationUuidService.findUuidCode(code);
-    User user = userService.getById(emailConfirmationCode.getUserId());
+    UserSecurity userSecurity = userService.getById(emailConfirmationCode.getUserId());
 
     String encodedPassword = passwordEncoder.encode(newPassword);
 
-    user.setPassword(encodedPassword);
-    userService.save(user);
+    userSecurity.setPassword(encodedPassword);
+    userService.save(userSecurity);
 
-    emailConfirmationUuidService.deleteConfirmedCodesByUserId(user.getId());
-    emailConfirmationUuidService.sendPasswordChangeConfirmation(user.getEmail());
+    emailConfirmationUuidService.deleteConfirmedCodesByUserId(userSecurity.getId());
+    emailConfirmationUuidService.sendPasswordChangeConfirmation(userSecurity.getEmail());
     return true;
   }
 }

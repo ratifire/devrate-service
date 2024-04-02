@@ -1,6 +1,6 @@
 package com.ratifire.devrate.service;
 
-import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,20 +33,20 @@ public class UserService {
   /**
    * Saves the user entity.
    *
-   * @param user The user entity to save.
-   * @return The saved user entity.
+   * @param userSecurity The user entity to save.
+   * @return The saved user security entity.
    */
-  public User save(User user) {
-    return userRepository.save(user);
+  public UserSecurity save(UserSecurity userSecurity) {
+    return userRepository.save(userSecurity);
   }
 
   /**
-   * Get the user entity by id.
+   * Get the user security entity by id.
    *
-   * @param id The user id.
-   * @return The user entity that has been found.
+   * @param id The user security id.
+   * @return The user security entity that has been found.
    */
-  public User getById(long id) {
+  public UserSecurity getById(long id) {
     return userRepository.findById(id)
             .orElseThrow(() -> new UserNotFoundException("The user cannot be found."));
   }
@@ -55,10 +55,10 @@ public class UserService {
    * Finds a user by email.
    *
    * @param email The email address of the user to find.
-   * @return The user entity if found, otherwise throws UsernameNotFoundException.
+   * @return The user security entity if found, otherwise throws UsernameNotFoundException.
    * @throws UsernameNotFoundException if the user with the given email is not found.
    */
-  public User findUserByEmail(String email) throws UsernameNotFoundException {
+  public UserSecurity findUserByEmail(String email) throws UsernameNotFoundException {
     return userRepository.findByEmail(email).orElseThrow();
   }
 }

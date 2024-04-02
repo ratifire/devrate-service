@@ -25,8 +25,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
- * Entity class representing a user in the system. A user is an entity with authentication
- * credentials and associated profile information.
+ * Entity class representing a user security in the system. A user is an entity with authentication
+ * credentials information.
  */
 @Entity
 @Getter
@@ -34,8 +34,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
-public class User implements UserDetails {
+@Table(name = "user_security")
+public class UserSecurity implements UserDetails {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,25 +45,6 @@ public class User implements UserDetails {
   @Size(max = 100)
   @Column(nullable = false, unique = true)
   private String email;
-
-  @NotEmpty
-  @Size(max = 100)
-  @Column(nullable = false)
-  private String firstName;
-
-  @NotEmpty
-  @Size(max = 100)
-  @Column(nullable = false)
-  private String lastName;
-
-  @NotEmpty
-  @Size(max = 100)
-  @Column(nullable = false)
-  private String country;
-
-  @NotNull
-  @Column(name = "is_subscribed", nullable = false)
-  private boolean subscribed;
 
   @NotNull
   @Column(name = "is_verified", nullable = false)

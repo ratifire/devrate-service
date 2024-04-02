@@ -17,7 +17,7 @@ import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.dto.UserInfoDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.Role;
-import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserAlreadyExistException;
@@ -52,7 +52,7 @@ public class RegistrationServiceTest {
   private RoleService roleService;
 
   @Mock
-  private DataMapper<UserDto, User> userMapper;
+  private DataMapper<UserDto, UserSecurity> userMapper;
 
   @Mock
   private EmailConfirmationCodeService emailConfirmationCodeService;
@@ -112,7 +112,7 @@ public class RegistrationServiceTest {
         .password(testPassword)
         .build();
 
-    User testUser = User.builder()
+    UserSecurity testUserSecurity = UserSecurity.builder()
         .email("test@gmail.com")
         .build();
 
@@ -121,9 +121,9 @@ public class RegistrationServiceTest {
         .build();
 
     when(roleService.getDefaultRole()).thenReturn(testRole);
-    when(userService.save(any())).thenReturn(testUser);
-    when(userMapper.toEntity(any(UserDto.class))).thenReturn(testUser);
-    when(userMapper.toDto(any(User.class))).thenReturn(testUserDto);
+    when(userService.save(any())).thenReturn(testUserSecurity);
+    when(userMapper.toEntity(any(UserDto.class))).thenReturn(testUserSecurity);
+    when(userMapper.toDto(any(UserSecurity.class))).thenReturn(testUserDto);
     when(userInfoService.create(any(UserInfoDto.class))).thenReturn(UserInfoDto.builder().build());
 
     when(registrationService.isUserExistByEmail(any())).thenReturn(false);
@@ -176,20 +176,20 @@ public class RegistrationServiceTest {
     when(emailConfirmationCodeService.findEmailConfirmationCode(code))
         .thenReturn(emailConfirmationCode);
 
-    User user = new User();
-    user.setId(userId);
-    when(userService.getById(userId)).thenReturn(user);
-    when(userService.save(user)).thenReturn(null);
+    UserSecurity userSecurity = new UserSecurity();
+    userSecurity.setId(userId);
+    when(userService.getById(userId)).thenReturn(userSecurity);
+    when(userService.save(userSecurity)).thenReturn(null);
 
     doNothing().when(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
 
     long actualUserId = registrationService.confirmRegistration(code);
 
     assertEquals(userId, actualUserId);
-    assertTrue(user.isVerified());
+    assertTrue(userSecurity.isVerified());
     verify(emailConfirmationCodeService).findEmailConfirmationCode(code);
     verify(userService).getById(userId);
-    verify(userService).save(user);
+    verify(userService).save(userSecurity);
     verify(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
   }
 

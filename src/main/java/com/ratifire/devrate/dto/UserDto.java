@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 /**
- * Data Transfer Object (DTO) representing the user.
+ * Data Transfer Object (DTO) representing the user registration.
  */
 @Builder
 @Getter

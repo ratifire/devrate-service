@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.repository.UserRepository;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * methods.
  */
 @ExtendWith(MockitoExtension.class)
-public class UserServiceTest {
+public class UserSecurityServiceTest {
 
   @Mock
   private UserRepository userRepository;
@@ -61,25 +61,21 @@ public class UserServiceTest {
   }
 
   /**
-   * Unit test for {@link UserService#save(User)}.
+   * Unit test for {@link UserService#save(UserSecurity)}.
    *
    * <p>Test method for saving a user entity into the database. This method verifies that the
    * UserService correctly saves a user entity into the database.
    */
   @Test
   public void testSaveUser() {
-    User testUser = User.builder()
+    UserSecurity testUserSecurity = UserSecurity.builder()
         .email("test@gmail.com")
-        .firstName("Test first name")
-        .lastName("Test last name")
-        .country("Test country")
         .verified(true)
-        .subscribed(true)
         .createdAt(LocalDateTime.now())
         .build();
 
-    when(userRepository.save(any())).thenReturn(testUser);
-    User expectedUser = userService.save(User.builder().build());
-    assertEquals(expectedUser, testUser);
+    when(userRepository.save(any())).thenReturn(testUserSecurity);
+    UserSecurity expectedUserSecurity = userService.save(UserSecurity.builder().build());
+    assertEquals(expectedUserSecurity, testUserSecurity);
   }
 }
