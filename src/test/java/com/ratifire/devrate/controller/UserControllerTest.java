@@ -33,7 +33,7 @@ import org.springframework.test.web.servlet.MockMvc;
  */
 @WebMvcTest(UserInfoController.class)
 @Import(SecurityConfiguration.class)
-class UserInfoControllerTest {
+class UserControllerTest {
 
   private static final long USER_ID = 1L;
 
