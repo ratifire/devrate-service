@@ -7,7 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.entity.UserSecurity;
-import com.ratifire.devrate.repository.UserRepository;
+import com.ratifire.devrate.repository.UserSecurityRepository;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public class UserSecurityServiceTest {
 
   @Mock
-  private UserRepository userRepository;
+  private UserSecurityRepository userSecurityRepository;
 
   @InjectMocks
   private UserSecurityService userSecurityService;
@@ -40,7 +40,7 @@ public class UserSecurityServiceTest {
   @Test
   public void testUserExistsByEmail_ReturnsTrue() {
     String existingEmail = "existing@example.com";
-    when(userRepository.existsByEmail(any())).thenReturn(true);
+    when(userSecurityRepository.existsByEmail(any())).thenReturn(true);
     boolean isExist = userSecurityService.isUserExistByEmail(existingEmail);
     assertTrue(isExist);
   }
@@ -55,7 +55,7 @@ public class UserSecurityServiceTest {
   @Test
   public void testUserExistsByEmail_ReturnsFalse() {
     String notExistingEmail = "notexisting@example.com";
-    when(userRepository.existsByEmail(any())).thenReturn(false);
+    when(userSecurityRepository.existsByEmail(any())).thenReturn(false);
     boolean isExist = userSecurityService.isUserExistByEmail(notExistingEmail);
     assertFalse(isExist);
   }
@@ -74,7 +74,7 @@ public class UserSecurityServiceTest {
         .createdAt(LocalDateTime.now())
         .build();
 
-    when(userRepository.save(any())).thenReturn(testUserSecurity);
+    when(userSecurityRepository.save(any())).thenReturn(testUserSecurity);
     UserSecurity expectedUserSecurity = userSecurityService.save(UserSecurity.builder().build());
     assertEquals(expectedUserSecurity, testUserSecurity);
   }

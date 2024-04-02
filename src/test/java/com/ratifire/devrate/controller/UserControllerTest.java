@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.configuration.SecurityConfiguration;
 import com.ratifire.devrate.dto.UserDto;
-import com.ratifire.devrate.service.userinfo.UserInfoService;
+import com.ratifire.devrate.service.userinfo.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +29,9 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
- * Unit tests for the {@link UserInfoController} class.
+ * Unit tests for the {@link UserController} class.
  */
-@WebMvcTest(UserInfoController.class)
+@WebMvcTest(UserController.class)
 @Import(SecurityConfiguration.class)
 class UserControllerTest {
 
@@ -44,7 +44,7 @@ class UserControllerTest {
   private ObjectMapper objectMapper;
 
   @MockBean
-  private UserInfoService userInfoService;
+  private UserService userService;
 
   @MockBean
   private UserDetailsService userDetailsService;
@@ -69,7 +69,7 @@ class UserControllerTest {
   @Test
   @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
   void findByIdTest() throws Exception {
-    when(userInfoService.findById(USER_ID)).thenReturn(userDto);
+    when(userService.findById(USER_ID)).thenReturn(userDto);
     mockMvc.perform(get("/users/{id}", USER_ID))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -83,14 +83,14 @@ class UserControllerTest {
         .andExpect(jsonPath("$.description").value(userDto.getDescription()))
         .andExpect(jsonPath("$.userId").value(userDto.getUserId()));
 
-    verify(userInfoService, times(1)).findById(anyLong());
+    verify(userService, times(1)).findById(anyLong());
   }
 
   @Test
   @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
   void createTest() throws Exception {
     String requestBody = objectMapper.writeValueAsString(userDto);
-    when(userInfoService.create(any(UserDto.class))).thenReturn(userDto);
+    when(userService.create(any(UserDto.class))).thenReturn(userDto);
     mockMvc.perform(post("/users")
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestBody))
@@ -106,14 +106,14 @@ class UserControllerTest {
         .andExpect(jsonPath("$.description").value(userDto.getDescription()))
         .andExpect(jsonPath("$.userId").value(userDto.getUserId()));
 
-    verify(userInfoService, times(1)).create(any(UserDto.class));
+    verify(userService, times(1)).create(any(UserDto.class));
   }
 
   @Test
   @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
   void updateTest() throws Exception {
     String requestBody = objectMapper.writeValueAsString(userDto);
-    when(userInfoService.update(any(UserDto.class))).thenReturn(userDto);
+    when(userService.update(any(UserDto.class))).thenReturn(userDto);
     mockMvc.perform(put("/users")
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestBody))
@@ -129,7 +129,7 @@ class UserControllerTest {
         .andExpect(jsonPath("$.description").value(userDto.getDescription()))
         .andExpect(jsonPath("$.userId").value(userDto.getUserId()));
 
-    verify(userInfoService, times(1)).update(any(UserDto.class));
+    verify(userService, times(1)).update(any(UserDto.class));
   }
 
   @Test

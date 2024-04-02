@@ -25,7 +25,7 @@ import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.service.RoleService;
 import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.email.EmailService;
-import com.ratifire.devrate.service.userinfo.UserInfoService;
+import com.ratifire.devrate.service.userinfo.UserService;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,7 +61,7 @@ public class RegistrationServiceTest {
   private EmailService emailService;
 
   @Mock
-  private UserInfoService userInfoService;
+  private UserService userService;
 
   @InjectMocks
   private RegistrationService registrationService;
@@ -124,7 +124,7 @@ public class RegistrationServiceTest {
     when(userSecurityService.save(any())).thenReturn(testUserSecurity);
     when(userMapper.toEntity(any(UserRegistrationDto.class))).thenReturn(testUserSecurity);
     when(userMapper.toDto(any(UserSecurity.class))).thenReturn(testUserRegistrationDto);
-    when(userInfoService.create(any(UserDto.class))).thenReturn(UserDto.builder().build());
+    when(userService.create(any(UserDto.class))).thenReturn(UserDto.builder().build());
 
     when(registrationService.isUserExistByEmail(any())).thenReturn(false);
     when(emailConfirmationCodeService.save(anyLong()))
@@ -135,7 +135,7 @@ public class RegistrationServiceTest {
 
     assertEquals(expected, testUserRegistrationDto);
     verify(emailConfirmationCodeService, times(1)).save(anyLong());
-    verify(userInfoService, times(1)).create(any(UserDto.class));
+    verify(userService, times(1)).create(any(UserDto.class));
     verify(emailService, times(1)).sendEmail(any(), anyBoolean());
   }
 

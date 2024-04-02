@@ -2,7 +2,7 @@ package com.ratifire.devrate.service;
 
 import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.UserNotFoundException;
-import com.ratifire.devrate.repository.UserRepository;
+import com.ratifire.devrate.repository.UserSecurityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class UserSecurityService {
   /**
    * Repository for accessing user data in the database.
    */
-  private final UserRepository userRepository;
+  private final UserSecurityRepository userSecurityRepository;
 
   /**
    * Checks if a user with the given email exists in the system.
@@ -27,7 +27,7 @@ public class UserSecurityService {
    * @return True if a user with the given email exists, false otherwise.
    */
   public boolean isUserExistByEmail(String email) {
-    return userRepository.existsByEmail(email);
+    return userSecurityRepository.existsByEmail(email);
   }
 
   /**
@@ -37,7 +37,7 @@ public class UserSecurityService {
    * @return The saved user security entity.
    */
   public UserSecurity save(UserSecurity userSecurity) {
-    return userRepository.save(userSecurity);
+    return userSecurityRepository.save(userSecurity);
   }
 
   /**
@@ -47,7 +47,7 @@ public class UserSecurityService {
    * @return The user security entity that has been found.
    */
   public UserSecurity getById(long id) {
-    return userRepository.findById(id)
+    return userSecurityRepository.findById(id)
             .orElseThrow(() -> new UserNotFoundException("The user cannot be found."));
   }
 
@@ -59,6 +59,6 @@ public class UserSecurityService {
    * @throws UsernameNotFoundException if the user with the given email is not found.
    */
   public UserSecurity findUserByEmail(String email) throws UsernameNotFoundException {
-    return userRepository.findByEmail(email).orElseThrow();
+    return userSecurityRepository.findByEmail(email).orElseThrow();
   }
 }

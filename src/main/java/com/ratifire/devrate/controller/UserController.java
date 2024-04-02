@@ -1,7 +1,7 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.UserDto;
-import com.ratifire.devrate.service.userinfo.UserInfoService;
+import com.ratifire.devrate.service.userinfo.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
-public class UserInfoController {
+public class UserController {
 
-  private final UserInfoService userInfoService;
+  private final UserService userService;
 
   /**
    * Retrieves user personal information by user ID.
@@ -30,7 +30,7 @@ public class UserInfoController {
    */
   @GetMapping("/{id}")
   public UserDto findById(@PathVariable long id) {
-    return userInfoService.findById(id);
+    return userService.findById(id);
   }
 
   /**
@@ -41,7 +41,7 @@ public class UserInfoController {
    */
   @PostMapping
   public UserDto create(@RequestBody UserDto userDto) {
-    return userInfoService.create(userDto);
+    return userService.create(userDto);
   }
 
   /**
@@ -52,7 +52,7 @@ public class UserInfoController {
    */
   @PutMapping
   public UserDto update(@RequestBody UserDto userDto) {
-    return userInfoService.update(userDto);
+    return userService.update(userDto);
   }
 
   /**
@@ -62,6 +62,6 @@ public class UserInfoController {
    */
   @DeleteMapping("/{id}")
   public void delete(@PathVariable long id) {
-    userInfoService.delete(id);
+    userService.delete(id);
   }
 }

@@ -11,7 +11,7 @@ import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.service.RoleService;
 import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.email.EmailService;
-import com.ratifire.devrate.service.userinfo.UserInfoService;
+import com.ratifire.devrate.service.userinfo.UserService;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import liquibase.util.StringUtil;
@@ -42,7 +42,7 @@ public class RegistrationService {
 
   private final EmailService emailService;
 
-  private final UserInfoService userInfoService;
+  private final UserService userService;
 
   /**
    * Checks if a user with the given email address exists.
@@ -84,7 +84,7 @@ public class RegistrationService {
         .subscribed(userRegistrationDto.isSubscribed())
         .userId(userSecurity.getId())
         .build();
-    userInfoService.create(userDto);
+    userService.create(userDto);
 
     EmailConfirmationCode savedEmailConfirmationCode =
             emailConfirmationCodeService.save(userSecurity.getId());

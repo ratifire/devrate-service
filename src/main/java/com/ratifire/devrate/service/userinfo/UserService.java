@@ -5,7 +5,7 @@ import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.UserInfoAlreadyExistsException;
 import com.ratifire.devrate.exception.UserInfoNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
-import com.ratifire.devrate.repository.UserInfoRepository;
+import com.ratifire.devrate.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-public class UserInfoService {
+public class UserService {
 
-  private final UserInfoRepository userInfoRepository;
+  private final UserRepository userRepository;
   private final DataMapper<UserDto, User> userInfoMapper;
 
   /**
@@ -27,7 +27,7 @@ public class UserInfoService {
    * @throws UserInfoNotFoundException if user personal information is not found
    */
   public UserDto findById(long id) {
-    return userInfoRepository.findById(id).map(userInfoMapper::toDto)
+    return userRepository.findById(id).map(userInfoMapper::toDto)
         .orElseThrow(() -> new UserInfoNotFoundException("The user's personal information "
             + "could not be found with the user id \"" + id + "\""));
   }
@@ -41,7 +41,7 @@ public class UserInfoService {
    */
   public UserDto create(UserDto userDto) {
     long userId = userDto.getUserId();
-    if (userInfoRepository.existsById(userId)) {
+    if (userRepository.existsById(userId)) {
       throw new UserInfoAlreadyExistsException("The user's personal information "
           + "with the user id \"" + userId + "\" already exists");
     }
@@ -49,7 +49,7 @@ public class UserInfoService {
     User user = userInfoMapper.toEntity(userDto);
     user.setUserId(userId);
 
-    return userInfoMapper.toDto(userInfoRepository.save(user));
+    return userInfoMapper.toDto(userRepository.save(user));
   }
 
   /**
@@ -61,13 +61,13 @@ public class UserInfoService {
    */
   public UserDto update(UserDto userDto) {
     long userId = userDto.getUserId();
-    User user = userInfoRepository.findById(userId)
+    User user = userRepository.findById(userId)
         .orElseThrow(() -> new UserInfoNotFoundException("The user's personal information "
             + "could not be found with the user id \"" + userId + "\""));
 
     userInfoMapper.updateEntity(userDto, user);
 
-    return userInfoMapper.toDto(userInfoRepository.save(user));
+    return userInfoMapper.toDto(userRepository.save(user));
   }
 
   /**
@@ -77,10 +77,10 @@ public class UserInfoService {
    * @throws UserInfoNotFoundException if user personal information is not found
    */
   public void delete(long userId) {
-    User user = userInfoRepository.findById(userId)
+    User user = userRepository.findById(userId)
         .orElseThrow(() -> new UserInfoNotFoundException("The user's personal information "
             + "could not be found with the user id \"" + userId + "\""));
 
-    userInfoRepository.delete(user);
+    userRepository.delete(user);
   }
 }
