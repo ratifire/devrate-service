@@ -1,7 +1,7 @@
 package com.ratifire.devrate.service.registration;
 
-import com.ratifire.devrate.dto.UserRegistrationDto;
 import com.ratifire.devrate.dto.UserInfoDto;
+import com.ratifire.devrate.dto.UserRegistrationDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
