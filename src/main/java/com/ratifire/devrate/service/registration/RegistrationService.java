@@ -1,6 +1,6 @@
 package com.ratifire.devrate.service.registration;
 
-import com.ratifire.devrate.dto.UserInfoDto;
+import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.dto.UserRegistrationDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.UserSecurity;
@@ -77,14 +77,14 @@ public class RegistrationService {
 
     UserSecurity userSecurity = userSecurityService.save(entity);
 
-    UserInfoDto userInfoDto = UserInfoDto.builder()
+    UserDto userDto = UserDto.builder()
         .firstName(userRegistrationDto.getFirstName())
         .lastName(userRegistrationDto.getLastName())
         .country(userRegistrationDto.getCountry())
         .subscribed(userRegistrationDto.isSubscribed())
         .userId(userSecurity.getId())
         .build();
-    userInfoService.create(userInfoDto);
+    userInfoService.create(userDto);
 
     EmailConfirmationCode savedEmailConfirmationCode =
             emailConfirmationCodeService.save(userSecurity.getId());

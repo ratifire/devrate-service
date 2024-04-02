@@ -6,7 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ratifire.devrate.dto.UserInfoDto;
+import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.UserInfoAlreadyExistsException;
 import com.ratifire.devrate.exception.UserInfoNotFoundException;
@@ -29,7 +29,7 @@ class UserServiceTest {
   private UserInfoService userInfoService;
 
   @Mock
-  private DataMapper<UserInfoDto, User> userInfoMapper;
+  private DataMapper<UserDto, User> userInfoMapper;
 
   @Mock
   private UserInfoRepository userInfoRepository;
@@ -45,48 +45,48 @@ class UserServiceTest {
 
   @Test
   void whenCreate_UserInfoAlreadyExists_ThrowUserInfoAlreadyExistsException() {
-    UserInfoDto userInfoDto = UserInfoDto.builder()
+    UserDto userDto = UserDto.builder()
         .userId(userId)
         .build();
     when(userInfoRepository.existsById(userId)).thenReturn(true);
 
-    assertThrows(UserInfoAlreadyExistsException.class, () -> userInfoService.create(userInfoDto));
+    assertThrows(UserInfoAlreadyExistsException.class, () -> userInfoService.create(userDto));
   }
 
   @Test
   void whenCreate_Successful_ReturnCreatedUserInfoDto() {
-    UserInfoDto userInfoDto = UserInfoDto.builder()
+    UserDto userDto = UserDto.builder()
         .userId(userId)
         .build();
     User user = new User();
 
     when(userInfoRepository.existsById(userId)).thenReturn(false);
-    when(userInfoMapper.toEntity(userInfoDto)).thenReturn(user);
+    when(userInfoMapper.toEntity(userDto)).thenReturn(user);
     when(userInfoRepository.save(user)).thenReturn(user);
-    when(userInfoMapper.toDto(user)).thenReturn(userInfoDto);
+    when(userInfoMapper.toDto(user)).thenReturn(userDto);
 
-    UserInfoDto createdUserInfoDto = userInfoService.create(userInfoDto);
+    UserDto createdUserDto = userInfoService.create(userDto);
 
-    assertEquals(userInfoDto.getUserId(), createdUserInfoDto.getUserId());
+    assertEquals(userDto.getUserId(), createdUserDto.getUserId());
     verify(userInfoRepository).existsById(userId);
     verify(userInfoRepository).save(user);
-    verify(userInfoMapper).toEntity(userInfoDto);
+    verify(userInfoMapper).toEntity(userDto);
     verify(userInfoMapper).toDto(user);
   }
 
   @Test
   void whenUpdate_UserInfoNotFound_ThrowUserInfoNotFoundException() {
-    UserInfoDto userInfoDto = UserInfoDto.builder()
+    UserDto userDto = UserDto.builder()
         .userId(userId)
         .build();
     when(userInfoRepository.findById(userId)).thenReturn(Optional.empty());
 
-    assertThrows(UserInfoNotFoundException.class, () -> userInfoService.update(userInfoDto));
+    assertThrows(UserInfoNotFoundException.class, () -> userInfoService.update(userDto));
   }
 
   @Test
   void whenUpdate_Successful_ReturnCreatedUserInfoDto() {
-    UserInfoDto userInfoDto = UserInfoDto.builder()
+    UserDto userDto = UserDto.builder()
         .userId(userId)
         .build();
     User user = new User();
@@ -94,14 +94,14 @@ class UserServiceTest {
     when(userInfoRepository.findById(userId)).thenReturn(Optional.of(user));
     when(userInfoMapper.updateEntity(any(), any())).thenReturn(user);
     when(userInfoRepository.save(user)).thenReturn(user);
-    when(userInfoMapper.toDto(user)).thenReturn(userInfoDto);
+    when(userInfoMapper.toDto(user)).thenReturn(userDto);
 
-    UserInfoDto updatedUserInfoDto = userInfoService.update(userInfoDto);
+    UserDto updatedUserDto = userInfoService.update(userDto);
 
-    assertEquals(userInfoDto.getUserId(), updatedUserInfoDto.getUserId());
+    assertEquals(userDto.getUserId(), updatedUserDto.getUserId());
     verify(userInfoRepository).findById(userId);
     verify(userInfoRepository).save(user);
-    verify(userInfoMapper).updateEntity(userInfoDto, user);
+    verify(userInfoMapper).updateEntity(userDto, user);
     verify(userInfoMapper).toDto(user);
   }
 

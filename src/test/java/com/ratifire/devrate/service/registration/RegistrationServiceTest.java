@@ -13,7 +13,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ratifire.devrate.dto.UserInfoDto;
+import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.dto.UserRegistrationDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.Role;
@@ -124,7 +124,7 @@ public class RegistrationServiceTest {
     when(userSecurityService.save(any())).thenReturn(testUserSecurity);
     when(userMapper.toEntity(any(UserRegistrationDto.class))).thenReturn(testUserSecurity);
     when(userMapper.toDto(any(UserSecurity.class))).thenReturn(testUserRegistrationDto);
-    when(userInfoService.create(any(UserInfoDto.class))).thenReturn(UserInfoDto.builder().build());
+    when(userInfoService.create(any(UserDto.class))).thenReturn(UserDto.builder().build());
 
     when(registrationService.isUserExistByEmail(any())).thenReturn(false);
     when(emailConfirmationCodeService.save(anyLong()))
@@ -135,7 +135,7 @@ public class RegistrationServiceTest {
 
     assertEquals(expected, testUserRegistrationDto);
     verify(emailConfirmationCodeService, times(1)).save(anyLong());
-    verify(userInfoService, times(1)).create(any(UserInfoDto.class));
+    verify(userInfoService, times(1)).create(any(UserDto.class));
     verify(emailService, times(1)).sendEmail(any(), anyBoolean());
   }
 

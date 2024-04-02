@@ -10,7 +10,7 @@ import lombok.Getter;
  */
 @Builder
 @Getter
-public class UserInfoDto {
+public class UserDto {
 
   @Size(max = 100)
   private String firstName;
