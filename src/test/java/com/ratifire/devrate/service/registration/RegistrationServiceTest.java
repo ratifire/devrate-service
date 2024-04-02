@@ -23,7 +23,7 @@ import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserAlreadyExistException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.service.RoleService;
-import com.ratifire.devrate.service.UserService;
+import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.email.EmailService;
 import com.ratifire.devrate.service.userinfo.UserInfoService;
 import java.time.LocalDateTime;
@@ -46,7 +46,7 @@ import org.springframework.test.context.TestPropertySource;
 public class RegistrationServiceTest {
 
   @Mock
-  private UserService userService;
+  private UserSecurityService userSecurityService;
 
   @Mock
   private RoleService roleService;
@@ -76,7 +76,7 @@ public class RegistrationServiceTest {
   @Test
   public void testUserExistsByEmail_ReturnsTrue() {
     String existingEmail = "existing@example.com";
-    when(userService.isUserExistByEmail(any())).thenReturn(true);
+    when(userSecurityService.isUserExistByEmail(any())).thenReturn(true);
     boolean isExist = registrationService.isUserExistByEmail(existingEmail);
     assertTrue(isExist);
   }
@@ -91,7 +91,7 @@ public class RegistrationServiceTest {
   @Test
   public void testUserExistsByEmail_ReturnsFalse() {
     String notExistingEmail = "notexisting@example.com";
-    when(userService.isUserExistByEmail(any())).thenReturn(false);
+    when(userSecurityService.isUserExistByEmail(any())).thenReturn(false);
     boolean isExist = registrationService.isUserExistByEmail(notExistingEmail);
     assertFalse(isExist);
   }
@@ -121,7 +121,7 @@ public class RegistrationServiceTest {
         .build();
 
     when(roleService.getDefaultRole()).thenReturn(testRole);
-    when(userService.save(any())).thenReturn(testUserSecurity);
+    when(userSecurityService.save(any())).thenReturn(testUserSecurity);
     when(userMapper.toEntity(any(UserRegistrationDto.class))).thenReturn(testUserSecurity);
     when(userMapper.toDto(any(UserSecurity.class))).thenReturn(testUserRegistrationDto);
     when(userInfoService.create(any(UserInfoDto.class))).thenReturn(UserInfoDto.builder().build());
@@ -178,8 +178,8 @@ public class RegistrationServiceTest {
 
     UserSecurity userSecurity = new UserSecurity();
     userSecurity.setId(userId);
-    when(userService.getById(userId)).thenReturn(userSecurity);
-    when(userService.save(userSecurity)).thenReturn(null);
+    when(userSecurityService.getById(userId)).thenReturn(userSecurity);
+    when(userSecurityService.save(userSecurity)).thenReturn(null);
 
     doNothing().when(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
 
@@ -188,8 +188,8 @@ public class RegistrationServiceTest {
     assertEquals(userId, actualUserId);
     assertTrue(userSecurity.isVerified());
     verify(emailConfirmationCodeService).findEmailConfirmationCode(code);
-    verify(userService).getById(userId);
-    verify(userService).save(userSecurity);
+    verify(userSecurityService).getById(userId);
+    verify(userSecurityService).save(userSecurity);
     verify(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
   }
 
@@ -211,7 +211,7 @@ public class RegistrationServiceTest {
    *
    * <p>Tests the confirmation of registration with an expired confirmation code.
    * Verifies that an {@link EmailConfirmationCodeExpiredException} is thrown
-   * and that neither the {@link UserService} nor the {@link EmailConfirmationCodeService}
+   * and that neither the {@link UserSecurityService} nor the {@link EmailConfirmationCodeService}
    * are invoked for further actions.
    */
   @Test
@@ -228,7 +228,7 @@ public class RegistrationServiceTest {
     assertThrows(EmailConfirmationCodeExpiredException.class,
         () -> registrationService.confirmRegistration(code));
 
-    verify(userService, never()).getById(anyLong());
+    verify(userSecurityService, never()).getById(anyLong());
     verify(emailConfirmationCodeService, times(1)).deleteConfirmedCode(anyLong());
   }
 }

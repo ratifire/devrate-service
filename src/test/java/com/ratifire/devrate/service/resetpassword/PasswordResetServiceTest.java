@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.InvalidCodeException;
-import com.ratifire.devrate.service.UserService;
+import com.ratifire.devrate.service.UserSecurityService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,7 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class PasswordResetServiceTest {
 
   @Mock
-  private UserService userService;
+  private UserSecurityService userSecurityService;
 
   @Mock
   private EmailConfirmationUuidService emailConfirmationUuidService;
@@ -46,7 +46,7 @@ public class PasswordResetServiceTest {
   void requestPasswordReset_WithValidEmail_SendsResetLink() {
     String email = "user@example.com";
     UserSecurity userSecurity = UserSecurity.builder().id(1L).build();
-    when(userService.findUserByEmail(email)).thenReturn(userSecurity);
+    when(userSecurityService.findUserByEmail(email)).thenReturn(userSecurity);
     when(emailConfirmationUuidService.generateAndPersistUuidCode(userSecurity.getId()))
         .thenReturn("code");
 
@@ -63,7 +63,7 @@ public class PasswordResetServiceTest {
   @Test
   void requestPasswordReset_WithInvalidEmail_ThrowsException() {
     String email = "invalid@example.com";
-    when(userService.findUserByEmail(email))
+    when(userSecurityService.findUserByEmail(email))
         .thenThrow(new UsernameNotFoundException("User not found"));
 
     assertThrows(UsernameNotFoundException.class, () -> passwordResetService
@@ -82,13 +82,13 @@ public class PasswordResetServiceTest {
         .builder().userId(userSecurity.getId()).build();
 
     when(emailConfirmationUuidService.findUuidCode(code)).thenReturn(emailConfirmationCode);
-    when(userService.getById(userSecurity.getId())).thenReturn(userSecurity);
+    when(userSecurityService.getById(userSecurity.getId())).thenReturn(userSecurity);
     when(passwordEncoder.encode(newPassword)).thenReturn("encodedPassword");
 
     boolean result = passwordResetService.resetPassword(code, newPassword);
 
     assertTrue(result);
-    verify(userService).save(userSecurity);
+    verify(userSecurityService).save(userSecurity);
     verify(passwordEncoder).encode(newPassword);
     verify(emailConfirmationUuidService).deleteConfirmedCodesByUserId(userSecurity.getId());
   }

@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * Test class for the {@link UserService}.
+ * Test class for the {@link UserSecurityService}.
  *
  * <p>Unit tests for the UserService class. This class tests the behavior of the UserService
  * methods.
@@ -28,10 +28,10 @@ public class UserSecurityServiceTest {
   private UserRepository userRepository;
 
   @InjectMocks
-  private UserService userService;
+  private UserSecurityService userSecurityService;
 
   /**
-   * Unit test for {@link UserService#isUserExistByEmail(String)}.
+   * Unit test for {@link UserSecurityService#isUserExistByEmail(String)}.
    *
    * <p>Test method for checking if a user exists by email when the user exists. This method
    * verifies that the RegistrationService correctly returns true when a user with the specified
@@ -41,12 +41,12 @@ public class UserSecurityServiceTest {
   public void testUserExistsByEmail_ReturnsTrue() {
     String existingEmail = "existing@example.com";
     when(userRepository.existsByEmail(any())).thenReturn(true);
-    boolean isExist = userService.isUserExistByEmail(existingEmail);
+    boolean isExist = userSecurityService.isUserExistByEmail(existingEmail);
     assertTrue(isExist);
   }
 
   /**
-   * Unit test for {@link UserService#isUserExistByEmail(String)}.
+   * Unit test for {@link UserSecurityService#isUserExistByEmail(String)}.
    *
    * <p>Test method for checking if a user exists by email when the user does not exist. This
    * method verifies that the RegistrationService correctly returns false when no user with the
@@ -56,12 +56,12 @@ public class UserSecurityServiceTest {
   public void testUserExistsByEmail_ReturnsFalse() {
     String notExistingEmail = "notexisting@example.com";
     when(userRepository.existsByEmail(any())).thenReturn(false);
-    boolean isExist = userService.isUserExistByEmail(notExistingEmail);
+    boolean isExist = userSecurityService.isUserExistByEmail(notExistingEmail);
     assertFalse(isExist);
   }
 
   /**
-   * Unit test for {@link UserService#save(UserSecurity)}.
+   * Unit test for {@link UserSecurityService#save(UserSecurity)}.
    *
    * <p>Test method for saving a user entity into the database. This method verifies that the
    * UserService correctly saves a user entity into the database.
@@ -75,7 +75,7 @@ public class UserSecurityServiceTest {
         .build();
 
     when(userRepository.save(any())).thenReturn(testUserSecurity);
-    UserSecurity expectedUserSecurity = userService.save(UserSecurity.builder().build());
+    UserSecurity expectedUserSecurity = userSecurityService.save(UserSecurity.builder().build());
     assertEquals(expectedUserSecurity, testUserSecurity);
   }
 }

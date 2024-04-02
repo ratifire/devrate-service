@@ -2,7 +2,7 @@ package com.ratifire.devrate.service.resetpassword;
 
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.UserSecurity;
-import com.ratifire.devrate.service.UserService;
+import com.ratifire.devrate.service.UserSecurityService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PasswordResetService {
 
-  private final UserService userService;
+  private final UserSecurityService userSecurityService;
   private final EmailConfirmationUuidService emailConfirmationUuidService;
   private final PasswordEncoder passwordEncoder;
 
@@ -27,7 +27,7 @@ public class PasswordResetService {
    */
   @Transactional
   public boolean requestPasswordReset(String email) {
-    UserSecurity userSecurity = userService.findUserByEmail(email);
+    UserSecurity userSecurity = userSecurityService.findUserByEmail(email);
 
     String code = emailConfirmationUuidService.generateAndPersistUuidCode(userSecurity.getId());
 
@@ -44,12 +44,12 @@ public class PasswordResetService {
   @Transactional
   public boolean resetPassword(String code, String newPassword) {
     EmailConfirmationCode emailConfirmationCode = emailConfirmationUuidService.findUuidCode(code);
-    UserSecurity userSecurity = userService.getById(emailConfirmationCode.getUserId());
+    UserSecurity userSecurity = userSecurityService.getById(emailConfirmationCode.getUserId());
 
     String encodedPassword = passwordEncoder.encode(newPassword);
 
     userSecurity.setPassword(encodedPassword);
-    userService.save(userSecurity);
+    userSecurityService.save(userSecurity);
 
     emailConfirmationUuidService.deleteConfirmedCodesByUserId(userSecurity.getId());
     emailConfirmationUuidService.sendPasswordChangeConfirmation(userSecurity.getEmail());

@@ -9,7 +9,7 @@ import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserAlreadyExistException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.service.RoleService;
-import com.ratifire.devrate.service.UserService;
+import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.email.EmailService;
 import com.ratifire.devrate.service.userinfo.UserInfoService;
 import java.time.LocalDateTime;
@@ -32,7 +32,7 @@ public class RegistrationService {
   /**
    * Service responsible for user management operations.
    */
-  private final UserService userService;
+  private final UserSecurityService userSecurityService;
 
   private final RoleService roleService;
 
@@ -51,7 +51,7 @@ public class RegistrationService {
    * @return True if a user with the specified email address exists, false otherwise.
    */
   public boolean isUserExistByEmail(String email) {
-    return userService.isUserExistByEmail(email);
+    return userSecurityService.isUserExistByEmail(email);
   }
 
   /**
@@ -75,7 +75,7 @@ public class RegistrationService {
     UserSecurity entity = userMapper.toEntity(userRegistrationDto);
     entity.setRole(roleService.getDefaultRole());
 
-    UserSecurity userSecurity = userService.save(entity);
+    UserSecurity userSecurity = userSecurityService.save(entity);
 
     UserInfoDto userInfoDto = UserInfoDto.builder()
         .firstName(userRegistrationDto.getFirstName())
@@ -125,9 +125,9 @@ public class RegistrationService {
       throw new EmailConfirmationCodeExpiredException("The confirmation code has expired");
     }
 
-    UserSecurity userSecurity = userService.getById(emailConfirmationCode.getUserId());
+    UserSecurity userSecurity = userSecurityService.getById(emailConfirmationCode.getUserId());
     userSecurity.setVerified(true);
-    userService.save(userSecurity);
+    userSecurityService.save(userSecurity);
 
     emailConfirmationCodeService.deleteConfirmedCode(emailConfirmationCode.getId());
 
