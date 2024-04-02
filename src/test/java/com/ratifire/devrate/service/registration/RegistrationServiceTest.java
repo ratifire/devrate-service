@@ -13,7 +13,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.dto.UserRegistrationDto;
 import com.ratifire.devrate.dto.UserInfoDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.Role;
@@ -52,7 +52,7 @@ public class RegistrationServiceTest {
   private RoleService roleService;
 
   @Mock
-  private DataMapper<UserDto, UserSecurity> userMapper;
+  private DataMapper<UserRegistrationDto, UserSecurity> userMapper;
 
   @Mock
   private EmailConfirmationCodeService emailConfirmationCodeService;
@@ -97,7 +97,7 @@ public class RegistrationServiceTest {
   }
 
   /**
-   * Unit test for {@link RegistrationService#registerUser(UserDto)}.
+   * Unit test for {@link RegistrationService#registerUser(UserRegistrationDto)}.
    *
    * <p>Test case to verify successful user registration. A valid email and password are provided.
    * The user should be successfully registered.
@@ -107,7 +107,7 @@ public class RegistrationServiceTest {
     String testEmail = "test@gmail.com";
     String testPassword = "somepassword";
 
-    UserDto testUserDto = UserDto.builder()
+    UserRegistrationDto testUserRegistrationDto = UserRegistrationDto.builder()
         .email(testEmail)
         .password(testPassword)
         .build();
@@ -122,8 +122,8 @@ public class RegistrationServiceTest {
 
     when(roleService.getDefaultRole()).thenReturn(testRole);
     when(userService.save(any())).thenReturn(testUserSecurity);
-    when(userMapper.toEntity(any(UserDto.class))).thenReturn(testUserSecurity);
-    when(userMapper.toDto(any(UserSecurity.class))).thenReturn(testUserDto);
+    when(userMapper.toEntity(any(UserRegistrationDto.class))).thenReturn(testUserSecurity);
+    when(userMapper.toDto(any(UserSecurity.class))).thenReturn(testUserRegistrationDto);
     when(userInfoService.create(any(UserInfoDto.class))).thenReturn(UserInfoDto.builder().build());
 
     when(registrationService.isUserExistByEmail(any())).thenReturn(false);
@@ -131,30 +131,30 @@ public class RegistrationServiceTest {
         .thenReturn(EmailConfirmationCode.builder().build());
     doNothing().when(emailService).sendEmail(any(), anyBoolean());
 
-    UserDto expected = registrationService.registerUser(testUserDto);
+    UserRegistrationDto expected = registrationService.registerUser(testUserRegistrationDto);
 
-    assertEquals(expected, testUserDto);
+    assertEquals(expected, testUserRegistrationDto);
     verify(emailConfirmationCodeService, times(1)).save(anyLong());
     verify(userInfoService, times(1)).create(any(UserInfoDto.class));
     verify(emailService, times(1)).sendEmail(any(), anyBoolean());
   }
 
   /**
-   * Unit test for {@link RegistrationService#registerUser(UserDto)}.
+   * Unit test for {@link RegistrationService#registerUser(UserRegistrationDto)}.
    *
    * <p>Test case to verify successful user registration. A not valid email and password are
    * provided. UserAlreadyExistException have to be thrown.
    */
   @Test
   public void testRegisterUser_ThrowUserAlreadyExistException() {
-    UserDto testUserDto = UserDto.builder()
+    UserRegistrationDto testUserRegistrationDto = UserRegistrationDto.builder()
         .email("test@gmail.com")
         .build();
 
     Mockito.when(registrationService.isUserExistByEmail(any())).thenReturn(true);
 
     assertThrows(UserAlreadyExistException.class,
-        () -> registrationService.registerUser(testUserDto));
+        () -> registrationService.registerUser(testUserRegistrationDto));
   }
 
   /**

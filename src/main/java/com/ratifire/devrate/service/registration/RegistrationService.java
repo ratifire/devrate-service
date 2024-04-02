@@ -1,6 +1,6 @@
 package com.ratifire.devrate.service.registration;
 
-import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.dto.UserRegistrationDto;
 import com.ratifire.devrate.dto.UserInfoDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.UserSecurity;
@@ -36,7 +36,7 @@ public class RegistrationService {
 
   private final RoleService roleService;
 
-  private final DataMapper<UserDto, UserSecurity> userMapper;
+  private final DataMapper<UserRegistrationDto, UserSecurity> userMapper;
 
   private final EmailConfirmationCodeService emailConfirmationCodeService;
 
@@ -57,31 +57,31 @@ public class RegistrationService {
   /**
    * Registers a new user.
    *
-   * <p>This method registers a new user based on the provided UserDto. It checks if the user
-   * already exists by email, throws an exception if the user is already registered, creates a new
-   * user entity, sends an email confirmation code for user verification, and returns the registered
-   * user information.
+   * <p>This method registers a new user based on the provided {@link UserRegistrationDto}. It
+   * checks if the user already exists by email, throws an exception if the user is already
+   * registered, creates a new user entity, sends an email confirmation code for user verification,
+   * and returns the registered user information.
    *
-   * @param userDto The UserDto containing the user information to be registered.
-   * @return UserDto representing the registered user information.
+   * @param userRegistrationDto Containing the user information to be registered.
+   * @return {@link UserRegistrationDto} representing the registered user information.
    * @throws UserAlreadyExistException If a user with the provided email already exists.
    */
   @Transactional
-  public UserDto registerUser(UserDto userDto) {
-    if (isUserExistByEmail(userDto.getEmail())) {
+  public UserRegistrationDto registerUser(UserRegistrationDto userRegistrationDto) {
+    if (isUserExistByEmail(userRegistrationDto.getEmail())) {
       throw new UserAlreadyExistException("User is already registered!");
     }
 
-    UserSecurity entity = userMapper.toEntity(userDto);
+    UserSecurity entity = userMapper.toEntity(userRegistrationDto);
     entity.setRole(roleService.getDefaultRole());
 
     UserSecurity userSecurity = userService.save(entity);
 
     UserInfoDto userInfoDto = UserInfoDto.builder()
-        .firstName(userDto.getFirstName())
-        .lastName(userDto.getLastName())
-        .country(userDto.getCountry())
-        .subscribed(userDto.isSubscribed())
+        .firstName(userRegistrationDto.getFirstName())
+        .lastName(userRegistrationDto.getLastName())
+        .country(userRegistrationDto.getCountry())
+        .subscribed(userRegistrationDto.isSubscribed())
         .userId(userSecurity.getId())
         .build();
     userInfoService.create(userInfoDto);
