@@ -1,7 +1,10 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.LoginDto;
+import com.ratifire.devrate.service.UserSecurityService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
 
   private final AuthenticationManager authenticationManager;
+  private final UserSecurityService userSecurityService;
 
   /**
    * Authenticates a user based on the provided login credentials.
@@ -29,7 +33,7 @@ public class LoginController {
    * <p>@return ResponseEntity indicating the status of the authentication attempt
    */
   @PostMapping
-  public LoginDto authenticateUser(@RequestBody LoginDto loginDto) {
+  public ResponseEntity<Long> authenticateUser(@RequestBody LoginDto loginDto) {
     String login = loginDto.getEmail();
     String password = loginDto.getPassword();
 
@@ -37,6 +41,8 @@ public class LoginController {
         new UsernamePasswordAuthenticationToken(login, password));
 
     SecurityContextHolder.getContext().setAuthentication(authentication);
-    return loginDto;
+
+    Long userId = userSecurityService.findUserByEmail(login).getUser().getId();
+    return new ResponseEntity<>(userId, HttpStatus.OK);
   }
 }

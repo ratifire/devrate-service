@@ -12,6 +12,9 @@ import lombok.Getter;
 @Getter
 public class UserDto {
 
+  @NotNull
+  private long id;
+
   @Size(max = 100)
   private String firstName;
 
@@ -33,7 +36,4 @@ public class UserDto {
   private boolean subscribed;
 
   private String description;
-
-  @NotNull
-  private long userId;
 }

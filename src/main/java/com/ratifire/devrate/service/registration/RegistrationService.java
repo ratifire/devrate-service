@@ -3,15 +3,16 @@ package com.ratifire.devrate.service.registration;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.dto.UserRegistrationDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
+import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
-import com.ratifire.devrate.exception.UserAlreadyExistException;
+import com.ratifire.devrate.exception.UserSecurityAlreadyExistException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.service.RoleService;
 import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.email.EmailService;
-import com.ratifire.devrate.service.userinfo.UserService;
+import com.ratifire.devrate.service.user.UserService;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import liquibase.util.StringUtil;
@@ -64,27 +65,27 @@ public class RegistrationService {
    *
    * @param userRegistrationDto Containing the user information to be registered.
    * @return {@link UserRegistrationDto} representing the registered user information.
-   * @throws UserAlreadyExistException If a user with the provided email already exists.
+   * @throws UserSecurityAlreadyExistException If a user with the provided email already exists.
    */
   @Transactional
   public UserRegistrationDto registerUser(UserRegistrationDto userRegistrationDto) {
     if (isUserExistByEmail(userRegistrationDto.getEmail())) {
-      throw new UserAlreadyExistException("User is already registered!");
+      throw new UserSecurityAlreadyExistException("User is already registered!");
     }
-
-    UserSecurity entity = userMapper.toEntity(userRegistrationDto);
-    entity.setRole(roleService.getDefaultRole());
-
-    UserSecurity userSecurity = userSecurityService.save(entity);
 
     UserDto userDto = UserDto.builder()
         .firstName(userRegistrationDto.getFirstName())
         .lastName(userRegistrationDto.getLastName())
         .country(userRegistrationDto.getCountry())
         .subscribed(userRegistrationDto.isSubscribed())
-        .userId(userSecurity.getId())
         .build();
-    userService.create(userDto);
+    User createdUser = userService.create(userDto);
+
+    UserSecurity entity = userMapper.toEntity(userRegistrationDto);
+    entity.setRole(roleService.getDefaultRole());
+    entity.setUser(createdUser);
+
+    UserSecurity userSecurity = userSecurityService.save(entity);
 
     EmailConfirmationCode savedEmailConfirmationCode =
             emailConfirmationCodeService.save(userSecurity.getId());
