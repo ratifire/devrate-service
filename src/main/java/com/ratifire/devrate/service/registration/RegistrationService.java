@@ -1,18 +1,17 @@
 package com.ratifire.devrate.service.registration;
 
 import com.ratifire.devrate.dto.UserDto;
-import com.ratifire.devrate.dto.UserInfoDto;
+import com.ratifire.devrate.dto.UserRegistrationDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
-import com.ratifire.devrate.entity.Role;
-import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserAlreadyExistException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.service.RoleService;
-import com.ratifire.devrate.service.UserService;
+import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.email.EmailService;
-import com.ratifire.devrate.service.userinfo.UserInfoService;
+import com.ratifire.devrate.service.userinfo.UserService;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import liquibase.util.StringUtil;
@@ -33,17 +32,17 @@ public class RegistrationService {
   /**
    * Service responsible for user management operations.
    */
-  private final UserService userService;
+  private final UserSecurityService userSecurityService;
 
   private final RoleService roleService;
 
-  private final DataMapper<UserDto, User> userMapper;
+  private final DataMapper<UserRegistrationDto, UserSecurity> userMapper;
 
   private final EmailConfirmationCodeService emailConfirmationCodeService;
 
   private final EmailService emailService;
 
-  private final UserInfoService userInfoService;
+  private final UserService userService;
 
   /**
    * Checks if a user with the given email address exists.
@@ -52,50 +51,50 @@ public class RegistrationService {
    * @return True if a user with the specified email address exists, false otherwise.
    */
   public boolean isUserExistByEmail(String email) {
-    return userService.isUserExistByEmail(email);
+    return userSecurityService.isUserExistByEmail(email);
   }
 
   /**
    * Registers a new user.
    *
-   * <p>This method registers a new user based on the provided SignUpDto. It checks if the user
-   * already exists by email, throws an exception if the user is already registered, creates a new
-   * user entity, sends an email confirmation code for user verification, and returns the registered
-   * user information.
+   * <p>This method registers a new user based on the provided {@link UserRegistrationDto}. It
+   * checks if the user already exists by email, throws an exception if the user is already
+   * registered, creates a new user entity, sends an email confirmation code for user verification,
+   * and returns the registered user information.
    *
-   * @param userDto The SignUpDto containing the user information to be registered.
-   * @return SignUpDto representing the registered user information.
+   * @param userRegistrationDto Containing the user information to be registered.
+   * @return {@link UserRegistrationDto} representing the registered user information.
    * @throws UserAlreadyExistException If a user with the provided email already exists.
    */
   @Transactional
-  public UserDto registerUser(UserDto userDto) {
-    if (isUserExistByEmail(userDto.getEmail())) {
+  public UserRegistrationDto registerUser(UserRegistrationDto userRegistrationDto) {
+    if (isUserExistByEmail(userRegistrationDto.getEmail())) {
       throw new UserAlreadyExistException("User is already registered!");
     }
 
-    User entity = userMapper.toEntity(userDto);
+    UserSecurity entity = userMapper.toEntity(userRegistrationDto);
     entity.setRole(roleService.getDefaultRole());
 
-    User user = userService.save(entity);
+    UserSecurity userSecurity = userSecurityService.save(entity);
 
-    UserInfoDto userInfoDto = UserInfoDto.builder()
-        .firstName(user.getFirstName())
-        .lastName(user.getLastName())
-        .country(user.getCountry())
-        .subscribed(user.isSubscribed())
-        .userId(user.getId())
+    UserDto userDto = UserDto.builder()
+        .firstName(userRegistrationDto.getFirstName())
+        .lastName(userRegistrationDto.getLastName())
+        .country(userRegistrationDto.getCountry())
+        .subscribed(userRegistrationDto.isSubscribed())
+        .userId(userSecurity.getId())
         .build();
-    userInfoService.create(userInfoDto);
+    userService.create(userDto);
 
     EmailConfirmationCode savedEmailConfirmationCode =
-            emailConfirmationCodeService.save(user.getId());
+            emailConfirmationCodeService.save(userSecurity.getId());
 
     SimpleMailMessage confirmationMessage = emailConfirmationCodeService
-        .createMessage(user.getEmail(), savedEmailConfirmationCode.getCode());
+        .createMessage(userSecurity.getEmail(), savedEmailConfirmationCode.getCode());
 
     emailService.sendEmail(confirmationMessage, true);
 
-    return userMapper.toDto(user);
+    return userMapper.toDto(userSecurity);
   }
 
   /**
@@ -126,12 +125,12 @@ public class RegistrationService {
       throw new EmailConfirmationCodeExpiredException("The confirmation code has expired");
     }
 
-    User user = userService.getById(emailConfirmationCode.getUserId());
-    user.setVerified(true);
-    userService.save(user);
+    UserSecurity userSecurity = userSecurityService.getById(emailConfirmationCode.getUserId());
+    userSecurity.setVerified(true);
+    userSecurityService.save(userSecurity);
 
     emailConfirmationCodeService.deleteConfirmedCode(emailConfirmationCode.getId());
 
-    return user.getId();
+    return userSecurity.getId();
   }
 }

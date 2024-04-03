@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: 02-04-2024_01_change-table-users
+      author: Ivan Ivashchenko
+      preConditions:
+        - onFail: CONTINUE
+          comments: |
+            Checks if the "users" table was created.
+          tableExists:
+            tableName: users
+      changes:
+        - renameTable:
+            oldTableName: users
+            newTableName: user_security
+        - dropColumn:
+            tableName: user_security
+            columnName: first_name
+        - dropColumn:
+            tableName: user_security
+            columnName: last_name
+        - dropColumn:
+            tableName: user_security
+            columnName: country
+        - dropColumn:
+            tableName: user_security
+            columnName: is_subscribed

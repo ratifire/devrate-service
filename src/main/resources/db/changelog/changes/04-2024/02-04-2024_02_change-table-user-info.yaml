@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 02-04-2024_02_change-table-user-info
+      author: Ivan Ivashchenko
+      preConditions:
+        - onFail: CONTINUE
+          comments: |
+            Checks if the "user_info" table was created.
+          tableExists:
+            tableName: user_info
+      changes:
+        - renameTable:
+            oldTableName: user_info
+            newTableName: users
