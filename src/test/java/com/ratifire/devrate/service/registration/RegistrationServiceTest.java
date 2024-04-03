@@ -17,15 +17,16 @@ import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.dto.UserRegistrationDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.Role;
+import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
-import com.ratifire.devrate.exception.UserAlreadyExistException;
+import com.ratifire.devrate.exception.UserSecurityAlreadyExistException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.service.RoleService;
 import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.email.EmailService;
-import com.ratifire.devrate.service.userinfo.UserService;
+import com.ratifire.devrate.service.user.UserService;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -124,7 +125,7 @@ public class RegistrationServiceTest {
     when(userSecurityService.save(any())).thenReturn(testUserSecurity);
     when(userMapper.toEntity(any(UserRegistrationDto.class))).thenReturn(testUserSecurity);
     when(userMapper.toDto(any(UserSecurity.class))).thenReturn(testUserRegistrationDto);
-    when(userService.create(any(UserDto.class))).thenReturn(UserDto.builder().build());
+    when(userService.create(any(UserDto.class))).thenReturn(new User());
 
     when(registrationService.isUserExistByEmail(any())).thenReturn(false);
     when(emailConfirmationCodeService.save(anyLong()))
@@ -153,7 +154,7 @@ public class RegistrationServiceTest {
 
     Mockito.when(registrationService.isUserExistByEmail(any())).thenReturn(true);
 
-    assertThrows(UserAlreadyExistException.class,
+    assertThrows(UserSecurityAlreadyExistException.class,
         () -> registrationService.registerUser(testUserRegistrationDto));
   }
 

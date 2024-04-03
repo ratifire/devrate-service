@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: 03-04-2024-03_change-table-user-security
+      author: Ivan Ivashchenko
+      preConditions:
+        - onFail: CONTINUE
+          comments: |
+            Checks if the "user_security" table was created.
+          tableExists:
+            tableName: user_security
+      changes:
+        - addColumn:
+            tableName: user_security
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: user_security
+            baseColumnNames: user_id
+            constraintName: fk_user_security_user
+            referencedTableName: users
+            referencedColumnNames: id

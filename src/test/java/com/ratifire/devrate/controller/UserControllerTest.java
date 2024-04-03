@@ -7,7 +7,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -16,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.configuration.SecurityConfiguration;
 import com.ratifire.devrate.dto.UserDto;
-import com.ratifire.devrate.service.userinfo.UserService;
+import com.ratifire.devrate.service.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +53,7 @@ class UserControllerTest {
   @BeforeEach
   public void setUp() {
     userDto = UserDto.builder()
+        .id(USER_ID)
         .firstName("firstName")
         .lastName("lastName")
         .position("position")
@@ -62,7 +62,6 @@ class UserControllerTest {
         .city("city")
         .subscribed(true)
         .description("description")
-        .userId(USER_ID)
         .build();
   }
 
@@ -73,6 +72,7 @@ class UserControllerTest {
     mockMvc.perform(get("/users/{id}", USER_ID))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.id").value(userDto.getId()))
         .andExpect(jsonPath("$.firstName").value(userDto.getFirstName()))
         .andExpect(jsonPath("$.lastName").value(userDto.getLastName()))
         .andExpect(jsonPath("$.position").value(userDto.getPosition()))
@@ -80,33 +80,9 @@ class UserControllerTest {
         .andExpect(jsonPath("$.region").value(userDto.getRegion()))
         .andExpect(jsonPath("$.city").value(userDto.getCity()))
         .andExpect(jsonPath("$.subscribed").value(userDto.isSubscribed()))
-        .andExpect(jsonPath("$.description").value(userDto.getDescription()))
-        .andExpect(jsonPath("$.userId").value(userDto.getUserId()));
+        .andExpect(jsonPath("$.description").value(userDto.getDescription()));
 
     verify(userService, times(1)).findById(anyLong());
-  }
-
-  @Test
-  @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
-  void createTest() throws Exception {
-    String requestBody = objectMapper.writeValueAsString(userDto);
-    when(userService.create(any(UserDto.class))).thenReturn(userDto);
-    mockMvc.perform(post("/users")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(requestBody))
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.firstName").value(userDto.getFirstName()))
-        .andExpect(jsonPath("$.lastName").value(userDto.getLastName()))
-        .andExpect(jsonPath("$.position").value(userDto.getPosition()))
-        .andExpect(jsonPath("$.country").value(userDto.getCountry()))
-        .andExpect(jsonPath("$.region").value(userDto.getRegion()))
-        .andExpect(jsonPath("$.city").value(userDto.getCity()))
-        .andExpect(jsonPath("$.subscribed").value(userDto.isSubscribed()))
-        .andExpect(jsonPath("$.description").value(userDto.getDescription()))
-        .andExpect(jsonPath("$.userId").value(userDto.getUserId()));
-
-    verify(userService, times(1)).create(any(UserDto.class));
   }
 
   @Test
@@ -119,6 +95,7 @@ class UserControllerTest {
             .content(requestBody))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.id").value(userDto.getId()))
         .andExpect(jsonPath("$.firstName").value(userDto.getFirstName()))
         .andExpect(jsonPath("$.lastName").value(userDto.getLastName()))
         .andExpect(jsonPath("$.position").value(userDto.getPosition()))
@@ -126,8 +103,7 @@ class UserControllerTest {
         .andExpect(jsonPath("$.region").value(userDto.getRegion()))
         .andExpect(jsonPath("$.city").value(userDto.getCity()))
         .andExpect(jsonPath("$.subscribed").value(userDto.isSubscribed()))
-        .andExpect(jsonPath("$.description").value(userDto.getDescription()))
-        .andExpect(jsonPath("$.userId").value(userDto.getUserId()));
+        .andExpect(jsonPath("$.description").value(userDto.getDescription()));
 
     verify(userService, times(1)).update(any(UserDto.class));
   }

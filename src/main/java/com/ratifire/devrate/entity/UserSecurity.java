@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -63,6 +64,11 @@ public class UserSecurity implements UserDetails {
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "role_id")
   private Role role;
+
+  @NotNull
+  @OneToOne
+  @JoinColumn(name = "user_id")
+  private User user;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
