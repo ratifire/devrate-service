@@ -5,14 +5,14 @@ package com.ratifire.devrate.exception;
  * in the system. This exception indicates that a user with the same email address already exists
  * and prevents duplicate user creation.
  */
-public class UserAlreadyExistException extends RuntimeException {
+public class UserSecurityAlreadyExistException extends RuntimeException {
 
   /**
    * Constructs a new UserAlreadyExistException with the specified error message.
    *
    * @param message The detail message of the exception.
    */
-  public UserAlreadyExistException(String message) {
+  public UserSecurityAlreadyExistException(String message) {
     super(message);
   }
 }

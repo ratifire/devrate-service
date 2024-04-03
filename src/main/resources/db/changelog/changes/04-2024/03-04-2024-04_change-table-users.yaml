@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 03-04-2024-04_change-table-users
+      author: Ivan Ivashchenko
+      preConditions:
+        - onFail: CONTINUE
+          comments: |
+            Checks if the "users" table was created.
+          tableExists:
+            tableName: users
+      changes:
+        - dropColumn:
+            tableName: users
+            columnName: user_id

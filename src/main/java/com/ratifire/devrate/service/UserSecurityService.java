@@ -1,7 +1,7 @@
 package com.ratifire.devrate.service;
 
 import com.ratifire.devrate.entity.UserSecurity;
-import com.ratifire.devrate.exception.UserNotFoundException;
+import com.ratifire.devrate.exception.UserSecurityNotFoundException;
 import com.ratifire.devrate.repository.UserSecurityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -48,7 +48,7 @@ public class UserSecurityService {
    */
   public UserSecurity getById(long id) {
     return userSecurityRepository.findById(id)
-            .orElseThrow(() -> new UserNotFoundException("The user cannot be found."));
+            .orElseThrow(() -> new UserSecurityNotFoundException("The user cannot be found."));
   }
 
   /**
