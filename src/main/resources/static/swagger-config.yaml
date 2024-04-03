@@ -41,14 +41,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserDto'
+              $ref: '#/components/schemas/UserRegistrationDto'
       responses:
         '200':
           description: User registered successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserDto'
+                $ref: '#/components/schemas/UserRegistrationDto'
         '400':
           description: Bad request
           content:
@@ -501,7 +501,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    UserDto:
+    UserRegistrationDto:
       type: object
       description: Required information for registering a new user
       properties:
