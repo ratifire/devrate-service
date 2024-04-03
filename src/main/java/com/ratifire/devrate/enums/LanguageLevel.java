@@ -1,5 +1,8 @@
 package com.ratifire.devrate.enums;
 
+/**
+ * The enum Language level.
+ */
 public enum LanguageLevel {
   ELEMENTARY_A1,
   PRE_INTERMEDIATE_A2,
