@@ -1,8 +1,9 @@
 package com.ratifire.devrate.dto;
 
 import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,22 +17,24 @@ public class EducationDto {
 
   private long id;
 
-  @NotEmpty
   @Size(max = 100)
+  @NotBlank(message = "must not be null or empty")
   private String type;
 
-  @NotEmpty
   @Size(max = 100)
+  @NotBlank(message = "must not be null or empty")
   private String name;
 
-  @NotEmpty
+  @NotBlank(message = "must not be null or empty")
   private String description;
 
+  @NotNull
+  @Positive
   @Digits(integer = 4, fraction = 0, message = "Provide valid Year in the format YYYY")
-  @PositiveOrZero
-  private int startYear;
+  private Integer startYear;
 
+  @NotNull
+  @Positive
   @Digits(integer = 4, fraction = 0, message = "Provide valid Year in the format YYYY")
-  @PositiveOrZero
-  private int endYear;
+  private Integer endYear;
 }
