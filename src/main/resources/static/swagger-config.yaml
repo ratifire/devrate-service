@@ -250,7 +250,7 @@ paths:
     get:
       tags:
         - user info
-      summary: Get user info by user ID
+      summary: Get user by user ID
       description: Retrieve a specific user personal info based on the user ID
       operationId: findById
       parameters:
@@ -267,7 +267,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserInfoDto'
+                $ref: '#/components/schemas/UserDto'
         '400':
           description: Bad request, e.g., missing or invalid parameters
           content:
@@ -283,7 +283,7 @@ paths:
     delete:
       tags:
         - user info
-      summary: Delete user info by user ID
+      summary: Delete user by user ID
       description: Delete a specific user personal info based on the user ID
       operationId: delete
       parameters:
@@ -313,7 +313,7 @@ paths:
     put:
       tags:
         - user info
-      summary: Update user info by user ID
+      summary: Update user by user ID
       description: Update an existing user personal info based on the user ID
       operationId: update
       requestBody:
@@ -321,14 +321,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserInfoDto'
+              $ref: '#/components/schemas/UserDto'
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserInfoDto'
+                $ref: '#/components/schemas/UserDto'
         '400':
           description: Bad request, e.g., missing or invalid parameters
           content:
@@ -547,10 +547,13 @@ components:
       required:
         - email
         - password
-    UserInfoDto:
+    UserDto:
       type: object
       description: Required information for registering a new user
       properties:
+        id:
+          type: integer
+          description: The user ID that the user received upon registration
         firstName:
           type: string
           description: The first name inputted by the user
@@ -575,11 +578,8 @@ components:
         description:
           type: string
           description: The description by the user for their account
-        userId:
-          type: integer
-          description: The user ID that the user received upon registration
       required:
-        - userId
+        - id
     ContactDto:
       type: object
       properties:

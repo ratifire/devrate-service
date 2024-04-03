@@ -48,7 +48,4 @@ public class User {
   private boolean subscribed;
 
   private String description;
-
-  @Column(name = "user_id", nullable = false)
-  private long userId;
 }
