@@ -48,5 +48,4 @@ public class User {
   private boolean subscribed;
 
   private String description;
-
 }
