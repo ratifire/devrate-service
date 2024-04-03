@@ -674,6 +674,12 @@ components:
         city:
           type: string
           description: The city chosen by the user for their account
+        educations:
+          type: array
+          description: An array containing educational records associated with the user
+          items:
+            $ref: '#/components/schemas/EducationDto'
+          readOnly: true
         subscribed:
           type: boolean
           description: Flag indicating whether the user is subscribed to the newsletter
