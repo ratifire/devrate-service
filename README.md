@@ -229,6 +229,23 @@ making it easy to test email notifications without sending them to actual email 
   authentication mechanisms, and access control rules.
   [Learn more](https://docs.spring.io/spring-security/reference/servlet/test/index.html)
 
+### New Users for Application Testing
+
+The following accounts have been added for application testing:
+
+1. **User 1**
+    - Email: dev1@test.com
+    - Password: 12345678
+
+2. **User 2**
+    - Email: dev2@test.com
+    - Password: 12345678
+
+3. **User 3**
+    - Email: dev3@test.com
+    - Password: 12345678
+
+
 ## Project Information
 
 - **Group ID:** com.ratifire

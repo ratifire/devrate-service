@@ -1,6 +1,6 @@
 package com.ratifire.devrate.controller;
 
-import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.dto.UserRegistrationDto;
 import com.ratifire.devrate.service.registration.RegistrationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,12 +28,13 @@ public class RegistrationController {
    * Endpoint for user registration. Accepts POST requests with user details and registers a new
    * user.
    *
-   * @param userDto DTO containing new user's details such as username, password, etc.
+   * @param userRegistrationDto DTO containing new user's details such as username, password, etc.
    * @return The registered User entity if successful, or null if the registration fails.
    */
   @PostMapping
-  public UserDto registerUser(@RequestBody @Valid UserDto userDto) {
-    return registrationService.registerUser(userDto);
+  public UserRegistrationDto registerUser(
+      @RequestBody @Valid UserRegistrationDto userRegistrationDto) {
+    return registrationService.registerUser(userRegistrationDto);
   }
 
   /**

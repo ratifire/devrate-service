@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.dto.UserRegistrationDto;
 import com.ratifire.devrate.exception.EmailConfirmationCodeException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.service.registration.RegistrationService;
@@ -42,7 +42,7 @@ public class RegistrationControllerTest {
   @MockBean
   private RegistrationService registrationService;
 
-  private UserDto userDto;
+  private UserRegistrationDto userRegistrationDto;
 
   /**
    * Initializes the test environment for the RegistrationControllerTest class. This method is
@@ -50,7 +50,7 @@ public class RegistrationControllerTest {
    */
   @BeforeEach
   public void init() {
-    userDto = UserDto.builder()
+    userRegistrationDto = UserRegistrationDto.builder()
         .email("test@gmail.com")
         .firstName("Test first name")
         .lastName("Test last name")
@@ -62,7 +62,7 @@ public class RegistrationControllerTest {
   }
 
   /**
-   * Test for {@link RegistrationController#registerUser(UserDto)}.
+   * Test for {@link RegistrationController#registerUser(UserRegistrationDto)}.
    *
    * <p>Test method for verifying that the sign-up endpoint ("/signup") returns OK status. This
    * method verifies that the sign-up endpoint returns HTTP status 200 (OK) when accessed.
@@ -71,13 +71,13 @@ public class RegistrationControllerTest {
    */
   @Test
   public void testSignUpShouldReturnOk() throws Exception {
-    UserDto testDto = UserDto.builder().build();
+    UserRegistrationDto testDto = UserRegistrationDto.builder().build();
 
     Mockito.when(registrationService.registerUser(any())).thenReturn(testDto);
 
     mockMvc.perform(post(END_POINT_PATH)
             .contentType("application/json")
-            .content(objectMapper.writeValueAsString(userDto)))
+            .content(objectMapper.writeValueAsString(userRegistrationDto)))
         .andExpect(status().isOk())
         .andDo(print());
   }
