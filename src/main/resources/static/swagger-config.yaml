@@ -443,7 +443,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /educations/{userInfoId}:
+  /educations/{userId}:
     post:
       tags:
         - education
@@ -452,8 +452,8 @@ paths:
       operationId: createEducation
       parameters:
         - in: path
-          name: user_info_id
-          description: The ID of the user info for whom the education is being created.
+          name: user_id
+          description: The ID of the user for whom the education is being created.
           required: true
           schema:
             type: integer

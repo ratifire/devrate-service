@@ -14,7 +14,7 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public abstract class EducationMapper implements DataMapper<EducationDto, Education> {
 
-  @Mapping(target = "userInfoId", ignore = true)
+  @Mapping(target = "userId", ignore = true)
   public abstract Education toEntity(EducationDto educationDto);
 
   public abstract EducationDto toDto(Education education);
@@ -22,7 +22,7 @@ public abstract class EducationMapper implements DataMapper<EducationDto, Educat
   public abstract List<EducationDto> toDto(List<Education> educations);
 
   @Mapping(target = "id", ignore = true)
-  @Mapping(target = "userInfoId", ignore = true)
+  @Mapping(target = "userId", ignore = true)
   public abstract Education updateEntity(EducationDto educationDto,
       @MappingTarget Education education);
 }

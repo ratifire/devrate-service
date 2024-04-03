@@ -34,13 +34,13 @@ public class EducationService {
   /**
    * Creates a new education entity.
    *
-   * @param userInfoId   The ID of the user to whom the education belongs.
+   * @param userId   The ID of the user to whom the education belongs.
    * @param educationDto The data representing the education entity to be created.
    * @return EducationDto representing the newly created education entity.
    */
-  public EducationDto create(long userInfoId, EducationDto educationDto) {
+  public EducationDto create(long userId, EducationDto educationDto) {
     Education education = mapper.toEntity(educationDto);
-    education.setUserInfoId(userInfoId);
+    education.setUserId(userId);
 
     return mapper.toDto(educationRepository.save(education));
   }

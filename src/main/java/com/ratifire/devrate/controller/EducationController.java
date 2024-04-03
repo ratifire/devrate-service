@@ -38,14 +38,14 @@ public class EducationController {
   /**
    * Creates a new education entity.
    *
-   * @param userInfoId       The ID of the user to whom the education belongs.
+   * @param userId       The ID of the user to whom the education belongs.
    * @param educationDto The data representing the education entity to be created.
    * @return EducationDto representing the newly created education entity.
    */
-  @PostMapping("/{userInfoId}")
-  public EducationDto create(@PathVariable long userInfoId,
+  @PostMapping("/{userId}")
+  public EducationDto create(@PathVariable long userId,
       @RequestBody @Valid EducationDto educationDto) {
-    return educationService.create(userInfoId, educationDto);
+    return educationService.create(userId, educationDto);
   }
 
   /**
