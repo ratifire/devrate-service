@@ -677,12 +677,6 @@ components:
         description:
           type: string
           description: The description by the user for their account
-        educations:
-          type: array
-          description: An array containing educational records associated with the user
-          items:
-            $ref: '#/components/schemas/EducationDto'
-          readOnly: true
         userId:
           type: integer
           description: The user ID that the user received upon registration
