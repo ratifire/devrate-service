@@ -35,8 +35,6 @@ public class UserDto {
 
   private String description;
 
-  private List<EducationDto> educations;
-
   @NotNull
   private long userId;
 }

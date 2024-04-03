@@ -52,8 +52,4 @@ public class User {
   private boolean subscribed;
 
   private String description;
-
-  @OneToMany(fetch = FetchType.EAGER)
-  @JoinColumn(name = "user_info_id")
-  private List<Education> educations;
 }
