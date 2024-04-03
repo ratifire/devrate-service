@@ -49,7 +49,4 @@ public class User {
 
   private String description;
 
-  @Column(name = "user_id", nullable = false)
-  private long userId;
-
 }
