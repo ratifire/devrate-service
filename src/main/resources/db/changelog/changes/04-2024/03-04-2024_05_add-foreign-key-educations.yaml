@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 26-03-2024_02_add-foreign-key-educations-table
+      id: 03-04-2024_05_add-foreign-key-educations-table
       author: V. Hubersky
       preConditions:
         - onFail: MARK_RAN
