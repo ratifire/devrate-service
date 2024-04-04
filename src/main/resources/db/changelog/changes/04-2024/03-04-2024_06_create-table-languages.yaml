@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 03-04-2024_03_create-table-languages
+      id: 03-04-2024_06_create-table-languages
       author: Dmytro Abalmas
       preConditions:
         - onFail: MARK_RAN

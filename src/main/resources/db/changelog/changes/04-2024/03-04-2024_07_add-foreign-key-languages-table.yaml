@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 03-04-2024_04_add-foreign-key-languages-table
+      id: 03-04-2024_07_add-foreign-key-languages-table
       author: Dmytro Abalmas
       preConditions:
         - onFail: MARK_RAN
