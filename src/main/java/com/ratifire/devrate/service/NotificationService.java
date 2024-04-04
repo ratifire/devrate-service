@@ -51,4 +51,14 @@ public class NotificationService {
   public void deleteNotificationById(long id) {
     notificationRepository.deleteById(id);
   }
+
+  /**
+   * Saves a notification.
+   *
+   * @param notification The notification to save.
+   * @return The saved notification.
+   */
+  public Notification save(Notification notification) {
+    return notificationRepository.save(notification);
+  }
 }
