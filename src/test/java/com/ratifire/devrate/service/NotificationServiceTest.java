@@ -86,4 +86,15 @@ public class NotificationServiceTest {
 
     verify(notificationRepository, times(1)).deleteById(testUserId);
   }
+
+  @Test
+  void testSaveNotification() {
+    Notification notification = Notification.builder().build();
+    when(notificationRepository.save(any())).thenReturn(notification);
+
+    Notification savedNotification = notificationService.save(notification);
+
+    verify(notificationRepository, times(1)).save(notification);
+    assertEquals(notification, savedNotification);
+  }
 }

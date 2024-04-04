@@ -27,6 +27,7 @@ import com.ratifire.devrate.service.RoleService;
 import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.email.EmailService;
 import com.ratifire.devrate.service.user.UserService;
+import com.ratifire.devrate.util.websocket.WebSocketSender;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -60,6 +61,9 @@ public class RegistrationServiceTest {
 
   @Mock
   private EmailService emailService;
+
+  @Mock
+  private WebSocketSender webSocketSender;
 
   @Mock
   private UserService userService;
@@ -181,6 +185,7 @@ public class RegistrationServiceTest {
     userSecurity.setId(userId);
     when(userSecurityService.getById(userId)).thenReturn(userSecurity);
     when(userSecurityService.save(userSecurity)).thenReturn(null);
+    doNothing().when(webSocketSender).addGreetingNotification(any());
 
     doNothing().when(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
 

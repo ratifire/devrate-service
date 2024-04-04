@@ -7,6 +7,8 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.dto.NotificationDto;
+import com.ratifire.devrate.entity.Notification;
+import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.service.NotificationService;
 import java.io.IOException;
 import java.util.List;
@@ -15,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -67,5 +70,28 @@ public class WebSocketSenderTest {
     webSocketSender.sendNotificationsBySession(login, session);
 
     verify(session, times(1)).sendMessage(any(TextMessage.class));
+  }
+
+  @Test
+  void testAddNotification() {
+    User user = User.builder().build();
+    Notification notification = Notification.builder().build();
+    String text = "Test notification";
+    when(notificationService.save(any())).thenReturn(notification);
+
+    webSocketSender.addNotification(user, text);
+
+    verify(notificationService, times(1)).save(any());
+  }
+
+  @Test
+  void testAddGreetingNotification() {
+    User user = User.builder().build();
+    Notification notification = Notification.builder().build();
+    when(notificationService.save(any())).thenReturn(notification);
+
+    webSocketSender.addGreetingNotification(user);
+
+    verify(notificationService, times(1)).save(any());
   }
 }
