@@ -166,30 +166,30 @@ public class RegistrationServiceTest {
    */
   @Test
   public void testConfirmRegistration_Success() {
-    long userId = 1L;
+    long userSecurityId = 1L;
     String code = "123456";
 
     EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode.builder()
         .code(code)
-        .userId(userId)
+        .userSecurityId(userSecurityId)
         .createdAt(LocalDateTime.now())
         .build();
     when(emailConfirmationCodeService.findEmailConfirmationCode(code))
         .thenReturn(emailConfirmationCode);
 
     UserSecurity userSecurity = new UserSecurity();
-    userSecurity.setId(userId);
-    when(userSecurityService.getById(userId)).thenReturn(userSecurity);
+    userSecurity.setId(userSecurityId);
+    when(userSecurityService.getById(userSecurityId)).thenReturn(userSecurity);
     when(userSecurityService.save(userSecurity)).thenReturn(null);
 
     doNothing().when(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
 
     long actualUserId = registrationService.confirmRegistration(code);
 
-    assertEquals(userId, actualUserId);
+    assertEquals(userSecurityId, actualUserId);
     assertTrue(userSecurity.isVerified());
     verify(emailConfirmationCodeService).findEmailConfirmationCode(code);
-    verify(userSecurityService).getById(userId);
+    verify(userSecurityService).getById(userSecurityId);
     verify(userSecurityService).save(userSecurity);
     verify(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
   }
@@ -220,7 +220,7 @@ public class RegistrationServiceTest {
     String code = "123456";
     EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode.builder()
         .code(code)
-        .userId(1L)
+        .userSecurityId(1L)
         .createdAt(LocalDateTime.now().minusHours(25))
         .build();
     when(emailConfirmationCodeService.findEmailConfirmationCode(code))

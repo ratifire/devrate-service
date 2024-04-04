@@ -126,7 +126,8 @@ public class RegistrationService {
       throw new EmailConfirmationCodeExpiredException("The confirmation code has expired");
     }
 
-    UserSecurity userSecurity = userSecurityService.getById(emailConfirmationCode.getUserId());
+    UserSecurity userSecurity = userSecurityService
+        .getById(emailConfirmationCode.getUserSecurityId());
     userSecurity.setVerified(true);
     userSecurityService.save(userSecurity);
 

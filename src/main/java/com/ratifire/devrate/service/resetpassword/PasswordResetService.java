@@ -44,7 +44,8 @@ public class PasswordResetService {
   @Transactional
   public boolean resetPassword(String code, String newPassword) {
     EmailConfirmationCode emailConfirmationCode = emailConfirmationUuidService.findUuidCode(code);
-    UserSecurity userSecurity = userSecurityService.getById(emailConfirmationCode.getUserId());
+    UserSecurity userSecurity = userSecurityService
+        .getById(emailConfirmationCode.getUserSecurityId());
 
     String encodedPassword = passwordEncoder.encode(newPassword);
 

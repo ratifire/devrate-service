@@ -65,7 +65,7 @@ public class EmailConfirmationUuidServiceTest {
     String validCode = UUID.randomUUID().toString();
     EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode.builder()
         .code(validCode)
-        .userId(1L)
+        .userSecurityId(1L)
         .createdAt(LocalDateTime.now().plusHours(12))
         .build();
 

@@ -79,7 +79,7 @@ public class PasswordResetServiceTest {
     String newPassword = "newPassword";
     UserSecurity userSecurity = UserSecurity.builder().id(1L).build();
     EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode
-        .builder().userId(userSecurity.getId()).build();
+        .builder().userSecurityId(userSecurity.getId()).build();
 
     when(emailConfirmationUuidService.findUuidCode(code)).thenReturn(emailConfirmationCode);
     when(userSecurityService.getById(userSecurity.getId())).thenReturn(userSecurity);
