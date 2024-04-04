@@ -53,7 +53,7 @@ public class EmailConfirmationUuidServiceTest {
     String code = emailConfirmationUuidService.generateAndPersistUuidCode(userId);
 
     assertNotNull(code, "Generated code should not be null");
-    verify(emailConfirmationCodeRepository).deleteByUserId(userId);
+    verify(emailConfirmationCodeRepository).deleteByUserSecurityId(userId);
     verify(emailConfirmationCodeRepository).save(any(EmailConfirmationCode.class));
   }
 
@@ -128,8 +128,8 @@ public class EmailConfirmationUuidServiceTest {
   @Test
   public void deleteConfirmedCodesByUserId_DeletesCodes() {
     Long userId = 1L;
-    emailConfirmationUuidService.deleteConfirmedCodesByUserId(userId);
-    verify(emailConfirmationCodeRepository).deleteByUserId(userId);
+    emailConfirmationUuidService.deleteConfirmedCodesByUserSecurityId(userId);
+    verify(emailConfirmationCodeRepository).deleteByUserSecurityId(userId);
   }
 
   /**

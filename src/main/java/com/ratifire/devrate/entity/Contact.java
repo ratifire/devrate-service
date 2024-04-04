@@ -34,7 +34,7 @@ public class Contact {
 
   private String value;
 
-  @Column(name = "user_info_id", nullable = false)
+  @Column(name = "user_id", nullable = false)
   private long userId;
 
 }

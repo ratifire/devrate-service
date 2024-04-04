@@ -11,12 +11,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
-
-
 /**
  * Service for generating unique UUID codes for email verification.
  */
-
 @Service
 @AllArgsConstructor
 public class EmailConfirmationUuidService {
@@ -37,17 +34,17 @@ public class EmailConfirmationUuidService {
   }
 
   /**
-   * Saves the UUID confirmation code for a specific user in the database.
+   * Saves the UUID confirmation code for a specific user security in the database.
    *
-   * @param userId The ID of the user associated with the confirmation code.
+   * @param userSecurityId The ID of the user security associated with the confirmation code.
    * @param code   The confirmation code to be saved.
    */
-  public void saveUuidConfirmationCode(Long userId, String code) {
+  public void saveUuidConfirmationCode(Long userSecurityId, String code) {
     LocalDateTime createdAt = LocalDateTime.now().plusHours(12);
     EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode.builder()
             .code(code)
             .createdAt(createdAt)
-            .userSecurityId(userId)
+            .userSecurityId(userSecurityId)
             .build();
     emailConfirmationCodeRepository.save(emailConfirmationCode);
   }
@@ -55,27 +52,25 @@ public class EmailConfirmationUuidService {
   /**
    * Generates and persists a unique UUID confirmation code for email confirmation.
    *
-   * @param userId ID of the user to generate the code for.
+   * @param userSecurityId ID of the user security to generate the code for.
    * @return Generated UUID confirmation code.
    */
-
-  public String generateAndPersistUuidCode(Long userId) {
-    deleteConfirmedCodesByUserId(userId);
+  public String generateAndPersistUuidCode(Long userSecurityId) {
+    deleteConfirmedCodesByUserSecurityId(userSecurityId);
     String code = createUniqueUuid();
-    saveUuidConfirmationCode(userId, code);
+    saveUuidConfirmationCode(userSecurityId, code);
     return code;
   }
 
   /**
-   * Removes a confirmed email code for the specified user ID.
+   * Removes a confirmed email code for the specified user security ID.
    *
    * <p>This method deletes a previously confirmed email code from the database.
    *
-   * @param userId The ID of the user whose email code is to be deleted.
+   * @param userSecurityId The ID of the user security whose email code is to be deleted.
    */
-
-  public void deleteConfirmedCodesByUserId(Long userId) {
-    emailConfirmationCodeRepository.deleteByUserId(userId);
+  public void deleteConfirmedCodesByUserSecurityId(Long userSecurityId) {
+    emailConfirmationCodeRepository.deleteByUserSecurityId(userSecurityId);
   }
 
   /**

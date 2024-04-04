@@ -52,7 +52,7 @@ public class PasswordResetService {
     userSecurity.setPassword(encodedPassword);
     userSecurityService.save(userSecurity);
 
-    emailConfirmationUuidService.deleteConfirmedCodesByUserId(userSecurity.getId());
+    emailConfirmationUuidService.deleteConfirmedCodesByUserSecurityId(userSecurity.getId());
     emailConfirmationUuidService.sendPasswordChangeConfirmation(userSecurity.getEmail());
     return true;
   }

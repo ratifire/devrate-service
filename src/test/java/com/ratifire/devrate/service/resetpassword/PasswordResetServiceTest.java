@@ -90,7 +90,7 @@ public class PasswordResetServiceTest {
     assertTrue(result);
     verify(userSecurityService).save(userSecurity);
     verify(passwordEncoder).encode(newPassword);
-    verify(emailConfirmationUuidService).deleteConfirmedCodesByUserId(userSecurity.getId());
+    verify(emailConfirmationUuidService).deleteConfirmedCodesByUserSecurityId(userSecurity.getId());
   }
 
 
