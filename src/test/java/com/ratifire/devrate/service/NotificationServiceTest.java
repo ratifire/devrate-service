@@ -47,11 +47,11 @@ public class NotificationServiceTest {
         NotificationDto.builder().build(),
         NotificationDto.builder().build());
 
-    when(notificationRepository.findAllByUser_EmailOrderByCreatedAtDesc(any())).thenReturn(
+    when(notificationRepository.findAllByUserSecurityEmailOrderByCreatedAt(any())).thenReturn(
         notifications);
     when(mapper.toDto(notifications)).thenReturn(expectedNotifications);
 
-    List<NotificationDto> actualNotifications = notificationService.getAllByUserLogin(any());
+    List<NotificationDto> actualNotifications = notificationService.getAllByLogin(any());
 
     assertEquals(expectedNotifications, actualNotifications);
   }

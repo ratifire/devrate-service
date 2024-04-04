@@ -34,7 +34,7 @@ public class WebSocketSender {
    * @param login The user's login.
    */
   public void sendNotificationsByLogin(String login) {
-    List<NotificationDto> notifications = notificationService.getAllByUserLogin(login);
+    List<NotificationDto> notifications = notificationService.getAllByLogin(login);
     Set<WebSocketSession> sessions = sessionRegistry.getUserSessions(login);
     for (WebSocketSession session : sessions) {
       sendNotifications(session, notifications);
@@ -48,7 +48,7 @@ public class WebSocketSender {
    * @param session The WebSocket session to send notifications to.
    */
   public void sendNotificationsBySession(String login, WebSocketSession session) {
-    List<NotificationDto> notifications = notificationService.getAllByUserLogin(login);
+    List<NotificationDto> notifications = notificationService.getAllByLogin(login);
     sendNotifications(session, notifications);
   }
 

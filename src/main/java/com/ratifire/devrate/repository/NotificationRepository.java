@@ -11,5 +11,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-  List<Notification> findAllByUser_EmailOrderByCreatedAtDesc(String email);
+  List<Notification> findAllByUserSecurityEmailOrderByCreatedAt(String email);
 }

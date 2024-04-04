@@ -26,8 +26,8 @@ public class NotificationService {
    * @param login The user's login.
    * @return A list of NotificationDto objects.
    */
-  public List<NotificationDto> getAllByUserLogin(String login) {
-    return mapper.toDto(notificationRepository.findAllByUser_EmailOrderByCreatedAtDesc(login));
+  public List<NotificationDto> getAllByLogin(String login) {
+    return mapper.toDto(notificationRepository.findAllByUserSecurityEmailOrderByCreatedAt(login));
   }
 
   /**
