@@ -77,7 +77,7 @@ public class RegistrationServiceTest {
   @Test
   public void testUserExistsByEmail_ReturnsTrue() {
     String existingEmail = "existing@example.com";
-    when(userSecurityService.isUserExistByEmail(any())).thenReturn(true);
+    when(userSecurityService.isExistByEmail(any())).thenReturn(true);
     boolean isExist = registrationService.isUserExistByEmail(existingEmail);
     assertTrue(isExist);
   }
@@ -92,7 +92,7 @@ public class RegistrationServiceTest {
   @Test
   public void testUserExistsByEmail_ReturnsFalse() {
     String notExistingEmail = "notexisting@example.com";
-    when(userSecurityService.isUserExistByEmail(any())).thenReturn(false);
+    when(userSecurityService.isExistByEmail(any())).thenReturn(false);
     boolean isExist = registrationService.isUserExistByEmail(notExistingEmail);
     assertFalse(isExist);
   }

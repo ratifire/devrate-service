@@ -1,7 +1,7 @@
 package com.ratifire.devrate.exception;
 
 /**
- * Exception thrown when a user is not found.
+ * Exception thrown when a user security is not found.
  */
 public class UserSecurityNotFoundException extends RuntimeException {
   public UserSecurityNotFoundException(String message) {

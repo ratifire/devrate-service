@@ -46,7 +46,7 @@ public class PasswordResetServiceTest {
   void requestPasswordReset_WithValidEmail_SendsResetLink() {
     String email = "user@example.com";
     UserSecurity userSecurity = UserSecurity.builder().id(1L).build();
-    when(userSecurityService.findUserByEmail(email)).thenReturn(userSecurity);
+    when(userSecurityService.findByEmail(email)).thenReturn(userSecurity);
     when(emailConfirmationUuidService.generateAndPersistUuidCode(userSecurity.getId()))
         .thenReturn("code");
 
@@ -63,7 +63,7 @@ public class PasswordResetServiceTest {
   @Test
   void requestPasswordReset_WithInvalidEmail_ThrowsException() {
     String email = "invalid@example.com";
-    when(userSecurityService.findUserByEmail(email))
+    when(userSecurityService.findByEmail(email))
         .thenThrow(new UsernameNotFoundException("User not found"));
 
     assertThrows(UsernameNotFoundException.class, () -> passwordResetService

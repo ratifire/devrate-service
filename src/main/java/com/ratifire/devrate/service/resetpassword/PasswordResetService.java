@@ -27,7 +27,7 @@ public class PasswordResetService {
    */
   @Transactional
   public boolean requestPasswordReset(String email) {
-    UserSecurity userSecurity = userSecurityService.findUserByEmail(email);
+    UserSecurity userSecurity = userSecurityService.findByEmail(email);
 
     String code = emailConfirmationUuidService.generateAndPersistUuidCode(userSecurity.getId());
 

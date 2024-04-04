@@ -31,7 +31,7 @@ public class UserSecurityServiceTest {
   private UserSecurityService userSecurityService;
 
   /**
-   * Unit test for {@link UserSecurityService#isUserExistByEmail(String)}.
+   * Unit test for {@link UserSecurityService#isExistByEmail(String)}.
    *
    * <p>Test method for checking if a user exists by email when the user exists. This method
    * verifies that the RegistrationService correctly returns true when a user with the specified
@@ -40,13 +40,13 @@ public class UserSecurityServiceTest {
   @Test
   public void testUserExistsByEmail_ReturnsTrue() {
     String existingEmail = "existing@example.com";
-    when(userSecurityRepository.existsByEmail(any())).thenReturn(true);
-    boolean isExist = userSecurityService.isUserExistByEmail(existingEmail);
+    when(userSecurityRepository.isExistsByEmail(any())).thenReturn(true);
+    boolean isExist = userSecurityService.isExistByEmail(existingEmail);
     assertTrue(isExist);
   }
 
   /**
-   * Unit test for {@link UserSecurityService#isUserExistByEmail(String)}.
+   * Unit test for {@link UserSecurityService#isExistByEmail(String)}.
    *
    * <p>Test method for checking if a user exists by email when the user does not exist. This
    * method verifies that the RegistrationService correctly returns false when no user with the
@@ -55,8 +55,8 @@ public class UserSecurityServiceTest {
   @Test
   public void testUserExistsByEmail_ReturnsFalse() {
     String notExistingEmail = "notexisting@example.com";
-    when(userSecurityRepository.existsByEmail(any())).thenReturn(false);
-    boolean isExist = userSecurityService.isUserExistByEmail(notExistingEmail);
+    when(userSecurityRepository.isExistsByEmail(any())).thenReturn(false);
+    boolean isExist = userSecurityService.isExistByEmail(notExistingEmail);
     assertFalse(isExist);
   }
 

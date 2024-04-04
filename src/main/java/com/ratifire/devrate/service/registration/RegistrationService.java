@@ -46,13 +46,13 @@ public class RegistrationService {
   private final UserService userService;
 
   /**
-   * Checks if a user with the given email address exists.
+   * Checks if a user security with the given email address exists.
    *
    * @param email The email address to check for existence.
-   * @return True if a user with the specified email address exists, false otherwise.
+   * @return True if a user security with the specified email address exists, false otherwise.
    */
   public boolean isUserExistByEmail(String email) {
-    return userSecurityService.isUserExistByEmail(email);
+    return userSecurityService.isExistByEmail(email);
   }
 
   /**
