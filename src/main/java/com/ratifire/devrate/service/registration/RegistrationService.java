@@ -13,6 +13,7 @@ import com.ratifire.devrate.service.RoleService;
 import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.email.EmailService;
 import com.ratifire.devrate.service.user.UserService;
+import com.ratifire.devrate.util.websocket.WebSocketSender;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import liquibase.util.StringUtil;
@@ -29,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RegistrationService {
 
-  private static final long CONFIRM_CODE_EXPIRATION_HOURS  = 24;
+  private static final long CONFIRM_CODE_EXPIRATION_HOURS = 24;
   /**
    * Service responsible for user management operations.
    */
@@ -44,6 +45,8 @@ public class RegistrationService {
   private final EmailService emailService;
 
   private final UserService userService;
+
+  private final WebSocketSender webSocketSender;
 
   /**
    * Checks if a user with the given email address exists.
@@ -88,7 +91,7 @@ public class RegistrationService {
     UserSecurity userSecurity = userSecurityService.save(entity);
 
     EmailConfirmationCode savedEmailConfirmationCode =
-            emailConfirmationCodeService.save(userSecurity.getId());
+        emailConfirmationCodeService.save(userSecurity.getId());
 
     SimpleMailMessage confirmationMessage = emailConfirmationCodeService
         .createMessage(userSecurity.getEmail(), savedEmailConfirmationCode.getCode());
@@ -99,8 +102,8 @@ public class RegistrationService {
   }
 
   /**
-   * Checks if the provided confirmation code matches the stored confirmation code for the
-   * user and marks the user as verified if the codes match.
+   * Checks if the provided confirmation code matches the stored confirmation code for the user and
+   * marks the user as verified if the codes match.
    *
    * @param confirmationCode The confirmation code provided by the user.
    * @return The ID of the user whose registration has been confirmed
@@ -132,6 +135,7 @@ public class RegistrationService {
 
     emailConfirmationCodeService.deleteConfirmedCode(emailConfirmationCode.getId());
 
+    webSocketSender.addGreetingNotification(userSecurity.getUser());
     return userSecurity.getId();
   }
 }
