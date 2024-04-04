@@ -53,7 +53,7 @@ public class User {
 
   private String description;
 
-  @OneToMany(fetch = FetchType.EAGER)
+  @OneToMany(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
   private List<Education> educations;
 }
