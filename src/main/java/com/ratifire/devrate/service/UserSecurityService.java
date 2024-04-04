@@ -27,7 +27,7 @@ public class UserSecurityService {
    * @return True if a user security with the given email exists, false otherwise.
    */
   public boolean isExistByEmail(String email) {
-    return userSecurityRepository.isExistsByEmail(email);
+    return userSecurityRepository.existsByEmail(email);
   }
 
   /**

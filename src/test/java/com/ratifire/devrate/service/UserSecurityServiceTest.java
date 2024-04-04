@@ -40,7 +40,7 @@ public class UserSecurityServiceTest {
   @Test
   public void testUserExistsByEmail_ReturnsTrue() {
     String existingEmail = "existing@example.com";
-    when(userSecurityRepository.isExistsByEmail(any())).thenReturn(true);
+    when(userSecurityRepository.existsByEmail(any())).thenReturn(true);
     boolean isExist = userSecurityService.isExistByEmail(existingEmail);
     assertTrue(isExist);
   }
@@ -55,7 +55,7 @@ public class UserSecurityServiceTest {
   @Test
   public void testUserExistsByEmail_ReturnsFalse() {
     String notExistingEmail = "notexisting@example.com";
-    when(userSecurityRepository.isExistsByEmail(any())).thenReturn(false);
+    when(userSecurityRepository.existsByEmail(any())).thenReturn(false);
     boolean isExist = userSecurityService.isExistByEmail(notExistingEmail);
     assertFalse(isExist);
   }
