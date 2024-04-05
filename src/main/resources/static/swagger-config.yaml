@@ -463,14 +463,14 @@ paths:
   /educations/{userId}:
     post:
       tags:
-        - contact
-      summary: Create a new contact
-      description: Create a new contact of the specified user
-      operationId: create
+        - education
+      summary: Create New Education
+      description: Creates a new education record for a specified user.
+      operationId: createEducation
       parameters:
         - in: path
-          name: userId
-          description: The ID of the user to associate the new contact with
+          name: user_id
+          description: The ID of the user for whom the education is being created.
           required: true
           schema:
             type: integer
@@ -479,14 +479,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ContactDto'
+              $ref: '#/components/schemas/EducationDto'
       responses:
         '200':
-          description: Successful operation
+          description: The created education
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ContactDto'
+                $ref: '#/components/schemas/EducationDto'
         '400':
           description: Bad request, e.g., missing or invalid parameters
           content:
@@ -494,7 +494,109 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
-          description: Internal server error
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /educations/{id}:
+    get:
+      tags:
+        - education
+      summary: Get Education By ID
+      description: Retrieves an education record based on the provided ID.
+      operationId: getEducationById
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the education to retrieve.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The education corresponding to the provided ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - education
+      summary: Update Education By ID
+      description: Updates an existing education record identified by the provided ID.
+      operationId: updateEducation
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the education to update.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EducationDto'
+      responses:
+        '200':
+          description: The updated education
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - education
+      summary: Delete Education By ID
+      description: Deletes an education record identified by the provided ID.
+      operationId: deleteEducation
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the education to delete.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Education deleted successfully
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
           content:
             application/json:
               schema:
@@ -608,6 +710,12 @@ components:
         city:
           type: string
           description: The city chosen by the user for their account
+        educations:
+          type: array
+          description: An array containing educational records associated with the user
+          items:
+            $ref: '#/components/schemas/EducationDto'
+          readOnly: true
         subscribed:
           type: boolean
           description: Flag indicating whether the user is subscribed to the newsletter
@@ -635,3 +743,32 @@ components:
       required:
         - type
         - value
+    EducationDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The unique identifier for the education
+          readOnly: true
+        type:
+          type: string
+          description: The type of education
+        name:
+          type: string
+          description: The name of the education
+        description:
+          type: string
+          description: Description of the education
+        startYear:
+          type: integer
+          description: The starting year of the education
+        endYear:
+          type: integer
+          description: The ending year of the education
+      required:
+        - type
+        - name
+        - description
+        - startYear
+        - endYear
