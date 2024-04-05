@@ -1,0 +1,55 @@
+databaseChangeLog:
+  - changeSet:
+      id: 04-04-2024_05_create-table-work_experience
+      author: Maksim Matveychuk
+      preConditions:
+        - onFail: MARK_RAN
+          comments: |
+            Checks if the "work_experience" table already exists.
+            Marks the changeSet as executed if the table exists.
+          not:
+            tableExists:
+              tableName: work_experience
+      changes:
+        - createTable:
+            tableName: work_experience
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: start_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: end_date
+                  type: DATE
+              - column:
+                  name: position
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: company_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+                  constraints:
+                    length: 1000
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: responsibility_id
+                  type: TEXT
+                  constraints:
+                    nullable: false

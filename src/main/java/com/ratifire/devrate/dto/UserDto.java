@@ -39,4 +39,6 @@ public class UserDto {
   private String description;
 
   private List<EducationDto> educations;
+
+  private List<WorkExperienceDto> workExperience;
 }

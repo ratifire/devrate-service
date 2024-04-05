@@ -21,3 +21,22 @@ SELECT * FROM (
 WHERE NOT EXISTS (
     SELECT 1 FROM user_security WHERE id = new_user_security.id OR email = new_user_security.email
 );
+
+
+-- Create responsibility records
+INSERT INTO responsibility (name)
+SELECT * FROM (
+    VALUES
+        ('BACKEND_DEVELOPMENT'),
+        ('FRONTEND_DEVELOPMENT'),
+        ('DEVOPS'),
+        ('TEAM_LEAD'),
+        ('PROJECT_MANAGEMENT'),
+        ('QUALITY_ASSURANCE'),
+        ('SYSTEM_ARCHITECTURE'),
+        ('DATABASE_MANAGEMENT'),
+        ('TECHNICAL_SUPPORT'),
+        ('OTHER')
+) AS new_responsibility (name)
+WHERE NOT EXISTS (SELECT 1 FROM responsibility);
+
