@@ -29,6 +29,8 @@ tags:
     description: Endpoints for user personal info functionality
   - name: contact
     description: Endpoints for user contact management
+  - name: language
+    description: Endpoints for user language management
 paths:
   /auth/signup:
     post:
@@ -482,6 +484,147 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /languages/{id}:
+    get:
+      tags:
+        - language
+      summary: Get language by its ID
+      description: Retrieve a specific language based on the provided language ID
+      operationId: findById
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the language to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LanguageDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - language
+      summary: Update language by its ID
+      description: Updates an existing language with provided data
+      operationId: update
+      parameters:
+        - in: path
+          name: id
+          description: Unique identifier of the language to be updated
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LanguageDto'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LanguageDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - language
+      summary: Delete language by its ID
+      description: Deletes a language from the system based on the provided language ID
+      operationId: delete
+      parameters:
+        - in: path
+          name: id
+          description: Unique identifier of the language to be deleted
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /languages/{userId}:
+    post:
+      tags:
+        - language
+      summary: Create a new language
+      description: Create a new language of the specified user
+      operationId: create
+      parameters:
+        - in: path
+          name: userId
+          description: The ID of the user to associate the new language with
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LanguageDto'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LanguageDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     UserRegistrationDto:
@@ -578,6 +721,12 @@ components:
         description:
           type: string
           description: The description by the user for their account
+        languages:
+          type: array
+          description: An array containing languages associated with the user
+          items:
+            $ref: '#/components/schemas/LanguageDto'
+          readOnly: true
       required:
         - id
     ContactDto:
@@ -599,3 +748,39 @@ components:
       required:
         - type
         - value
+    LanguageDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The unique identifier for the language
+          readOnly: true
+        name:
+          type: string
+          description: "The name of the language. The name can only be one of the following: 
+          UA, EN, FR, IT, DE, ES, PL, CS."
+          enum:
+            - UA
+            - EN
+            - FR
+            - IT
+            - DE
+            - ES
+            - PL
+            - CS
+        level:
+          type: string
+          description: "The name of the language. The name can only be one of the following: 
+            ELEMENTARY_A1, PRE_INTERMEDIATE_A2, INTERMEDIATE_B1, UPPER_INTERMEDIATE_B2, ADVANCED_C1,
+             PROFESSIONAL_C2, NATIVE."
+          enum:
+            - ELEMENTARY_A1
+            - PRE_INTERMEDIATE_A2
+            - INTERMEDIATE_B1
+            - UPPER_INTERMEDIATE_B2
+            - ADVANCED_C1
+            - PROFESSIONAL_C2
+            - NATIVE
+      required:
+        - name
+        - level
