@@ -46,7 +46,7 @@ public class UserController {
   /**
    * Deletes user personal information by user ID.
    *
-   * @param id the ID of the user
+   * @param id the ID of the user.
    */
   @DeleteMapping("/{id}")
   public void delete(@PathVariable long id) {
