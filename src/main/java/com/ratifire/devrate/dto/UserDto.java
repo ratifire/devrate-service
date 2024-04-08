@@ -38,5 +38,7 @@ public class UserDto {
 
   private String description;
 
+  private List<ContactDto> contacts;
+
   private List<EducationDto> educations;
 }
