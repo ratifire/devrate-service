@@ -2,14 +2,13 @@ package com.ratifire.devrate.service.workexperience;
 
 import com.ratifire.devrate.dto.WorkExperienceDto;
 import com.ratifire.devrate.entity.WorkExperience;
-import com.ratifire.devrate.exception.WorkExperienceAlreadyExistException;
+import com.ratifire.devrate.exception.WorkExperienceNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.WorkExperienceRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * The service responsible for managing user work experience information. Provides functionality for
@@ -25,15 +24,15 @@ public class WorkExperienceService {
   /**
    * Retrieves work experience information by user ID.
    *
-   * @param id the ID of the user
+   * @param userId the ID of the user
    * @return the user's work experience as a DTO
-   * @throws WorkExperienceAlreadyExistException if work experience information is not found
+   * @throws WorkExperienceNotFoundException if work experience information is not found
    */
-  public List<WorkExperienceDto> findByUserId(long id) {
-    List<WorkExperience> workExperiences = workExperienceRepository.findByUserId(id);
+  public List<WorkExperienceDto> findByUserId(long userId) {
+    List<WorkExperience> workExperiences = workExperienceRepository.findByUserId(userId);
     if (workExperiences.isEmpty()) {
-      throw new WorkExperienceAlreadyExistException("The user's work experience information "
-          + "could not be found with the user id \"" + id + "\"");
+      throw new WorkExperienceNotFoundException("The user's work experience information "
+          + "could not be found with the user userId \"" + userId + "\"");
     }
     return workExperiences.stream()
         .map(workExperienceDataMapper::toDto)
@@ -45,14 +44,12 @@ public class WorkExperienceService {
    *
    * @param workExperienceDto the user's work experience information as a DTO
    * @return the created user work experience information as a DTO
-   * @throws WorkExperienceAlreadyExistException if the user work experience info already exists
    */
-  @Transactional
   public WorkExperienceDto create(WorkExperienceDto workExperienceDto) {
-    long id = workExperienceDto.getUserId();
+    long userId = workExperienceDto.getUserId();
 
     WorkExperience workExperience = workExperienceDataMapper.toEntity(workExperienceDto);
-    workExperience.setUserId(id);
+    workExperience.setUserId(userId);
 
     return workExperienceDataMapper.toDto(workExperienceRepository.save(workExperience));
   }
@@ -62,15 +59,14 @@ public class WorkExperienceService {
    *
    * @param workExperienceDto the updated user's work experience information as a DTO
    * @return the updated user work experience information as a DTO
-   * @throws WorkExperienceAlreadyExistException if the user work experience info does not exist by
+   * @throws WorkExperienceNotFoundException if the user work experience info does not exist by
    *                                             user id
    */
   public WorkExperienceDto update(WorkExperienceDto workExperienceDto) {
     long id = workExperienceDto.getId();
     WorkExperience workExperience = workExperienceRepository.findById(id)
         .orElseThrow(
-            () -> new WorkExperienceAlreadyExistException("The user's work experience information "
-                + "could not be found with the user id \"" + id + "\""));
+            () -> new WorkExperienceNotFoundException("User Id" + id));
 
     workExperienceDataMapper.updateEntity(workExperienceDto, workExperience);
 
@@ -81,13 +77,12 @@ public class WorkExperienceService {
    * Deletes user work experience information by user ID.
    *
    * @param id the ID of the user whose work experience information is to be deleted
-   * @throws WorkExperienceAlreadyExistException if user work experience information is not found
+   * @throws WorkExperienceNotFoundException if user work experience information is not found
    */
   public void delete(long id) {
     WorkExperience workExperience = workExperienceRepository.findById(id)
         .orElseThrow(
-            () -> new WorkExperienceAlreadyExistException("The user's work experience information "
-                + "could not be found with the user id \"" + id + "\""));
+            () -> new WorkExperienceNotFoundException("id " + id));
 
     workExperienceRepository.delete(workExperience);
   }

@@ -26,12 +26,12 @@ public class WorkExperienceController {
   /**
    * Retrieves user work experience information by user ID.
    *
-   * @param id the ID of the user
+   * @param userId the ID of the user
    * @return the user's work experience information as a DTO
    */
-  @GetMapping("/{id}")
-  public List<WorkExperienceDto> findById(@PathVariable long id) {
-    return workExperienceService.findByUserId(id);
+  @GetMapping("/{userId}")
+  public List<WorkExperienceDto> findByUserId(@PathVariable long userId) {
+    return workExperienceService.findByUserId(userId);
   }
 
   /**
@@ -40,13 +40,13 @@ public class WorkExperienceController {
    * @param workExperienceDto the user's work experience information as a DTO
    * @return the created user work experience information as a DTO
    */
-  @PostMapping("/create")
+  @PostMapping
   public WorkExperienceDto create(@RequestBody WorkExperienceDto workExperienceDto) {
     return workExperienceService.create(workExperienceDto);
   }
 
   /**
-   * Updates user work experience information by user ID. я
+   * Updates user work experience information by user ID.
    *
    * @param workExperienceDto the updated user's work experience information as a DTO
    * @return the updated user work experience information as a DTO

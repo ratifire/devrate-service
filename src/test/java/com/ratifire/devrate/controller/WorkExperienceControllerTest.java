@@ -80,7 +80,7 @@ public class WorkExperienceControllerTest {
   public void createTest() throws Exception {
     WorkExperienceDto workExperienceDto1 = workExperienceDto;
     when(workExperienceService.create(workExperienceDto)).thenReturn(workExperienceDto1);
-    mockMvc.perform(post("/work-experience/create", 1)
+    mockMvc.perform(post("/work-experience", 1)
             .with(SecurityMockMvcRequestPostProcessors.user("Maksim Matveychuk").roles("USER"))
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)

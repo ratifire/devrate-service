@@ -3,9 +3,9 @@ package com.ratifire.devrate.exception;
 /**
  * Exception thrown when a user work experience info already exists.
  */
-public class WorkExperienceAlreadyExistException extends RuntimeException {
+public class WorkExperienceNotFoundException extends RuntimeException {
 
-  public WorkExperienceAlreadyExistException(String massage) {
+  public WorkExperienceNotFoundException(String massage) {
     super(massage);
   }
 

@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.WorkExperienceDto;
 import com.ratifire.devrate.entity.WorkExperience;
-import com.ratifire.devrate.exception.WorkExperienceAlreadyExistException;
+import com.ratifire.devrate.exception.WorkExperienceNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.WorkExperienceRepository;
 import java.time.LocalDate;
@@ -84,7 +84,7 @@ public class WorkExperienceServiceTest {
   public void getByWithUnExpectedIdTest() {
     when(workExperienceRepository.findByUserId(anyLong())).thenReturn(Collections.emptyList());
 
-    assertThrows(WorkExperienceAlreadyExistException.class, () -> {
+    assertThrows(WorkExperienceNotFoundException.class, () -> {
       workExperienceService.findByUserId(8882L);
     });
   }
@@ -122,9 +122,9 @@ public class WorkExperienceServiceTest {
   @Test
   public void updateWithUnExpectedIdTest() {
     when(workExperienceRepository.findById(anyLong())).thenThrow(
-        WorkExperienceAlreadyExistException.class);
+        WorkExperienceNotFoundException.class);
 
-    assertThrows(WorkExperienceAlreadyExistException.class, () -> {
+    assertThrows(WorkExperienceNotFoundException.class, () -> {
       workExperienceService.update(workExperienceDto);
     });
   }

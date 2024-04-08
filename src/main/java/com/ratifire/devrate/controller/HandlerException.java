@@ -4,6 +4,7 @@ import com.ratifire.devrate.exception.EmailConfirmationCodeException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.InvalidCodeException;
+import com.ratifire.devrate.exception.WorkExperienceNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
@@ -129,5 +130,20 @@ public class HandlerException {
       EmailConfirmationCodeExpiredException ex) {
     log.error("Email confirmation code: {}", ex.getMessage(), ex);
     return ResponseEntity.status(HttpStatus.GONE).body(ex.getMessage());
+  }
+
+  /**
+   * Exception handler method for handling WorkExperienceNotFoundException. This method is
+   * responsible for handling exceptions related to work experience information not being found.
+   *
+   * @param ex The WorkExperienceNotFoundException that has been thrown.
+   * @return A ResponseEntity with an error message and HTTP status NOT_FOUND (404).
+   */
+  @ExceptionHandler(WorkExperienceNotFoundException.class)
+  public ResponseEntity<String> handleWorkExperienceNotFoundException(
+      WorkExperienceNotFoundException ex) {
+    log.error("The user's work experience information could not be found with"
+        + "the: {}", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
   }
 }
