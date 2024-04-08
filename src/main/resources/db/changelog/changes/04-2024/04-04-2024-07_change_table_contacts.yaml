@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 04-04-2024-07_change_table_contacts
+      author: Ivan Ivashchenko
+      changes:
+        - renameColumn:
+            tableName: contacts
+            oldColumnName: user_info_id
+            newColumnName: user_id
