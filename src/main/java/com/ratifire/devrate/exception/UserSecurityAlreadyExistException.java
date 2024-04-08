@@ -6,12 +6,6 @@ package com.ratifire.devrate.exception;
  * and prevents duplicate user creation.
  */
 public class UserSecurityAlreadyExistException extends RuntimeException {
-
-  /**
-   * Constructs a new UserAlreadyExistException with the specified error message.
-   *
-   * @param message The detail message of the exception.
-   */
   public UserSecurityAlreadyExistException(String message) {
     super(message);
   }

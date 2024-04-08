@@ -41,7 +41,7 @@ public class EmailConfirmationCodeService {
     EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode.builder()
         .code(confirmationCode)
         .createdAt(LocalDateTime.now())
-        .userId(userId)
+        .userSecurityId(userId)
         .build();
 
     return emailConfirmationCodeRepository.save(emailConfirmationCode);
