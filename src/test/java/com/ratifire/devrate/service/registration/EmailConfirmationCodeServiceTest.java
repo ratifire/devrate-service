@@ -35,7 +35,7 @@ class EmailConfirmationCodeServiceTest {
     EmailConfirmationCode expectedConfirmationCode = EmailConfirmationCode.builder()
         .code("123456")
         .createdAt(LocalDateTime.now())
-        .userId(userId)
+        .userSecurityId(userId)
         .build();
 
     when(emailConfirmationCodeRepository.save(any(EmailConfirmationCode.class)))
@@ -60,7 +60,7 @@ class EmailConfirmationCodeServiceTest {
     EmailConfirmationCode expectedCode = EmailConfirmationCode.builder()
         .code(confirmationCode)
         .createdAt(LocalDateTime.now())
-        .userId(userId)
+        .userSecurityId(userId)
         .build();
 
     when(emailConfirmationCodeRepository.findByCode(confirmationCode))

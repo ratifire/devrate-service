@@ -1,10 +1,7 @@
 package com.ratifire.devrate.entity;
 
-import com.ratifire.devrate.enums.ContactType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -15,24 +12,29 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Entity class representing a contact in the system.
+ * Entity class representing an education in the system.
  */
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
-@Table(name = "contacts")
-public class Contact {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "educations")
+public class Education {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @Enumerated(EnumType.STRING)
-  private ContactType type;
+  private String type;
 
-  private String value;
+  private String name;
+
+  private String description;
+
+  private int startYear;
+
+  private int endYear;
 
   @Column(name = "user_id", nullable = false)
   private long userId;

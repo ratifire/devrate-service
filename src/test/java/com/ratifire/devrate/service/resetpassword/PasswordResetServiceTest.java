@@ -46,7 +46,7 @@ public class PasswordResetServiceTest {
   void requestPasswordReset_WithValidEmail_SendsResetLink() {
     String email = "user@example.com";
     UserSecurity userSecurity = UserSecurity.builder().id(1L).build();
-    when(userSecurityService.findUserByEmail(email)).thenReturn(userSecurity);
+    when(userSecurityService.findByEmail(email)).thenReturn(userSecurity);
     when(emailConfirmationUuidService.generateAndPersistUuidCode(userSecurity.getId()))
         .thenReturn("code");
 
@@ -63,7 +63,7 @@ public class PasswordResetServiceTest {
   @Test
   void requestPasswordReset_WithInvalidEmail_ThrowsException() {
     String email = "invalid@example.com";
-    when(userSecurityService.findUserByEmail(email))
+    when(userSecurityService.findByEmail(email))
         .thenThrow(new UsernameNotFoundException("User not found"));
 
     assertThrows(UsernameNotFoundException.class, () -> passwordResetService
@@ -79,7 +79,7 @@ public class PasswordResetServiceTest {
     String newPassword = "newPassword";
     UserSecurity userSecurity = UserSecurity.builder().id(1L).build();
     EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode
-        .builder().userId(userSecurity.getId()).build();
+        .builder().userSecurityId(userSecurity.getId()).build();
 
     when(emailConfirmationUuidService.findUuidCode(code)).thenReturn(emailConfirmationCode);
     when(userSecurityService.getById(userSecurity.getId())).thenReturn(userSecurity);
@@ -90,7 +90,7 @@ public class PasswordResetServiceTest {
     assertTrue(result);
     verify(userSecurityService).save(userSecurity);
     verify(passwordEncoder).encode(newPassword);
-    verify(emailConfirmationUuidService).deleteConfirmedCodesByUserId(userSecurity.getId());
+    verify(emailConfirmationUuidService).deleteConfirmedCodesByUserSecurityId(userSecurity.getId());
   }
 
 
