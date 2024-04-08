@@ -17,6 +17,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ContactDto {
 
+  private Long id;
+
   @NotNull
   private ContactType type;
 
