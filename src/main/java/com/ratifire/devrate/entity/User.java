@@ -55,6 +55,10 @@ public class User {
 
   @OneToMany(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
+  private List<Contact> contacts;
+
+  @OneToMany(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
   private List<Education> educations;
 
   @OneToMany(fetch = FetchType.LAZY)
