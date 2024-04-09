@@ -460,6 +460,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /contacts/{userId}:
+    post:
+      tags:
+        - contact
+      summary: Create a new contact
+      description: Create a new contact of the specified user
+      operationId: create
+      parameters:
+        - in: path
+          name: userId
+          description: The ID of the user to associate the new contact with
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactDto'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /educations/{userId}:
     post:
       tags:
@@ -710,6 +749,12 @@ components:
         city:
           type: string
           description: The city chosen by the user for their account
+        contacts:
+          type: array
+          description: An array containing contact records associated with the user
+          items:
+            $ref: '#/components/schemas/ContactDto'
+          readOnly: true
         educations:
           type: array
           description: An array containing educational records associated with the user
@@ -727,6 +772,11 @@ components:
     ContactDto:
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
+          description: The unique identifier for the contact
+          readOnly: true
         type:
           type: string
           description: "The type of the contact. The type can only be one of the following: 

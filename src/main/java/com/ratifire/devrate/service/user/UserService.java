@@ -2,7 +2,6 @@ package com.ratifire.devrate.service.user;
 
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.exception.UserAlreadyExistsException;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.UserRepository;
@@ -20,7 +19,7 @@ public class UserService {
   private final DataMapper<UserDto, User> userMapper;
 
   /**
-   * Retrieves user personal information by user ID.
+   * Retrieves user by user ID.
    *
    * @param id the ID of the user
    * @return the user as a DTO
@@ -33,11 +32,10 @@ public class UserService {
   }
 
   /**
-   * Creates user personal information.
+   * Creates user.
    *
    * @param userDto the user as a DTO
    * @return the created user
-   * @throws UserAlreadyExistsException if the user already exists
    */
   public User create(UserDto userDto) {
     User user = userMapper.toEntity(userDto);
@@ -45,7 +43,7 @@ public class UserService {
   }
 
   /**
-   * Updates user personal information.
+   * Updates user.
    *
    * @param userDto the updated user as a DTO
    * @return the updated user as a DTO

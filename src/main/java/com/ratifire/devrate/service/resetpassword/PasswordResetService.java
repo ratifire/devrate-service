@@ -27,7 +27,7 @@ public class PasswordResetService {
    */
   @Transactional
   public boolean requestPasswordReset(String email) {
-    UserSecurity userSecurity = userSecurityService.findUserByEmail(email);
+    UserSecurity userSecurity = userSecurityService.findByEmail(email);
 
     String code = emailConfirmationUuidService.generateAndPersistUuidCode(userSecurity.getId());
 
@@ -44,14 +44,15 @@ public class PasswordResetService {
   @Transactional
   public boolean resetPassword(String code, String newPassword) {
     EmailConfirmationCode emailConfirmationCode = emailConfirmationUuidService.findUuidCode(code);
-    UserSecurity userSecurity = userSecurityService.getById(emailConfirmationCode.getUserId());
+    UserSecurity userSecurity = userSecurityService
+        .getById(emailConfirmationCode.getUserSecurityId());
 
     String encodedPassword = passwordEncoder.encode(newPassword);
 
     userSecurity.setPassword(encodedPassword);
     userSecurityService.save(userSecurity);
 
-    emailConfirmationUuidService.deleteConfirmedCodesByUserId(userSecurity.getId());
+    emailConfirmationUuidService.deleteConfirmedCodesByUserSecurityId(userSecurity.getId());
     emailConfirmationUuidService.sendPasswordChangeConfirmation(userSecurity.getEmail());
     return true;
   }

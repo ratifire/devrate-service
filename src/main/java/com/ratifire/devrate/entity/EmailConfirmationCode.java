@@ -42,8 +42,8 @@ public class EmailConfirmationCode {
   private LocalDateTime createdAt;
 
   @NotNull
-  @Column(name = "user_id", nullable = false)
-  private long userId;
+  @Column(name = "user_security_id", nullable = false)
+  private long userSecurityId;
 }
 
 

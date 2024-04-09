@@ -24,7 +24,7 @@ public interface EmailConfirmationCodeRepository
   /**
    * Deletes {@link EmailConfirmationCode} entities by user ID.
    *
-   * @param userId The ID of the user associated with the email confirmation code.
+   * @param userSecurityId The ID of the user associated with the email confirmation code.
    */
-  void deleteByUserId(Long userId);
+  void deleteByUserSecurityId(Long userSecurityId);
 }

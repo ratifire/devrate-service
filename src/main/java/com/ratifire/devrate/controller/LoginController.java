@@ -42,7 +42,7 @@ public class LoginController {
 
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
-    Long userId = userSecurityService.findUserByEmail(login).getUser().getId();
+    Long userId = userSecurityService.findByEmail(login).getUser().getId();
     return new ResponseEntity<>(userId, HttpStatus.OK);
   }
 }
