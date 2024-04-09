@@ -77,8 +77,7 @@ public class HandlerException {
    * for debugging purposes.</p>
    *
    * @param ex The MailSendException to be handled.
-   * @return A ResponseEntity containing the error message from the exception with an HTTP status of
-   * BAD_REQUEST.
+   * @return A ResponseEntity containing the error message with an HTTP status of BAD_REQUEST.
    */
   @ExceptionHandler(MailSendException.class)
   public ResponseEntity<String> handleMailSendException(MailSendException ex) {
@@ -94,8 +93,7 @@ public class HandlerException {
    * for debugging purposes.</p>
    *
    * @param ex The InvalidCodeException to be handled.
-   * @return A ResponseEntity containing the error message from the exception with an HTTP status of
-   * BAD_REQUEST.
+   * @return A ResponseEntity containing the error message with an HTTP status of BAD_REQUEST.
    */
   @ExceptionHandler(InvalidCodeException.class)
   public ResponseEntity<?> handleInvalidCodeException(InvalidCodeException ex) {
