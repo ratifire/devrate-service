@@ -15,6 +15,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /**
  * Global exception handler class for REST controllers.
@@ -56,15 +57,28 @@ public class HandlerException {
   }
 
   /**
+   * Handles NoResourceFoundException by returning a message with HTTP status 404 (Not Found).
+   *
+   * @param ex The NoResourceFoundException to handle.
+   * @return A string message indicating that the resource was not found.
+   */
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ExceptionHandler(NoResourceFoundException.class)
+  public String handleNoResourceFoundException(NoResourceFoundException ex) {
+    log.error("Handling NoResourceFoundException: {}", ex.getMessage(), ex);
+    return "Resource not found!";
+  }
+
+  /**
    * Exception handler method for handling MailSendException.
    *
    * <p>Handles instances of MailSendException by responding with an HTTP status
-   * of BAD_REQUEST and returning the error message from the exception. Logs the
-   * exception details for debugging purposes.</p>
+   * of BAD_REQUEST and returning the error message from the exception. Logs the exception details
+   * for debugging purposes.</p>
    *
    * @param ex The MailSendException to be handled.
-   * @return A ResponseEntity containing the error message from the exception
-   *         with an HTTP status of BAD_REQUEST.
+   * @return A ResponseEntity containing the error message from the exception with an HTTP status of
+   * BAD_REQUEST.
    */
   @ExceptionHandler(MailSendException.class)
   public ResponseEntity<String> handleMailSendException(MailSendException ex) {
@@ -76,12 +90,12 @@ public class HandlerException {
    * Exception handler method for handling InvalidCodeException.
    *
    * <p>Handles instances of InvalidCodeException by responding with an HTTP status
-   * of BAD_REQUEST and returning the error message from the exception. Logs the
-   * exception details for debugging purposes.</p>
+   * of BAD_REQUEST and returning the error message from the exception. Logs the exception details
+   * for debugging purposes.</p>
    *
    * @param ex The InvalidCodeException to be handled.
-   * @return A ResponseEntity containing the error message from the exception
-   *         with an HTTP status of BAD_REQUEST.
+   * @return A ResponseEntity containing the error message from the exception with an HTTP status of
+   * BAD_REQUEST.
    */
   @ExceptionHandler(InvalidCodeException.class)
   public ResponseEntity<?> handleInvalidCodeException(InvalidCodeException ex) {
@@ -91,8 +105,8 @@ public class HandlerException {
   }
 
   /**
-   * Exception handler method for handling EmailConfirmationCodeException.
-   * This method is responsible for handling exceptions related to invalid email confirmation codes.
+   * Exception handler method for handling EmailConfirmationCodeException. This method is
+   * responsible for handling exceptions related to invalid email confirmation codes.
    *
    * @param ex The EmailConfirmationCodeException that has been thrown.
    * @return ResponseEntity with an error message and HTTP status NOT_FOUND (404).
@@ -104,8 +118,8 @@ public class HandlerException {
   }
 
   /**
-   * Exception handler method for handling {@code EmailConfirmationCodeRequestException}.
-   * This method handles exceptions related to invalid email confirmation code requests.
+   * Exception handler method for handling {@code EmailConfirmationCodeRequestException}. This
+   * method handles exceptions related to invalid email confirmation code requests.
    *
    * @param ex The {@code EmailConfirmationCodeRequestException} that has been thrown.
    * @return ResponseEntity with an error message and HTTP status BAD_REQUEST (400).
