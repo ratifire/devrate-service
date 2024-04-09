@@ -136,7 +136,7 @@ public class RegistrationService {
 
     emailConfirmationCodeService.deleteConfirmedCode(emailConfirmationCode.getId());
 
-    webSocketSender.addGreetingNotification(userSecurity.getUser());
+    webSocketSender.addGreetingNotification(userSecurity.getUser().getId());
     return userSecurity.getId();
   }
 }

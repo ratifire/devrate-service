@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.dto.NotificationDto;
 import com.ratifire.devrate.entity.Notification;
-import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.service.NotificationService;
 import java.io.IOException;
 import java.util.List;
@@ -73,23 +72,23 @@ public class WebSocketSenderTest {
 
   @Test
   void testAddNotification() {
-    User user = User.builder().build();
+    long userId = 1L;
     Notification notification = Notification.builder().build();
     String text = "Test notification";
     when(notificationService.save(any())).thenReturn(notification);
 
-    webSocketSender.addNotification(user, text);
+    webSocketSender.addNotification(text, userId);
 
     verify(notificationService, times(1)).save(any());
   }
 
   @Test
   void testAddGreetingNotification() {
-    User user = User.builder().build();
+    long userId = 1L;
     Notification notification = Notification.builder().build();
     when(notificationService.save(any())).thenReturn(notification);
 
-    webSocketSender.addGreetingNotification(user);
+    webSocketSender.addGreetingNotification(userId);
 
     verify(notificationService, times(1)).save(any());
   }

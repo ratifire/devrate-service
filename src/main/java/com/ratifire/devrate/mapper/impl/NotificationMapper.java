@@ -5,6 +5,7 @@ import com.ratifire.devrate.entity.Notification;
 import com.ratifire.devrate.mapper.DataMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 /**
  * Mapper interface for converting between Notification entities and DTOs.
@@ -12,6 +13,14 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public abstract class NotificationMapper implements DataMapper<NotificationDto, Notification> {
 
-  @Mapping(target = "userId", source = "entity.user.id")
-  public abstract NotificationDto toDto(Notification entity);
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "userId", ignore = true)
+  @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
+  public abstract Notification toEntity(NotificationDto dto);
+
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "userId", ignore = true)
+  @Mapping(target = "createdAt", ignore = true)
+  public abstract Notification updateEntity(NotificationDto dto,
+      @MappingTarget Notification entity);
 }

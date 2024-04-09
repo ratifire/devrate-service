@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.dto.NotificationDto;
 import com.ratifire.devrate.entity.Notification;
-import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.service.NotificationService;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -70,14 +69,14 @@ public class WebSocketSender {
   /**
    * Adds a notification for the given user with the specified text.
    *
-   * @param user The user to add the notification for.
-   * @param text The text of the notification.
+   * @param text   The text of the notification.
+   * @param userId The ID of the user to add the notification for.
    */
-  public void addNotification(User user, String text) {
+  public void addNotification(String text, long userId) {
     Notification notification = Notification.builder()
-        .user(user)
         .text(text)
         .read(false)
+        .userId(userId)
         .createdAt(LocalDateTime.now())
         .build();
 
@@ -87,9 +86,9 @@ public class WebSocketSender {
   /**
    * Adds a greeting notification for the given user.
    *
-   * @param user The user to add the greeting notification for.
+   * @param userId The ID of the user to add the greeting notification for.
    */
-  public void addGreetingNotification(User user) {
+  public void addGreetingNotification(long userId) {
     String text = """
         Welcome aboard!
         We're thrilled to have you join DevRate community.
@@ -102,7 +101,7 @@ public class WebSocketSender {
         Best regards,
         DevRate""";
 
-    addNotification(user, text);
+    addNotification(text, userId);
   }
 
   /**

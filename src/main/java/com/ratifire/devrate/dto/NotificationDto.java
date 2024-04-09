@@ -15,5 +15,4 @@ public class NotificationDto {
   @Size(max = 100)
   private String text;
   private boolean read;
-  private long userId;
 }

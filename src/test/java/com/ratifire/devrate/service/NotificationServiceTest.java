@@ -11,6 +11,8 @@ import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.NotificationDto;
 import com.ratifire.devrate.entity.Notification;
+import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.NotificationNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.NotificationRepository;
@@ -32,6 +34,9 @@ public class NotificationServiceTest {
   private NotificationRepository notificationRepository;
 
   @Mock
+  private UserSecurityService userSecurityService;
+
+  @Mock
   private DataMapper<NotificationDto, Notification> mapper;
 
   @InjectMocks
@@ -42,13 +47,18 @@ public class NotificationServiceTest {
     List<Notification> notifications = List.of(
         Notification.builder().build(),
         Notification.builder().build());
+    User testUser = User.builder()
+        .notifications(notifications)
+        .build();
+    UserSecurity testUserSecurity = UserSecurity.builder()
+        .user(testUser)
+        .build();
 
     List<NotificationDto> expectedNotifications = List.of(
         NotificationDto.builder().build(),
         NotificationDto.builder().build());
 
-    when(notificationRepository.findAllByUserSecurityEmailOrderByCreatedAt(any())).thenReturn(
-        notifications);
+    when(userSecurityService.findByEmail(any())).thenReturn(testUserSecurity);
     when(mapper.toDto(notifications)).thenReturn(expectedNotifications);
 
     List<NotificationDto> actualNotifications = notificationService.getAllByLogin(any());

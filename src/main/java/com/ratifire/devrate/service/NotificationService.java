@@ -2,6 +2,7 @@ package com.ratifire.devrate.service;
 
 import com.ratifire.devrate.dto.NotificationDto;
 import com.ratifire.devrate.entity.Notification;
+import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.NotificationNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.NotificationRepository;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class NotificationService {
 
   private final NotificationRepository notificationRepository;
+  private final UserSecurityService userSecurityService;
   public final DataMapper<NotificationDto, Notification> mapper;
 
   /**
@@ -27,7 +29,8 @@ public class NotificationService {
    * @return A list of NotificationDto objects.
    */
   public List<NotificationDto> getAllByLogin(String login) {
-    return mapper.toDto(notificationRepository.findAllByUserSecurityEmailOrderByCreatedAt(login));
+    User user = userSecurityService.findByEmail(login).getUser();
+    return mapper.toDto(user.getNotifications());
   }
 
   /**
