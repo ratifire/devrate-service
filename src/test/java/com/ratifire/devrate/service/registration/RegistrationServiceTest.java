@@ -178,14 +178,20 @@ public class RegistrationServiceTest {
         .userSecurityId(userSecurityId)
         .createdAt(LocalDateTime.now())
         .build();
+
+    User testUser = User.builder()
+        .id(1L)
+        .build();
+    UserSecurity userSecurity = UserSecurity.builder()
+        .id(userSecurityId)
+        .user(testUser)
+        .build();
+
     when(emailConfirmationCodeService.findEmailConfirmationCode(code))
         .thenReturn(emailConfirmationCode);
-
-    UserSecurity userSecurity = new UserSecurity();
-    userSecurity.setId(userSecurityId);
     when(userSecurityService.getById(userSecurityId)).thenReturn(userSecurity);
     when(userSecurityService.save(userSecurity)).thenReturn(null);
-    doNothing().when(webSocketSender).addGreetingNotification(any());
+    doNothing().when(webSocketSender).addGreetingNotification(anyLong());
 
     doNothing().when(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
 
