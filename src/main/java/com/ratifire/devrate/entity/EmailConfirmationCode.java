@@ -32,7 +32,6 @@ public class EmailConfirmationCode {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @Size(min = 6)
   @NotBlank
   @Column(nullable = false, unique = true)
   private String code;
