@@ -57,16 +57,11 @@ public class HandlerException {
   }
 
   /**
-   * Handles NoResourceFoundException by returning a message with HTTP status 404 (Not Found).
-   *
-   * @param ex The NoResourceFoundException to handle.
-   * @return A string message indicating that the resource was not found.
+   * Handles NoResourceFoundException by returning an HTTP status 404 (Not Found).
    */
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ExceptionHandler(NoResourceFoundException.class)
-  public String handleNoResourceFoundException(NoResourceFoundException ex) {
-    log.error("Handling NoResourceFoundException: {}", ex.getMessage(), ex);
-    return "Resource not found!";
+  public void handleNoResourceFoundException() {
   }
 
   /**
