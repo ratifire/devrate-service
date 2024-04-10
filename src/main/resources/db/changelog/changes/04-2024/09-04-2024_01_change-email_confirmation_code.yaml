@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 09-04-2024_01_change-table-email_confirmation_code
+      author: Ivan Ivashchenko
+      changes:
+        - modifyDataType:
+            tableName: email_confirmation_code
+            columnName: code
+            newDataType: VARCHAR(100)
