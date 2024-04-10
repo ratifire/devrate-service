@@ -4,6 +4,7 @@ import com.ratifire.devrate.exception.EmailConfirmationCodeException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.InvalidCodeException;
+import com.ratifire.devrate.exception.UserSecurityAlreadyExistException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
@@ -129,5 +130,16 @@ public class HandlerException {
       EmailConfirmationCodeExpiredException ex) {
     log.error("Email confirmation code: {}", ex.getMessage(), ex);
     return ResponseEntity.status(HttpStatus.GONE).body(ex.getMessage());
+  }
+
+  /**
+   * Handles the {@link UserSecurityAlreadyExistException} by returning an HTTP CONFLICT status.
+   *
+   * @param ex The {@link UserSecurityAlreadyExistException} that was thrown.
+   */
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ExceptionHandler(UserSecurityAlreadyExistException.class)
+  public void handleUserSecurityAlreadyExistException(UserSecurityAlreadyExistException ex) {
+    log.error("User registration: {}", ex.getMessage(), ex);
   }
 }
