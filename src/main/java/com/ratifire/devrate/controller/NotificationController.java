@@ -30,7 +30,7 @@ public class NotificationController {
    * @param notificationId The ID of the notification to be marked as read.
    */
   @PatchMapping
-  public void read(@RequestParam long userId, @RequestParam long notificationId) {
+  public void markAsRead(@RequestParam long userId, @RequestParam long notificationId) {
     notificationService.markAsReadById(notificationId);
     UserSecurity userSecurity = userSecurityService.getByUserId(userId);
     webSocketSender.sendNotificationsByUserEmail(userSecurity.getEmail());
