@@ -57,7 +57,7 @@ public class HandlerException {
   }
 
   /**
-   * Handles NoResourceFoundException by returning an HTTP status 404 (Not Found).
+   * Handles NoResourceFoundException by returning an HTTP status 404.
    */
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ExceptionHandler(NoResourceFoundException.class)
