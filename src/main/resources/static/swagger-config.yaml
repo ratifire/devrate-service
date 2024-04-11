@@ -218,6 +218,51 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /notifications:
+    patch:
+      tags:
+        - Notification
+      summary: Mark Notification as Read
+      description: Marks a notification as read for a given user.
+      operationId: markAsRead
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: integer
+            description: The ID of the user associated with the notification.
+        - in: query
+          name: notificationId
+          required: true
+          schema:
+            type: integer
+            description: The ID of the notification to be marked as read.
+      responses:
+        '200':
+          description: Notification marked as read successfully.
+    delete:
+      tags:
+        - Notification
+      summary: Delete Notification
+      description: Deletes a notification for a given user.
+      operationId: delete
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: integer
+            description: The ID of the user associated with the notification.
+        - in: query
+          name: notificationId
+          required: true
+          schema:
+            type: integer
+            description: The ID of the notification to be deleted.
+      responses:
+        '200':
+          description: Notification deleted successfully.
   /ws/notifications:
     get:
       tags:
