@@ -23,13 +23,13 @@ public class NotificationService {
   public final DataMapper<NotificationDto, Notification> mapper;
 
   /**
-   * Retrieves all notifications associated with a user's login.
+   * Retrieves all notifications associated with a user's email.
    *
-   * @param login The user's login.
+   * @param email The user's email.
    * @return A list of NotificationDto objects.
    */
-  public List<NotificationDto> getAllByLogin(String login) {
-    User user = userSecurityService.findByEmail(login).getUser();
+  public List<NotificationDto> getAllByEmail(String email) {
+    User user = userSecurityService.findByEmail(email).getUser();
     return mapper.toDto(user.getNotifications());
   }
 
@@ -38,7 +38,7 @@ public class NotificationService {
    *
    * @param id The ID of the notification to mark as read.
    */
-  public void readNotificationById(long id) {
+  public void markAsReadById(long id) {
     Notification notification = notificationRepository.findById(id)
         .orElseThrow(() -> new NotificationNotFoundException(id));
 
@@ -51,7 +51,7 @@ public class NotificationService {
    *
    * @param id The ID of the notification to delete.
    */
-  public void deleteNotificationById(long id) {
+  public void deleteById(long id) {
     notificationRepository.deleteById(id);
   }
 

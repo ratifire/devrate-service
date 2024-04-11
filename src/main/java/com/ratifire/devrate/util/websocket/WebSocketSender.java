@@ -31,13 +31,13 @@ public class WebSocketSender {
   private static final Logger logger = LoggerFactory.getLogger(WebSocketSender.class);
 
   /**
-   * Sends notifications to all WebSocket sessions associated with a user's login.
+   * Sends notifications to all WebSocket sessions associated with a user's email.
    *
-   * @param login The user's login.
+   * @param email The user's email.
    */
-  public void sendNotificationsByLogin(String login) {
-    List<NotificationDto> notifications = notificationService.getAllByLogin(login);
-    Set<WebSocketSession> sessions = sessionRegistry.getUserSessions(login);
+  public void sendNotificationsByUserEmail(String email) {
+    List<NotificationDto> notifications = notificationService.getAllByEmail(email);
+    Set<WebSocketSession> sessions = sessionRegistry.getUserSessions(email);
     for (WebSocketSession session : sessions) {
       sendNotifications(session, notifications);
     }
@@ -46,11 +46,11 @@ public class WebSocketSender {
   /**
    * Sends notifications to a specific WebSocket session associated with a user's login.
    *
-   * @param login   The user's login.
+   * @param email   The user's login.
    * @param session The WebSocket session to send notifications to.
    */
-  public void sendNotificationsBySession(String login, WebSocketSession session) {
-    List<NotificationDto> notifications = notificationService.getAllByLogin(login);
+  public void sendNotificationsBySession(String email, WebSocketSession session) {
+    List<NotificationDto> notifications = notificationService.getAllByEmail(email);
     sendNotifications(session, notifications);
   }
 
