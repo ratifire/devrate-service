@@ -61,7 +61,7 @@ public class NotificationServiceTest {
     when(userSecurityService.findByEmail(any())).thenReturn(testUserSecurity);
     when(mapper.toDto(notifications)).thenReturn(expectedNotifications);
 
-    List<NotificationDto> actualNotifications = notificationService.getAllByLogin(any());
+    List<NotificationDto> actualNotifications = notificationService.getAllByEmail(any());
 
     assertEquals(expectedNotifications, actualNotifications);
   }
@@ -72,7 +72,7 @@ public class NotificationServiceTest {
     Notification notification = Notification.builder().build();
     when(notificationRepository.findById(any())).thenReturn(Optional.of(notification));
 
-    notificationService.readNotificationById(testUserId);
+    notificationService.markAsReadById(testUserId);
 
     assertTrue(notification.isRead());
     verify(notificationRepository, times(1)).save(notification);
@@ -84,7 +84,7 @@ public class NotificationServiceTest {
     when(notificationRepository.findById(any())).thenReturn(Optional.empty());
 
     assertThrows(NotificationNotFoundException.class,
-        () -> notificationService.readNotificationById(testUserId));
+        () -> notificationService.markAsReadById(testUserId));
   }
 
   @Test
@@ -92,7 +92,7 @@ public class NotificationServiceTest {
     long testUserId = 1L;
     doNothing().when(notificationRepository).deleteById(any());
 
-    notificationService.deleteNotificationById(testUserId);
+    notificationService.deleteById(testUserId);
 
     verify(notificationRepository, times(1)).deleteById(testUserId);
   }

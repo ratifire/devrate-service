@@ -47,11 +47,11 @@ public class WebSocketSenderTest {
     List<NotificationDto> notifications = List.of(NotificationDto.builder().build());
     Set<WebSocketSession> sessions = Set.of(session);
 
-    when(notificationService.getAllByLogin(any())).thenReturn(notifications);
+    when(notificationService.getAllByEmail(any())).thenReturn(notifications);
     when(sessionRegistry.getUserSessions(any())).thenReturn(sessions);
     when(objectMapper.writeValueAsString(any())).thenReturn(testMessage);
 
-    webSocketSender.sendNotificationsByLogin("testUser");
+    webSocketSender.sendNotificationsByUserEmail("testUser");
 
     verify(session, times(1)).sendMessage(any(TextMessage.class));
   }
@@ -62,7 +62,7 @@ public class WebSocketSenderTest {
     String testMessage = "{test message}";
     List<NotificationDto> notifications = List.of(NotificationDto.builder().build());
 
-    when(notificationService.getAllByLogin(any())).thenReturn(notifications);
+    when(notificationService.getAllByEmail(any())).thenReturn(notifications);
     when(objectMapper.writeValueAsString(any())).thenReturn(testMessage);
 
     webSocketSender.sendNotificationsBySession(login, session);
