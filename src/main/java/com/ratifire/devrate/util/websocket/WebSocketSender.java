@@ -3,10 +3,8 @@ package com.ratifire.devrate.util.websocket;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.dto.NotificationDto;
-import com.ratifire.devrate.entity.Notification;
 import com.ratifire.devrate.service.NotificationService;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -64,44 +62,6 @@ public class WebSocketSender {
     for (NotificationDto notification : notifications) {
       send(session, notification);
     }
-  }
-
-  /**
-   * Adds a notification for the given user with the specified text.
-   *
-   * @param text   The text of the notification.
-   * @param userId The ID of the user to add the notification for.
-   */
-  public void addNotification(String text, long userId) {
-    Notification notification = Notification.builder()
-        .text(text)
-        .read(false)
-        .userId(userId)
-        .createdAt(LocalDateTime.now())
-        .build();
-
-    notificationService.save(notification);
-  }
-
-  /**
-   * Adds a greeting notification for the given user.
-   *
-   * @param userId The ID of the user to add the greeting notification for.
-   */
-  public void addGreetingNotification(long userId) {
-    String text = """
-        Welcome aboard!
-        We're thrilled to have you join DevRate community.
-                
-        At DevRate, we're all about empowering developers like you to share your expertise,
-        learn from others, and build meaningful connections.
-                
-        Happy interviewing!
-                
-        Best regards,
-        DevRate""";
-
-    addNotification(text, userId);
   }
 
   /**

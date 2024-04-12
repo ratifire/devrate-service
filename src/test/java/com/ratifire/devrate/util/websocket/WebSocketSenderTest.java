@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.dto.NotificationDto;
-import com.ratifire.devrate.entity.Notification;
 import com.ratifire.devrate.service.NotificationService;
 import java.io.IOException;
 import java.util.List;
@@ -68,28 +67,5 @@ public class WebSocketSenderTest {
     webSocketSender.sendNotificationsBySession(login, session);
 
     verify(session, times(1)).sendMessage(any(TextMessage.class));
-  }
-
-  @Test
-  void testAddNotification() {
-    long userId = 1L;
-    Notification notification = Notification.builder().build();
-    String text = "Test notification";
-    when(notificationService.save(any())).thenReturn(notification);
-
-    webSocketSender.addNotification(text, userId);
-
-    verify(notificationService, times(1)).save(any());
-  }
-
-  @Test
-  void testAddGreetingNotification() {
-    long userId = 1L;
-    Notification notification = Notification.builder().build();
-    when(notificationService.save(any())).thenReturn(notification);
-
-    webSocketSender.addGreetingNotification(userId);
-
-    verify(notificationService, times(1)).save(any());
   }
 }

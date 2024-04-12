@@ -16,6 +16,8 @@ import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.NotificationNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.NotificationRepository;
+import com.ratifire.devrate.service.user.UserService;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -32,13 +34,12 @@ public class NotificationServiceTest {
 
   @Mock
   private NotificationRepository notificationRepository;
-
   @Mock
   private UserSecurityService userSecurityService;
-
+  @Mock
+  private UserService userService;
   @Mock
   private DataMapper<NotificationDto, Notification> mapper;
-
   @InjectMocks
   private NotificationService notificationService;
 
@@ -106,5 +107,30 @@ public class NotificationServiceTest {
 
     verify(notificationRepository, times(1)).save(notification);
     assertEquals(notification, savedNotification);
+  }
+
+  @Test
+  void testAddNotification() {
+    User user = User.builder()
+        .notifications(new ArrayList<>())
+        .build();
+    String text = "Test notification";
+    when(userService.updateUser(any())).thenReturn(user);
+
+    notificationService.addNotification(text, user);
+
+    verify(userService, times(1)).updateUser(any());
+  }
+
+  @Test
+  void testAddGreetingNotification() {
+    User user = User.builder()
+        .notifications(new ArrayList<>())
+        .build();
+    when(userService.updateUser(any())).thenReturn(user);
+
+    notificationService.addGreetingNotification(user);
+
+    verify(userService, times(1)).updateUser(any());
   }
 }
