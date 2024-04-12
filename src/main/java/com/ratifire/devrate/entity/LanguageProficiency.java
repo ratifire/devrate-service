@@ -1,8 +1,7 @@
 package com.ratifire.devrate.entity;
 
-import com.ratifire.devrate.enums.LanguageLevel;
-import com.ratifire.devrate.enums.LanguageName;
-import jakarta.persistence.Column;
+import com.ratifire.devrate.enums.LanguageProficiencyLevel;
+import com.ratifire.devrate.enums.LanguageProficiencyName;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -16,27 +15,24 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * The Language entity represents a language known by a user.
+ * The Language Proficiency entity represents a language proficiency known by a user.
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "languages")
-public class Language {
+@Table(name = "language_proficiencies")
+public class LanguageProficiency {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
   @Enumerated(EnumType.STRING)
-  private LanguageName name;
+  private LanguageProficiencyName name;
 
   @Enumerated(EnumType.STRING)
-  private LanguageLevel level;
-
-  @Column(name = "user_id", nullable = false)
-  private long userId;
+  private LanguageProficiencyLevel level;
 
 }

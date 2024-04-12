@@ -42,6 +42,4 @@ public class UserDto {
 
   private List<EducationDto> educations;
 
-  private List<LanguageDto> languages;
-
 }
