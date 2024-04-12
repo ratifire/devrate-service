@@ -1,5 +1,9 @@
 package com.ratifire.devrate.controller;
 
+import static com.ratifire.devrate.enums.LanguageProficiencyLevel.INTERMEDIATE_B1;
+import static com.ratifire.devrate.enums.LanguageProficiencyLevel.NATIVE;
+import static com.ratifire.devrate.enums.LanguageProficiencyName.ENGLISH;
+import static com.ratifire.devrate.enums.LanguageProficiencyName.UKRAINE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
@@ -7,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -14,8 +19,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.configuration.SecurityConfiguration;
+import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.service.user.UserService;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +58,8 @@ class UserControllerTest {
 
   private UserDto userDto;
 
+  private LanguageProficiencyDto languageProficiencyDto;
+
   @BeforeEach
   public void setUp() {
     userDto = UserDto.builder()
@@ -62,6 +72,12 @@ class UserControllerTest {
         .city("city")
         .subscribed(true)
         .description("description")
+        .build();
+
+    languageProficiencyDto = LanguageProficiencyDto.builder()
+        .id(USER_ID)
+        .name(ENGLISH)
+        .level(INTERMEDIATE_B1)
         .build();
   }
 
@@ -114,4 +130,43 @@ class UserControllerTest {
     mockMvc.perform(delete("/users/{id}", USER_ID))
         .andExpect(status().isOk());
   }
+
+  @Test
+  @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
+  void createLanguageProficiencyTest() throws Exception {
+    String requestBody = objectMapper.writeValueAsString(languageProficiencyDto);
+    when(
+        userService.createLanguageProficiency(anyLong(), any(LanguageProficiencyDto.class)))
+        .thenReturn(languageProficiencyDto);
+    mockMvc.perform(post("/users/{userId}/language-proficiencies", USER_ID)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.name").value(languageProficiencyDto.getName().getCode()))
+        .andExpect(jsonPath("$.level").value(languageProficiencyDto.getLevel()
+            .toString()));
+    verify(userService, times(1)).createLanguageProficiency(anyLong(),
+        any(LanguageProficiencyDto.class));
+  }
+
+  @Test
+  @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
+  void findAllLanguageProficienciesByUserIdTest() throws Exception {
+    List<LanguageProficiencyDto> proficiencies = Arrays.asList(
+        new LanguageProficiencyDto(1L, ENGLISH, NATIVE),
+        new LanguageProficiencyDto(2L, UKRAINE, INTERMEDIATE_B1)
+    );
+    when(userService.findAllLanguageProficienciesByUserId(USER_ID)).thenReturn(proficiencies);
+    mockMvc.perform(get("/users/{userId}/language-proficiencies", USER_ID))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$[0].name").value(ENGLISH.getCode()))
+        .andExpect(jsonPath("$[0].level").value(NATIVE.toString()))
+        .andExpect(jsonPath("$[1].name").value(UKRAINE.getCode()))
+        .andExpect(jsonPath("$[1].level").value(INTERMEDIATE_B1.toString()));
+    verify(userService, times(1))
+        .findAllLanguageProficienciesByUserId(USER_ID);
+  }
+
 }
