@@ -9,11 +9,11 @@ import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserSecurityAlreadyExistException;
 import com.ratifire.devrate.mapper.DataMapper;
+import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.RoleService;
 import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.email.EmailService;
 import com.ratifire.devrate.service.user.UserService;
-import com.ratifire.devrate.util.websocket.WebSocketSender;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import liquibase.util.StringUtil;
@@ -31,22 +31,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class RegistrationService {
 
   private static final long CONFIRM_CODE_EXPIRATION_HOURS = 24;
-  /**
-   * Service responsible for user management operations.
-   */
   private final UserSecurityService userSecurityService;
-
   private final RoleService roleService;
-
   private final DataMapper<UserRegistrationDto, UserSecurity> userMapper;
-
   private final EmailConfirmationCodeService emailConfirmationCodeService;
-
   private final EmailService emailService;
-
   private final UserService userService;
-
-  private final WebSocketSender webSocketSender;
+  private final NotificationService notificationService;
 
   /**
    * Checks if a user security with the given email address exists.
@@ -136,7 +127,7 @@ public class RegistrationService {
 
     emailConfirmationCodeService.deleteConfirmedCode(emailConfirmationCode.getId());
 
-    webSocketSender.addGreetingNotification(userSecurity.getUser().getId());
+    notificationService.addGreetingNotification(userSecurity.getUser());
     return userSecurity.getId();
   }
 }

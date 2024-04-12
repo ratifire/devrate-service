@@ -23,11 +23,11 @@ import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserSecurityAlreadyExistException;
 import com.ratifire.devrate.mapper.DataMapper;
+import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.RoleService;
 import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.email.EmailService;
 import com.ratifire.devrate.service.user.UserService;
-import com.ratifire.devrate.util.websocket.WebSocketSender;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -63,7 +63,7 @@ public class RegistrationServiceTest {
   private EmailService emailService;
 
   @Mock
-  private WebSocketSender webSocketSender;
+  private NotificationService notificationService;
 
   @Mock
   private UserService userService;
@@ -191,7 +191,7 @@ public class RegistrationServiceTest {
         .thenReturn(emailConfirmationCode);
     when(userSecurityService.getById(userSecurityId)).thenReturn(userSecurity);
     when(userSecurityService.save(userSecurity)).thenReturn(null);
-    doNothing().when(webSocketSender).addGreetingNotification(anyLong());
+    doNothing().when(notificationService).addGreetingNotification(any());
 
     doNothing().when(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
 
@@ -222,9 +222,9 @@ public class RegistrationServiceTest {
    * Unit test for {@link RegistrationService#confirmRegistration(String)}.
    *
    * <p>Tests the confirmation of registration with an expired confirmation code.
-   * Verifies that an {@link EmailConfirmationCodeExpiredException} is thrown
-   * and that neither the {@link UserSecurityService} nor the {@link EmailConfirmationCodeService}
-   * are invoked for further actions.
+   * Verifies that an {@link EmailConfirmationCodeExpiredException} is thrown and that neither the
+   * {@link UserSecurityService} nor the {@link EmailConfirmationCodeService} are invoked for
+   * further actions.
    */
   @Test
   void testConfirmRegistrationExpiredCode() {
