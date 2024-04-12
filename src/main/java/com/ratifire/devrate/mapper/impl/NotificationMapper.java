@@ -14,12 +14,10 @@ import org.mapstruct.MappingTarget;
 public abstract class NotificationMapper implements DataMapper<NotificationDto, Notification> {
 
   @Mapping(target = "id", ignore = true)
-  @Mapping(target = "userId", ignore = true)
   @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
   public abstract Notification toEntity(NotificationDto dto);
 
   @Mapping(target = "id", ignore = true)
-  @Mapping(target = "userId", ignore = true)
   @Mapping(target = "createdAt", ignore = true)
   public abstract Notification updateEntity(NotificationDto dto,
       @MappingTarget Notification entity);
