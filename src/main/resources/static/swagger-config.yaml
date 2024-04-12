@@ -29,8 +29,8 @@ tags:
     description: Endpoints for user personal info functionality
   - name: contact
     description: Endpoints for user contact management
-  - name: language
-    description: Endpoints for user language management
+  - name: "language proficiency"
+    description: Endpoints for user language proficiency management
 paths:
   /auth/signup:
     post:
@@ -343,6 +343,79 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /users/{userId}/language-proficiencies:
+    post:
+      tags:
+        - user info
+      summary: Create a new language proficiency
+      description: Create a new language proficiency of the specified user
+      operationId: createLanguageProficiency
+      parameters:
+        - in: path
+          name: userId
+          description: The ID of the user to associate the new language proficiency with
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LanguageProficiencyDto'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LanguageProficiencyDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - user info
+      summary: Get all language proficiencies by user ID
+      description: Retrieve all language proficiencies of the specified user
+      operationId: findAllLanguageProficienciesByUserId
+      parameters:
+        - in: path
+          name: userId
+          description: The ID of the user to associate the language proficiencies with
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LanguageProficiencyDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /contacts/{id}:
     get:
       tags:
@@ -625,17 +698,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /languages/{id}:
+  /language-proficiencies/{id}:
     get:
       tags:
-        - language
-      summary: Get language by its ID
-      description: Retrieve a specific language based on the provided language ID
+        - "language proficiency"
+      summary: Get language proficiency by its ID
+      description: Retrieve a specific language proficiency based on the provided language ID
       operationId: findById
       parameters:
         - in: path
           name: id
-          description: The ID of the language to retrieve
+          description: The ID of the language proficiency to retrieve
           required: true
           schema:
             type: integer
@@ -646,7 +719,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LanguageDto'
+                $ref: '#/components/schemas/LanguageProficiencyDto'
         '400':
           description: Bad request, e.g., missing or invalid parameters
           content:
@@ -661,14 +734,14 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
-        - language
-      summary: Update language by its ID
-      description: Updates an existing language with provided data
+        - "language proficiency"
+      summary: Update language proficiency by its ID
+      description: Updates an existing language proficiency with provided data
       operationId: update
       parameters:
         - in: path
           name: id
-          description: Unique identifier of the language to be updated
+          description: Unique identifier of the language proficiency to be updated
           required: true
           schema:
             type: integer
@@ -678,14 +751,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LanguageDto'
+              $ref: '#/components/schemas/LanguageProficiencyDto'
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LanguageDto'
+                $ref: '#/components/schemas/LanguageProficiencyDto'
         '400':
           description: Bad request, e.g., missing or invalid parameters
           content:
@@ -700,14 +773,14 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
-        - language
-      summary: Delete language by its ID
-      description: Deletes a language from the system based on the provided language ID
+        - "language proficiency"
+      summary: Delete language proficiency by its ID
+      description: Deletes a language proficiency from the system based on the provided language ID
       operationId: delete
       parameters:
         - in: path
           name: id
-          description: Unique identifier of the language to be deleted
+          description: Unique identifier of the language proficiency to be deleted
           required: true
           schema:
             type: integer
@@ -715,45 +788,6 @@ paths:
       responses:
         '200':
           description: Successful operation
-        '400':
-          description: Bad request, e.g., missing or invalid parameters
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-  /languages/{userId}:
-    post:
-      tags:
-        - language
-      summary: Create a new language
-      description: Create a new language of the specified user
-      operationId: create
-      parameters:
-        - in: path
-          name: userId
-          description: The ID of the user to associate the new language with
-          required: true
-          schema:
-            type: integer
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LanguageDto'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LanguageDto'
         '400':
           description: Bad request, e.g., missing or invalid parameters
           content:
@@ -874,12 +908,6 @@ components:
         description:
           type: string
           description: The description by the user for their account
-        languages:
-          type: array
-          description: An array containing languages associated with the user
-          items:
-            $ref: '#/components/schemas/LanguageDto'
-          readOnly: true
       required:
         - id
     ContactDto:
@@ -935,12 +963,12 @@ components:
         - description
         - startYear
         - endYear
-    LanguageDto:
+    LanguageProficiencyDto:
       type: object
       properties:
         id:
           type: integer
-          description: The unique identifier for the language
+          description: The unique identifier for the language proficiency
           readOnly: true
         name:
           type: string
@@ -957,9 +985,9 @@ components:
             - CS
         level:
           type: string
-          description: "The name of the language. The name can only be one of the following: 
-            ELEMENTARY_A1, PRE_INTERMEDIATE_A2, INTERMEDIATE_B1, UPPER_INTERMEDIATE_B2, ADVANCED_C1,
-             PROFESSIONAL_C2, NATIVE."
+          description: "The level of the language proficiency. The level can only be one of 
+          the following: ELEMENTARY_A1, PRE_INTERMEDIATE_A2, INTERMEDIATE_B1, UPPER_INTERMEDIATE_B2, 
+          ADVANCED_C1, PROFESSIONAL_C2, NATIVE."
           enum:
             - ELEMENTARY_A1
             - PRE_INTERMEDIATE_A2
