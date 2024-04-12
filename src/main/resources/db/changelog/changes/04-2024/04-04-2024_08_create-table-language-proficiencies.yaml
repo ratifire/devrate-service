@@ -1,18 +1,18 @@
 databaseChangeLog:
   - changeSet:
-      id: 03-04-2024_06_create-table-languages
+      id: 04-04-2024_08_create-table-language-proficiencies
       author: Dmytro Abalmas
       preConditions:
         - onFail: MARK_RAN
           comments: |
-            Checks if the "languages" table already exists.
+            Checks if the "language proficiencies" table already exists.
             Marks the changeSet as executed if the table exists.
           not:
             tableExists:
-              tableName: languages
+              tableName: language_proficiencies
       changes:
         - createTable:
-            tableName: languages
+            tableName: language_proficiencies
             columns:
               - column:
                   name: id
