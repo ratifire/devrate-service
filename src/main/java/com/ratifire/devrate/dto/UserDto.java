@@ -41,5 +41,4 @@ public class UserDto {
   private List<ContactDto> contacts;
 
   private List<EducationDto> educations;
-
 }
