@@ -50,6 +50,6 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: responsibilities
-                  type: TEXT ARRAY
+                  type: VARCHAR(2500) ARRAY
                   constraints:
                     nullable: false

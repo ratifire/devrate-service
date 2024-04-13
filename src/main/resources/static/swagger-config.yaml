@@ -29,6 +29,8 @@ tags:
     description: Endpoints for user personal info functionality
   - name: contact
     description: Endpoints for user contact management
+  - name: employment records
+    description: Endpoints for user Employment Records management
 paths:
   /auth/signup:
     post:
@@ -584,6 +586,147 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /user/{userId}/employment-record:
+    get:
+      tags:
+        - employment record
+      summary: Get Employment record By UserId
+      description: Retrieves all user`s employment records based on the provided UserId.
+      operationId: findByUserId
+      parameters:
+        - in: path
+          name: userId
+          description: The userId of the employment record to retrieve.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The employment record corresponding to the provided userId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmploymentRecordDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - employment record
+      summary: Update employment-record By ID
+      description: Updates an existing employment-record identified by the provided ID.
+      operationId: update
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the employment-record to update.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmploymentRecordDto'
+      responses:
+        '200':
+          description: The updated education
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmploymentRecordDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+        - employment record
+      summary: Create New Employment Record
+      description: Creates a new employment record for a specified user.
+      operationId: createEmploymentRecord
+      parameters:
+        - in: path
+          name: userId
+          description: The ID of the user for whom the employment record is being created.
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmploymentRecordDto'
+      responses:
+        '200':
+          description: The created employment record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmploymentRecordDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /user/{userId}/employment-record/{id}:
+    delete:
+      tags:
+        - employment record
+      summary: Delete Employment Record By ID
+      description: Deletes an employment record identified by the provided ID.
+      operationId: delete
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the employment record to delete.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Employment record deleted successfully
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     UserRegistrationDto:
@@ -736,3 +879,40 @@ components:
         - description
         - startYear
         - endYear
+    EmploymentRecordDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The unique identifier for the employment record
+          readOnly: true
+        startDate:
+          type: string
+          format: date
+          description: The starting date of the employment record
+        endDate:
+          type: string
+          format: date
+          description: The ending date of the employment record
+        position:
+          type: string
+          description: The position held during employment
+        companyName:
+          type: string
+          description: The name of the company
+        description:
+          type: string
+          description: Description of the employment record
+        responsibilities:
+          type: array
+          items:
+            type: string
+          description: Responsibilities during employment
+      required:
+        - startDate
+        - endDate
+        - position
+        - companyName
+        - description
+        - responsibilities

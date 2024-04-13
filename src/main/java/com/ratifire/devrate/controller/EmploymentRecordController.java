@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("user/{userId}/work-experience")
+@RequestMapping("user/{userId}/employment-record")
 public class EmploymentRecordController {
 
   private final EmploymentRecordService employmentRecordService;

@@ -68,7 +68,7 @@ public class EmploymentRecordControllerTest {
   public void getByIdTest() throws Exception {
     when(employmentRecordService.findByUserId(anyLong())).thenReturn(
         Collections.singletonList(employmentRecordDto));
-    mockMvc.perform(get("/user/{userId}/work-experience", 1))
+    mockMvc.perform(get("/user/{userId}/employment-record", 1))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$[0].id").value(1))
@@ -81,7 +81,7 @@ public class EmploymentRecordControllerTest {
     EmploymentRecordDto employmentRecordDto1 = employmentRecordDto;
     when(employmentRecordService.create(employmentRecordDto, 8883L)).thenReturn(
         employmentRecordDto1);
-    mockMvc.perform(post("/user/8883/work-experience", 1)
+    mockMvc.perform(post("/user/8883/employment-record", 1)
             .with(SecurityMockMvcRequestPostProcessors.user("Maksim Matveychuk").roles("USER"))
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
@@ -98,7 +98,7 @@ public class EmploymentRecordControllerTest {
   @Test
   public void updateTest() throws Exception {
     when(employmentRecordService.update(employmentRecordDto)).thenReturn(employmentRecordDto);
-    mockMvc.perform(put("/user/{userId}/work-experience", 1)
+    mockMvc.perform(put("/user/{userId}/employment-record", 1)
             .with(SecurityMockMvcRequestPostProcessors.user("Maksim Matveychuk").roles("USER"))
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
@@ -112,7 +112,7 @@ public class EmploymentRecordControllerTest {
 
   @Test
   public void deleteTest() throws Exception {
-    mockMvc.perform(delete("/user/{userId}/work-experience/{id}", 1, 1L)
+    mockMvc.perform(delete("/user/{userId}/employment-record/{id}", 1, 1L)
             .with(SecurityMockMvcRequestPostProcessors.user("Maksim Matveychuk").roles("USER"))
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isOk());
