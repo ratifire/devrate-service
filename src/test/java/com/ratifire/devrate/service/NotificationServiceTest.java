@@ -99,17 +99,6 @@ public class NotificationServiceTest {
   }
 
   @Test
-  void testSaveNotification() {
-    Notification notification = Notification.builder().build();
-    when(notificationRepository.save(any())).thenReturn(notification);
-
-    Notification savedNotification = notificationService.save(notification);
-
-    verify(notificationRepository, times(1)).save(notification);
-    assertEquals(notification, savedNotification);
-  }
-
-  @Test
   void testAddNotification() {
     User user = User.builder()
         .notifications(new ArrayList<>())

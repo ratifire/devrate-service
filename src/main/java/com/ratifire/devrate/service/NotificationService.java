@@ -23,7 +23,7 @@ public class NotificationService {
   private final NotificationRepository notificationRepository;
   private final UserService userService;
   private final UserSecurityService userSecurityService;
-  public final DataMapper<NotificationDto, Notification> mapper;
+  private final DataMapper<NotificationDto, Notification> mapper;
 
   /**
    * Adds a notification for the given user with the specified text.
@@ -94,15 +94,5 @@ public class NotificationService {
    */
   public void deleteById(long id) {
     notificationRepository.deleteById(id);
-  }
-
-  /**
-   * Saves a notification.
-   *
-   * @param notification The notification to save.
-   * @return The saved notification.
-   */
-  public Notification save(Notification notification) {
-    return notificationRepository.save(notification);
   }
 }
