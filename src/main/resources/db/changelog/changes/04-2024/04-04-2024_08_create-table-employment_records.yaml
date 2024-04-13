@@ -1,18 +1,18 @@
 databaseChangeLog:
   - changeSet:
-      id: 04-04-2024_05_create-table-work_experience
+      id: 04-04-2024_08_create-table-employment_records
       author: Maksim Matveychuk
       preConditions:
         - onFail: MARK_RAN
           comments: |
-            Checks if the "work_experience" table already exists.
+            Checks if the "employment_records" table already exists.
             Marks the changeSet as executed if the table exists.
           not:
             tableExists:
-              tableName: work_experience
+              tableName: employment_records
       changes:
         - createTable:
-            tableName: work_experience
+            tableName: employment_records
             columns:
               - column:
                   name: id
@@ -27,7 +27,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: end_date
-                  type: DATE
+                  type: TEXT
               - column:
                   name: position
                   type: VARCHAR(255)
@@ -45,11 +45,11 @@ databaseChangeLog:
                     length: 1000
               - column:
                   name: user_id
-                  type: BIGINT
+                  type: BIGSERIAL
                   constraints:
                     nullable: false
               - column:
-                  name: responsibility_id
-                  type: TEXT
+                  name: responsibilities
+                  type: TEXT ARRAY
                   constraints:
                     nullable: false

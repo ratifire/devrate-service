@@ -1,7 +1,8 @@
 package com.ratifire.devrate.controller;
 
-import com.ratifire.devrate.dto.WorkExperienceDto;
-import com.ratifire.devrate.service.workexperience.WorkExperienceService;
+import com.ratifire.devrate.dto.EmploymentRecordDto;
+import com.ratifire.devrate.service.employmentrecord.EmploymentRecordService;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,11 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
  * Controller class responsible for handling requests related to user work experience information.
  */
 @RestController
-@RequestMapping("/work-experience")
 @RequiredArgsConstructor
-public class WorkExperienceController {
+@RequestMapping("user/{userId}/work-experience")
+public class EmploymentRecordController {
 
-  private final WorkExperienceService workExperienceService;
+  private final EmploymentRecordService employmentRecordService;
 
   /**
    * Retrieves user work experience information by user ID.
@@ -29,31 +30,32 @@ public class WorkExperienceController {
    * @param userId the ID of the user
    * @return the user's work experience information as a DTO
    */
-  @GetMapping("/{userId}")
-  public List<WorkExperienceDto> findByUserId(@PathVariable long userId) {
-    return workExperienceService.findByUserId(userId);
+  @GetMapping
+  public List<EmploymentRecordDto> findByUserId(@PathVariable long userId) {
+    return employmentRecordService.findByUserId(userId);
   }
 
   /**
    * Creates user work experience information by user ID.
    *
-   * @param workExperienceDto the user's work experience information as a DTO
+   * @param employmentRecordDto the user's work experience information as a DTO
    * @return the created user work experience information as a DTO
    */
   @PostMapping
-  public WorkExperienceDto create(@RequestBody WorkExperienceDto workExperienceDto) {
-    return workExperienceService.create(workExperienceDto);
+  public EmploymentRecordDto create(@Valid @RequestBody EmploymentRecordDto employmentRecordDto,
+      @PathVariable long userId) {
+    return employmentRecordService.create(employmentRecordDto, userId);
   }
 
   /**
    * Updates user work experience information by user ID.
    *
-   * @param workExperienceDto the updated user's work experience information as a DTO
+   * @param employmentRecordDto the updated user's work experience information as a DTO
    * @return the updated user work experience information as a DTO
    */
   @PutMapping
-  public WorkExperienceDto update(@RequestBody WorkExperienceDto workExperienceDto) {
-    return workExperienceService.update(workExperienceDto);
+  public EmploymentRecordDto update(@RequestBody EmploymentRecordDto employmentRecordDto) {
+    return employmentRecordService.update(employmentRecordDto);
   }
 
   /**
@@ -63,7 +65,7 @@ public class WorkExperienceController {
    */
   @DeleteMapping("/{id}")
   public void delete(@PathVariable long id) {
-    workExperienceService.delete(id);
+    employmentRecordService.delete(id);
   }
 
 }

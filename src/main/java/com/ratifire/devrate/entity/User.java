@@ -59,5 +59,5 @@ public class User {
 
   @OneToMany(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
-  private List<WorkExperience> workExperiences;
+  private List<EmploymentRecord> employmentRecords;
 }

@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,19 +23,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "work_experience")
-public class WorkExperience {
+@Table(name = "employment_records")
+public class EmploymentRecord {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column(name = "start_date", nullable = false)
-  @JsonFormat(pattern = "yyyy")
+  @JsonFormat(pattern = "yyyy-MM")
   private LocalDate startDate;
 
   @Column(name = "end_date")
-  @JsonFormat(pattern = "yyyy")
+  @JsonFormat(pattern = "yyyy-MM")
   private LocalDate endDate;
 
   @Column(name = "position", nullable = false)
@@ -49,7 +50,7 @@ public class WorkExperience {
   @Column(name = "user_id", nullable = false)
   private long userId;
 
-  @Column(name = "responsibility_id")
-  private String responsibilityId;
+  @Column(name = "responsibilities", columnDefinition = "text[]")
+  private List<String> responsibilities;
 
 }

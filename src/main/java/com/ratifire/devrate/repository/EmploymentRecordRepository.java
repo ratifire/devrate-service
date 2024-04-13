@@ -1,6 +1,6 @@
 package com.ratifire.devrate.repository;
 
-import com.ratifire.devrate.entity.WorkExperience;
+import com.ratifire.devrate.entity.EmploymentRecord;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
  * provides methods for accessing and managing Work Experience entities in the database.
  */
 @Repository
-public interface WorkExperienceRepository extends JpaRepository<WorkExperience, Long> {
+public interface EmploymentRecordRepository extends JpaRepository<EmploymentRecord, Long> {
 
-  List<WorkExperience> findByUserId(long userId);
+  List<EmploymentRecord> findByUserId(long userId);
 }

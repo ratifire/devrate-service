@@ -3,8 +3,8 @@ package com.ratifire.devrate.controller;
 import com.ratifire.devrate.exception.EmailConfirmationCodeException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
+import com.ratifire.devrate.exception.EmploymentRecordNotFoundException;
 import com.ratifire.devrate.exception.InvalidCodeException;
-import com.ratifire.devrate.exception.WorkExperienceNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
@@ -133,17 +133,17 @@ public class HandlerException {
   }
 
   /**
-   * Exception handler method for handling WorkExperienceNotFoundException. This method is
+   * Exception handler method for handling EmploymentRecordNotFoundException. This method is
    * responsible for handling exceptions related to work experience information not being found.
    *
-   * @param ex The WorkExperienceNotFoundException that has been thrown.
-   * @return A ResponseEntity with an error message and HTTP status NOT_FOUND (404).
+   * @param ex The EmploymentRecordNotFoundException that has been thrown.
+   * @return A ResponseEntity with HTTP status NOT_FOUND (404).
    */
-  @ExceptionHandler(WorkExperienceNotFoundException.class)
-  public ResponseEntity<String> handleWorkExperienceNotFoundException(
-      WorkExperienceNotFoundException ex) {
-    log.error("The user's work experience information could not be found with"
+  @ExceptionHandler(EmploymentRecordNotFoundException.class)
+  public ResponseEntity<Void> handleEmploymentRecordNotFoundException(
+      EmploymentRecordNotFoundException ex) {
+    log.error("The user's employment record information could not be found with"
         + "the: {}", ex.getMessage());
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
   }
 }
