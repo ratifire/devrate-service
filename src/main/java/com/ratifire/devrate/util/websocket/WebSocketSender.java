@@ -3,7 +3,9 @@ package com.ratifire.devrate.util.websocket;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.dto.NotificationDto;
+import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.service.NotificationService;
+import com.ratifire.devrate.service.UserSecurityService;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
@@ -25,15 +27,19 @@ public class WebSocketSender {
 
   private final WebSocketSessionRegistry sessionRegistry;
   private final NotificationService notificationService;
+  private final UserSecurityService userSecurityService;
   private final ObjectMapper objectMapper;
   private static final Logger logger = LoggerFactory.getLogger(WebSocketSender.class);
 
   /**
-   * Sends notifications to all WebSocket sessions associated with a user's email.
+   * Sends notifications to all WebSocket sessions associated with a user's id.
    *
-   * @param email The user's email.
+   * @param userId The user's ID.
    */
-  public void sendNotificationsByUserEmail(String email) {
+  public void sendNotificationsByUserId(long userId) {
+    UserSecurity userSecurity = userSecurityService.getByUserId(userId);
+    String email = userSecurity.getEmail();
+
     List<NotificationDto> notifications = notificationService.getAllByEmail(email);
     Set<WebSocketSession> sessions = sessionRegistry.getUserSessions(email);
     for (WebSocketSession session : sessions) {

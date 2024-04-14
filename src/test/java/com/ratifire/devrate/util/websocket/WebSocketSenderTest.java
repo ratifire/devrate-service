@@ -1,13 +1,16 @@
 package com.ratifire.devrate.util.websocket;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.dto.NotificationDto;
+import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.service.NotificationService;
+import com.ratifire.devrate.service.UserSecurityService;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +35,9 @@ public class WebSocketSenderTest {
   private NotificationService notificationService;
 
   @Mock
+  private UserSecurityService userSecurityService;
+
+  @Mock
   private ObjectMapper objectMapper;
 
   @Mock
@@ -41,16 +47,20 @@ public class WebSocketSenderTest {
   private WebSocketSender webSocketSender;
 
   @Test
-  void testSendNotificationsByLogin() throws IOException {
+  void testSendNotificationsByUserId() throws IOException {
+    UserSecurity userSecurity = UserSecurity.builder()
+        .email("test@example.com")
+        .build();
     String testMessage = "{test message}";
     List<NotificationDto> notifications = List.of(NotificationDto.builder().build());
     Set<WebSocketSession> sessions = Set.of(session);
 
+    when(userSecurityService.getByUserId(anyLong())).thenReturn(userSecurity);
     when(notificationService.getAllByEmail(any())).thenReturn(notifications);
     when(sessionRegistry.getUserSessions(any())).thenReturn(sessions);
     when(objectMapper.writeValueAsString(any())).thenReturn(testMessage);
 
-    webSocketSender.sendNotificationsByUserEmail("testUser");
+    webSocketSender.sendNotificationsByUserId(1L);
 
     verify(session, times(1)).sendMessage(any(TextMessage.class));
   }

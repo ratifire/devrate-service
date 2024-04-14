@@ -1,8 +1,6 @@
 package com.ratifire.devrate.controller;
 
-import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.service.NotificationService;
-import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.util.websocket.WebSocketSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class NotificationController {
 
   private final NotificationService notificationService;
-  private final UserSecurityService userSecurityService;
   private final WebSocketSender webSocketSender;
 
   /**
@@ -32,8 +29,7 @@ public class NotificationController {
   @PatchMapping
   public void markAsRead(@RequestParam long userId, @RequestParam long notificationId) {
     notificationService.markAsReadById(notificationId);
-    UserSecurity userSecurity = userSecurityService.getByUserId(userId);
-    webSocketSender.sendNotificationsByUserEmail(userSecurity.getEmail());
+    webSocketSender.sendNotificationsByUserId(userId);
   }
 
   /**
@@ -45,7 +41,6 @@ public class NotificationController {
   @DeleteMapping
   public void delete(@RequestParam long userId, @RequestParam long notificationId) {
     notificationService.deleteById(notificationId);
-    UserSecurity userSecurity = userSecurityService.getByUserId(userId);
-    webSocketSender.sendNotificationsByUserEmail(userSecurity.getEmail());
+    webSocketSender.sendNotificationsByUserId(userId);
   }
 }
