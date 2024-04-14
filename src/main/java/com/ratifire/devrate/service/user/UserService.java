@@ -19,18 +19,6 @@ public class UserService {
   private final DataMapper<UserDto, User> userMapper;
 
   /**
-   * Retrieves a user entity by ID.
-   *
-   * @param id the ID of the user to retrieve
-   * @return the user entity
-   * @throws UserNotFoundException if the user with the specified ID is not found
-   */
-  private User findUserById(long id) {
-    return userRepository.findById(id)
-        .orElseThrow(() -> new UserNotFoundException("The user not found with id " + id));
-  }
-
-  /**
    * Retrieves a user by ID.
    *
    * @param id the ID of the user to retrieve
@@ -84,5 +72,17 @@ public class UserService {
   public void delete(long userId) {
     User user = findUserById(userId);
     userRepository.delete(user);
+  }
+
+  /**
+   * Retrieves a user entity by ID.
+   *
+   * @param id the ID of the user to retrieve
+   * @return the user entity
+   * @throws UserNotFoundException if the user with the specified ID is not found
+   */
+  private User findUserById(long id) {
+    return userRepository.findById(id)
+        .orElseThrow(() -> new UserNotFoundException("The user not found with id " + id));
   }
 }
