@@ -29,6 +29,8 @@ tags:
     description: Endpoints for user personal info functionality
   - name: contact
     description: Endpoints for user contact management
+  - name: avatar
+    description: Endpoints for user avatar management
 paths:
   /auth/signup:
     post:
@@ -623,6 +625,179 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /avatar/{userId}:
+    get:
+      tags:
+        - avatar
+      summary: Retrieve user avatar
+      description: Retrieves the avatar for the specified user ID. If no custom avatar is set, returns a default avatar path.
+      operationId: getAvatar
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Unique identifier of the user
+      responses:
+        '200':
+          description: Avatar path retrieved successfully. Returns default avatar if no custom avatar is set.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvatarDto'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+        - avatar
+      summary: Add user avatar
+      description: Adds a new avatar for the specified user ID.
+      operationId: addAvatar
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Unique identifier of the user
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+                  description: The avatar file to upload
+      responses:
+        '201':
+          description: Avatar added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvatarDto'
+        '409':
+          description: User already has an avatar
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Missing or unreadable file data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '415':
+          description: Unsupported media type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - avatar
+      summary: Update user avatar
+      description: Updates the avatar for the specified user ID.
+      operationId: updateAvatar
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Unique identifier of the user
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+                  description: New avatar file to replace the existing one
+      responses:
+        '200':
+          description: Avatar updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvatarDto'
+        '404':
+          description: User avatar not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Missing or unreadable file data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '415':
+          description: Unsupported media type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - avatar
+      summary: Remove user avatar
+      description: Removes the avatar for the specified user ID.
+      operationId: removeAvatar
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Unique identifier of the user
+      responses:
+        '200':
+          description: Avatar removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User avatar not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     UserRegistrationDto:
@@ -786,3 +961,9 @@ components:
         - description
         - startYear
         - endYear
+    AvatarDto:
+      type: object
+      properties:
+        avatarPath:
+          type: string
+          description: Path to the user's avatar image

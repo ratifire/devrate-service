@@ -229,6 +229,22 @@ making it easy to test email notifications without sending them to actual email 
   authentication mechanisms, and access control rules.
   [Learn more](https://docs.spring.io/spring-security/reference/servlet/test/index.html)
 
+### Google Cloud Storage for Spring Cloud
+
+- **Description:** This starter simplifies the integration of Google Cloud Storage with Spring applications through the
+  Spring Cloud GCP. It enables seamless usage of Google Cloud Storage for managing application data, providing essential
+  infrastructure to interact with Google's storage services programmatically. Suitable for a variety of use cases
+  including storing backups, serving static assets, and managing uploads in Spring-based applications. It abstracts much
+  of the boilerplate code necessary to set up a connection to Google Cloud Storage, making it straightforward to
+  implement in a cloud-native environment. [Learn more](https://cloud.spring.io/spring-cloud-static/spring-cloud-gcp/current/reference/html/#cloud-storage)
+
+### Commons IO
+
+- **Description:** Commons IO is a library of utilities to assist with developing IO functionality. It provides a rich
+  set of IO utilities that supplement the standard Java IO and NIO classes. The library includes tools for file
+  monitoring, a file system manager, and utilities that simplify file and directory copying, file filtering, and reading
+  and writing to streams. [Learn more](https://commons.apache.org/proper/commons-io/)
+
 ### New Users for Application Testing
 
 The following accounts have been added for application testing:

@@ -4,6 +4,10 @@ import com.ratifire.devrate.exception.EmailConfirmationCodeException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.InvalidCodeException;
+import com.ratifire.devrate.exception.MissingFileDataException;
+import com.ratifire.devrate.exception.UnsupportedFileTypeException;
+import com.ratifire.devrate.exception.UserAvatarAlreadyExistException;
+import com.ratifire.devrate.exception.UserAvatarNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
@@ -129,5 +133,63 @@ public class HandlerException {
       EmailConfirmationCodeExpiredException ex) {
     log.error("Email confirmation code: {}", ex.getMessage(), ex);
     return ResponseEntity.status(HttpStatus.GONE).body(ex.getMessage());
+  }
+
+  /**
+   * Handles exceptions of type {@link UserAvatarAlreadyExistException}. This handler logs the
+   * exception and responds with an HTTP 409 Conflict status, indicating that the user already has
+   * an avatar, which prevents the creation of another one.
+   *
+   * @param ex the caught {@link UserAvatarAlreadyExistException} instance.
+   * @return a {@link ResponseEntity} containing the error message and an HTTP 409 Conflict status.
+   */
+  @ExceptionHandler(UserAvatarAlreadyExistException.class)
+  public ResponseEntity<String> handleUserAvatarAlreadyExists(UserAvatarAlreadyExistException ex) {
+    log.error("Handling UserAvatarAlreadyExistException: {}", ex.getMessage(), ex);
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+  }
+
+  /**
+   * Handles exceptions of type {@link UserAvatarNotFoundException}. This handler logs the exception
+   * and responds with an HTTP 404 Not Found status, indicating that the requested operation failed
+   * because the user's avatar could not be found.
+   *
+   * @param ex the caught {@link UserAvatarNotFoundException} instance.
+   * @return a {@link ResponseEntity} containing the error message and an HTTP 404 Not Found status.
+   */
+  @ExceptionHandler(UserAvatarNotFoundException.class)
+  public ResponseEntity<String> handleUserAvatarNotFound(UserAvatarNotFoundException ex) {
+    log.error("Handling UserAvatarNotFoundException: {}", ex.getMessage(), ex);
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+  }
+
+  /**
+   * Handles exceptions of type {@link MissingFileDataException}. This handler logs the exception
+   * and responds with an HTTP 400 Bad Request status, indicating that the operation failed due to
+   * missing or unreadable file data.
+   *
+   * @param ex the caught {@link MissingFileDataException} instance.
+   * @return a {@link ResponseEntity} containing the error message and an HTTP 400 Bad Request
+   *     status.
+   */
+  @ExceptionHandler(MissingFileDataException.class)
+  public ResponseEntity<String> handleMissingFileData(MissingFileDataException ex) {
+    log.error("Handling MissingFileDataException: {}", ex.getMessage(), ex);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+  }
+
+  /**
+   * Handles exceptions of type {@link UnsupportedFileTypeException}. This handler logs the
+   * exception and responds with an HTTP 415 Unsupported Media Type status, indicating that the
+   * operation failed because the file type of the uploaded file is not supported.
+   *
+   * @param ex the caught {@link UnsupportedFileTypeException} instance.
+   * @return a {@link ResponseEntity} containing the error message and an HTTP 415 Unsupported Media
+   *     Type status.
+   */
+  @ExceptionHandler(UnsupportedFileTypeException.class)
+  public ResponseEntity<String> handleUnsupportedFileType(UnsupportedFileTypeException ex) {
+    log.error("Handling UnsupportedFileTypeException: {}", ex.getMessage(), ex);
+    return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(ex.getMessage());
   }
 }
