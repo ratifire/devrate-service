@@ -83,7 +83,7 @@ public class HandlerException {
       UserSecurityNotFoundException.class,
       WebSocketSessionNotFoundException.class
   })
-  public void handleNoFoundException() {
+  public void handleNoFoundExceptions() {
   }
 
   /**
