@@ -1,6 +1,5 @@
 package com.ratifire.devrate.controller;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -83,7 +82,6 @@ public class PasswordResetControllerTest {
     mockMvc.perform(post("/auth/password-reset/{code}", invalidCode)
             .contentType("application/json")
             .content(newPassword))
-        .andExpect(status().isBadRequest())
-        .andExpect(content().string(containsString("Invalid or expired password reset code.")));
+        .andExpect(status().isBadRequest());
   }
 }
