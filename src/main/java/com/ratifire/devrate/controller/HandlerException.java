@@ -1,16 +1,11 @@
 package com.ratifire.devrate.controller;
 
-import com.ratifire.devrate.exception.ContactNotFoundException;
-import com.ratifire.devrate.exception.EducationNotFoundException;
-import com.ratifire.devrate.exception.EmailConfirmationCodeException;
-import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
-import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
+import com.ratifire.devrate.exception.MailConfirmationCodeException;
+import com.ratifire.devrate.exception.MailConfirmationCodeExpiredException;
+import com.ratifire.devrate.exception.MailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.InvalidCodeException;
-import com.ratifire.devrate.exception.LoginNotFoundException;
-import com.ratifire.devrate.exception.RoleNotFoundException;
-import com.ratifire.devrate.exception.UserNotFoundException;
-import com.ratifire.devrate.exception.UserSecurityNotFoundException;
-import com.ratifire.devrate.exception.WebSocketSessionNotFoundException;
+import com.ratifire.devrate.exception.SuperNotFoundException;
+import com.ratifire.devrate.exception.SuperMailException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
@@ -71,48 +66,39 @@ public class HandlerException {
   }
 
   /**
-   * Handles custom NoFoundExceptions by returning an HTTP status 400.
+   * Handles exceptions that extend SuperNotFoundException by returning an HTTP status 400.
    */
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  @ExceptionHandler({
-      ContactNotFoundException.class,
-      EducationNotFoundException.class,
-      LoginNotFoundException.class,
-      RoleNotFoundException.class,
-      UserNotFoundException.class,
-      UserSecurityNotFoundException.class,
-      WebSocketSessionNotFoundException.class
-  })
+  @ExceptionHandler(SuperNotFoundException.class)
   public void handleNoFoundExceptions() {
   }
 
   /**
-   * Global exception handler method to handle specific mail-related exceptions.
-   *
-   * @param ex The runtime exception being handled.
-   * @return A {@link ResponseEntity} with an appropriate status code type of exception.
+   * Handles MailSendException by returning an HTTP status 400.
    */
-  @ExceptionHandler({
-      MailSendException.class,
-      InvalidCodeException.class,
-      EmailConfirmationCodeException.class,
-      EmailConfirmationCodeRequestException.class,
-      EmailConfirmationCodeExpiredException.class
-  })
-  public ResponseEntity<?> handleMailExceptions(RuntimeException ex) {
-    switch (ex.getClass().getSimpleName()) {
-      case "MailSendException", "EmailConfirmationCodeRequestException", "InvalidCodeException" -> {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-      }
-      case "EmailConfirmationCodeException" -> {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-      }
-      case "EmailConfirmationCodeExpiredException" -> {
-        return ResponseEntity.status(HttpStatus.GONE).build();
-      }
-      default -> handleExceptionErrors(ex);
-    }
-    return handleExceptionErrors(ex);
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(MailSendException.class)
+  public void handleMailSendException() {
   }
 
+  /**
+   * Handles exceptions that extend SuperEmailException.
+   *
+   * @param exception The SuperEmailException instance to handle
+   * @return ResponseEntity with appropriate HTTP status based on the type of exception
+   */
+  @ExceptionHandler(SuperMailException.class)
+  public ResponseEntity<?> handleMailExceptions(SuperMailException exception) {
+    return switch (exception) {
+      case MailConfirmationCodeRequestException ignored ->
+          ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+      case InvalidCodeException ignored ->
+          ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+      case MailConfirmationCodeException ignored ->
+          ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+      case MailConfirmationCodeExpiredException ignored ->
+          ResponseEntity.status(HttpStatus.GONE).build();
+      default -> handleExceptionErrors(exception);
+    };
+  }
 }

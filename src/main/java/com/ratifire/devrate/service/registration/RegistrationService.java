@@ -5,8 +5,8 @@ import com.ratifire.devrate.dto.UserRegistrationDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.UserSecurity;
-import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
-import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
+import com.ratifire.devrate.exception.MailConfirmationCodeExpiredException;
+import com.ratifire.devrate.exception.MailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserSecurityAlreadyExistException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.service.RoleService;
@@ -104,13 +104,13 @@ public class RegistrationService {
    *
    * @param confirmationCode The confirmation code provided by the user.
    * @return The ID of the user whose registration has been confirmed
-   * @throws EmailConfirmationCodeRequestException If the provided confirmation code is empty or
+   * @throws MailConfirmationCodeRequestException If the provided confirmation code is empty or
    *                                               null.
-   * @throws EmailConfirmationCodeExpiredException If the confirmation code is expired.
+   * @throws MailConfirmationCodeExpiredException If the confirmation code is expired.
    */
   public long confirmRegistration(String confirmationCode) {
     if (StringUtil.isEmpty(confirmationCode)) {
-      throw new EmailConfirmationCodeRequestException("The confirmation code is a required "
+      throw new MailConfirmationCodeRequestException("The confirmation code is a required "
           + "argument");
     }
 
@@ -123,7 +123,7 @@ public class RegistrationService {
     long hoursSinceCreation = ChronoUnit.HOURS.between(createdAt, currentDateTime);
     if (hoursSinceCreation >= CONFIRM_CODE_EXPIRATION_HOURS) {
       emailConfirmationCodeService.deleteConfirmedCode(emailConfirmationCode.getId());
-      throw new EmailConfirmationCodeExpiredException("The confirmation code has expired");
+      throw new MailConfirmationCodeExpiredException("The confirmation code has expired");
     }
 
     UserSecurity userSecurity = userSecurityService

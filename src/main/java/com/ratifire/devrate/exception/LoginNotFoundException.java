@@ -3,7 +3,7 @@ package com.ratifire.devrate.exception;
 /**
  * Exception thrown when a login is not found.
  */
-public class LoginNotFoundException extends RuntimeException {
+public class LoginNotFoundException extends SuperNotFoundException {
 
   /**
    * Constructs a new LoginNotFoundException with the specified detail message.

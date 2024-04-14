@@ -19,8 +19,8 @@ import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.Role;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.UserSecurity;
-import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
-import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
+import com.ratifire.devrate.exception.MailConfirmationCodeExpiredException;
+import com.ratifire.devrate.exception.MailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserSecurityAlreadyExistException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.service.RoleService;
@@ -203,7 +203,7 @@ public class RegistrationServiceTest {
    */
   @Test
   public void testConfirmRegistration_RequestEmptyCode() {
-    assertThrows(EmailConfirmationCodeRequestException.class,
+    assertThrows(MailConfirmationCodeRequestException.class,
         () -> registrationService.confirmRegistration(""));
   }
 
@@ -211,7 +211,7 @@ public class RegistrationServiceTest {
    * Unit test for {@link RegistrationService#confirmRegistration(String)}.
    *
    * <p>Tests the confirmation of registration with an expired confirmation code.
-   * Verifies that an {@link EmailConfirmationCodeExpiredException} is thrown
+   * Verifies that an {@link MailConfirmationCodeExpiredException} is thrown
    * and that neither the {@link UserSecurityService} nor the {@link EmailConfirmationCodeService}
    * are invoked for further actions.
    */
@@ -226,7 +226,7 @@ public class RegistrationServiceTest {
     when(emailConfirmationCodeService.findEmailConfirmationCode(code))
         .thenReturn(emailConfirmationCode);
 
-    assertThrows(EmailConfirmationCodeExpiredException.class,
+    assertThrows(MailConfirmationCodeExpiredException.class,
         () -> registrationService.confirmRegistration(code));
 
     verify(userSecurityService, never()).getById(anyLong());
