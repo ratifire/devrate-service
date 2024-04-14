@@ -1,9 +1,16 @@
 package com.ratifire.devrate.controller;
 
+import com.ratifire.devrate.exception.ContactNotFoundException;
+import com.ratifire.devrate.exception.EducationNotFoundException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.InvalidCodeException;
+import com.ratifire.devrate.exception.LoginNotFoundException;
+import com.ratifire.devrate.exception.RoleNotFoundException;
+import com.ratifire.devrate.exception.UserNotFoundException;
+import com.ratifire.devrate.exception.UserSecurityNotFoundException;
+import com.ratifire.devrate.exception.WebSocketSessionNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
@@ -43,17 +50,16 @@ public class HandlerException {
   }
 
   /**
-   * Controller advice method to handle exceptions of type Exception. Responds with an HTTP status
-   * of INTERNAL_SERVER_ERROR and returns the error message from the exception.
+   * Global exception handler method to handle exceptions of type {@link Exception}.
    *
-   * @param ex The exception to be handled.
-   * @return A String containing the error message from the exception.
+   * @param ex The exception being handled.
+   * @return A {@link ResponseEntity} with an appropriate error message and status code.
    */
-  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   @ExceptionHandler(Exception.class)
-  public String handleExceptionErrors(Exception ex) {
+  public ResponseEntity<?> handleExceptionErrors(Exception ex) {
     log.error("Handling Exception: {}", ex.getMessage(), ex);
-    return "Oops! Something went wrong:( We're working to fix it! Please try again later:)";
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body("Oops! Something went wrong:( We're working to fix it! Please try again later:)");
   }
 
   /**
@@ -65,76 +71,48 @@ public class HandlerException {
   }
 
   /**
-   * Exception handler method for handling MailSendException.
-   *
-   * <p>Handles instances of MailSendException by responding with an HTTP status
-   * of BAD_REQUEST and returning the error message from the exception. Logs the exception details
-   * for debugging purposes.</p>
-   *
-   * @param ex The MailSendException to be handled.
-   * @return A ResponseEntity containing the error message with an HTTP status of BAD_REQUEST.
+   * Handles custom NoFoundExceptions by returning an HTTP status 400.
    */
-  @ExceptionHandler(MailSendException.class)
-  public ResponseEntity<String> handleMailSendException(MailSendException ex) {
-    log.error("Handling MailSendException: {}", ex.getMessage(), ex);
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler({
+      ContactNotFoundException.class,
+      EducationNotFoundException.class,
+      LoginNotFoundException.class,
+      RoleNotFoundException.class,
+      UserNotFoundException.class,
+      UserSecurityNotFoundException.class,
+      WebSocketSessionNotFoundException.class
+  })
+  public void handleNoFoundException() {
   }
 
   /**
-   * Exception handler method for handling InvalidCodeException.
+   * Global exception handler method to handle specific mail-related exceptions.
    *
-   * <p>Handles instances of InvalidCodeException by responding with an HTTP status
-   * of BAD_REQUEST and returning the error message from the exception. Logs the exception details
-   * for debugging purposes.</p>
-   *
-   * @param ex The InvalidCodeException to be handled.
-   * @return A ResponseEntity containing the error message with an HTTP status of BAD_REQUEST.
+   * @param ex The runtime exception being handled.
+   * @return A {@link ResponseEntity} with an appropriate status code type of exception.
    */
-  @ExceptionHandler(InvalidCodeException.class)
-  public ResponseEntity<?> handleInvalidCodeException(InvalidCodeException ex) {
-    log.error("Invalid code: {}", ex.getMessage());
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-        .body("Invalid or expired password reset code.");
+  @ExceptionHandler({
+      MailSendException.class,
+      InvalidCodeException.class,
+      EmailConfirmationCodeException.class,
+      EmailConfirmationCodeRequestException.class,
+      EmailConfirmationCodeExpiredException.class
+  })
+  public ResponseEntity<?> handleMailExceptions(RuntimeException ex) {
+    switch (ex.getClass().getSimpleName()) {
+      case "MailSendException", "EmailConfirmationCodeRequestException", "InvalidCodeException" -> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+      }
+      case "EmailConfirmationCodeException" -> {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+      }
+      case "EmailConfirmationCodeExpiredException" -> {
+        return ResponseEntity.status(HttpStatus.GONE).build();
+      }
+      default -> handleExceptionErrors(ex);
+    }
+    return handleExceptionErrors(ex);
   }
 
-  /**
-   * Exception handler method for handling EmailConfirmationCodeException. This method is
-   * responsible for handling exceptions related to invalid email confirmation codes.
-   *
-   * @param ex The EmailConfirmationCodeException that has been thrown.
-   * @return ResponseEntity with an error message and HTTP status NOT_FOUND (404).
-   */
-  @ExceptionHandler(EmailConfirmationCodeException.class)
-  public ResponseEntity<String> handleConfirmationCodeException(EmailConfirmationCodeException ex) {
-    log.error("Invalid email confirmation code: {}", ex.getMessage(), ex);
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-  }
-
-  /**
-   * Exception handler method for handling {@code EmailConfirmationCodeRequestException}. This
-   * method handles exceptions related to invalid email confirmation code requests.
-   *
-   * @param ex The {@code EmailConfirmationCodeRequestException} that has been thrown.
-   * @return ResponseEntity with an error message and HTTP status BAD_REQUEST (400).
-   */
-  @ExceptionHandler(EmailConfirmationCodeRequestException.class)
-  public ResponseEntity<String> handleEmailConfirmationCodeRequestException(
-      EmailConfirmationCodeRequestException ex) {
-    log.error("Invalid request: {}", ex.getMessage(), ex);
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-  }
-
-  /**
-   * Handles the {@link EmailConfirmationCodeExpiredException} thrown when attempting to confirm
-   * registration with an expired email confirmation code.
-   *
-   * @param ex The {@link EmailConfirmationCodeExpiredException} thrown.
-   * @return A {@link ResponseEntity} with an appropriate HTTP status code and error message.
-   */
-  @ExceptionHandler(EmailConfirmationCodeExpiredException.class)
-  public ResponseEntity<String> handleEmailConfirmationCodeExpiredException(
-      EmailConfirmationCodeExpiredException ex) {
-    log.error("Email confirmation code: {}", ex.getMessage(), ex);
-    return ResponseEntity.status(HttpStatus.GONE).body(ex.getMessage());
-  }
 }
