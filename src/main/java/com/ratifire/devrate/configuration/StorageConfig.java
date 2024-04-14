@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Profile;
 
 /** Configures Google Cloud Storage service for Spring applications. */
 @Configuration
-@Profile("default")
+@Profile("dev")
 public class StorageConfig {
 
   /**

@@ -25,7 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
  * storage of avatar files.
  */
 @Service
-@Profile("default")
+@Profile("dev")
 public class AvatarStorageService implements AvatarService {
 
   private final Storage storage;
