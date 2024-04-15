@@ -58,11 +58,10 @@ public class RegistrationService {
    * and returns the registered user information.
    *
    * @param userRegistrationDto Containing the user information to be registered.
-   * @return {@link UserRegistrationDto} representing the registered user information.
    * @throws UserSecurityAlreadyExistException If a user with the provided email already exists.
    */
   @Transactional
-  public UserRegistrationDto registerUser(UserRegistrationDto userRegistrationDto) {
+  public void registerUser(UserRegistrationDto userRegistrationDto) {
     if (isUserExistByEmail(userRegistrationDto.getEmail())) {
       throw new UserSecurityAlreadyExistException("User is already registered!");
     }
@@ -88,8 +87,6 @@ public class RegistrationService {
         .createMessage(userSecurity.getEmail(), savedEmailConfirmationCode.getCode());
 
     emailService.sendEmail(confirmationMessage, true);
-
-    return userMapper.toDto(userSecurity);
   }
 
   /**
