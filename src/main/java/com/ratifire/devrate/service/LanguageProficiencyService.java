@@ -21,8 +21,7 @@ public class LanguageProficiencyService {
   private final DataMapper<LanguageProficiencyDto, LanguageProficiency> languageProficiencyMapper;
 
   /**
-   * Retrieves a language proficiency by its ID and converts it to a LanguageProficiencyDto. If the
-   * language proficiency is not found, a LanguageProficiencyNotFoundException is thrown.
+   * Retrieves a language proficiency by its ID and converts it to a LanguageProficiencyDto.
    *
    * @param id the ID of the language proficiency to retrieve
    * @return the LanguageProficiencyDto corresponding to the specified ID
@@ -30,9 +29,7 @@ public class LanguageProficiencyService {
    *                                              ID
    */
   public LanguageProficiencyDto findById(long id) {
-    return languageProficiencyRepository.findById(id)
-        .map(languageProficiencyMapper::toDto)
-        .orElseThrow(() -> new LanguageProficiencyNotFoundException(id));
+    return languageProficiencyMapper.toDto(languageProficiencyById(id));
   }
 
   /**
@@ -46,8 +43,7 @@ public class LanguageProficiencyService {
    *                                              ID
    */
   public LanguageProficiencyDto update(long id, LanguageProficiencyDto languageProficiencyDto) {
-    LanguageProficiency languageProficiency = languageProficiencyRepository.findById(id)
-        .orElseThrow(() -> new LanguageProficiencyNotFoundException(id));
+    LanguageProficiency languageProficiency = languageProficiencyById(id);
     languageProficiencyMapper.updateEntity(languageProficiencyDto, languageProficiency);
     languageProficiencyRepository.save(languageProficiency);
     return languageProficiencyMapper.toDto(languageProficiency);
@@ -59,10 +55,20 @@ public class LanguageProficiencyService {
    * @param id the ID of the language proficiency to delete
    */
   public void delete(long id) {
-    if (!languageProficiencyRepository.existsById(id)) {
-      throw new LanguageProficiencyNotFoundException(id);
-    }
     languageProficiencyRepository.deleteById(id);
+  }
+
+  /**
+   * Retrieves a language proficiency by ID.
+   *
+   * @param id the ID of the language proficiency to retrieve
+   * @return the language proficiency entity
+   * @throws LanguageProficiencyNotFoundException if the language proficiency with the specified ID
+   *                                              is not found
+   */
+  private LanguageProficiency languageProficiencyById(long id) {
+    return languageProficiencyRepository.findById(id)
+        .orElseThrow(() -> new LanguageProficiencyNotFoundException(id));
   }
 
 }

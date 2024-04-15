@@ -80,30 +80,14 @@ public class UserService {
   }
 
   /**
-   * Retrieves a user entity by ID.
-   *
-   * @param id the ID of the user to retrieve
-   * @return the user entity
-   * @throws UserNotFoundException if the user with the specified ID is not found
-   */
-  private User findUserById(long id) {
-    return userRepository.findById(id)
-        .orElseThrow(() -> new UserNotFoundException("The user not found with id " + id));
-  }
-
-  /**
    * Retrieves all language proficiencies associated with the user.
    *
    * @param userId the ID of the user to associate the language proficiencies with
    * @return A list of LanguageProficiencyDto objects.
    */
   public List<LanguageProficiencyDto> findAllLanguageProficienciesByUserId(long userId) {
-    User user = userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException("The user could not be found with id \""
-            + userId + "\""));
-
-    return languageProficiencyMapper.toDto(user.getLanguageProficiency());
-
+    User user = findUserById(userId);
+    return languageProficiencyMapper.toDto(user.getLanguageProficiencies());
   }
 
   /**
@@ -115,11 +99,9 @@ public class UserService {
    */
   public LanguageProficiencyDto createLanguageProficiency(long userId,
       LanguageProficiencyDto languageProficiencyDto) {
-    User user = userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException("The user could not be found with id \""
-            + userId + "\""));
+    User user = findUserById(userId);
 
-    if (user.getLanguageProficiency().stream()
+    if (user.getLanguageProficiencies().stream()
         .anyMatch(languageProficiency -> languageProficiency.getName()
             .equals(languageProficiencyDto.getName()))) {
       throw new LanguageProficiencyAlreadyExistException("Language proficiency already exists");
@@ -127,9 +109,21 @@ public class UserService {
 
     LanguageProficiency languageProficiency = languageProficiencyMapper.toEntity(
         languageProficiencyDto);
-    user.getLanguageProficiency().add(languageProficiency);
+    user.getLanguageProficiencies().add(languageProficiency);
     userRepository.save(user);
     return languageProficiencyMapper.toDto(languageProficiency);
+  }
+
+  /**
+   * Retrieves a user entity by ID.
+   *
+   * @param id the ID of the user to retrieve
+   * @return the user entity
+   * @throws UserNotFoundException if the user with the specified ID is not found
+   */
+  private User findUserById(long id) {
+    return userRepository.findById(id)
+        .orElseThrow(() -> new UserNotFoundException("The user not found with id " + id));
   }
 
 }

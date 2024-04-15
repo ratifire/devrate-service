@@ -64,6 +64,6 @@ public class User {
 
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "user_id", nullable = false)
-  private List<LanguageProficiency> languageProficiency;
+  private List<LanguageProficiency> languageProficiencies;
 
 }
