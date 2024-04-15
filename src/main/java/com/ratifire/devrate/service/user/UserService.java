@@ -127,5 +127,4 @@ public class UserService {
     return userRepository.findById(id)
         .orElseThrow(() -> new UserNotFoundException("The user not found with id " + id));
   }
-
 }
