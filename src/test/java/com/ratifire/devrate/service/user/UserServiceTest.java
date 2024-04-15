@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -23,6 +23,7 @@ import com.ratifire.devrate.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -44,70 +45,101 @@ class UserServiceTest {
   @Mock
   private UserRepository userRepository;
 
-  private long userId = 1L;
+  private final long userId = 1L;
+  private User testUser;
+  private UserDto testUserDto;
+
+  /**
+   * Setup method executed before each test method.
+   */
+  @BeforeEach
+  public void init() {
+    testUser = User.builder()
+        .id(userId)
+        .build();
+
+    testUserDto = UserDto.builder()
+        .id(userId)
+        .build();
+  }
+
 
   @Test
-  void whenFindById_UserNotFound_ThrowUserNotFoundException() {
-    when(userRepository.findById(userId)).thenReturn(Optional.empty());
+  void findUserById_UserExists_ReturnsUserDto() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(dataMapper.toDto(any(User.class))).thenReturn(testUserDto);
+
+    UserDto foundUser = userService.findById(userId);
+
+    assertEquals(foundUser, testUserDto);
+  }
+
+  @Test
+  void findUserById_UserNotFound_ThrowsUserNotFoundException() {
+    when(userRepository.findById(any())).thenReturn(Optional.empty());
 
     assertThrows(UserNotFoundException.class, () -> userService.findById(userId));
   }
 
   @Test
   void whenCreate_Successful_ReturnCreatedUser() {
-    UserDto userDto = UserDto.builder()
-        .id(userId)
-        .build();
-    User user = User.builder()
-        .id(userId)
-        .build();
+    when(dataMapper.toEntity(any(UserDto.class))).thenReturn(testUser);
+    when(userRepository.save(any())).thenReturn(testUser);
 
-    when(dataMapper.toEntity(userDto)).thenReturn(user);
-    when(userRepository.save(user)).thenReturn(user);
+    User createdUser = userService.create(testUserDto);
 
-    User createdUser = userService.create(userDto);
-
-    assertEquals(userDto.getId(), createdUser.getId());
-    verify(userRepository).save(user);
-    verify(dataMapper).toEntity(userDto);
+    assertEquals(testUserDto.getId(), createdUser.getId());
+    verify(userRepository).save(testUser);
+    verify(dataMapper).toEntity(testUserDto);
   }
 
   @Test
   void whenUpdate_UserNotFound_ThrowUserNotFoundException() {
-    UserDto userDto = UserDto.builder()
-        .id(userId)
-        .build();
-    when(userRepository.findById(userId)).thenReturn(Optional.empty());
+    when(userRepository.findById(any())).thenReturn(Optional.empty());
 
-    assertThrows(UserNotFoundException.class, () -> userService.update(userDto));
+    assertThrows(UserNotFoundException.class, () -> userService.update(testUserDto));
   }
 
   @Test
   void whenUpdate_Successful_ReturnCreatedUserDto() {
-    UserDto userDto = UserDto.builder()
-        .id(userId)
-        .build();
-    User user = new User();
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(dataMapper.updateEntity(any(UserDto.class), any(User.class))).thenReturn(testUser);
+    when(userRepository.save(any())).thenReturn(testUser);
+    when(dataMapper.toDto(any(User.class))).thenReturn(testUserDto);
 
-    when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-    when(dataMapper.updateEntity(any(), any())).thenReturn(user);
-    when(userRepository.save(user)).thenReturn(user);
-    when(dataMapper.toDto(user)).thenReturn(userDto);
+    UserDto updatedUserDto = userService.update(testUserDto);
 
-    UserDto updatedUserDto = userService.update(userDto);
-
-    assertEquals(userDto.getId(), updatedUserDto.getId());
+    assertEquals(testUserDto.getId(), updatedUserDto.getId());
     verify(userRepository).findById(userId);
-    verify(userRepository).save(user);
-    verify(dataMapper).updateEntity(userDto, user);
-    verify(dataMapper).toDto(user);
+    verify(userRepository).save(testUser);
+    verify(dataMapper).updateEntity(testUserDto, testUser);
+    verify(dataMapper).toDto(testUser);
+  }
+
+  @Test
+  void whenUpdate_Successful_ReturnCreatedUser() {
+    when(userRepository.save(any())).thenReturn(testUser);
+
+    User updatedUser = userService.updateUser(testUser);
+
+    assertEquals(userId, updatedUser.getId());
+    verify(userRepository, times(1)).save(testUser);
   }
 
   @Test
   void whenDelete_UserNotFound_ThrowUserNotFoundException() {
-    when(userRepository.findById(userId)).thenReturn(Optional.empty());
+    when(userRepository.findById(any())).thenReturn(Optional.empty());
 
     assertThrows(UserNotFoundException.class, () -> userService.delete(userId));
+  }
+
+  @Test
+  void delete_UserExists_DeletesUser() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+
+    userService.delete(userId);
+
+    verify(userRepository, times(1)).delete(testUser);
   }
 
   @Test
