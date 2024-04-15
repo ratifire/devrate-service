@@ -93,8 +93,8 @@ public class HandlerException {
   /**
    * Handles exceptions that extend SuperEmailException.
    *
-   * @param exception The SuperEmailException instance to handle
-   * @return ResponseEntity with appropriate HTTP status based on the type of exception
+   * @param exception The SuperEmailException instance to handle.
+   * @return ResponseEntity with appropriate HTTP status based on the type of exception.
    */
   @ExceptionHandler(SuperMailException.class)
   public ResponseEntity<?> handleMailExceptions(SuperMailException exception) {
