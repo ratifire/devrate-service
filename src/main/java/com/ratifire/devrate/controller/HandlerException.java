@@ -4,16 +4,15 @@ import com.ratifire.devrate.exception.InvalidCodeException;
 import com.ratifire.devrate.exception.MailConfirmationCodeException;
 import com.ratifire.devrate.exception.MailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.MailConfirmationCodeRequestException;
-import com.ratifire.devrate.exception.SuperAlreadyExistException;
-import com.ratifire.devrate.exception.SuperMailException;
-import com.ratifire.devrate.exception.SuperNotFoundException;
+import com.ratifire.devrate.exception.ResourceAlreadyExistException;
+import com.ratifire.devrate.exception.MailException;
+import com.ratifire.devrate.exception.ResourceNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.MailSendException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -67,27 +66,19 @@ public class HandlerException {
   }
 
   /**
-   * Handles exceptions that extend SuperNotFoundException by returning an HTTP status 400.
+   * Handles exceptions that extend ResourceNotFoundException by returning an HTTP status 400.
    */
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  @ExceptionHandler(SuperNotFoundException.class)
+  @ExceptionHandler(ResourceNotFoundException.class)
   public void handleNoFoundExceptions() {
   }
 
   /**
-   * Handles exceptions that extend SuperAlreadyExistException by returning an HTTP status 409.
+   * Handles exceptions that extend ResourceAlreadyExistException by returning an HTTP status 409.
    */
   @ResponseStatus(HttpStatus.CONFLICT)
-  @ExceptionHandler(SuperAlreadyExistException.class)
+  @ExceptionHandler(ResourceAlreadyExistException.class)
   public void handleAlreadyExistExceptions() {
-  }
-
-  /**
-   * Handles MailSendException by returning an HTTP status 400.
-   */
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
-  @ExceptionHandler(MailSendException.class)
-  public void handleMailSendException() {
   }
 
   /**
@@ -96,8 +87,8 @@ public class HandlerException {
    * @param exception The SuperEmailException instance to handle.
    * @return ResponseEntity with appropriate HTTP status based on the type of exception.
    */
-  @ExceptionHandler(SuperMailException.class)
-  public ResponseEntity<?> handleMailExceptions(SuperMailException exception) {
+  @ExceptionHandler(MailException.class)
+  public ResponseEntity<?> handleMailExceptions(MailException exception) {
     return switch (exception) {
       case MailConfirmationCodeRequestException ignored ->
           ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
