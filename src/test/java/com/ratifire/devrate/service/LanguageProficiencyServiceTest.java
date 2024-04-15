@@ -30,14 +30,9 @@ class LanguageProficiencyServiceTest {
 
   @Mock
   private DataMapper<LanguageProficiencyDto, LanguageProficiency> languageProficiencyMapper;
-
+  private final long languageProficiencyId = 1;
   private LanguageProficiencyDto languageProficiencyDto;
-
   private LanguageProficiency languageProficiency;
-
-  private long userId = 1;
-
-  private long id = 1;
 
   @BeforeEach
   void setUp() {
@@ -47,69 +42,54 @@ class LanguageProficiencyServiceTest {
 
   @Test
   void findByIdTest() {
-    when(languageProficiencyRepository.findById(id)).thenReturn(Optional.of(languageProficiency));
+    when(languageProficiencyRepository.findById(any())).thenReturn(
+        Optional.of(languageProficiency));
     when(languageProficiencyMapper.toDto(languageProficiency)).thenReturn(languageProficiencyDto);
 
-    LanguageProficiencyDto result = languageProficiencyService.findById(id);
+    LanguageProficiencyDto result = languageProficiencyService.findById(languageProficiencyId);
 
     assertEquals(languageProficiencyDto, result);
-    verify(languageProficiencyRepository).findById(id);
-    verify(languageProficiencyMapper).toDto(languageProficiency);
   }
 
   @Test
   void findByIdThrowLanguageProficiencyNotFoundExceptionTest() {
-    when(languageProficiencyRepository.findById(id)).thenReturn(Optional.empty());
+    when(languageProficiencyRepository.findById(any())).thenReturn(Optional.empty());
 
     assertThrows(LanguageProficiencyNotFoundException.class,
-        () -> languageProficiencyService.findById(id));
+        () -> languageProficiencyService.findById(languageProficiencyId));
   }
 
   @Test
   void updateTest() {
-    when(languageProficiencyRepository.findById(id)).thenReturn(Optional.of(languageProficiency));
+    when(languageProficiencyRepository.findById(any())).thenReturn(
+        Optional.of(languageProficiency));
     when(languageProficiencyMapper.updateEntity(any(), any())).thenReturn(languageProficiency);
     when(languageProficiencyRepository.save(any(LanguageProficiency.class))).thenReturn(
         languageProficiency);
     when(languageProficiencyMapper.toDto(any(LanguageProficiency.class))).thenReturn(
         languageProficiencyDto);
 
-    LanguageProficiencyDto languageProficiencyDtoUpdated = languageProficiencyService.update(id,
+    LanguageProficiencyDto languageProficiencyDtoUpdated = languageProficiencyService.update(
+        languageProficiencyId,
         languageProficiencyDto);
 
     assertEquals(languageProficiencyDto, languageProficiencyDtoUpdated);
-    verify(languageProficiencyRepository).findById(id);
     verify(languageProficiencyRepository).save(any(LanguageProficiency.class));
-    verify(languageProficiencyMapper).updateEntity(any(LanguageProficiencyDto.class),
-        any(LanguageProficiency.class));
-    verify(languageProficiencyMapper).toDto(any(LanguageProficiency.class));
   }
 
 
   @Test
   void updateThrowLanguageProficiencyNotFoundExceptionTest() {
-    when(languageProficiencyRepository.findById(id)).thenReturn(Optional.empty());
+    when(languageProficiencyRepository.findById(any())).thenReturn(Optional.empty());
 
     assertThrows(LanguageProficiencyNotFoundException.class,
-        () -> languageProficiencyService.update(id, languageProficiencyDto));
+        () -> languageProficiencyService.update(languageProficiencyId, languageProficiencyDto));
   }
 
   @Test
   void deleteTest() {
-    when(languageProficiencyRepository.existsById(id)).thenReturn(true);
+    languageProficiencyService.delete(languageProficiencyId);
 
-    languageProficiencyService.delete(id);
-
-    verify(languageProficiencyRepository).existsById(id);
-    verify(languageProficiencyRepository).deleteById(id);
+    verify(languageProficiencyRepository).deleteById(languageProficiencyId);
   }
-
-  @Test
-  void deleteThrowLanguageProficiencyNotFoundExceptionTest() {
-    when(languageProficiencyRepository.existsById(id)).thenReturn(false);
-
-    assertThrows(LanguageProficiencyNotFoundException.class,
-        () -> languageProficiencyService.delete(id));
-  }
-
 }

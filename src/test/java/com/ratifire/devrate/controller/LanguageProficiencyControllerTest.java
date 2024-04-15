@@ -2,14 +2,11 @@ package com.ratifire.devrate.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,29 +44,19 @@ class LanguageProficiencyControllerTest {
 
   @Autowired
   private ObjectMapper objectMapper;
-
-  private long languageProficiencyId = 1;
-
-  private long userId = 1;
-
+  private final long languageProficiencyId = 1;
   private LanguageProficiencyDto languageProficiencyDto;
-
-  private LanguageProficiencyDto languageProficiencyDtoUpdated;
+  private String content;
 
   @BeforeEach
-  public void setUp() {
+  public void setUp() throws Exception {
     languageProficiencyDto = LanguageProficiencyDto.builder()
         .id(languageProficiencyId)
         .name(LanguageProficiencyName.ENGLISH)
         .level(LanguageProficiencyLevel.INTERMEDIATE_B1)
         .build();
 
-    languageProficiencyDtoUpdated = LanguageProficiencyDto.builder()
-        .id(languageProficiencyId)
-        .name(LanguageProficiencyName.ENGLISH)
-        .level(LanguageProficiencyLevel.UPPER_INTERMEDIATE_B2)
-        .build();
-
+    content = objectMapper.writeValueAsString(languageProficiencyDto);
   }
 
   @Test
@@ -79,32 +66,20 @@ class LanguageProficiencyControllerTest {
         languageProficiencyDto);
     mockMvc.perform(get("/language-proficiencies/{id}", languageProficiencyId))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.name").value(languageProficiencyDto.getName().getCode()))
-        .andExpect(jsonPath("$.level").value(languageProficiencyDto.getLevel()
-            .toString()));
-    verify(languageProficiencyService, times(1)).findById(anyLong());
+        .andExpect(content().json(content));
   }
 
   @Test
   @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
   void updateTest() throws Exception {
-    String requestBody = objectMapper.writeValueAsString(languageProficiencyDtoUpdated);
     when(
         languageProficiencyService.update(anyLong(), any(LanguageProficiencyDto.class)))
-        .thenReturn(languageProficiencyDtoUpdated);
+        .thenReturn(languageProficiencyDto);
     mockMvc.perform(put("/language-proficiencies/{id}", languageProficiencyId)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(requestBody))
+            .content(content))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.name").value(languageProficiencyDtoUpdated.getName()
-            .getCode()))
-        .andExpect(jsonPath("$.level").value(languageProficiencyDtoUpdated.getLevel()
-            .toString()));
-    verify(languageProficiencyService, times(1)).update(anyLong(),
-        any(LanguageProficiencyDto.class));
-
+        .andExpect(content().json(content));
   }
 
   @Test
@@ -113,5 +88,4 @@ class LanguageProficiencyControllerTest {
     mockMvc.perform(delete("/language-proficiencies/{id}", languageProficiencyId))
         .andExpect(status().isOk());
   }
-
 }

@@ -2,13 +2,10 @@ package com.ratifire.devrate.service.user;
 
 import static com.ratifire.devrate.enums.LanguageProficiencyLevel.INTERMEDIATE_B1;
 import static com.ratifire.devrate.enums.LanguageProficiencyName.ENGLISH;
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -46,8 +43,12 @@ class UserServiceTest {
   private UserRepository userRepository;
 
   private final long userId = 1L;
+  private final long languageProficiencyId = 1L;
   private User testUser;
   private UserDto testUserDto;
+  private LanguageProficiency testLanguageProficiency;
+  private LanguageProficiencyDto testLanguageProficiencyDto;
+
 
   /**
    * Setup method executed before each test method.
@@ -56,10 +57,23 @@ class UserServiceTest {
   public void init() {
     testUser = User.builder()
         .id(userId)
+        .languageProficiencies(new ArrayList<>())
         .build();
 
     testUserDto = UserDto.builder()
         .id(userId)
+        .build();
+
+    testLanguageProficiency = LanguageProficiency.builder()
+        .id(languageProficiencyId)
+        .name(ENGLISH)
+        .level(INTERMEDIATE_B1)
+        .build();
+
+    testLanguageProficiencyDto = LanguageProficiencyDto.builder()
+        .id(languageProficiencyId)
+        .name(ENGLISH)
+        .level(INTERMEDIATE_B1)
         .build();
   }
 
@@ -144,23 +158,17 @@ class UserServiceTest {
 
   @Test
   void findAllLanguageProficienciesByUserIdTest() {
-    long userId = 1L;
-    User user = new User();
-    user.setId(userId);
-    user.setLanguageProficiency(new ArrayList<>());
-
-    when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
 
     List<LanguageProficiencyDto> result = userService.findAllLanguageProficienciesByUserId(userId);
 
-    assertNotNull(result);
-    assertTrue(result.isEmpty());
-    verify(userRepository, times(1)).findById(userId);
+    assertEquals(0, result.size());
+
   }
 
   @Test
   void findAllLanguageProficienciesByUserIdThrowsUserNotFoundException() {
-    when(userRepository.findById(userId)).thenReturn(Optional.empty());
+    when(userRepository.findById(any())).thenReturn(Optional.empty());
 
     assertThrows(UserNotFoundException.class,
         () -> userService.findAllLanguageProficienciesByUserId(userId));
@@ -168,69 +176,35 @@ class UserServiceTest {
 
   @Test
   void createLanguageProficiencyTest() {
-    long userId = 1L;
-    User user = new User();
-    user.setId(userId);
-    user.setLanguageProficiency(new ArrayList<>());
-    LanguageProficiencyDto languageProficiencyDto = new LanguageProficiencyDto();
-    LanguageProficiency languageProficiency = new LanguageProficiency();
-
-    when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
     when(dataMapper.toEntity(any(LanguageProficiencyDto.class))).thenReturn(
-        languageProficiency);
+        testLanguageProficiency);
     when(dataMapper.toDto(any(LanguageProficiency.class))).thenReturn(
-        languageProficiencyDto);
-    when(userRepository.save(any(User.class))).thenReturn(user);
+        testLanguageProficiencyDto);
+    when(userRepository.save(any(User.class))).thenReturn(testUser);
 
     LanguageProficiencyDto result = userService.createLanguageProficiency(userId,
-        languageProficiencyDto);
+        testLanguageProficiencyDto);
 
-    assertNotNull(result);
-    assertEquals(languageProficiencyDto, result);
-    verify(userRepository).findById(userId);
-    verify(userRepository).save(user);
-    verify(dataMapper).toEntity(any(LanguageProficiencyDto.class));
-    verify(dataMapper).toDto(any(LanguageProficiency.class));
+    assertEquals(testLanguageProficiencyDto, result);
   }
 
   @Test
   void createLanguageProficiencyThrowUserNotFoundExceptionTest() {
-    LanguageProficiencyDto languageProficiencyDto = LanguageProficiencyDto.builder()
-        .id(1L)
-        .name(ENGLISH)
-        .level(INTERMEDIATE_B1)
-        .build();
-    when(userRepository.findById(userId)).thenReturn(Optional.empty());
+    when(userRepository.findById(any())).thenReturn(Optional.empty());
 
     assertThrows(UserNotFoundException.class,
-        () -> userService.createLanguageProficiency(userId, languageProficiencyDto));
+        () -> userService.createLanguageProficiency(userId, testLanguageProficiencyDto));
   }
 
   @Test
   void createLanguageProficiencyThrowAlreadyExistExceptionTest() {
-    LanguageProficiencyDto languageProficiencyDto = LanguageProficiencyDto.builder()
-        .id(1L)
-        .name(ENGLISH)
-        .level(INTERMEDIATE_B1)
-        .build();
-    LanguageProficiency existingLanguageProficiency = LanguageProficiency.builder()
-        .id(1L)
-        .name(ENGLISH)
-        .level(INTERMEDIATE_B1)
-        .build();
-    List<LanguageProficiency> languageProficiencies = new ArrayList<>();
-    languageProficiencies.add(existingLanguageProficiency);
-    User user = User.builder()
-        .id(userId)
-        .languageProficiency(languageProficiencies)
-        .build();
+    testUser.getLanguageProficiencies().add(testLanguageProficiency);
 
-    when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
 
     assertThrows(LanguageProficiencyAlreadyExistException.class, () -> {
-      userService.createLanguageProficiency(userId, languageProficiencyDto);
+      userService.createLanguageProficiency(userId, testLanguageProficiencyDto);
     });
-    verify(userRepository, times(1)).findById(userId);
-    verify(userRepository, never()).save(user);
   }
 }

@@ -55,10 +55,9 @@ class UserControllerTest {
 
   @MockBean
   private UserDetailsService userDetailsService;
-
   private UserDto userDto;
-
   private LanguageProficiencyDto languageProficiencyDto;
+  private List<LanguageProficiencyDto> proficiencies;
 
   @BeforeEach
   public void setUp() {
@@ -79,6 +78,11 @@ class UserControllerTest {
         .name(ENGLISH)
         .level(INTERMEDIATE_B1)
         .build();
+
+    proficiencies = Arrays.asList(
+        new LanguageProficiencyDto(1L, ENGLISH, NATIVE),
+        new LanguageProficiencyDto(2L, UKRAINE, INTERMEDIATE_B1)
+    );
   }
 
   @Test
@@ -134,39 +138,25 @@ class UserControllerTest {
   @Test
   @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
   void createLanguageProficiencyTest() throws Exception {
-    String requestBody = objectMapper.writeValueAsString(languageProficiencyDto);
+    String content = objectMapper.writeValueAsString(languageProficiencyDto);
     when(
         userService.createLanguageProficiency(anyLong(), any(LanguageProficiencyDto.class)))
         .thenReturn(languageProficiencyDto);
     mockMvc.perform(post("/users/{userId}/language-proficiencies", USER_ID)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(requestBody))
+            .content(content))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.name").value(languageProficiencyDto.getName().getCode()))
-        .andExpect(jsonPath("$.level").value(languageProficiencyDto.getLevel()
-            .toString()));
-    verify(userService, times(1)).createLanguageProficiency(anyLong(),
-        any(LanguageProficiencyDto.class));
+        .andExpect(content().json(content));
   }
 
   @Test
   @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
   void findAllLanguageProficienciesByUserIdTest() throws Exception {
-    List<LanguageProficiencyDto> proficiencies = Arrays.asList(
-        new LanguageProficiencyDto(1L, ENGLISH, NATIVE),
-        new LanguageProficiencyDto(2L, UKRAINE, INTERMEDIATE_B1)
-    );
+    String expectedContent = objectMapper.writeValueAsString(proficiencies);
     when(userService.findAllLanguageProficienciesByUserId(USER_ID)).thenReturn(proficiencies);
     mockMvc.perform(get("/users/{userId}/language-proficiencies", USER_ID))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$[0].name").value(ENGLISH.getCode()))
-        .andExpect(jsonPath("$[0].level").value(NATIVE.toString()))
-        .andExpect(jsonPath("$[1].name").value(UKRAINE.getCode()))
-        .andExpect(jsonPath("$[1].level").value(INTERMEDIATE_B1.toString()));
-    verify(userService, times(1))
-        .findAllLanguageProficienciesByUserId(USER_ID);
+        .andExpect(content().json(expectedContent));
   }
 
 }
