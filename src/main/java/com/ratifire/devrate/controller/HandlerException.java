@@ -1,11 +1,13 @@
 package com.ratifire.devrate.controller;
 
+import com.ratifire.devrate.exception.EducationNotFoundException;
+import com.ratifire.devrate.exception.InvalidCodeException;
 import com.ratifire.devrate.exception.MailConfirmationCodeException;
 import com.ratifire.devrate.exception.MailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.MailConfirmationCodeRequestException;
-import com.ratifire.devrate.exception.InvalidCodeException;
-import com.ratifire.devrate.exception.SuperNotFoundException;
+import com.ratifire.devrate.exception.SuperAlreadyExistException;
 import com.ratifire.devrate.exception.SuperMailException;
+import com.ratifire.devrate.exception.SuperNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
@@ -71,6 +73,14 @@ public class HandlerException {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(SuperNotFoundException.class)
   public void handleNoFoundExceptions() {
+  }
+
+  /**
+   * Handles exceptions that extend SuperAlreadyExistException by returning an HTTP status 409.
+   */
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ExceptionHandler(SuperAlreadyExistException.class)
+  public void handleAlreadyExistExceptions() {
   }
 
   /**
