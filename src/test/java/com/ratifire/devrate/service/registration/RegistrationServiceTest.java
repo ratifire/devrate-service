@@ -108,11 +108,6 @@ public class RegistrationServiceTest {
     String testEmail = "test@gmail.com";
     String testPassword = "somepassword";
 
-    UserRegistrationDto testUserRegistrationDto = UserRegistrationDto.builder()
-        .email(testEmail)
-        .password(testPassword)
-        .build();
-
     UserSecurity testUserSecurity = UserSecurity.builder()
         .email("test@gmail.com")
         .build();
@@ -124,7 +119,6 @@ public class RegistrationServiceTest {
     when(roleService.getDefaultRole()).thenReturn(testRole);
     when(userSecurityService.save(any())).thenReturn(testUserSecurity);
     when(userMapper.toEntity(any(UserRegistrationDto.class))).thenReturn(testUserSecurity);
-    when(userMapper.toDto(any(UserSecurity.class))).thenReturn(testUserRegistrationDto);
     when(userService.create(any(UserDto.class))).thenReturn(new User());
 
     when(registrationService.isUserExistByEmail(any())).thenReturn(false);
@@ -132,9 +126,13 @@ public class RegistrationServiceTest {
         .thenReturn(EmailConfirmationCode.builder().build());
     doNothing().when(emailService).sendEmail(any(), anyBoolean());
 
-    UserRegistrationDto expected = registrationService.registerUser(testUserRegistrationDto);
+    UserRegistrationDto testUserRegistrationDto = UserRegistrationDto.builder()
+        .email(testEmail)
+        .password(testPassword)
+        .build();
 
-    assertEquals(expected, testUserRegistrationDto);
+    registrationService.registerUser(testUserRegistrationDto);
+
     verify(emailConfirmationCodeService, times(1)).save(anyLong());
     verify(userService, times(1)).create(any(UserDto.class));
     verify(emailService, times(1)).sendEmail(any(), anyBoolean());

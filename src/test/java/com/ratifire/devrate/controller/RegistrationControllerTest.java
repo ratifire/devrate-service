@@ -71,9 +71,7 @@ public class RegistrationControllerTest {
    */
   @Test
   public void testSignUpShouldReturnOk() throws Exception {
-    UserRegistrationDto testDto = UserRegistrationDto.builder().build();
-
-    Mockito.when(registrationService.registerUser(any())).thenReturn(testDto);
+    Mockito.doNothing().when(registrationService).registerUser(any());
 
     mockMvc.perform(post(END_POINT_PATH)
             .contentType("application/json")

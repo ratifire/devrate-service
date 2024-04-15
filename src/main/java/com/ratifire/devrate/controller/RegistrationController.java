@@ -29,12 +29,10 @@ public class RegistrationController {
    * user.
    *
    * @param userRegistrationDto DTO containing new user's details such as username, password, etc.
-   * @return The registered User entity if successful, or null if the registration fails.
    */
   @PostMapping
-  public UserRegistrationDto registerUser(
-      @RequestBody @Valid UserRegistrationDto userRegistrationDto) {
-    return registrationService.registerUser(userRegistrationDto);
+  public void registerUser(@RequestBody @Valid UserRegistrationDto userRegistrationDto) {
+    registrationService.registerUser(userRegistrationDto);
   }
 
   /**
