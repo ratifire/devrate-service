@@ -104,7 +104,9 @@ public class UserService {
     if (user.getLanguageProficiencies().stream()
         .anyMatch(languageProficiency -> languageProficiency.getName()
             .equals(languageProficiencyDto.getName()))) {
-      throw new LanguageProficiencyAlreadyExistException("Language proficiency already exists");
+      throw new LanguageProficiencyAlreadyExistException(
+          "The language proficiency with name" + languageProficiencyDto.getName()
+              + "already exists");
     }
 
     LanguageProficiency languageProficiency = languageProficiencyMapper.toEntity(
