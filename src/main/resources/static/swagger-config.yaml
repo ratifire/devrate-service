@@ -61,34 +61,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /notify/{login}:
-    post:
-      tags:
-        - Notification
-      summary: Send a notification to a specific user
-      description: Sends a notification to a specific user identified by their login
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Notification'
-      parameters:
-        - in: path
-          name: login
-          required: true
-          schema:
-            type: string
-          description: The login of the user to send the notification to
-      responses:
-        '200':
-          description: Notification sent successfully
-        '400':
-          description: Bad request, invalid parameters
-        '404':
-          description: User not found
-        '500':
-          description: Internal server error
   /auth/signup/{code}:
     put:
       tags:
@@ -242,6 +214,70 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /notifications:
+    patch:
+      tags:
+        - Notification
+      summary: Mark Notification as Read
+      description: Marks a notification as read for a given user.
+      operationId: markAsRead
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: integer
+            description: The ID of the user associated with the notification.
+        - in: query
+          name: notificationId
+          required: true
+          schema:
+            type: integer
+            description: The ID of the notification to be marked as read.
+      responses:
+        '200':
+          description: Notification marked as read successfully.
+    delete:
+      tags:
+        - Notification
+      summary: Delete Notification
+      description: Deletes a notification for a given user.
+      operationId: delete
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: integer
+            description: The ID of the user associated with the notification.
+        - in: query
+          name: notificationId
+          required: true
+          schema:
+            type: integer
+            description: The ID of the notification to be deleted.
+      responses:
+        '200':
+          description: Notification deleted successfully.
+  /ws/notifications:
+    get:
+      tags:
+        - Notification
+      summary: Connect to WebSocket notifications
+      description: Establish a WebSocket connection to receive real-time notifications.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationDto'
+        '401':
+          description: Unauthorized, e.g., invalid email or password
           content:
             application/json:
               schema:
@@ -843,12 +879,31 @@ components:
         message:
           type: string
           description: The error message
-    Notification:
+    NotificationActionDto:
       type: object
       properties:
+        notificationId:
+          type: integer
+          description: ID of the notification
+        action:
+          type: string
+          description: Action to be performed on the notification (allowed only "read", "delete")
+    NotificationDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID of the notification
         text:
           type: string
-          description: The text of the notification
+          maxLength: 100
+          description: Text content of the notification
+        read:
+          type: boolean
+          description: Indicates whether the notification has been read
+        userId:
+          type: integer
+          description: ID of the user to whom the notification belongs
     LoginDto:
       type: object
       properties:

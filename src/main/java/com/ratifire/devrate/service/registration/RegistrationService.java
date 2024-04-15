@@ -9,6 +9,7 @@ import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserSecurityAlreadyExistException;
 import com.ratifire.devrate.mapper.DataMapper;
+import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.RoleService;
 import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.email.EmailService;
@@ -29,21 +30,14 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RegistrationService {
 
-  private static final long CONFIRM_CODE_EXPIRATION_HOURS  = 24;
-  /**
-   * Service responsible for user management operations.
-   */
+  private static final long CONFIRM_CODE_EXPIRATION_HOURS = 24;
   private final UserSecurityService userSecurityService;
-
   private final RoleService roleService;
-
   private final DataMapper<UserRegistrationDto, UserSecurity> userMapper;
-
   private final EmailConfirmationCodeService emailConfirmationCodeService;
-
   private final EmailService emailService;
-
   private final UserService userService;
+  private final NotificationService notificationService;
 
   /**
    * Checks if a user security with the given email address exists.
@@ -87,7 +81,7 @@ public class RegistrationService {
     UserSecurity userSecurity = userSecurityService.save(entity);
 
     EmailConfirmationCode savedEmailConfirmationCode =
-            emailConfirmationCodeService.save(userSecurity.getId());
+        emailConfirmationCodeService.save(userSecurity.getId());
 
     SimpleMailMessage confirmationMessage = emailConfirmationCodeService
         .createMessage(userSecurity.getEmail(), savedEmailConfirmationCode.getCode());
@@ -96,8 +90,8 @@ public class RegistrationService {
   }
 
   /**
-   * Checks if the provided confirmation code matches the stored confirmation code for the
-   * user and marks the user as verified if the codes match.
+   * Checks if the provided confirmation code matches the stored confirmation code for the user and
+   * marks the user as verified if the codes match.
    *
    * @param confirmationCode The confirmation code provided by the user.
    * @return The ID of the user whose registration has been confirmed
@@ -130,6 +124,7 @@ public class RegistrationService {
 
     emailConfirmationCodeService.deleteConfirmedCode(emailConfirmationCode.getId());
 
+    notificationService.addGreetingNotification(userSecurity.getUser());
     return userSecurity.getId();
   }
 }

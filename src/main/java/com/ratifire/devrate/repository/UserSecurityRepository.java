@@ -15,4 +15,6 @@ public interface UserSecurityRepository extends JpaRepository<UserSecurity, Long
   boolean existsByEmail(String email);
 
   Optional<UserSecurity> findByEmail(String email);
+
+  Optional<UserSecurity> findByUserId(long id);
 }
