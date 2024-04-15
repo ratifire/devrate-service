@@ -1,6 +1,5 @@
 package com.ratifire.devrate.controller;
 
-import com.ratifire.devrate.exception.EducationNotFoundException;
 import com.ratifire.devrate.exception.InvalidCodeException;
 import com.ratifire.devrate.exception.MailConfirmationCodeException;
 import com.ratifire.devrate.exception.MailConfirmationCodeExpiredException;
