@@ -197,7 +197,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LoginDto'
+                $ref: '#/components/schemas/UserDto'
         '400':
           description: Bad request, e.g., missing or invalid parameters
           content:
