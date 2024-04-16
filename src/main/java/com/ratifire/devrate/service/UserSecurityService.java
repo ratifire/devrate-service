@@ -1,17 +1,9 @@
 package com.ratifire.devrate.service;
 
-import com.ratifire.devrate.dto.LoginDto;
-import com.ratifire.devrate.dto.UserDto;
-import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.UserSecurityNotFoundException;
-import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.UserSecurityRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +16,6 @@ import org.springframework.stereotype.Service;
 public class UserSecurityService {
 
   private final UserSecurityRepository userSecurityRepository;
-  private final AuthenticationManager authenticationManager;
-  private final DataMapper<UserDto, User> userMapper;
 
   /**
    * Checks if a user security with the given email exists in the system.
@@ -82,22 +72,5 @@ public class UserSecurityService {
    */
   public UserSecurity findByEmail(String email) throws UsernameNotFoundException {
     return userSecurityRepository.findByEmail(email).orElseThrow();
-  }
-
-  /**
-   * Authenticates a user based on the provided login credentials.
-   *
-   * @param loginDto The data transfer object containing the user's login information.
-   * @return A UserDto object representing the authenticated user.
-   */
-  public UserDto authenticate(LoginDto loginDto) {
-    String login = loginDto.getEmail();
-    String password = loginDto.getPassword();
-
-    Authentication authentication = authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(login, password));
-
-    SecurityContextHolder.getContext().setAuthentication(authentication);
-    return userMapper.toDto(findByEmail(login).getUser());
   }
 }

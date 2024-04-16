@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.dto.LoginDto;
 import com.ratifire.devrate.dto.UserDto;
-import com.ratifire.devrate.service.UserSecurityService;
+import com.ratifire.devrate.service.LoginService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,7 +31,7 @@ public class LoginControllerTest {
   private MockMvc mockMvc;
 
   @MockBean
-  private UserSecurityService userSecurityService;
+  private LoginService loginService;
 
   @Autowired
   private ObjectMapper objectMapper;
@@ -45,7 +45,7 @@ public class LoginControllerTest {
         .id(123L)
         .build();
 
-    when(userSecurityService.authenticate(any())).thenReturn(expectedUserDto);
+    when(loginService.authenticate(any())).thenReturn(expectedUserDto);
 
     UserDto resultUserDto = objectMapper.readValue(
         mockMvc.perform(post(END_POINT_PATH)

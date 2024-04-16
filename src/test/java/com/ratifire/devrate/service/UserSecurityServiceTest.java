@@ -10,12 +10,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ratifire.devrate.dto.LoginDto;
-import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.UserSecurityNotFoundException;
-import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.UserSecurityRepository;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -24,8 +21,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
 
 /**
  * Test class for the {@link UserSecurityService}.
@@ -38,15 +33,6 @@ public class UserSecurityServiceTest {
 
   @Mock
   private UserSecurityRepository userSecurityRepository;
-
-  @Mock
-  private Authentication authentication;
-
-  @Mock
-  private AuthenticationManager authenticationManager;
-
-  @Mock
-  private DataMapper<UserDto, User> userMapper;
 
   @InjectMocks
   private UserSecurityService userSecurityService;
@@ -159,32 +145,5 @@ public class UserSecurityServiceTest {
 
     assertEquals(email, result.getEmail());
     verify(userSecurityRepository, times(1)).findByEmail(email);
-  }
-
-  @Test
-  void authenticate() {
-    String email = "test@example.com";
-    String password = "password";
-    LoginDto loginDto = LoginDto.builder()
-        .email(email)
-        .password(password)
-        .build();
-
-    User user = User.builder().build();
-    UserDto expectedDto = UserDto.builder().build();
-
-    UserSecurity userSecurity = UserSecurity.builder()
-        .email(email)
-        .password(password)
-        .user(user)
-        .build();
-
-    when(authenticationManager.authenticate(any())).thenReturn(authentication);
-    when(userSecurityRepository.findByEmail(any())).thenReturn(Optional.of(userSecurity));
-    when(userMapper.toDto(any(User.class))).thenReturn(expectedDto);
-
-    UserDto resultDto = userSecurityService.authenticate(loginDto);
-
-    assertEquals(expectedDto, resultDto);
   }
 }
