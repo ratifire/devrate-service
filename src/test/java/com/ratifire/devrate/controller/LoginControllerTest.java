@@ -56,6 +56,6 @@ public class LoginControllerTest {
             .getResponse()
             .getContentAsString(), UserDto.class);
 
-    assertEquals(expectedUserDto.getId(), resultUserDto.getId());
+    assertEquals(expectedUserDto, resultUserDto);
   }
 }
