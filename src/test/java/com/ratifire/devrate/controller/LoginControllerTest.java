@@ -40,21 +40,19 @@ public class LoginControllerTest {
   void authenticateUser() throws Exception {
     String testEmail = "test@example.com";
     LoginDto loginDto = LoginDto.builder().email(testEmail).build();
-    String requestBody = objectMapper.writeValueAsString(loginDto);
-    UserDto expectedUserDto = UserDto.builder()
-        .id(123L)
-        .build();
+    UserDto expectedUserDto = UserDto.builder().id(123L).build();
 
     when(loginService.authenticate(any())).thenReturn(expectedUserDto);
 
-    UserDto resultUserDto = objectMapper.readValue(
-        mockMvc.perform(post(END_POINT_PATH)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-            .andExpect(status().isOk())
-            .andReturn()
-            .getResponse()
-            .getContentAsString(), UserDto.class);
+    String responseAsString = mockMvc.perform(post(END_POINT_PATH)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(loginDto)))
+        .andExpect(status().isOk())
+        .andReturn()
+        .getResponse()
+        .getContentAsString();
+
+    UserDto resultUserDto = objectMapper.readValue(responseAsString, UserDto.class);
 
     assertEquals(expectedUserDto, resultUserDto);
   }
