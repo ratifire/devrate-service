@@ -2,7 +2,6 @@ package com.ratifire.devrate.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.util.List;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -39,8 +38,4 @@ public class UserDto {
   private boolean subscribed;
 
   private String description;
-
-  private List<ContactDto> contacts;
-
-  private List<EducationDto> educations;
 }
