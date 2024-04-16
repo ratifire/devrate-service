@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserSecurityService {
 
+  /**
+   * Repository for accessing user security data in the database.
+   */
   private final UserSecurityRepository userSecurityRepository;
 
   /**
