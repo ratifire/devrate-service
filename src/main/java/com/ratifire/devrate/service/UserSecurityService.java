@@ -48,8 +48,22 @@ public class UserSecurityService {
    */
   public UserSecurity getById(long id) {
     return userSecurityRepository.findById(id)
-            .orElseThrow(() -> new UserSecurityNotFoundException("The user security cannot be "
-                + "found."));
+        .orElseThrow(() -> new UserSecurityNotFoundException("The user security cannot be "
+            + "found."));
+  }
+
+  /**
+   * Retrieves user security information by user ID.
+   *
+   * @param userId The ID of the user.
+   * @return The UserSecurity object associated with the provided user ID.
+   * @throws UserSecurityNotFoundException If the user security information cannot be found for the
+   *                                       given user ID.
+   */
+  public UserSecurity getByUserId(long userId) {
+    return userSecurityRepository.findByUserId(userId)
+        .orElseThrow(() -> new UserSecurityNotFoundException("The user security cannot be "
+            + "found."));
   }
 
   /**
