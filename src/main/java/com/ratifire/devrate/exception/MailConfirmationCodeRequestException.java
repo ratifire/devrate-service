@@ -6,7 +6,6 @@ package com.ratifire.devrate.exception;
  * code.
  */
 public class MailConfirmationCodeRequestException extends MailException {
-
   public MailConfirmationCodeRequestException(String message) {
     super(message);
   }

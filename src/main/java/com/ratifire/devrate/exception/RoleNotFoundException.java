@@ -5,7 +5,6 @@ package com.ratifire.devrate.exception;
  * the specified role could not be found in the database.
  */
 public class RoleNotFoundException extends ResourceNotFoundException {
-
   public RoleNotFoundException(String message) {
     super(message);
   }

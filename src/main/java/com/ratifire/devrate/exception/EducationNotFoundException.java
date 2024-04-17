@@ -5,7 +5,6 @@ package com.ratifire.devrate.exception;
  * that the specified education could not be found in the database.
  */
 public class EducationNotFoundException extends ResourceNotFoundException {
-
   public EducationNotFoundException(String message) {
     super(message);
   }

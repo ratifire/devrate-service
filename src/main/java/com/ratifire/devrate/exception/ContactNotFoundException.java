@@ -11,5 +11,4 @@ public class ContactNotFoundException extends ResourceNotFoundException {
   public ContactNotFoundException(long id) {
     super(String.format(MESSAGE_NOT_FOUND_FORMAT, id));
   }
-
 }
