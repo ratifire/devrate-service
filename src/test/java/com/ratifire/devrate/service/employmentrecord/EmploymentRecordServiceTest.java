@@ -32,16 +32,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class EmploymentRecordServiceTest {
 
-  @InjectMocks
-  private EmploymentRecordService employmentRecordService;
   @Mock
   private EmploymentRecordRepository employmentRecordRepository;
   @Mock
-  private DataMapper<EmploymentRecordDto, EmploymentRecord> mapper;
-  private EmploymentRecordDto employmentRecordDto;
-  private EmploymentRecord employmentRecord;
-  @Mock
   private DataMapper<EmploymentRecordDto, EmploymentRecord> employmentRecordMapper;
+  @InjectMocks
+  private EmploymentRecordService employmentRecordService;
+  private EmploymentRecordDto employmentRecordDto;
+  @Mock
+  private EmploymentRecord employmentRecord;
+
 
   /**
    * Setup method executed before each test method.
@@ -97,7 +97,7 @@ public class EmploymentRecordServiceTest {
 
   @Test
   public void updateTest() {
-    when(mapper.toDto(any(EmploymentRecord.class))).thenReturn(employmentRecordDto);
+    when(employmentRecordMapper.toDto(any(EmploymentRecord.class))).thenReturn(employmentRecordDto);
     when(employmentRecordRepository.findById(anyLong())).thenReturn(
         Optional.of(new EmploymentRecord()));
     when(employmentRecordRepository.save(any())).thenReturn(new EmploymentRecord());
