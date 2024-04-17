@@ -5,8 +5,8 @@ package com.ratifire.devrate.exception;
  */
 public class EmploymentRecordNotFoundException extends RuntimeException {
 
-  public EmploymentRecordNotFoundException(String massage) {
-    super(massage);
+  public EmploymentRecordNotFoundException(String message) {
+    super(message);
   }
 
 }

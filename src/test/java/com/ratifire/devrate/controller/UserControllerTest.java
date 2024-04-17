@@ -7,15 +7,20 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.configuration.SecurityConfiguration;
+import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.service.employmentrecord.EmploymentRecordService;
 import com.ratifire.devrate.service.user.UserService;
+import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +30,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -49,6 +55,11 @@ class UserControllerTest {
   private UserDetailsService userDetailsService;
 
   private UserDto userDto;
+  @MockBean
+  private EmploymentRecordService employmentRecordService;
+  @MockBean
+  private EmploymentRecordDto employmentRecordDto;
+
 
   @BeforeEach
   public void setUp() {
@@ -113,5 +124,29 @@ class UserControllerTest {
   void deleteTest() throws Exception {
     mockMvc.perform(delete("/users/{id}", USER_ID))
         .andExpect(status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "Maksim Matveychuk", roles = {"USER", "ADMIN"})
+  public void getByIdTest() throws Exception {
+    when(employmentRecordService.getEmploymentRecordsByUserId(anyLong())).thenReturn(
+        Collections.singletonList(employmentRecordDto));
+    mockMvc.perform(get("/users/{userId}/employment-records", 1))
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andDo(print());
+  }
+
+  @Test
+  public void createEmploymentRecordTest() throws Exception {
+    EmploymentRecordDto employmentRecordDto1 = employmentRecordDto;
+    when(employmentRecordService.createEmploymentRecord(employmentRecordDto, 8883L)).thenReturn(
+        employmentRecordDto1);
+    mockMvc.perform(post("/users/{userId}/employment-records", 1)
+            .with(SecurityMockMvcRequestPostProcessors.user("Maksim Matveychuk").roles("USER"))
+            .with(SecurityMockMvcRequestPostProcessors.csrf())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(employmentRecordDto1)))
+        .andExpect(jsonPath("$").isNotEmpty())
+        .andDo(print());
   }
 }

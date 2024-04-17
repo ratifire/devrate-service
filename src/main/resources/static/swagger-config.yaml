@@ -659,10 +659,82 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /user/{userId}/employment-record:
+  /users/{userId}/employment-records:
     get:
       tags:
-        - employment record
+        - employment records
+      summary: Get Employment record By UserId
+      description: Retrieves all user`s employment records based on the provided UserId.
+      operationId: findByUserId
+      parameters:
+        - in: path
+          name: userId
+          description: The userId of the employment record to retrieve.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The employment record corresponding to the provided userId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmploymentRecordDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+        - employment records
+      summary: Create New Employment Records
+      description: Creates a new employment record for a specified user.
+      operationId: createEmploymentRecord
+      parameters:
+        - in: path
+          name: userId
+          description: The ID of the user for whom the employment record is being created.
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmploymentRecordDto'
+      responses:
+        '200':
+          description: The created employment records
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmploymentRecordDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /employment-record/{id}:
+    get:
+      tags:
+        - employment records
       summary: Get Employment record By UserId
       description: Retrieves all user`s employment records based on the provided UserId.
       operationId: findByUserId
@@ -695,7 +767,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
-        - employment record
+        - employment records
       summary: Update employment-record By ID
       description: Updates an existing employment-record identified by the provided ID.
       operationId: update
@@ -732,48 +804,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-    post:
-      tags:
-        - employment record
-      summary: Create New Employment Record
-      description: Creates a new employment record for a specified user.
-      operationId: createEmploymentRecord
-      parameters:
-        - in: path
-          name: userId
-          description: The ID of the user for whom the employment record is being created.
-          required: true
-          schema:
-            type: integer
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/EmploymentRecordDto'
-      responses:
-        '200':
-          description: The created employment record
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EmploymentRecordDto'
-        '400':
-          description: Bad request, e.g., missing or invalid parameters
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Internal server error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-  /user/{userId}/employment-record/{id}:
     delete:
       tags:
-        - employment record
+        - employment records
       summary: Delete Employment Record By ID
       description: Deletes an employment record identified by the provided ID.
       operationId: delete

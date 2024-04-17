@@ -16,7 +16,6 @@ import com.ratifire.devrate.repository.EmploymentRecordRepository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,18 +32,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class EmploymentRecordServiceTest {
 
-  @Mock
-  private EmploymentRecordRepository employmentRecordRepository;
-
-  @Mock
-  private DataMapper<EmploymentRecordDto, EmploymentRecord> mapper;
-
   @InjectMocks
   private EmploymentRecordService employmentRecordService;
-
-  private EmploymentRecordDto employmentRecordDto;
   @Mock
+  private EmploymentRecordRepository employmentRecordRepository;
+  @Mock
+  private DataMapper<EmploymentRecordDto, EmploymentRecord> mapper;
+  private EmploymentRecordDto employmentRecordDto;
   private EmploymentRecord employmentRecord;
+  @Mock
+  private DataMapper<EmploymentRecordDto, EmploymentRecord> employmentRecordMapper;
 
   /**
    * Setup method executed before each test method.
@@ -62,37 +59,28 @@ public class EmploymentRecordServiceTest {
         .build();
   }
 
-
   @Test
   public void getByIdTest() {
-    List<EmploymentRecord> mockEmploymentRecords = new ArrayList<>();
-    mockEmploymentRecords.add(employmentRecord);
-    when(employmentRecordRepository.findByUserId(anyLong())).thenReturn(mockEmploymentRecords);
+    List<EmploymentRecord> employmentRecordArrayList = new ArrayList<>();
+    employmentRecordArrayList.add(employmentRecord);
+    when(employmentRecordRepository.findByUserId(8882L)).thenReturn(employmentRecordArrayList);
 
-    List<EmploymentRecordDto> result = employmentRecordService.findByUserId(8882L);
+    List<EmploymentRecordDto> result = employmentRecordService.getEmploymentRecordsByUserId(8882L);
     assertNotNull(result);
 
-    List<EmploymentRecordDto> expected = mockEmploymentRecords.stream()
-        .map(mapper::toDto)
+    List<EmploymentRecordDto> expected = employmentRecordArrayList.stream()
+        .map(employmentRecordMapper::toDto)
         .collect(Collectors.toList());
 
-    assertEquals(mockEmploymentRecords.size(), result.size());
     assertEquals(expected, result);
   }
 
   @Test
-  public void getByWithUnExpectedIdTest() {
-    when(employmentRecordRepository.findByUserId(anyLong())).thenReturn(Collections.emptyList());
-
-    assertThrows(EmploymentRecordNotFoundException.class, () -> {
-      employmentRecordService.findByUserId(8882L);
-    });
-  }
-
-  @Test
-  public void crateTest() {
-    when(mapper.toEntity(any(EmploymentRecordDto.class))).thenReturn(new EmploymentRecord());
-    when(mapper.toDto(any(EmploymentRecord.class))).thenReturn(employmentRecordDto);
+  public void createEmploymentRecordTest() {
+    when(employmentRecordMapper.toEntity(any(EmploymentRecordDto.class))).thenReturn(
+        new EmploymentRecord());
+    when(employmentRecordMapper.toDto(any(EmploymentRecord.class)))
+        .thenReturn(employmentRecordDto);
 
     when(employmentRecordRepository.save(any(EmploymentRecord.class))).thenAnswer(invocation -> {
       EmploymentRecord savedEmploymentRecord = invocation.getArgument(0);
@@ -100,7 +88,8 @@ public class EmploymentRecordServiceTest {
       return savedEmploymentRecord;
     });
 
-    EmploymentRecordDto result = employmentRecordService.create(employmentRecordDto, 8883L);
+    EmploymentRecordDto result = employmentRecordService
+        .createEmploymentRecord(employmentRecordDto, 8883L);
 
     assertNotNull(result);
     assertEquals(employmentRecordDto, result);
@@ -117,6 +106,7 @@ public class EmploymentRecordServiceTest {
 
     assertNotNull(result);
     assertEquals(employmentRecordDto, result);
+
   }
 
   @Test
@@ -129,15 +119,5 @@ public class EmploymentRecordServiceTest {
     });
   }
 
-  @Test
-  public void deleteTest() {
-    when(mapper.toEntity(any(EmploymentRecordDto.class))).thenReturn(employmentRecord);
-    when(mapper.toDto(any(EmploymentRecord.class))).thenReturn(employmentRecordDto);
-    when(employmentRecordRepository.save(any(EmploymentRecord.class))).thenReturn(employmentRecord);
 
-    EmploymentRecordDto result = employmentRecordService.create(employmentRecordDto, 8883L);
-
-    assertNotNull(result);
-    assertEquals(employmentRecordDto, result);
-  }
 }

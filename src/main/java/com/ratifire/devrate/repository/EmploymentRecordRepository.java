@@ -13,4 +13,6 @@ import org.springframework.stereotype.Repository;
 public interface EmploymentRecordRepository extends JpaRepository<EmploymentRecord, Long> {
 
   List<EmploymentRecord> findByUserId(long userId);
+
+  void deleteById(long id);
 }

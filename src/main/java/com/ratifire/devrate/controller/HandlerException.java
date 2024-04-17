@@ -163,6 +163,6 @@ public class HandlerException {
       EmploymentRecordNotFoundException ex) {
     log.error("The user's employment record information could not be found with"
         + "the: {}", ex.getMessage());
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    return ResponseEntity.notFound().build();
   }
 }
