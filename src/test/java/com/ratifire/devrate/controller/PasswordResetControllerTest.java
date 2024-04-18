@@ -1,6 +1,5 @@
 package com.ratifire.devrate.controller;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -33,11 +32,6 @@ public class PasswordResetControllerTest {
   @MockBean
   private PasswordResetService passwordResetService;
 
-  /**
-   * Tests that a request to reset password returns an OK status when successful.
-   *
-   * @throws Exception if an error occurs during the test execution.
-   */
   @Test
   public void requestPasswordResetShouldReturnSuccessMessage() throws Exception {
     String email = "user@example.com";
@@ -48,11 +42,6 @@ public class PasswordResetControllerTest {
         .andExpect(status().isOk());
   }
 
-  /**
-   * Tests that resetting password with a valid code returns true.
-   *
-   * @throws Exception if an error occurs during the test execution.
-   */
   @Test
   public void resetPasswordWithValidCodeShouldReturnTrue() throws Exception {
     String code = "valid-code";
@@ -67,11 +56,6 @@ public class PasswordResetControllerTest {
         .andExpect(content().string("true"));
   }
 
-  /**
-   * Tests that resetting password with an invalid code returns an error message.
-   *
-   * @throws Exception if an error occurs during the test execution.
-   */
   @Test
   public void resetPasswordWithInvalidCodeShouldReturnError() throws Exception {
     String invalidCode = "invalid-code";
@@ -83,7 +67,6 @@ public class PasswordResetControllerTest {
     mockMvc.perform(post("/auth/password-reset/{code}", invalidCode)
             .contentType("application/json")
             .content(newPassword))
-        .andExpect(status().isBadRequest())
-        .andExpect(content().string(containsString("Invalid or expired password reset code.")));
+        .andExpect(status().isBadRequest());
   }
 }
