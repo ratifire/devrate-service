@@ -88,8 +88,8 @@ class ContactControllerTest {
   @Test
   @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
   void createTest() throws Exception {
-    when(contactService.create(anyLong(), any(ContactDto.class))).thenReturn(contactDto);
     String requestBody = objectMapper.writeValueAsString(contactDto);
+    when(contactService.create(anyLong(), any(ContactDto.class))).thenReturn(contactDto);
 
     String responseAsString = mockMvc.perform(post("/contacts/{userId}", userId)
             .contentType(MediaType.APPLICATION_JSON)
@@ -107,8 +107,8 @@ class ContactControllerTest {
   @Test
   @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
   void updateTest() throws Exception {
-    when(contactService.update(anyLong(), any(ContactDto.class))).thenReturn(contactDtoUpdated);
     String requestBody = objectMapper.writeValueAsString(contactDtoUpdated);
+    when(contactService.update(anyLong(), any(ContactDto.class))).thenReturn(contactDtoUpdated);
 
     String responseAsString = mockMvc.perform(put("/contacts/{id}", contactId)
             .contentType(MediaType.APPLICATION_JSON)
