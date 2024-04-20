@@ -3,6 +3,7 @@ package com.ratifire.devrate.service.resetpassword;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.service.UserSecurityService;
+import com.ratifire.devrate.service.email.EmailService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +20,7 @@ public class PasswordResetService {
   private final UserSecurityService userSecurityService;
   private final EmailConfirmationUuidService emailConfirmationUuidService;
   private final PasswordEncoder passwordEncoder;
+  private final EmailService emailService;
 
   /**
    * Sends a password reset link to the user's email address.
@@ -28,10 +30,8 @@ public class PasswordResetService {
   @Transactional
   public boolean requestPasswordReset(String email) {
     UserSecurity userSecurity = userSecurityService.findByEmail(email);
-
     String code = emailConfirmationUuidService.generateAndPersistUuidCode(userSecurity.getId());
-
-    emailConfirmationUuidService.sendPasswordResetEmail(email, code);
+    emailService.sendPasswordResetEmail(email, code);
     return true;
   }
 
@@ -53,7 +53,7 @@ public class PasswordResetService {
     userSecurityService.save(userSecurity);
 
     emailConfirmationUuidService.deleteConfirmedCodesByUserSecurityId(userSecurity.getId());
-    emailConfirmationUuidService.sendPasswordChangeConfirmation(userSecurity.getEmail());
+    emailService.sendPasswordChangeConfirmation(userSecurity.getEmail());
     return true;
   }
 }

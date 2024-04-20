@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import liquibase.util.StringUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,7 +61,8 @@ public class RegistrationService {
    */
   @Transactional
   public void registerUser(UserRegistrationDto userRegistrationDto) {
-    if (isUserExistByEmail(userRegistrationDto.getEmail())) {
+    String email = userRegistrationDto.getEmail();
+    if (isUserExistByEmail(email)) {
       throw new UserSecurityAlreadyExistException("User is already registered!");
     }
 
@@ -77,16 +77,10 @@ public class RegistrationService {
     UserSecurity entity = userMapper.toEntity(userRegistrationDto);
     entity.setRole(roleService.getDefaultRole());
     entity.setUser(createdUser);
-
     UserSecurity userSecurity = userSecurityService.save(entity);
 
-    EmailConfirmationCode savedEmailConfirmationCode =
-        emailConfirmationCodeService.save(userSecurity.getId());
-
-    SimpleMailMessage confirmationMessage = emailConfirmationCodeService
-        .createMessage(userSecurity.getEmail(), savedEmailConfirmationCode.getCode());
-
-    emailService.sendEmail(confirmationMessage, true);
+    String code = emailConfirmationCodeService.getConfirmationCode(userSecurity.getId());
+    emailService.sendConfirmationCodeEmail(email, code);
   }
 
   /**
@@ -124,7 +118,18 @@ public class RegistrationService {
 
     emailConfirmationCodeService.deleteConfirmedCode(emailConfirmationCode.getId());
 
-    notificationService.addGreetingNotification(userSecurity.getUser());
+    sendGreetings(userSecurity.getUser(), userSecurity.getEmail());
     return userSecurity.getId();
+  }
+
+  /**
+   * Sends greetings to a user via email and adds a greeting notification.
+   *
+   * @param user  The user to whom greetings are sent.
+   * @param email The email address of the user.
+   */
+  private void sendGreetings(User user, String email) {
+    notificationService.addGreetingNotification(user);
+    emailService.sendGreetingsEmail(user, email);
   }
 }
