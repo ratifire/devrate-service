@@ -8,7 +8,6 @@ import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserSecurityAlreadyExistException;
-import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.RoleService;
 import com.ratifire.devrate.service.UserSecurityService;
@@ -33,7 +32,6 @@ public class RegistrationService {
   private static final long CONFIRM_CODE_EXPIRATION_HOURS = 24;
   private final UserSecurityService userSecurityService;
   private final RoleService roleService;
-  private final DataMapper<UserRegistrationDto, UserSecurity> userMapper;
   private final EmailConfirmationCodeService emailConfirmationCodeService;
   private final EmailService emailService;
   private final UserService userService;
@@ -74,11 +72,16 @@ public class RegistrationService {
         .build();
     User createdUser = userService.create(userDto);
 
-    UserSecurity entity = userMapper.toEntity(userRegistrationDto);
-    entity.setRole(roleService.getDefaultRole());
-    entity.setUser(createdUser);
+    UserSecurity userSecurityEntity = UserSecurity.builder()
+        .email(userRegistrationDto.getEmail())
+        .password(userRegistrationDto.getPassword())
+        .role(roleService.getDefaultRole())
+        .user(createdUser)
+        .verified(false)
+        .createdAt(LocalDateTime.now())
+        .build();
 
-    UserSecurity userSecurity = userSecurityService.save(entity);
+    UserSecurity userSecurity = userSecurityService.save(userSecurityEntity);
 
     EmailConfirmationCode savedEmailConfirmationCode =
         emailConfirmationCodeService.save(userSecurity.getId());

@@ -22,7 +22,6 @@ import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserSecurityAlreadyExistException;
-import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.RoleService;
 import com.ratifire.devrate.service.UserSecurityService;
@@ -52,9 +51,6 @@ public class RegistrationServiceTest {
 
   @Mock
   private RoleService roleService;
-
-  @Mock
-  private DataMapper<UserRegistrationDto, UserSecurity> userMapper;
 
   @Mock
   private EmailConfirmationCodeService emailConfirmationCodeService;
@@ -122,7 +118,6 @@ public class RegistrationServiceTest {
 
     when(roleService.getDefaultRole()).thenReturn(testRole);
     when(userSecurityService.save(any())).thenReturn(testUserSecurity);
-    when(userMapper.toEntity(any(UserRegistrationDto.class))).thenReturn(testUserSecurity);
     when(userService.create(any(UserDto.class))).thenReturn(new User());
 
     when(registrationService.isUserExistByEmail(any())).thenReturn(false);
