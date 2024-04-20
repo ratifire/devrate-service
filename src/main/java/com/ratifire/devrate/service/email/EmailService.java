@@ -29,43 +29,6 @@ public class EmailService {
   private final TemplateEngine templateEngine;
 
   /**
-   * Sends a simple email message.
-   *
-   * @param recipient The recipient's email address.
-   * @param subject   The subject of the email.
-   * @param text      The content of the email.
-   */
-  private void sendEmail(String recipient, String subject, String text) {
-    MimeMessage mimeMessage = mailSender.createMimeMessage();
-    MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
-    try {
-      helper.setFrom("ratifire@devrate.com");
-      helper.setText(text, true);
-      helper.setTo(recipient);
-      helper.setSubject(subject);
-    } catch (MessagingException e) {
-      log.info("Failed to send the email to '" + recipient + "'."
-          + " Subject: '" + subject + "'");
-    }
-    mailSender.send(mimeMessage);
-  }
-
-  /**
-   * Builds an email text using a Thymeleaf template and provided variables.
-   *
-   * @param template  The name of the Thymeleaf template.
-   * @param variables The variables to be passed to the template.
-   * @return The processed email text.
-   */
-  private String buildTemplateEmailText(String template, Map<String, Object> variables) {
-    Context context = new Context();
-    for (Entry<String, Object> entry : variables.entrySet()) {
-      context.setVariable(entry.getKey(), entry.getValue());
-    }
-    return templateEngine.process(template, context);
-  }
-
-  /**
    * Sends a confirmation code email to the user.
    *
    * @param email The user's email address.
@@ -116,5 +79,42 @@ public class EmailService {
     String formattedDateTime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     String text = "Your password has been successfully changed on " + formattedDateTime + ".";
     sendEmail(email, subject, text);
+  }
+
+  /**
+   * Sends a simple email message.
+   *
+   * @param recipient The recipient's email address.
+   * @param subject   The subject of the email.
+   * @param text      The content of the email.
+   */
+  private void sendEmail(String recipient, String subject, String text) {
+    MimeMessage mimeMessage = mailSender.createMimeMessage();
+    MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+    try {
+      helper.setFrom("ratifire@devrate.com");
+      helper.setText(text, true);
+      helper.setTo(recipient);
+      helper.setSubject(subject);
+    } catch (MessagingException e) {
+      log.info("Failed to send the email to '" + recipient + "'."
+          + " Subject: '" + subject + "'");
+    }
+    mailSender.send(mimeMessage);
+  }
+
+  /**
+   * Builds an email text using a Thymeleaf template and provided variables.
+   *
+   * @param template  The name of the Thymeleaf template.
+   * @param variables The variables to be passed to the template.
+   * @return The processed email text.
+   */
+  private String buildTemplateEmailText(String template, Map<String, Object> variables) {
+    Context context = new Context();
+    for (Entry<String, Object> entry : variables.entrySet()) {
+      context.setVariable(entry.getKey(), entry.getValue());
+    }
+    return templateEngine.process(template, context);
   }
 }
