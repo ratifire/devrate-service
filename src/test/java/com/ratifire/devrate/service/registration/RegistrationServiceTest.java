@@ -34,6 +34,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -63,6 +64,9 @@ public class RegistrationServiceTest {
 
   @Mock
   private UserService userService;
+
+  @Mock
+  private PasswordEncoder passwordEncoder;
 
   @InjectMocks
   private RegistrationService registrationService;
@@ -119,7 +123,7 @@ public class RegistrationServiceTest {
     when(roleService.getDefaultRole()).thenReturn(testRole);
     when(userSecurityService.save(any())).thenReturn(testUserSecurity);
     when(userService.create(any(UserDto.class))).thenReturn(new User());
-
+    when(passwordEncoder.encode(any())).thenReturn(testPassword);
     when(registrationService.isUserExistByEmail(any())).thenReturn(false);
     when(emailConfirmationCodeService.save(anyLong()))
         .thenReturn(EmailConfirmationCode.builder().build());

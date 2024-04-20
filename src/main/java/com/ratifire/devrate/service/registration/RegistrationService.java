@@ -18,6 +18,7 @@ import java.time.temporal.ChronoUnit;
 import liquibase.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +37,7 @@ public class RegistrationService {
   private final EmailService emailService;
   private final UserService userService;
   private final NotificationService notificationService;
+  private final PasswordEncoder passwordEncoder;
 
   /**
    * Checks if a user security with the given email address exists.
@@ -74,7 +76,7 @@ public class RegistrationService {
 
     UserSecurity userSecurityEntity = UserSecurity.builder()
         .email(userRegistrationDto.getEmail())
-        .password(userRegistrationDto.getPassword())
+        .password(passwordEncoder.encode(userRegistrationDto.getPassword()))
         .role(roleService.getDefaultRole())
         .user(createdUser)
         .verified(false)
