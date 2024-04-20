@@ -9,7 +9,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.entity.EmailConfirmationCode;
-import com.ratifire.devrate.exception.EmailConfirmationCodeException;
+import com.ratifire.devrate.exception.MailConfirmationCodeException;
 import com.ratifire.devrate.repository.EmailConfirmationCodeRepository;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -79,7 +79,7 @@ class EmailConfirmationCodeServiceTest {
     when(emailConfirmationCodeRepository.findByCode(confirmationCode))
         .thenReturn(Optional.empty());
 
-    assertThrows(EmailConfirmationCodeException.class,
+    assertThrows(MailConfirmationCodeException.class,
         () -> emailConfirmationCodeService.findEmailConfirmationCode(confirmationCode));
   }
 

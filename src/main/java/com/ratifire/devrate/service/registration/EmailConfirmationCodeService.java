@@ -1,7 +1,7 @@
 package com.ratifire.devrate.service.registration;
 
 import com.ratifire.devrate.entity.EmailConfirmationCode;
-import com.ratifire.devrate.exception.EmailConfirmationCodeException;
+import com.ratifire.devrate.exception.MailConfirmationCodeException;
 import com.ratifire.devrate.repository.EmailConfirmationCodeRepository;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -91,11 +91,11 @@ public class EmailConfirmationCodeService {
    * Retrieves the {@link EmailConfirmationCode} entity for a requested code.
    *
    * @return The {@link EmailConfirmationCode} entity associated with the specified user ID.
-   * @throws EmailConfirmationCodeException If the confirmation code for the user ID is not found.
+   * @throws MailConfirmationCodeException If the confirmation code for the user ID is not found.
    */
   public EmailConfirmationCode findEmailConfirmationCode(String code) {
     return emailConfirmationCodeRepository.findByCode(code)
-        .orElseThrow(() -> new EmailConfirmationCodeException("The confirmation code "
+        .orElseThrow(() -> new MailConfirmationCodeException("The confirmation code "
             + "\"" + code + "\" could not be found."));
   }
 
