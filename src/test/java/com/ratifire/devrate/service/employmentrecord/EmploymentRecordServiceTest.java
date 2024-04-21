@@ -38,8 +38,6 @@ public class EmploymentRecordServiceTest {
   private DataMapper<EmploymentRecordDto, EmploymentRecord> mapper;
   private EmploymentRecordDto employmentRecordDto;
   private EmploymentRecord employmentRecord;
-  @Mock
-  private DataMapper<EmploymentRecordDto, EmploymentRecord> employmentRecordMapper;
   private final long employmentId = 1L;
 
   /**
@@ -49,12 +47,12 @@ public class EmploymentRecordServiceTest {
   public void before() {
     employmentRecordDto = EmploymentRecordDto.builder()
         .id(employmentId)
-        .startDate(LocalDate.ofEpochDay(2023 - 01 - 01))
-        .endDate(LocalDate.ofEpochDay(2022 - 01 - 01))
+        .startDate(LocalDate.of(2023, 1, 1))
+        .endDate(LocalDate.of(2023, 11, 22))
         .position("Java Developer")
-        .companyName("New Company")
+        .companyName("Example Company 4")
         .description("Worked on various projects")
-        .responsibilities(Arrays.asList("1", "2", "3"))
+        .responsibilities(Arrays.asList("Собирал одуванчики", "Hello World", "3"))
         .build();
 
     employmentRecord = EmploymentRecord.builder()
@@ -72,7 +70,7 @@ public class EmploymentRecordServiceTest {
   public void getByIdTest() {
     when(employmentRecordRepository.findById(any())).thenReturn(
         Optional.of(employmentRecord));
-    when(employmentRecordMapper.toDto(employmentRecord)).thenReturn(employmentRecordDto);
+    when(mapper.toDto(employmentRecord)).thenReturn(employmentRecordDto);
 
     EmploymentRecordDto result = employmentRecordService.findById(employmentId);
 
@@ -82,15 +80,13 @@ public class EmploymentRecordServiceTest {
   @Test
   public void updateTest() {
     when(mapper.toDto(any(EmploymentRecord.class))).thenReturn(employmentRecordDto);
-    when(employmentRecordRepository.findById(anyLong())).thenReturn(
-        Optional.of(new EmploymentRecord()));
+    when(employmentRecordRepository.findById(anyLong())).thenReturn(Optional.of(employmentRecord));
     when(employmentRecordRepository.save(any())).thenReturn(new EmploymentRecord());
 
     EmploymentRecordDto result = employmentRecordService.update(employmentRecordDto);
 
     assertNotNull(result);
     assertEquals(employmentRecordDto, result);
-
   }
 
   @Test

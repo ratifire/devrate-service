@@ -1,8 +1,5 @@
 package com.ratifire.devrate.controller;
 
-import com.ratifire.devrate.exception.EmailConfirmationCodeException;
-import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
-import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.EmploymentRecordNotFoundException;
 import com.ratifire.devrate.exception.InvalidCodeException;
 import com.ratifire.devrate.exception.MailConfirmationCodeException;

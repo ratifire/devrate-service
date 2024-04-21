@@ -2,14 +2,9 @@ package com.ratifire.devrate.service.employmentrecord;
 
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.entity.EmploymentRecord;
-import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.exception.EducationNotFoundException;
 import com.ratifire.devrate.exception.EmploymentRecordNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.EmploymentRecordRepository;
-import com.ratifire.devrate.repository.UserRepository;
-import com.ratifire.devrate.service.user.UserService;
-import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,7 +30,8 @@ public class EmploymentRecordService {
   public EmploymentRecordDto findById(long id) {
     return employmentRecordRepository.findById(id).map(employmentRecordDataMapper::toDto)
         .orElseThrow(
-            () -> new EducationNotFoundException("Employment record not found with id: " + id));
+            () -> new EmploymentRecordNotFoundException("Employment record not found with id: "
+                + id));
   }
 
   /**
