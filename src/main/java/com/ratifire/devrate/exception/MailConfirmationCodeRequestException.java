@@ -5,9 +5,8 @@ package com.ratifire.devrate.exception;
  * This exception is thrown when there is an error related to the request for email confirmation
  * code.
  */
-public class EmailConfirmationCodeRequestException extends RuntimeException {
-
-  public EmailConfirmationCodeRequestException(String message) {
+public class MailConfirmationCodeRequestException extends MailException {
+  public MailConfirmationCodeRequestException(String message) {
     super(message);
   }
 }

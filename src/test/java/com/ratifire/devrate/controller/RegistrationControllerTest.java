@@ -10,8 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.dto.UserRegistrationDto;
-import com.ratifire.devrate.exception.EmailConfirmationCodeException;
-import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
+import com.ratifire.devrate.exception.MailConfirmationCodeException;
+import com.ratifire.devrate.exception.MailConfirmationCodeRequestException;
 import com.ratifire.devrate.service.registration.RegistrationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -109,7 +109,7 @@ public class RegistrationControllerTest {
   @Test
   public void testConfirm_InvalidCode_ShouldReturnStatusCode404() throws Exception {
     Mockito.when(registrationService.confirmRegistration(anyString()))
-        .thenThrow(EmailConfirmationCodeException.class);
+        .thenThrow(MailConfirmationCodeException.class);
 
     mockMvc.perform(put(END_POINT_CONFIRM_PATH))
         .andExpect(status().isNotFound());
@@ -127,7 +127,7 @@ public class RegistrationControllerTest {
   @Test
   public void testConfirm_InvalidRequest_ShouldReturnStatusCode400() throws Exception {
     Mockito.when(registrationService.confirmRegistration(anyString()))
-        .thenThrow(EmailConfirmationCodeRequestException.class);
+        .thenThrow(MailConfirmationCodeRequestException.class);
 
     mockMvc.perform(put(END_POINT_CONFIRM_PATH))
         .andExpect(status().isBadRequest());
