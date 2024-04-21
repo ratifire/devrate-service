@@ -21,7 +21,6 @@ import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.MailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.MailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserSecurityAlreadyExistException;
-import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.RoleService;
 import com.ratifire.devrate.service.UserSecurityService;
@@ -34,6 +33,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -53,9 +53,6 @@ public class RegistrationServiceTest {
   private RoleService roleService;
 
   @Mock
-  private DataMapper<UserRegistrationDto, UserSecurity> userMapper;
-
-  @Mock
   private EmailConfirmationCodeService emailConfirmationCodeService;
 
   @Mock
@@ -66,6 +63,9 @@ public class RegistrationServiceTest {
 
   @Mock
   private UserService userService;
+
+  @Mock
+  private PasswordEncoder passwordEncoder;
 
   @InjectMocks
   private RegistrationService registrationService;
@@ -120,8 +120,9 @@ public class RegistrationServiceTest {
         .id(1L)
         .build();
 
+    when(registrationService.isUserExistByEmail(any())).thenReturn(false);
     when(userService.create(any(UserDto.class))).thenReturn(new User());
-    when(userMapper.toEntity(any(UserRegistrationDto.class))).thenReturn(testUserSecurity);
+    when(passwordEncoder.encode(any())).thenReturn(testPassword);
     when(roleService.getDefaultRole()).thenReturn(testRole);
     when(userSecurityService.save(any())).thenReturn(testUserSecurity);
     when(emailConfirmationCodeService.getConfirmationCode(anyLong())).thenReturn(confirmationCode);

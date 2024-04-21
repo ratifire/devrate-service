@@ -8,7 +8,6 @@ import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.MailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.MailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserSecurityAlreadyExistException;
-import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.RoleService;
 import com.ratifire.devrate.service.UserSecurityService;
@@ -18,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import liquibase.util.StringUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,11 +32,11 @@ public class RegistrationService {
   private static final long CONFIRM_CODE_EXPIRATION_HOURS = 24;
   private final UserSecurityService userSecurityService;
   private final RoleService roleService;
-  private final DataMapper<UserRegistrationDto, UserSecurity> userMapper;
   private final EmailConfirmationCodeService emailConfirmationCodeService;
   private final EmailService emailService;
   private final UserService userService;
   private final NotificationService notificationService;
+  private final PasswordEncoder passwordEncoder;
 
   /**
    * Checks if a user security with the given email address exists.
@@ -74,10 +74,16 @@ public class RegistrationService {
         .build();
     User createdUser = userService.create(userDto);
 
-    UserSecurity entity = userMapper.toEntity(userRegistrationDto);
-    entity.setRole(roleService.getDefaultRole());
-    entity.setUser(createdUser);
-    UserSecurity userSecurity = userSecurityService.save(entity);
+    UserSecurity userSecurityEntity = UserSecurity.builder()
+        .email(userRegistrationDto.getEmail())
+        .password(passwordEncoder.encode(userRegistrationDto.getPassword()))
+        .role(roleService.getDefaultRole())
+        .user(createdUser)
+        .verified(false)
+        .createdAt(LocalDateTime.now())
+        .build();
+
+    UserSecurity userSecurity = userSecurityService.save(userSecurityEntity);
 
     String code = emailConfirmationCodeService.getConfirmationCode(userSecurity.getId());
     emailService.sendConfirmationCodeEmail(email, code);
@@ -90,7 +96,7 @@ public class RegistrationService {
    * @param confirmationCode The confirmation code provided by the user.
    * @return The ID of the user whose registration has been confirmed
    * @throws MailConfirmationCodeRequestException If the provided confirmation code is empty or
-   *                                               null.
+   *                                              null.
    * @throws MailConfirmationCodeExpiredException If the confirmation code is expired.
    */
   public long confirmRegistration(String confirmationCode) {
