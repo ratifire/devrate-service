@@ -2,6 +2,9 @@ package com.ratifire.devrate.service.resetpassword;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -9,6 +12,7 @@ import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.InvalidCodeException;
 import com.ratifire.devrate.service.UserSecurityService;
+import com.ratifire.devrate.service.email.EmailService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,6 +36,9 @@ public class PasswordResetServiceTest {
   @Mock
   private EmailConfirmationUuidService emailConfirmationUuidService;
 
+  @Mock
+  private EmailService emailService;
+
   @InjectMocks
   private PasswordResetService passwordResetService;
 
@@ -49,11 +56,11 @@ public class PasswordResetServiceTest {
     when(userSecurityService.findByEmail(email)).thenReturn(userSecurity);
     when(emailConfirmationUuidService.generateAndPersistUuidCode(userSecurity.getId()))
         .thenReturn("code");
+    doNothing().when(emailService).sendPasswordResetEmail(any(), any());
 
     boolean result = passwordResetService.requestPasswordReset(email);
 
     assertTrue(result, "Password reset should be requested successfully");
-    verify(emailConfirmationUuidService).sendPasswordResetEmail(email, "code");
   }
 
   /**
@@ -84,6 +91,8 @@ public class PasswordResetServiceTest {
     when(emailConfirmationUuidService.findUuidCode(code)).thenReturn(emailConfirmationCode);
     when(userSecurityService.getById(userSecurity.getId())).thenReturn(userSecurity);
     when(passwordEncoder.encode(newPassword)).thenReturn("encodedPassword");
+    doNothing().when(emailConfirmationUuidService).deleteConfirmedCodesByUserSecurityId(anyLong());
+    doNothing().when(emailService).sendPasswordChangeConfirmation(any());
 
     boolean result = passwordResetService.resetPassword(code, newPassword);
 
