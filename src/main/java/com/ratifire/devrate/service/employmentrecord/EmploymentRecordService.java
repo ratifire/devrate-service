@@ -61,5 +61,4 @@ public class EmploymentRecordService {
   public void deleteById(long id) {
     employmentRecordRepository.deleteById(id);
   }
-
 }

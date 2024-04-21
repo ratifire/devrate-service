@@ -1,6 +1,5 @@
 package com.ratifire.devrate.controller;
 
-import com.ratifire.devrate.exception.EmploymentRecordNotFoundException;
 import com.ratifire.devrate.exception.InvalidCodeException;
 import com.ratifire.devrate.exception.MailConfirmationCodeException;
 import com.ratifire.devrate.exception.MailConfirmationCodeExpiredException;
@@ -101,20 +100,5 @@ public class HandlerException {
           ResponseEntity.status(HttpStatus.GONE).build();
       default -> handleExceptionErrors(exception);
     };
-  }
-
-  /**
-   * Exception handler method for handling EmploymentRecordNotFoundException. This method is
-   * responsible for handling exceptions related to work experience information not being found.
-   *
-   * @param ex The EmploymentRecordNotFoundException that has been thrown.
-   * @return A ResponseEntity with HTTP status NOT_FOUND (404).
-   */
-  @ExceptionHandler(EmploymentRecordNotFoundException.class)
-  public ResponseEntity<Void> handleEmploymentRecordNotFoundException(
-      EmploymentRecordNotFoundException ex) {
-    log.error("The user's employment record information could not be found with"
-        + "the: {}", ex.getMessage());
-    return ResponseEntity.notFound().build();
   }
 }

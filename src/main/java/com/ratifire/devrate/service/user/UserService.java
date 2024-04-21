@@ -86,7 +86,7 @@ public class UserService {
    * @return the user entity
    * @throws UserNotFoundException if the user with the specified ID is not found
    */
-  public User findUserById(long id) {
+  private User findUserById(long id) {
     return userRepository.findById(id)
         .orElseThrow(() -> new UserNotFoundException("The user not found with id " + id));
   }
@@ -97,7 +97,6 @@ public class UserService {
    *
    * @param userId the ID of the user
    * @return the user's work experience as a DTO
-   * @throws EmploymentRecordNotFoundException if work experience information is not found
    */
   public List<EmploymentRecordDto> getEmploymentRecordsByUserId(long userId) {
     User user = findUserById(userId);
