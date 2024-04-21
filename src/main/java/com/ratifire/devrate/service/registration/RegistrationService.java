@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import liquibase.util.StringUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -97,7 +96,7 @@ public class RegistrationService {
    * @param confirmationCode The confirmation code provided by the user.
    * @return The ID of the user whose registration has been confirmed
    * @throws MailConfirmationCodeRequestException If the provided confirmation code is empty or
-   *                                               null.
+   *                                              null.
    * @throws MailConfirmationCodeExpiredException If the confirmation code is expired.
    */
   public long confirmRegistration(String confirmationCode) {

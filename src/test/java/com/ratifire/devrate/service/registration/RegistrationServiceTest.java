@@ -120,9 +120,9 @@ public class RegistrationServiceTest {
         .id(1L)
         .build();
 
+    when(registrationService.isUserExistByEmail(any())).thenReturn(false);
     when(userService.create(any(UserDto.class))).thenReturn(new User());
     when(passwordEncoder.encode(any())).thenReturn(testPassword);
-    when(userMapper.toEntity(any(UserRegistrationDto.class))).thenReturn(testUserSecurity);
     when(roleService.getDefaultRole()).thenReturn(testRole);
     when(userSecurityService.save(any())).thenReturn(testUserSecurity);
     when(emailConfirmationCodeService.getConfirmationCode(anyLong())).thenReturn(confirmationCode);
