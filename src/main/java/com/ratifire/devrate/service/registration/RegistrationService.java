@@ -5,8 +5,8 @@ import com.ratifire.devrate.dto.UserRegistrationDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.UserSecurity;
-import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
-import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
+import com.ratifire.devrate.exception.MailConfirmationCodeExpiredException;
+import com.ratifire.devrate.exception.MailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserSecurityAlreadyExistException;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.RoleService;
@@ -62,7 +62,8 @@ public class RegistrationService {
    */
   @Transactional
   public void registerUser(UserRegistrationDto userRegistrationDto) {
-    if (isUserExistByEmail(userRegistrationDto.getEmail())) {
+    String email = userRegistrationDto.getEmail();
+    if (isUserExistByEmail(email)) {
       throw new UserSecurityAlreadyExistException("User is already registered!");
     }
 
@@ -85,13 +86,8 @@ public class RegistrationService {
 
     UserSecurity userSecurity = userSecurityService.save(userSecurityEntity);
 
-    EmailConfirmationCode savedEmailConfirmationCode =
-        emailConfirmationCodeService.save(userSecurity.getId());
-
-    SimpleMailMessage confirmationMessage = emailConfirmationCodeService
-        .createMessage(userSecurity.getEmail(), savedEmailConfirmationCode.getCode());
-
-    emailService.sendEmail(confirmationMessage, true);
+    String code = emailConfirmationCodeService.getConfirmationCode(userSecurity.getId());
+    emailService.sendConfirmationCodeEmail(email, code);
   }
 
   /**
@@ -100,13 +96,13 @@ public class RegistrationService {
    *
    * @param confirmationCode The confirmation code provided by the user.
    * @return The ID of the user whose registration has been confirmed
-   * @throws EmailConfirmationCodeRequestException If the provided confirmation code is empty or
+   * @throws MailConfirmationCodeRequestException If the provided confirmation code is empty or
    *                                               null.
-   * @throws EmailConfirmationCodeExpiredException If the confirmation code is expired.
+   * @throws MailConfirmationCodeExpiredException If the confirmation code is expired.
    */
   public long confirmRegistration(String confirmationCode) {
     if (StringUtil.isEmpty(confirmationCode)) {
-      throw new EmailConfirmationCodeRequestException("The confirmation code is a required "
+      throw new MailConfirmationCodeRequestException("The confirmation code is a required "
           + "argument");
     }
 
@@ -119,7 +115,7 @@ public class RegistrationService {
     long hoursSinceCreation = ChronoUnit.HOURS.between(createdAt, currentDateTime);
     if (hoursSinceCreation >= CONFIRM_CODE_EXPIRATION_HOURS) {
       emailConfirmationCodeService.deleteConfirmedCode(emailConfirmationCode.getId());
-      throw new EmailConfirmationCodeExpiredException("The confirmation code has expired");
+      throw new MailConfirmationCodeExpiredException("The confirmation code has expired");
     }
 
     UserSecurity userSecurity = userSecurityService
@@ -129,7 +125,18 @@ public class RegistrationService {
 
     emailConfirmationCodeService.deleteConfirmedCode(emailConfirmationCode.getId());
 
-    notificationService.addGreetingNotification(userSecurity.getUser());
+    sendGreetings(userSecurity.getUser(), userSecurity.getEmail());
     return userSecurity.getId();
+  }
+
+  /**
+   * Sends greetings to a user via email and adds a greeting notification.
+   *
+   * @param user  The user to whom greetings are sent.
+   * @param email The email address of the user.
+   */
+  private void sendGreetings(User user, String email) {
+    notificationService.addGreetingNotification(user);
+    emailService.sendGreetingsEmail(user, email);
   }
 }

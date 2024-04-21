@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
@@ -19,8 +18,8 @@ import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.Role;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.UserSecurity;
-import com.ratifire.devrate.exception.EmailConfirmationCodeExpiredException;
-import com.ratifire.devrate.exception.EmailConfirmationCodeRequestException;
+import com.ratifire.devrate.exception.MailConfirmationCodeExpiredException;
+import com.ratifire.devrate.exception.MailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserSecurityAlreadyExistException;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.RoleService;
@@ -111,6 +110,7 @@ public class RegistrationServiceTest {
   public void testRegisterUser_SuccessfulRegistration() {
     String testEmail = "test@gmail.com";
     String testPassword = "somepassword";
+    String confirmationCode = "123456";
 
     UserSecurity testUserSecurity = UserSecurity.builder()
         .email("test@gmail.com")
@@ -120,14 +120,13 @@ public class RegistrationServiceTest {
         .id(1L)
         .build();
 
-    when(roleService.getDefaultRole()).thenReturn(testRole);
-    when(userSecurityService.save(any())).thenReturn(testUserSecurity);
     when(userService.create(any(UserDto.class))).thenReturn(new User());
     when(passwordEncoder.encode(any())).thenReturn(testPassword);
-    when(registrationService.isUserExistByEmail(any())).thenReturn(false);
-    when(emailConfirmationCodeService.save(anyLong()))
-        .thenReturn(EmailConfirmationCode.builder().build());
-    doNothing().when(emailService).sendEmail(any(), anyBoolean());
+    when(userMapper.toEntity(any(UserRegistrationDto.class))).thenReturn(testUserSecurity);
+    when(roleService.getDefaultRole()).thenReturn(testRole);
+    when(userSecurityService.save(any())).thenReturn(testUserSecurity);
+    when(emailConfirmationCodeService.getConfirmationCode(anyLong())).thenReturn(confirmationCode);
+    doNothing().when(emailService).sendConfirmationCodeEmail(any(), any());
 
     UserRegistrationDto testUserRegistrationDto = UserRegistrationDto.builder()
         .email(testEmail)
@@ -136,9 +135,9 @@ public class RegistrationServiceTest {
 
     registrationService.registerUser(testUserRegistrationDto);
 
-    verify(emailConfirmationCodeService, times(1)).save(anyLong());
+    verify(emailConfirmationCodeService, times(1)).getConfirmationCode(anyLong());
     verify(userService, times(1)).create(any(UserDto.class));
-    verify(emailService, times(1)).sendEmail(any(), anyBoolean());
+    verify(emailService, times(1)).sendConfirmationCodeEmail(any(), any());
   }
 
   /**
@@ -188,9 +187,9 @@ public class RegistrationServiceTest {
         .thenReturn(emailConfirmationCode);
     when(userSecurityService.getById(userSecurityId)).thenReturn(userSecurity);
     when(userSecurityService.save(userSecurity)).thenReturn(null);
-    doNothing().when(notificationService).addGreetingNotification(any());
-
     doNothing().when(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
+    doNothing().when(notificationService).addGreetingNotification(any());
+    doNothing().when(emailService).sendGreetingsEmail(any(), any());
 
     long actualUserId = registrationService.confirmRegistration(code);
 
@@ -211,7 +210,7 @@ public class RegistrationServiceTest {
    */
   @Test
   public void testConfirmRegistration_RequestEmptyCode() {
-    assertThrows(EmailConfirmationCodeRequestException.class,
+    assertThrows(MailConfirmationCodeRequestException.class,
         () -> registrationService.confirmRegistration(""));
   }
 
@@ -219,7 +218,7 @@ public class RegistrationServiceTest {
    * Unit test for {@link RegistrationService#confirmRegistration(String)}.
    *
    * <p>Tests the confirmation of registration with an expired confirmation code.
-   * Verifies that an {@link EmailConfirmationCodeExpiredException} is thrown and that neither the
+   * Verifies that an {@link MailConfirmationCodeExpiredException} is thrown and that neither the
    * {@link UserSecurityService} nor the {@link EmailConfirmationCodeService} are invoked for
    * further actions.
    */
@@ -234,7 +233,7 @@ public class RegistrationServiceTest {
     when(emailConfirmationCodeService.findEmailConfirmationCode(code))
         .thenReturn(emailConfirmationCode);
 
-    assertThrows(EmailConfirmationCodeExpiredException.class,
+    assertThrows(MailConfirmationCodeExpiredException.class,
         () -> registrationService.confirmRegistration(code));
 
     verify(userSecurityService, never()).getById(anyLong());
