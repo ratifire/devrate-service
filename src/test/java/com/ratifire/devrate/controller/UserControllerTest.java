@@ -1,5 +1,6 @@
 package com.ratifire.devrate.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
@@ -9,18 +10,21 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.configuration.SecurityConfiguration;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.service.employmentrecord.EmploymentRecordService;
 import com.ratifire.devrate.service.user.UserService;
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +77,16 @@ class UserControllerTest {
         .city("city")
         .subscribed(true)
         .description("description")
+        .build();
+
+    employmentRecordDto = EmploymentRecordDto.builder()
+        .id(1L)
+        .startDate(LocalDate.ofEpochDay(2023 - 1 - 1))
+        .endDate(LocalDate.ofEpochDay(2022 - 1 - 1))
+        .position("Java Developer")
+        .companyName("New Company")
+        .description("Worked on various projects")
+        .responsibilities(Arrays.asList("1", "2", "3")) // Создание списка из строк
         .build();
   }
 
@@ -129,24 +143,43 @@ class UserControllerTest {
   @Test
   @WithMockUser(username = "Maksim Matveychuk", roles = {"USER", "ADMIN"})
   public void getByIdTest() throws Exception {
-    when(employmentRecordService.getEmploymentRecordsByUserId(anyLong())).thenReturn(
+    List<EmploymentRecordDto> expectedDtoList = Collections.singletonList(employmentRecordDto);
+    when(userService.getEmploymentRecordsByUserId(anyLong())).thenReturn(
         Collections.singletonList(employmentRecordDto));
-    mockMvc.perform(get("/users/{userId}/employment-records", 1))
+    String responseAsString = mockMvc
+        .perform(get("/users/{userId}/employment-records", USER_ID))
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andDo(print());
+        .andReturn()
+        .getResponse()
+        .getContentAsString();
+
+    List<EmploymentRecordDto> actualDtoList = objectMapper.readValue(responseAsString,
+        new TypeReference<List<EmploymentRecordDto>>() {
+        });
+    assertEquals(expectedDtoList, actualDtoList);
+
   }
 
   @Test
   public void createEmploymentRecordTest() throws Exception {
     EmploymentRecordDto employmentRecordDto1 = employmentRecordDto;
-    when(employmentRecordService.createEmploymentRecord(employmentRecordDto, 8883L)).thenReturn(
+    when(userService.createEmploymentRecord(employmentRecordDto, USER_ID)).thenReturn(
         employmentRecordDto1);
-    mockMvc.perform(post("/users/{userId}/employment-records", 1)
-            .with(SecurityMockMvcRequestPostProcessors.user("Maksim Matveychuk").roles("USER"))
+    String responseAsString = mockMvc
+        .perform(post("/users/{userId}/employment-records", USER_ID)
+            .with(SecurityMockMvcRequestPostProcessors
+                .user("Maksim Matveychuk").roles("USER"))
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(employmentRecordDto1)))
-        .andExpect(jsonPath("$").isNotEmpty())
-        .andDo(print());
+        .andExpect(status().isOk())
+        .andReturn()
+        .getResponse()
+        .getContentAsString();
+
+    EmploymentRecordDto resultEmploymentRecordDto = objectMapper.readValue(responseAsString,
+        EmploymentRecordDto.class);
+
+    assertEquals(employmentRecordDto, resultEmploymentRecordDto);
   }
 }

@@ -1,11 +1,11 @@
 package com.ratifire.devrate.controller;
 
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -35,7 +35,8 @@ public class EmploymentRecordControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
-
+  @Autowired
+  private ObjectMapper objectMapper;
   private EmploymentRecordDto employmentRecordDto;
 
   /**
@@ -50,7 +51,7 @@ public class EmploymentRecordControllerTest {
         .position("Java Developer")
         .companyName("New Company")
         .description("Worked on various projects")
-        .responsibilities(Arrays.asList("1", "2", "3")) // Создание списка из строк
+        .responsibilities(Arrays.asList("1", "2", "3"))
         .build();
   }
 
@@ -59,16 +60,25 @@ public class EmploymentRecordControllerTest {
   public void getByIdTest() throws Exception {
     when(employmentRecordService.findById(anyLong())).thenReturn(
         employmentRecordDto);
-    mockMvc.perform(get("/employment-records/{id}", 1))
+    String responseAsString = mockMvc
+        .perform(get("/employment-records/{id}", 1))
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andDo(print());
+        .andReturn()
+        .getResponse()
+        .getContentAsString();
+
+    EmploymentRecordDto resultEmploymentRecordDto = objectMapper
+        .readValue(responseAsString, EmploymentRecordDto.class);
+
+    assertEquals(employmentRecordDto, resultEmploymentRecordDto);
   }
 
 
   @Test
   public void deleteTest() throws Exception {
     mockMvc.perform(delete("/employment-records/{id}", 1, 1L)
-            .with(SecurityMockMvcRequestPostProcessors.user("Maksim Matveychuk").roles("USER"))
+            .with(SecurityMockMvcRequestPostProcessors
+                .user("Maksim Matveychuk").roles("USER"))
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andExpect(status().isOk());
   }

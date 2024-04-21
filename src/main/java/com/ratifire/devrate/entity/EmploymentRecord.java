@@ -18,11 +18,11 @@ import lombok.NoArgsConstructor;
  * Entity class representing work experience in the system. Work experience is recorded information
  * about a user's employment history.
  */
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
+@Builder
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "employment_records")
 public class EmploymentRecord {
 
@@ -46,9 +46,6 @@ public class EmploymentRecord {
 
   @Column(name = "description", length = 1000)
   private String description;
-
-  @Column(name = "user_id", nullable = false)
-  private long userId;
 
   @Column(name = "responsibilities", columnDefinition = "text[]")
   private List<String> responsibilities;

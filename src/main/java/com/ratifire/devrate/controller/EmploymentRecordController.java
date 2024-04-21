@@ -22,9 +22,9 @@ public class EmploymentRecordController {
   private final EmploymentRecordService employmentRecordService;
 
   /**
-   * Retrieves user EmploymentRecord information by user ID.
+   * Retrieves user EmploymentRecord information by ID.
    *
-   * @param id the ID of the user
+   * @param id the ID of the EmploymentRecord
    * @return the user's EmploymentRecord information as a DTO
    */
   @GetMapping("/{id}")
@@ -32,9 +32,8 @@ public class EmploymentRecordController {
     return employmentRecordService.findById(id);
   }
 
-
   /**
-   * Updates user work experience information by user ID.
+   * Updates user EmploymentRecord information by EmploymentRecord`s ID.
    *
    * @param employmentRecordDto the updated user's EmploymentRecord information as a DTO
    * @return the updated user EmploymentRecord information as a DTO
@@ -45,13 +44,12 @@ public class EmploymentRecordController {
   }
 
   /**
-   * Deletes user EmploymentRecord information by user ID.
+   * Deletes user EmploymentRecord information by EmploymentRecord`s ID.
    *
-   * @param id the ID of the user
+   * @param id the ID of EmploymentRecord
    */
   @DeleteMapping("/{id}")
   public void deleteById(@PathVariable long id) {
     employmentRecordService.deleteById(id);
   }
-
 }

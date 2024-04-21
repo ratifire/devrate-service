@@ -2,13 +2,15 @@ package com.ratifire.devrate.service.employmentrecord;
 
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.entity.EmploymentRecord;
+import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.EducationNotFoundException;
 import com.ratifire.devrate.exception.EmploymentRecordNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.EmploymentRecordRepository;
+import com.ratifire.devrate.repository.UserRepository;
+import com.ratifire.devrate.service.user.UserService;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,26 +25,26 @@ public class EmploymentRecordService {
   private final EmploymentRecordRepository employmentRecordRepository;
   private final DataMapper<EmploymentRecordDto, EmploymentRecord> employmentRecordDataMapper;
 
-
   /**
-   * Retrieves EmploymentRecord (work experience) information by user ID.
+   * Retrieves EmploymentRecord (work experience) information by employment ID.
    *
-   * @param id the ID of the user
+   * @param id the ID of the employment
    * @return the user's EmploymentRecord as a DTO
    * @throws EmploymentRecordNotFoundException if work experience information is not found
    */
   public EmploymentRecordDto findById(long id) {
     return employmentRecordRepository.findById(id).map(employmentRecordDataMapper::toDto)
-        .orElseThrow(() -> new EducationNotFoundException("Education not found with id: " + id));
+        .orElseThrow(
+            () -> new EducationNotFoundException("Employment record not found with id: " + id));
   }
 
   /**
    * Updates user EmploymentRecord information.
    *
    * @param employmentRecordDto the updated user's EmploymentRecord information as a DTO
-   * @return the updated user work experience information as a DTO
-   * @throws EmploymentRecordNotFoundException if the user work experience info does not exist by
-   *                                             user id
+   * @return the updated user EmploymentRecord information as a DTO
+   * @throws EmploymentRecordNotFoundException if the user EmploymentRecord info does not exist by
+   *                                             Employment record`s id
    */
   public EmploymentRecordDto update(EmploymentRecordDto employmentRecordDto) {
     long id = employmentRecordDto.getId();
@@ -52,46 +54,16 @@ public class EmploymentRecordService {
       employmentRecordDataMapper.updateEntity(employmentRecordDto, employmentRecord);
       EmploymentRecord updatedRecord = employmentRecordRepository.save(employmentRecord);
       return employmentRecordDataMapper.toDto(updatedRecord);
-    }).orElseThrow(() -> new EmploymentRecordNotFoundException("User Id " + id));
+    }).orElseThrow(() -> new EmploymentRecordNotFoundException("Employment record`s id: " + id));
   }
 
   /**
-   * Deletes user EmploymentRecord information by user ID.
+   * Deletes EmploymentRecord information by employment ID.
    *
-   * @param id the ID of the user whose EmploymentRecord information is to be deleted
-   * @throws EmploymentRecordNotFoundException if user EmploymentRecord information is not found
+   * @param id the ID of the employment whose EmploymentRecord information is to be deleted
    */
   public void deleteById(long id) {
     employmentRecordRepository.deleteById(id);
   }
 
-
-  /**
-   * Retrieves EmploymentRecord (work experience) information by user ID.
-   *
-   * @param userId the ID of the user
-   * @return the user's work experience as a DTO
-   * @throws EmploymentRecordNotFoundException if work experience information is not found
-   */
-  public List<EmploymentRecordDto> getEmploymentRecordsByUserId(long userId) {
-    List<EmploymentRecord> employmentRecords = employmentRecordRepository.findByUserId(userId);
-
-    return employmentRecords.stream()
-        .map(employmentRecordDataMapper::toDto)
-        .collect(Collectors.toList());
-  }
-
-
-  /**
-   * Creates work experience information.
-   *
-   * @param employmentRecordDto the user's work experience information as a DTO
-   * @return the created user work experience information as a DTO
-   */
-  public EmploymentRecordDto createEmploymentRecord(EmploymentRecordDto employmentRecordDto,
-      long userId) {
-    EmploymentRecord employmentRecord = employmentRecordDataMapper.toEntity(employmentRecordDto);
-    employmentRecord.setUserId(userId);
-    return employmentRecordDataMapper.toDto(employmentRecordRepository.save(employmentRecord));
-  }
 }

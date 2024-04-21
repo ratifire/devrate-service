@@ -735,20 +735,20 @@ paths:
     get:
       tags:
         - employment records
-      summary: Get Employment record By UserId
-      description: Retrieves all user`s employment records based on the provided UserId.
+      summary: Get Employment record By ID
+      description: Retrieves all user`s employment records based on the provided ID.
       operationId: findByUserId
       parameters:
         - in: path
-          name: userId
-          description: The userId of the employment record to retrieve.
+          name: ID
+          description: The ID of the employment record to retrieve.
           required: true
           schema:
             type: integer
             format: int64
       responses:
         '200':
-          description: The employment record corresponding to the provided userId
+          description: The employment record corresponding to the provided ID
           content:
             application/json:
               schema:

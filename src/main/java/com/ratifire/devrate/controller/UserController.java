@@ -26,9 +26,6 @@ public class UserController {
 
   private final UserService userService;
 
-  private final EmploymentRecordService employmentRecordService;
-
-
   /**
    * Retrieves user personal information by user ID.
    *
@@ -61,29 +58,28 @@ public class UserController {
     userService.delete(id);
   }
 
-
   /**
-   * Retrieves user work experience information by user ID.
+   * Retrieves user employment-record information by user ID.
    *
    * @param userId the ID of the user
-   * @return the user's work experience information as a DTO
+   * @return the list of user's employment-records information as a DTO
    */
   @GetMapping("/{userId}/employment-records")
   public List<EmploymentRecordDto> getEmploymentRecordsByUserId(@PathVariable long userId) {
-    return employmentRecordService.getEmploymentRecordsByUserId(userId);
+    return userService.getEmploymentRecordsByUserId(userId);
   }
 
   /**
-   * Creates user work experience information by user ID.
+   * Creates user employment-record information by user ID.
    *
-   * @param employmentRecordDto the user's work experience information as a DTO
-   * @return the created user work experience information as a DTO
+   * @param employmentRecordDto the user's employment-record information as a DTO
+   * @return the created user employment-record information as a DTO
    */
   @PostMapping("/{userId}/employment-records")
   public EmploymentRecordDto createEmploymentRecord(
       @Valid @RequestBody EmploymentRecordDto employmentRecordDto,
       @PathVariable long userId) {
-    return employmentRecordService.createEmploymentRecord(employmentRecordDto, userId);
+    return userService.createEmploymentRecord(employmentRecordDto, userId);
   }
 
 }

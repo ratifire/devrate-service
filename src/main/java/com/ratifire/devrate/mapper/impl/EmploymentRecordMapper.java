@@ -15,15 +15,10 @@ import org.mapstruct.MappingTarget;
 public abstract class EmploymentRecordMapper implements
     DataMapper<EmploymentRecordDto, EmploymentRecord> {
 
-  @Mapping(target = "userId", ignore = true)
+  @Mapping(target = "id", ignore = true)
   public abstract EmploymentRecord toEntity(EmploymentRecordDto employmentRecordDto);
 
-  public abstract EmploymentRecordDto toDto(EmploymentRecord employmentRecord);
-
-  public abstract List<EmploymentRecordDto> toDto(List<EmploymentRecord> employmentRecord);
-
   @Mapping(target = "id", ignore = true)
-  @Mapping(target = "userId", ignore = true)
   public abstract EmploymentRecord updateEntity(EmploymentRecordDto employmentRecordDto,
       @MappingTarget EmploymentRecord employmentRecord);
 }
