@@ -113,7 +113,8 @@ public class HandlerException {
     return switch (exception) {
       case MailConfirmationCodeRequestException ignored ->
           ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-      case InvalidCodeException ignored -> ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+      case InvalidCodeException ignored ->
+          ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
       case MailConfirmationCodeException ignored ->
           ResponseEntity.status(HttpStatus.NOT_FOUND).build();
       case MailConfirmationCodeExpiredException ignored ->
