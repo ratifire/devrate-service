@@ -1,6 +1,7 @@
 package com.ratifire.devrate.service.registration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -19,6 +20,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+/**
+ * Unit tests for the EmailConfirmationCodeService class.
+ */
 @ExtendWith(MockitoExtension.class)
 class EmailConfirmationCodeServiceTest {
 
@@ -29,28 +33,30 @@ class EmailConfirmationCodeServiceTest {
   private EmailConfirmationCodeService emailConfirmationCodeService;
 
   @Test
-  void testSave_ShouldReturnEmailConfirmationCode() {
+  void testGenerateConfirmationCodeFormat() {
     long userId = 1L;
+    EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode.builder().build();
 
-    EmailConfirmationCode expectedConfirmationCode = EmailConfirmationCode.builder()
-        .code("123456")
-        .createdAt(LocalDateTime.now())
-        .userSecurityId(userId)
-        .build();
+    when(emailConfirmationCodeRepository.save(any())).thenReturn(emailConfirmationCode);
 
-    when(emailConfirmationCodeRepository.save(any(EmailConfirmationCode.class)))
-        .thenReturn(expectedConfirmationCode);
+    String actualConfirmationCode = emailConfirmationCodeService.getConfirmationCode(userId);
 
-    EmailConfirmationCode actualConfirmationCode = emailConfirmationCodeService.save(userId);
-
-    assertEquals(expectedConfirmationCode, actualConfirmationCode);
+    assertTrue(actualConfirmationCode.matches("\\d{6}"),
+        "Confirmation code should be 6 digits long");
   }
 
   @Test
-  void testGenerateConfirmationCode() {
-    String code = emailConfirmationCodeService.generateConfirmationCode();
+  void testGenerateUniqueConfirmationCodes() {
+    long userId = 1L;
+    EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode.builder().build();
 
-    assertTrue(code.matches("\\d{6}"));
+    when(emailConfirmationCodeRepository.save(any())).thenReturn(emailConfirmationCode);
+
+    String confirmationCode1 = emailConfirmationCodeService.getConfirmationCode(userId);
+    String confirmationCode2 = emailConfirmationCodeService.getConfirmationCode(userId);
+
+    assertNotEquals(confirmationCode1, confirmationCode2,
+        "Generated confirmation codes should be unique");
   }
 
   @Test

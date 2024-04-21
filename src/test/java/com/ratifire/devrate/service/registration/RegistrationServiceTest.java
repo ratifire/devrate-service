@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
@@ -111,6 +110,7 @@ public class RegistrationServiceTest {
   public void testRegisterUser_SuccessfulRegistration() {
     String testEmail = "test@gmail.com";
     String testPassword = "somepassword";
+    String confirmationCode = "123456";
 
     UserSecurity testUserSecurity = UserSecurity.builder()
         .email("test@gmail.com")
@@ -120,15 +120,12 @@ public class RegistrationServiceTest {
         .id(1L)
         .build();
 
+    when(userService.create(any(UserDto.class))).thenReturn(new User());
+    when(userMapper.toEntity(any(UserRegistrationDto.class))).thenReturn(testUserSecurity);
     when(roleService.getDefaultRole()).thenReturn(testRole);
     when(userSecurityService.save(any())).thenReturn(testUserSecurity);
-    when(userMapper.toEntity(any(UserRegistrationDto.class))).thenReturn(testUserSecurity);
-    when(userService.create(any(UserDto.class))).thenReturn(new User());
-
-    when(registrationService.isUserExistByEmail(any())).thenReturn(false);
-    when(emailConfirmationCodeService.save(anyLong()))
-        .thenReturn(EmailConfirmationCode.builder().build());
-    doNothing().when(emailService).sendEmail(any(), anyBoolean());
+    when(emailConfirmationCodeService.getConfirmationCode(anyLong())).thenReturn(confirmationCode);
+    doNothing().when(emailService).sendConfirmationCodeEmail(any(), any());
 
     UserRegistrationDto testUserRegistrationDto = UserRegistrationDto.builder()
         .email(testEmail)
@@ -137,9 +134,9 @@ public class RegistrationServiceTest {
 
     registrationService.registerUser(testUserRegistrationDto);
 
-    verify(emailConfirmationCodeService, times(1)).save(anyLong());
+    verify(emailConfirmationCodeService, times(1)).getConfirmationCode(anyLong());
     verify(userService, times(1)).create(any(UserDto.class));
-    verify(emailService, times(1)).sendEmail(any(), anyBoolean());
+    verify(emailService, times(1)).sendConfirmationCodeEmail(any(), any());
   }
 
   /**
@@ -189,9 +186,9 @@ public class RegistrationServiceTest {
         .thenReturn(emailConfirmationCode);
     when(userSecurityService.getById(userSecurityId)).thenReturn(userSecurity);
     when(userSecurityService.save(userSecurity)).thenReturn(null);
-    doNothing().when(notificationService).addGreetingNotification(any());
-
     doNothing().when(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
+    doNothing().when(notificationService).addGreetingNotification(any());
+    doNothing().when(emailService).sendGreetingsEmail(any(), any());
 
     long actualUserId = registrationService.confirmRegistration(code);
 
