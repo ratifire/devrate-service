@@ -4,7 +4,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -61,14 +60,6 @@ public class RegistrationControllerTest {
         .build();
   }
 
-  /**
-   * Test for {@link RegistrationController#registerUser(UserRegistrationDto)}.
-   *
-   * <p>Test method for verifying that the sign-up endpoint ("/signup") returns OK status. This
-   * method verifies that the sign-up endpoint returns HTTP status 200 (OK) when accessed.
-   *
-   * @throws Exception if an error occurs during the test.
-   */
   @Test
   public void testSignUpShouldReturnOk() throws Exception {
     Mockito.doNothing().when(registrationService).registerUser(any());
@@ -76,18 +67,9 @@ public class RegistrationControllerTest {
     mockMvc.perform(post(END_POINT_PATH)
             .contentType("application/json")
             .content(objectMapper.writeValueAsString(userRegistrationDto)))
-        .andExpect(status().isOk())
-        .andDo(print());
+        .andExpect(status().isOk());
   }
 
-  /**
-   * Test for {@link RegistrationController#confirm(String)}.
-   *
-   * <p>Test method for verifying that the sign-up endpoint ("/signup") returns OK status. This
-   * method verifies that the sign-up endpoint returns HTTP status 200 (OK) when accessed.
-   *
-   * @throws Exception if an error occurs during the test.
-   */
   @Test
   public void testConfirmShouldReturnUserId() throws Exception {
     Mockito.when(registrationService.confirmRegistration(anyString())).thenReturn(1L);
@@ -97,15 +79,6 @@ public class RegistrationControllerTest {
         .andExpect(jsonPath("$").value(1L));
   }
 
-  /**
-   * Test for {@link RegistrationController#confirm(String)}.
-   *
-   * <p>This test ensures that the {@code confirmRegistration} method in {@code RegistrationService}
-   * throws {@code EmailConfirmationCodeException}, and the controller returns HTTP status code 404
-   * (NOT FOUND) in response.
-   *
-   * @throws Exception if an error occurs during the test execution
-   */
   @Test
   public void testConfirm_InvalidCode_ShouldReturnStatusCode404() throws Exception {
     Mockito.when(registrationService.confirmRegistration(anyString()))
@@ -115,15 +88,6 @@ public class RegistrationControllerTest {
         .andExpect(status().isNotFound());
   }
 
-  /**
-   * Test for {@link RegistrationController#confirm(String)}.
-   *
-   * <p>This test ensures that the {@code confirmRegistration} method in {@code RegistrationService}
-   * throws {@code EmailConfirmationCodeRequestException}, and the controller returns HTTP status
-   * code 400 (BAD REQUEST) in response.
-   *
-   * @throws Exception if an error occurs during the test execution
-   */
   @Test
   public void testConfirm_InvalidRequest_ShouldReturnStatusCode400() throws Exception {
     Mockito.when(registrationService.confirmRegistration(anyString()))
