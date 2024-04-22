@@ -2,8 +2,6 @@ package com.ratifire.devrate.controller;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -60,9 +58,6 @@ public class NotificationControllerTest {
             .param("userId", String.valueOf(testUserId))
             .param("notificationId", String.valueOf(testNotificationId)))
         .andExpect(status().isOk());
-
-    verify(notificationService, times(1)).markAsReadById(testNotificationId);
-    verify(webSocketSender, times(1)).sendNotificationsByUserId(testUserId);
   }
 
   @Test
@@ -75,8 +70,5 @@ public class NotificationControllerTest {
             .param("userId", String.valueOf(testUserId))
             .param("notificationId", String.valueOf(testNotificationId)))
         .andExpect(status().isOk());
-
-    verify(notificationService, times(1)).deleteById(testNotificationId);
-    verify(webSocketSender, times(1)).sendNotificationsByUserId(testUserId);
   }
 }

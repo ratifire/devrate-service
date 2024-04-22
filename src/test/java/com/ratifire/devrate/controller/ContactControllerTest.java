@@ -1,16 +1,14 @@
 package com.ratifire.devrate.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,9 +46,9 @@ class ContactControllerTest {
   @Autowired
   private ObjectMapper objectMapper;
 
-  private long contactId = 1;
+  private final long contactId = 1;
 
-  private long userId = 1;
+  private final long userId = 1;
 
   private ContactDto contactDto;
 
@@ -74,12 +72,17 @@ class ContactControllerTest {
   @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
   void findByIdTest() throws Exception {
     when(contactService.findById(contactId)).thenReturn(contactDto);
-    mockMvc.perform(get("/contacts/{id}", contactId))
+
+    String responseAsString = mockMvc.perform(get("/contacts/{id}", contactId))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.type").value(contactDto.getType().toString()))
-        .andExpect(jsonPath("$.value").value(contactDto.getValue()));
-    verify(contactService, times(1)).findById(anyLong());
+        .andReturn()
+        .getResponse()
+        .getContentAsString();
+
+    ContactDto resultContactDto = objectMapper.readValue(responseAsString, ContactDto.class);
+
+    assertEquals(contactDto, resultContactDto);
   }
 
   @Test
@@ -87,14 +90,18 @@ class ContactControllerTest {
   void createTest() throws Exception {
     String requestBody = objectMapper.writeValueAsString(contactDto);
     when(contactService.create(anyLong(), any(ContactDto.class))).thenReturn(contactDto);
-    mockMvc.perform(post("/contacts/{userId}", userId)
+
+    String responseAsString = mockMvc.perform(post("/contacts/{userId}", userId)
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestBody))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.type").value(contactDto.getType().toString()))
-        .andExpect(jsonPath("$.value").value(contactDto.getValue()));
-    verify(contactService, times(1)).create(anyLong(), any(ContactDto.class));
+        .andReturn()
+        .getResponse()
+        .getContentAsString();
+
+    ContactDto resultContactDto = objectMapper.readValue(responseAsString, ContactDto.class);
+
+    assertEquals(contactDto, resultContactDto);
   }
 
   @Test
@@ -102,15 +109,18 @@ class ContactControllerTest {
   void updateTest() throws Exception {
     String requestBody = objectMapper.writeValueAsString(contactDtoUpdated);
     when(contactService.update(anyLong(), any(ContactDto.class))).thenReturn(contactDtoUpdated);
-    mockMvc.perform(put("/contacts/{id}", contactId)
+
+    String responseAsString = mockMvc.perform(put("/contacts/{id}", contactId)
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestBody))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.type").value(contactDtoUpdated.getType().toString()))
-        .andExpect(jsonPath("$.value").value(contactDtoUpdated.getValue()));
-    verify(contactService, times(1)).update(anyLong(), any(ContactDto.class));
+        .andReturn()
+        .getResponse()
+        .getContentAsString();
 
+    ContactDto resultContactDto = objectMapper.readValue(responseAsString, ContactDto.class);
+
+    assertEquals(contactDtoUpdated, resultContactDto);
   }
 
   @Test
@@ -119,5 +129,4 @@ class ContactControllerTest {
     mockMvc.perform(delete("/contacts/{id}", contactId))
         .andExpect(status().isOk());
   }
-
 }

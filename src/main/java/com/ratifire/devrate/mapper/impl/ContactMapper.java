@@ -14,10 +14,10 @@ import org.mapstruct.MappingTarget;
 public abstract class ContactMapper implements DataMapper<ContactDto, Contact> {
 
   @Mapping(target = "id", ignore = true)
+  @Mapping(target = "userId", ignore = true)
   public abstract Contact toEntity(ContactDto contactDto);
 
   @Mapping(target = "id", ignore = true)
-  public abstract Contact updateEntity(ContactDto contactDto,
-      @MappingTarget Contact contact);
-
+  @Mapping(target = "userId", ignore = true)
+  public abstract Contact updateEntity(ContactDto dto, @MappingTarget Contact entity);
 }

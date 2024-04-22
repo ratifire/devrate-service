@@ -3,12 +3,9 @@ package com.ratifire.devrate.service.resetpassword;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.exception.InvalidCodeException;
 import com.ratifire.devrate.repository.EmailConfirmationCodeRepository;
-import com.ratifire.devrate.service.email.EmailService;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 /**
@@ -22,7 +19,6 @@ public class EmailConfirmationUuidService {
    * Repository for accessing email confirmation code data in the database.
    */
   private final EmailConfirmationCodeRepository emailConfirmationCodeRepository;
-  private final EmailService emailService;
 
   /**
    * Generates a unique UUID.
@@ -71,38 +67,6 @@ public class EmailConfirmationUuidService {
    */
   public void deleteConfirmedCodesByUserSecurityId(Long userSecurityId) {
     emailConfirmationCodeRepository.deleteByUserSecurityId(userSecurityId);
-  }
-
-  /**
-   * Sends an email with a password reset link to the user.
-   *
-   * @param email The user's email address.
-   * @param code  The unique password reset code.
-   */
-  public void sendPasswordResetEmail(String email, String code) {
-    // Temporarily removed password reset URL
-    String resetLink = "#" + code;
-    SimpleMailMessage resetEmail = new SimpleMailMessage();
-    resetEmail.setTo(email);
-    resetEmail.setSubject("Password Reset");
-    resetEmail.setText("To reset your password, please click the link below:\n" + resetLink);
-    emailService.sendEmail(resetEmail, false);
-  }
-
-  /**
-   * Sends an email confirmation about the password change.
-   *
-   * @param email The user's email address.
-   */
-  public void sendPasswordChangeConfirmation(String email) {
-    SimpleMailMessage message = new SimpleMailMessage();
-    message.setTo(email);
-    message.setSubject("Password Successfully Reset");
-    LocalDateTime now = LocalDateTime.now();
-    String formattedDateTime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-    String text = "Your password has been successfully changed on " + formattedDateTime + ".";
-    message.setText(text);
-    emailService.sendEmail(message, false);
   }
 
   /**

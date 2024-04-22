@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
@@ -22,7 +21,6 @@ import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.MailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.MailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserSecurityAlreadyExistException;
-import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.RoleService;
 import com.ratifire.devrate.service.UserSecurityService;
@@ -35,6 +33,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -54,9 +53,6 @@ public class RegistrationServiceTest {
   private RoleService roleService;
 
   @Mock
-  private DataMapper<UserRegistrationDto, UserSecurity> userMapper;
-
-  @Mock
   private EmailConfirmationCodeService emailConfirmationCodeService;
 
   @Mock
@@ -67,6 +63,9 @@ public class RegistrationServiceTest {
 
   @Mock
   private UserService userService;
+
+  @Mock
+  private PasswordEncoder passwordEncoder;
 
   @InjectMocks
   private RegistrationService registrationService;
@@ -111,6 +110,7 @@ public class RegistrationServiceTest {
   public void testRegisterUser_SuccessfulRegistration() {
     String testEmail = "test@gmail.com";
     String testPassword = "somepassword";
+    String confirmationCode = "123456";
 
     UserSecurity testUserSecurity = UserSecurity.builder()
         .email("test@gmail.com")
@@ -120,15 +120,13 @@ public class RegistrationServiceTest {
         .id(1L)
         .build();
 
+    when(registrationService.isUserExistByEmail(any())).thenReturn(false);
+    when(userService.create(any(UserDto.class))).thenReturn(new User());
+    when(passwordEncoder.encode(any())).thenReturn(testPassword);
     when(roleService.getDefaultRole()).thenReturn(testRole);
     when(userSecurityService.save(any())).thenReturn(testUserSecurity);
-    when(userMapper.toEntity(any(UserRegistrationDto.class))).thenReturn(testUserSecurity);
-    when(userService.create(any(UserDto.class))).thenReturn(new User());
-
-    when(registrationService.isUserExistByEmail(any())).thenReturn(false);
-    when(emailConfirmationCodeService.save(anyLong()))
-        .thenReturn(EmailConfirmationCode.builder().build());
-    doNothing().when(emailService).sendEmail(any(), anyBoolean());
+    when(emailConfirmationCodeService.getConfirmationCode(anyLong())).thenReturn(confirmationCode);
+    doNothing().when(emailService).sendConfirmationCodeEmail(any(), any());
 
     UserRegistrationDto testUserRegistrationDto = UserRegistrationDto.builder()
         .email(testEmail)
@@ -137,9 +135,9 @@ public class RegistrationServiceTest {
 
     registrationService.registerUser(testUserRegistrationDto);
 
-    verify(emailConfirmationCodeService, times(1)).save(anyLong());
+    verify(emailConfirmationCodeService, times(1)).getConfirmationCode(anyLong());
     verify(userService, times(1)).create(any(UserDto.class));
-    verify(emailService, times(1)).sendEmail(any(), anyBoolean());
+    verify(emailService, times(1)).sendConfirmationCodeEmail(any(), any());
   }
 
   /**
@@ -189,9 +187,9 @@ public class RegistrationServiceTest {
         .thenReturn(emailConfirmationCode);
     when(userSecurityService.getById(userSecurityId)).thenReturn(userSecurity);
     when(userSecurityService.save(userSecurity)).thenReturn(null);
-    doNothing().when(notificationService).addGreetingNotification(any());
-
     doNothing().when(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
+    doNothing().when(notificationService).addGreetingNotification(any());
+    doNothing().when(emailService).sendGreetingsEmail(any(), any());
 
     long actualUserId = registrationService.confirmRegistration(code);
 

@@ -13,6 +13,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -71,6 +74,24 @@ public class HandlerException {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(ResourceNotFoundException.class)
   public void handleNoFoundExceptions() {
+  }
+
+  /**
+   * Handles the authorizing exceptions by returning an HTTP status 401.
+   */
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  @ExceptionHandler({
+      InternalAuthenticationServiceException.class,
+      BadCredentialsException.class})
+  public void handleAuthenticationExceptions() {
+  }
+
+  /**
+   * Handles the disabled exception for not verified users by returning an HTTP status 403.
+   */
+  @ResponseStatus(HttpStatus.FORBIDDEN)
+  @ExceptionHandler({DisabledException.class})
+  public void handleUserDisabledException() {
   }
 
   /**
