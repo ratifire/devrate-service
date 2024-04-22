@@ -7,11 +7,16 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.UserRepository;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +35,7 @@ class UserServiceTest {
   private UserService userService;
 
   @Mock
-  private DataMapper<UserDto, User> userMapper;
+  private DataMapper dataMapper;
 
   @Mock
   private UserRepository userRepository;
@@ -38,6 +43,8 @@ class UserServiceTest {
   private final long userId = 1L;
   private User testUser;
   private UserDto testUserDto;
+  private EmploymentRecordDto employmentRecordDto;
+  private EmploymentRecord employmentRecord;
 
   /**
    * Setup method executed before each test method.
@@ -46,18 +53,38 @@ class UserServiceTest {
   public void init() {
     testUser = User.builder()
         .id(userId)
+        .employmentRecords(new ArrayList<>())
         .build();
 
     testUserDto = UserDto.builder()
         .id(userId)
         .build();
-  }
 
+    employmentRecordDto = EmploymentRecordDto.builder()
+        .id(1L)
+        .startDate(LocalDate.ofEpochDay(2023 - 01 - 01))
+        .endDate(LocalDate.ofEpochDay(2022 - 01 - 01))
+        .position("Java Developer")
+        .companyName("New Company")
+        .description("Worked on various projects")
+        .responsibilities(Arrays.asList("1", "2", "3"))
+        .build();
+
+    employmentRecord = EmploymentRecord.builder()
+        .id(1L)
+        .startDate(LocalDate.of(2023, 1, 1))
+        .endDate(LocalDate.of(2023, 11, 22))
+        .position("Java Developer")
+        .companyName("Example Company 4")
+        .description("Worked on various projects")
+        .responsibilities(Arrays.asList("Собирал одуванчики", "Hello World", "3"))
+        .build();
+  }
 
   @Test
   void findUserById_UserExists_ReturnsUserDto() {
     when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
-    when(userMapper.toDto(any(User.class))).thenReturn(testUserDto);
+    when(dataMapper.toDto(any(User.class))).thenReturn(testUserDto);
 
     UserDto foundUser = userService.findById(userId);
 
@@ -73,14 +100,14 @@ class UserServiceTest {
 
   @Test
   void whenCreate_Successful_ReturnCreatedUser() {
-    when(userMapper.toEntity(any(UserDto.class))).thenReturn(testUser);
+    when(dataMapper.toEntity(any(UserDto.class))).thenReturn(testUser);
     when(userRepository.save(any())).thenReturn(testUser);
 
     User createdUser = userService.create(testUserDto);
 
     assertEquals(testUserDto.getId(), createdUser.getId());
     verify(userRepository).save(testUser);
-    verify(userMapper).toEntity(testUserDto);
+    verify(dataMapper).toEntity(testUserDto);
   }
 
   @Test
@@ -93,17 +120,17 @@ class UserServiceTest {
   @Test
   void whenUpdate_Successful_ReturnCreatedUserDto() {
     when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
-    when(userMapper.updateEntity(any(UserDto.class), any(User.class))).thenReturn(testUser);
+    when(dataMapper.updateEntity(any(UserDto.class), any(User.class))).thenReturn(testUser);
     when(userRepository.save(any())).thenReturn(testUser);
-    when(userMapper.toDto(any(User.class))).thenReturn(testUserDto);
+    when(dataMapper.toDto(any(User.class))).thenReturn(testUserDto);
 
     UserDto updatedUserDto = userService.update(testUserDto);
 
     assertEquals(testUserDto.getId(), updatedUserDto.getId());
     verify(userRepository).findById(userId);
     verify(userRepository).save(testUser);
-    verify(userMapper).updateEntity(testUserDto, testUser);
-    verify(userMapper).toDto(testUser);
+    verify(dataMapper).updateEntity(testUserDto, testUser);
+    verify(dataMapper).toDto(testUser);
   }
 
   @Test
@@ -130,5 +157,27 @@ class UserServiceTest {
     userService.delete(userId);
 
     verify(userRepository, times(1)).delete(testUser);
+  }
+
+  @Test
+  void createEmploymentRecord_Successful_ReturnCreatedEmploymentRecordDto() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(dataMapper.toEntity(any(EmploymentRecordDto.class))).thenReturn(
+        employmentRecord);
+    when(dataMapper.toDto(any(EmploymentRecord.class))).thenReturn(
+        employmentRecordDto);
+    when(userRepository.save(any(User.class))).thenReturn(testUser);
+
+    EmploymentRecordDto result = userService.createEmploymentRecord(employmentRecordDto, userId);
+
+    assertEquals(employmentRecordDto, result);
+  }
+
+  @Test
+  void getEmploymentRecordsByUserId_UserExists_ReturnsListOfEmploymentRecordDto() {
+    when(userRepository.findById(any())).thenReturn(Optional.empty());
+
+    assertThrows(UserNotFoundException.class,
+        () -> userService.getEmploymentRecordsByUserId(userId));
   }
 }

@@ -1,11 +1,16 @@
 package com.ratifire.devrate.controller;
 
+import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.service.employmentrecord.EmploymentRecordService;
 import com.ratifire.devrate.service.user.UserService;
+import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,8 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
  * Controller class responsible for handling requests related to user personal information.
  */
 @RestController
-@RequestMapping("/users")
 @RequiredArgsConstructor
+@RequestMapping("/users")
 public class UserController {
 
   private final UserService userService;
@@ -52,4 +57,29 @@ public class UserController {
   public void delete(@PathVariable long id) {
     userService.delete(id);
   }
+
+  /**
+   * Retrieves user employment-record information by user ID.
+   *
+   * @param userId the ID of the user
+   * @return the list of user's employment-records information as a DTO
+   */
+  @GetMapping("/{userId}/employment-records")
+  public List<EmploymentRecordDto> getEmploymentRecordsByUserId(@PathVariable long userId) {
+    return userService.getEmploymentRecordsByUserId(userId);
+  }
+
+  /**
+   * Creates user employment-record information by user ID.
+   *
+   * @param employmentRecordDto the user's employment-record information as a DTO
+   * @return the created user employment-record information as a DTO
+   */
+  @PostMapping("/{userId}/employment-records")
+  public EmploymentRecordDto createEmploymentRecord(
+      @Valid @RequestBody EmploymentRecordDto employmentRecordDto,
+      @PathVariable long userId) {
+    return userService.createEmploymentRecord(employmentRecordDto, userId);
+  }
+
 }

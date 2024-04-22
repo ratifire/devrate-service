@@ -1,5 +1,6 @@
 package com.ratifire.devrate.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -64,4 +65,8 @@ public class User {
   @OneToMany(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
   private List<Notification> notifications;
+
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "user_id", nullable = false)
+  private List<EmploymentRecord> employmentRecords;
 }
