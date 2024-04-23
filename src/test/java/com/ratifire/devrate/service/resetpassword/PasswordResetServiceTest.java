@@ -22,10 +22,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * Tests for the PasswordResetService class. Verifies behavior for password reset requests,
- * including sending a reset link with a valid email, throwing exceptions for invalid emails,
- * successfully updating the password with a valid code, and handling invalid codes.
- * Utilizes Mockito to mock dependencies for isolated testing.
+ * Tests for the PasswordResetService class.
  */
 @ExtendWith(MockitoExtension.class)
 public class PasswordResetServiceTest {
@@ -45,10 +42,6 @@ public class PasswordResetServiceTest {
   @Mock
   private PasswordEncoder passwordEncoder;
 
-  /**
-   * Tests that a password reset request successfully sends a reset link
-   * when the user's email is valid.
-   */
   @Test
   void requestPasswordReset_WithValidEmail_SendsResetLink() {
     String email = "user@example.com";
@@ -63,10 +56,6 @@ public class PasswordResetServiceTest {
     assertTrue(result, "Password reset should be requested successfully");
   }
 
-  /**
-   * Tests that a UserNotFoundException is thrown when attempting to reset
-   * a password with an invalid email.
-   */
   @Test
   void requestPasswordReset_WithInvalidEmail_ThrowsException() {
     String email = "invalid@example.com";
@@ -77,9 +66,6 @@ public class PasswordResetServiceTest {
         .requestPasswordReset(email));
   }
 
-  /**
-   * Tests that a password is successfully reset when a valid code is provided.
-   */
   @Test
   void resetPassword_WithValidCode_UpdatesPassword() {
     String code = "validCode";
@@ -102,11 +88,6 @@ public class PasswordResetServiceTest {
     verify(emailConfirmationUuidService).deleteConfirmedCodesByUserSecurityId(userSecurity.getId());
   }
 
-
-  /**
-   * Tests that an InvalidCodeException is thrown when attempting to reset
-   * a password with an invalid code.
-   */
   @Test
   void resetPassword_WithInvalidCode_ThrowsException() {
     String code = "invalidCode";

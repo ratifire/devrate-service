@@ -24,9 +24,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * Test class for the {@link UserSecurityService}.
- *
- * <p>Unit tests for the UserService class. This class tests the behavior of the UserService
- * methods.
  */
 @ExtendWith(MockitoExtension.class)
 public class UserSecurityServiceTest {
@@ -39,13 +36,6 @@ public class UserSecurityServiceTest {
 
   private final long testId = 123;
 
-  /**
-   * Unit test for {@link UserSecurityService#isExistByEmail(String)}.
-   *
-   * <p>Test method for checking if a user exists by email when the user exists. This method
-   * verifies that the RegistrationService correctly returns true when a user with the specified
-   * email exists in the database.
-   */
   @Test
   public void testUserExistsByEmail_ReturnsTrue() {
     String existingEmail = "existing@example.com";
@@ -54,13 +44,6 @@ public class UserSecurityServiceTest {
     assertTrue(isExist);
   }
 
-  /**
-   * Unit test for {@link UserSecurityService#isExistByEmail(String)}.
-   *
-   * <p>Test method for checking if a user exists by email when the user does not exist. This
-   * method verifies that the RegistrationService correctly returns false when no user with the
-   * specified email exists in the database.
-   */
   @Test
   public void testUserExistsByEmail_ReturnsFalse() {
     String notExistingEmail = "notexisting@example.com";
@@ -69,12 +52,6 @@ public class UserSecurityServiceTest {
     assertFalse(isExist);
   }
 
-  /**
-   * Unit test for {@link UserSecurityService#save(UserSecurity)}.
-   *
-   * <p>Test method for saving a user entity into the database. This method verifies that the
-   * UserService correctly saves a user entity into the database.
-   */
   @Test
   public void testSaveUser() {
     UserSecurity testUserSecurity = UserSecurity.builder()

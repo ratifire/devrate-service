@@ -38,9 +38,6 @@ import org.springframework.test.context.TestPropertySource;
 
 /**
  * Test class for the {@link RegistrationService}.
- *
- * <p>Unit tests for the RegistrationService class. This class tests the behavior of the
- * RegistrationService methods.
  */
 @ExtendWith(MockitoExtension.class)
 @TestPropertySource(locations = "classpath:application.properties")
@@ -70,13 +67,6 @@ public class RegistrationServiceTest {
   @InjectMocks
   private RegistrationService registrationService;
 
-  /**
-   * Unit test for {@link RegistrationService#isUserExistByEmail(String)}.
-   *
-   * <p>Test method for checking if a user exists by email when the user exists. This method
-   * verifies that the RegistrationService correctly returns true when a user with the specified
-   * email exists in the database.
-   */
   @Test
   public void testUserExistsByEmail_ReturnsTrue() {
     String existingEmail = "existing@example.com";
@@ -85,13 +75,6 @@ public class RegistrationServiceTest {
     assertTrue(isExist);
   }
 
-  /**
-   * Unit test for {@link RegistrationService#isUserExistByEmail(String)}.
-   *
-   * <p>Test method for checking if a user exists by email when the user does not exist. This
-   * method verifies that the RegistrationService correctly returns false when no user with the
-   * specified email exists in the database.
-   */
   @Test
   public void testUserExistsByEmail_ReturnsFalse() {
     String notExistingEmail = "notexisting@example.com";
@@ -100,12 +83,6 @@ public class RegistrationServiceTest {
     assertFalse(isExist);
   }
 
-  /**
-   * Unit test for {@link RegistrationService#registerUser(UserRegistrationDto)}.
-   *
-   * <p>Test case to verify successful user registration. A valid email and password are provided.
-   * The user should be successfully registered.
-   */
   @Test
   public void testRegisterUser_SuccessfulRegistration() {
     String testEmail = "test@gmail.com";
@@ -140,12 +117,6 @@ public class RegistrationServiceTest {
     verify(emailService, times(1)).sendConfirmationCodeEmail(any(), any());
   }
 
-  /**
-   * Unit test for {@link RegistrationService#registerUser(UserRegistrationDto)}.
-   *
-   * <p>Test case to verify successful user registration. A not valid email and password are
-   * provided. UserAlreadyExistException have to be thrown.
-   */
   @Test
   public void testRegisterUser_ThrowUserAlreadyExistException() {
     UserRegistrationDto testUserRegistrationDto = UserRegistrationDto.builder()
@@ -158,12 +129,6 @@ public class RegistrationServiceTest {
         () -> registrationService.registerUser(testUserRegistrationDto));
   }
 
-  /**
-   * Unit test for {@link RegistrationService#confirmRegistration(String)}.
-   *
-   * <p>This test verifies the behavior of the confirmRegistration method in RegistrationService
-   * when a valid confirmation code is provided and the registration is successful.
-   */
   @Test
   public void testConfirmRegistration_Success() {
     long userSecurityId = 1L;
@@ -201,27 +166,12 @@ public class RegistrationServiceTest {
     verify(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
   }
 
-  /**
-   * Unit test for {@link RegistrationService#confirmRegistration(String)}.
-   *
-   * <p>This test verifies the behavior of the confirmRegistration method in RegistrationService
-   * when an empty confirmation code is provided, and it expects an
-   * EmailConfirmationCodeRequestException to be thrown.
-   */
   @Test
   public void testConfirmRegistration_RequestEmptyCode() {
     assertThrows(MailConfirmationCodeRequestException.class,
         () -> registrationService.confirmRegistration(""));
   }
 
-  /**
-   * Unit test for {@link RegistrationService#confirmRegistration(String)}.
-   *
-   * <p>Tests the confirmation of registration with an expired confirmation code.
-   * Verifies that an {@link MailConfirmationCodeExpiredException} is thrown and that neither the
-   * {@link UserSecurityService} nor the {@link EmailConfirmationCodeService} are invoked for
-   * further actions.
-   */
   @Test
   void testConfirmRegistrationExpiredCode() {
     String code = "123456";

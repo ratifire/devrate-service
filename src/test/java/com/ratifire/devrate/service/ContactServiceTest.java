@@ -98,7 +98,6 @@ class ContactServiceTest {
     verify(contactMapper).toDto(any(Contact.class));
   }
 
-
   @Test
   void updateThrowContactNotFoundExceptionTest() {
     when(contactRepository.findById(id)).thenReturn(Optional.empty());
