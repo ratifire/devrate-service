@@ -19,9 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * Test class for the {@link RoleService}.
- *
- * <p>Unit tests for the RoleService class. This class tests the behavior of the RoleService
- * methods.
  */
 @ExtendWith(MockitoExtension.class)
 public class RoleServiceTest {
@@ -45,12 +42,6 @@ public class RoleServiceTest {
         .build();
   }
 
-  /**
-   * Unit test for {@link RoleService#getRoleByName(String)}.
-   *
-   * <p>Test method for retrieving a role by name. This method verifies that the RoleService
-   * correctly retrieves a role by its name.
-   */
   @Test
   public void testGetRoleByName() {
     when(roleRepository.findByName(any())).thenReturn(Optional.of(testUserRole));
@@ -58,22 +49,12 @@ public class RoleServiceTest {
     assertEquals(expectedRole, testUserRole);
   }
 
-  /**
-   * Unit test for {@link RoleService#getRoleByName(String)}.
-   *
-   * <p>Test method for retrieving a role by name when the role is not found. This method verifies
-   * that the RoleService correctly throws a RoleNotFoundException when attempting to retrieve a
-   * role that does not exist.
-   */
   @Test
   public void testGetRoleByNameRoleNotFound() throws RoleNotFoundException {
     when(roleRepository.findByName(any())).thenThrow(RoleNotFoundException.class);
     assertThrows(RoleNotFoundException.class, () -> roleService.getRoleByName(any()));
   }
 
-  /**
-   * Unit test for {@link RoleService#getDefaultRole()}.
-   */
   @Test
   public void testGetDefaultRole() {
     when(roleRepository.findByName(any())).thenReturn(Optional.of(testUserRole));

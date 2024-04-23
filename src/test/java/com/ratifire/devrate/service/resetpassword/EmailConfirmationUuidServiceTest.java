@@ -21,9 +21,7 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
- * Tests for {@link EmailConfirmationUuidService}. Includes tests for generating and persisting UUID
- * codes, finding UUID codes, sending password reset and change confirmation emails, and deleting
- * confirmed codes.
+ * Tests for {@link EmailConfirmationUuidService}.
  */
 @ExtendWith(SpringExtension.class)
 public class EmailConfirmationUuidServiceTest {
@@ -34,9 +32,6 @@ public class EmailConfirmationUuidServiceTest {
   @InjectMocks
   private EmailConfirmationUuidService emailConfirmationUuidService;
 
-  /**
-   * Tests generating and persisting a UUID code for a given user ID.
-   */
   @Test
   public void generateAndPersistUuidCode_GeneratesAndSavesCode() {
     Long userId = 1L;
@@ -50,9 +45,6 @@ public class EmailConfirmationUuidServiceTest {
     verify(emailConfirmationCodeRepository).save(any(EmailConfirmationCode.class));
   }
 
-  /**
-   * Tests finding a UUID code when the code is valid.
-   */
   @Test
   public void findUuidCode_WithValidCode_ReturnsCode() {
     String validCode = UUID.randomUUID().toString();
@@ -70,9 +62,6 @@ public class EmailConfirmationUuidServiceTest {
     assertEquals(validCode, result.getCode(), "Should return the correct code");
   }
 
-  /**
-   * Tests behavior when a UUID code is invalid.
-   */
   @Test
   public void findUuidCode_WithInvalidCode_ThrowsInvalidCodeException() {
     String invalidCode = "invalid_code";
@@ -84,9 +73,6 @@ public class EmailConfirmationUuidServiceTest {
         "Should throw InvalidCodeException for an invalid code");
   }
 
-  /**
-   * Tests deleting confirmed codes by user ID.
-   */
   @Test
   public void deleteConfirmedCodesByUserId_DeletesCodes() {
     Long userId = 1L;
@@ -94,9 +80,6 @@ public class EmailConfirmationUuidServiceTest {
     verify(emailConfirmationCodeRepository).deleteByUserSecurityId(userId);
   }
 
-  /**
-   * Tests creating a unique UUID.
-   */
   @Test
   public void createUniqueUuid_CreatesValidUuid() {
     String uuid = emailConfirmationUuidService.createUniqueUuid();
