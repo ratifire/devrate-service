@@ -1,9 +1,12 @@
 package com.ratifire.devrate.service.user;
 
+import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.exception.EmploymentRecordNotFoundException;
 import com.ratifire.devrate.exception.LanguageProficiencyAlreadyExistException;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
@@ -21,6 +24,7 @@ public class UserService {
 
   private final UserRepository userRepository;
   private final DataMapper<UserDto, User> userMapper;
+  private final DataMapper<EmploymentRecordDto, EmploymentRecord> employmentRecordMapper;
   private final DataMapper<LanguageProficiencyDto, LanguageProficiency> languageProficiencyMapper;
 
   /**
@@ -126,5 +130,32 @@ public class UserService {
   private User findUserById(long id) {
     return userRepository.findById(id)
         .orElseThrow(() -> new UserNotFoundException("The user not found with id " + id));
+  }
+
+
+  /**
+   * Retrieves EmploymentRecord (work experience) information by user ID.
+   *
+   * @param userId the ID of the user
+   * @return the user's work experience as a DTO
+   */
+  public List<EmploymentRecordDto> getEmploymentRecordsByUserId(long userId) {
+    User user = findUserById(userId);
+    return employmentRecordMapper.toDto(user.getEmploymentRecords());
+  }
+
+  /**
+   * Creates EmploymentRecord information.
+   *
+   * @param employmentRecordDto the user's EmploymentRecord information as a DTO
+   * @return the created user work experience information as a DTO
+   */
+  public EmploymentRecordDto createEmploymentRecord(EmploymentRecordDto employmentRecordDto,
+      long userId) {
+    User user = findUserById(userId);
+    EmploymentRecord employmentRecord = employmentRecordMapper.toEntity(employmentRecordDto);
+    user.getEmploymentRecords().add(employmentRecord);
+    updateUser(user);
+    return employmentRecordMapper.toDto(employmentRecord);
   }
 }

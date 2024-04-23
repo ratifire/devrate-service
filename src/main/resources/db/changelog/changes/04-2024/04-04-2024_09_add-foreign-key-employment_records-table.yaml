@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: 04-04-2024_09_add-foreign-key-employment_records-table
+      author: Maksim Matveychuk
+      preConditions:
+        - onFail: MARK_RAN
+          comments: |
+            Checks if the foreign key constraint 'fk_employment_records_user' does not
+            already exist on the "employment_records" table.
+            Marks the changeSet as executed if the foreign key constraint exists.
+          not:
+            foreignKeyConstraintExists:
+              foreignKeyName: fk_employment_records_user
+              baseTableName: employment_records
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: employment_records
+            baseColumnNames: user_id
+            constraintName: fk_employment_records_user
+            referencedTableName: users
+            referencedColumnNames: id

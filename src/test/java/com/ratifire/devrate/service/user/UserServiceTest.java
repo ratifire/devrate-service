@@ -9,15 +9,19 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.LanguageProficiencyAlreadyExistException;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.UserRepository;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,9 +50,10 @@ class UserServiceTest {
   private final long languageProficiencyId = 1L;
   private User testUser;
   private UserDto testUserDto;
+  private EmploymentRecordDto employmentRecordDto;
+  private EmploymentRecord employmentRecord;
   private LanguageProficiency testLanguageProficiency;
   private LanguageProficiencyDto testLanguageProficiencyDto;
-
 
   /**
    * Setup method executed before each test method.
@@ -57,11 +62,32 @@ class UserServiceTest {
   public void init() {
     testUser = User.builder()
         .id(userId)
+        .employmentRecords(new ArrayList<>())
         .languageProficiencies(new ArrayList<>())
         .build();
 
     testUserDto = UserDto.builder()
         .id(userId)
+        .build();
+
+    employmentRecordDto = EmploymentRecordDto.builder()
+        .id(1L)
+        .startDate(LocalDate.ofEpochDay(2023 - 01 - 01))
+        .endDate(LocalDate.ofEpochDay(2022 - 01 - 01))
+        .position("Java Developer")
+        .companyName("New Company")
+        .description("Worked on various projects")
+        .responsibilities(Arrays.asList("1", "2", "3"))
+        .build();
+
+    employmentRecord = EmploymentRecord.builder()
+        .id(1L)
+        .startDate(LocalDate.of(2023, 1, 1))
+        .endDate(LocalDate.of(2023, 11, 22))
+        .position("Java Developer")
+        .companyName("Example Company 4")
+        .description("Worked on various projects")
+        .responsibilities(Arrays.asList("Собирал одуванчики", "Hello World", "3"))
         .build();
 
     testLanguageProficiency = LanguageProficiency.builder()
@@ -76,7 +102,6 @@ class UserServiceTest {
         .level(INTERMEDIATE_B1)
         .build();
   }
-
 
   @Test
   void findUserById_UserExists_ReturnsUserDto() {
@@ -154,6 +179,28 @@ class UserServiceTest {
     userService.delete(userId);
 
     verify(userRepository, times(1)).delete(testUser);
+  }
+
+  @Test
+  void createEmploymentRecord_Successful_ReturnCreatedEmploymentRecordDto() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(dataMapper.toEntity(any(EmploymentRecordDto.class))).thenReturn(
+        employmentRecord);
+    when(dataMapper.toDto(any(EmploymentRecord.class))).thenReturn(
+        employmentRecordDto);
+    when(userRepository.save(any(User.class))).thenReturn(testUser);
+
+    EmploymentRecordDto result = userService.createEmploymentRecord(employmentRecordDto, userId);
+
+    assertEquals(employmentRecordDto, result);
+  }
+
+  @Test
+  void getEmploymentRecordsByUserId_UserExists_ReturnsListOfEmploymentRecordDto() {
+    when(userRepository.findById(any())).thenReturn(Optional.empty());
+
+    assertThrows(UserNotFoundException.class,
+        () -> userService.getEmploymentRecordsByUserId(userId));
   }
 
   @Test

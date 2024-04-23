@@ -5,8 +5,8 @@ package com.ratifire.devrate.exception;
  * This exception indicates that the specified email confirmation code could not
  * be found in the database.
  */
-public class EmailConfirmationCodeException extends RuntimeException {
-  public EmailConfirmationCodeException(String message) {
+public class MailConfirmationCodeException extends MailException {
+  public MailConfirmationCodeException(String message) {
     super(message);
   }
 }

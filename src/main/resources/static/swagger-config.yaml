@@ -29,6 +29,8 @@ tags:
     description: Endpoints for user personal info functionality
   - name: contact
     description: Endpoints for user contact management
+  - name: employment records
+    description: Endpoints for user Employment Records management
   - name: "language proficiency"
     description: Endpoints for user language proficiency management
 paths:
@@ -199,7 +201,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LoginDto'
+                $ref: '#/components/schemas/UserDto'
         '400':
           description: Bad request, e.g., missing or invalid parameters
           content:
@@ -732,6 +734,180 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /users/{userId}/employment-records:
+    get:
+      tags:
+        - employment records
+      summary: Get Employment record By UserId
+      description: Retrieves all user`s employment records based on the provided UserId.
+      operationId: findByUserId
+      parameters:
+        - in: path
+          name: userId
+          description: The userId of the employment record to retrieve.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The employment record corresponding to the provided userId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmploymentRecordDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+        - employment records
+      summary: Create New Employment Records
+      description: Creates a new employment record for a specified user.
+      operationId: createEmploymentRecord
+      parameters:
+        - in: path
+          name: userId
+          description: The ID of the user for whom the employment record is being created.
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmploymentRecordDto'
+      responses:
+        '200':
+          description: The created employment records
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmploymentRecordDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /employment-record/{id}:
+    get:
+      tags:
+        - employment records
+      summary: Get Employment record By ID
+      description: Retrieves all user`s employment records based on the provided ID.
+      operationId: findByUserId
+      parameters:
+        - in: path
+          name: ID
+          description: The ID of the employment record to retrieve.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The employment record corresponding to the provided ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmploymentRecordDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - employment records
+      summary: Update employment-record By ID
+      description: Updates an existing employment-record identified by the provided ID.
+      operationId: update
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the employment-record to update.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmploymentRecordDto'
+      responses:
+        '200':
+          description: The updated education
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmploymentRecordDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - employment records
+      summary: Delete Employment Record By ID
+      description: Deletes an employment record identified by the provided ID.
+      operationId: delete
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the employment record to delete.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Employment record deleted successfully
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /language-proficiencies/{id}:
     get:
       tags:
@@ -943,18 +1119,6 @@ components:
         city:
           type: string
           description: The city chosen by the user for their account
-        contacts:
-          type: array
-          description: An array containing contact records associated with the user
-          items:
-            $ref: '#/components/schemas/ContactDto'
-          readOnly: true
-        educations:
-          type: array
-          description: An array containing educational records associated with the user
-          items:
-            $ref: '#/components/schemas/EducationDto'
-          readOnly: true
         subscribed:
           type: boolean
           description: Flag indicating whether the user is subscribed to the newsletter
@@ -1016,6 +1180,44 @@ components:
         - description
         - startYear
         - endYear
+    EmploymentRecordDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The unique identifier for the employment record
+          readOnly: true
+        startDate:
+          type: string
+          format: date
+          description: The starting date of the employment record
+        endDate:
+          type: string
+          format: date
+          description: The ending date of the employment record
+        position:
+          type: string
+          description: The position held during employment
+        companyName:
+          type: string
+          description: The name of the company
+        description:
+          type: string
+          description: Description of the employment record
+        responsibilities:
+          type: array
+          items:
+            type: string
+          description: Responsibilities during employment
+      required:
+        - startDate
+        - endDate
+        - position
+        - companyName
+        - description
+        - responsibilities
+
     LanguageProficiencyDto:
       type: object
       properties:
