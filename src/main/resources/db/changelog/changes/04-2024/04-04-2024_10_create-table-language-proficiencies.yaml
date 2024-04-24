@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 04-04-2024_08_create-table-language-proficiencies
+      id: 04-04-2024_10_create-table-language-proficiencies
       author: Dmytro Abalmas
       preConditions:
         - onFail: MARK_RAN

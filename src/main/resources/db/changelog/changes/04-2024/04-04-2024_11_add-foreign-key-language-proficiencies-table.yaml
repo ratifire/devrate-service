@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 04-04-2024_09_add-foreign-key-language-proficiencies-table
+      id: 04-04-2024_11_add-foreign-key-language-proficiencies-table
       author: Dmytro Abalmas
       preConditions:
         - onFail: MARK_RAN
