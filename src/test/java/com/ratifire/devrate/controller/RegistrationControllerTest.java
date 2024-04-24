@@ -87,7 +87,7 @@ public class RegistrationControllerTest {
   @Test
   public void testConfirm_InvalidCode_ShouldReturnStatusCode404() throws Exception {
     Mockito.when(registrationService.confirmRegistration(anyString()))
-        .thenThrow(MailConfirmationCodeException.class);
+        .thenThrow(new MailConfirmationCodeException("Code not found"));
 
     mockMvc.perform(put(END_POINT_CONFIRM_PATH))
         .andExpect(status().isNotFound());
@@ -96,7 +96,7 @@ public class RegistrationControllerTest {
   @Test
   public void testConfirm_InvalidRequest_ShouldReturnStatusCode400() throws Exception {
     Mockito.when(registrationService.confirmRegistration(anyString()))
-        .thenThrow(MailConfirmationCodeRequestException.class);
+        .thenThrow(new MailConfirmationCodeRequestException("Code is a required argument"));
 
     mockMvc.perform(put(END_POINT_CONFIRM_PATH))
         .andExpect(status().isBadRequest());

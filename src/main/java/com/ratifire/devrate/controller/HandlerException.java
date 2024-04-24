@@ -1,9 +1,5 @@
 package com.ratifire.devrate.controller;
 
-import com.ratifire.devrate.exception.InvalidCodeException;
-import com.ratifire.devrate.exception.MailConfirmationCodeException;
-import com.ratifire.devrate.exception.MailConfirmationCodeExpiredException;
-import com.ratifire.devrate.exception.MailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.MailException;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
@@ -110,16 +106,6 @@ public class HandlerException {
    */
   @ExceptionHandler(MailException.class)
   public ResponseEntity<?> handleMailExceptions(MailException exception) {
-    return switch (exception) {
-      case MailConfirmationCodeRequestException ignored ->
-          ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-      case InvalidCodeException ignored ->
-          ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-      case MailConfirmationCodeException ignored ->
-          ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-      case MailConfirmationCodeExpiredException ignored ->
-          ResponseEntity.status(HttpStatus.GONE).build();
-      default -> handleExceptionErrors(exception);
-    };
+    return ResponseEntity.status(exception.getStatus()).build();
   }
 }
