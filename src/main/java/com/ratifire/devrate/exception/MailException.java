@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public class MailException extends RuntimeException {
 
-  protected final HttpStatus status;
+  private final HttpStatus status;
 
   public MailException(String message, HttpStatus status) {
     super(message);
