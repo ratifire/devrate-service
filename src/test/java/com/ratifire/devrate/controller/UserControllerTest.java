@@ -1,11 +1,12 @@
 package com.ratifire.devrate.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static com.ratifire.devrate.enums.LanguageProficiencyLevel.INTERMEDIATE_B1;
 import static com.ratifire.devrate.enums.LanguageProficiencyLevel.NATIVE;
 import static com.ratifire.devrate.enums.LanguageProficiencyName.ENGLISH;
 import static com.ratifire.devrate.enums.LanguageProficiencyName.UKRAINE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -26,8 +27,6 @@ import com.ratifire.devrate.service.user.UserService;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
-import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,9 +65,7 @@ class UserControllerTest {
   private EmploymentRecordService employmentRecordService;
   @MockBean
   private EmploymentRecordDto employmentRecordDto;
-
-  private LanguageProficiencyDto languageProficiencyDto;
-  private List<LanguageProficiencyDto> proficiencies;
+  private List<LanguageProficiencyDto> languageProficiencyDtos;
 
   @BeforeEach
   public void setUp() {
@@ -91,18 +88,12 @@ class UserControllerTest {
         .position("Java Developer")
         .companyName("New Company")
         .description("Worked on various projects")
-        .responsibilities(Arrays.asList("1", "2", "3")) // Создание списка из строк
+        .responsibilities(Arrays.asList("1", "2", "3"))
         .build();
 
-    languageProficiencyDto = LanguageProficiencyDto.builder()
-        .id(USER_ID)
-        .name(ENGLISH)
-        .level(INTERMEDIATE_B1)
-        .build();
-
-    proficiencies = Arrays.asList(
-        new LanguageProficiencyDto(1L, ENGLISH, NATIVE),
-        new LanguageProficiencyDto(2L, UKRAINE, INTERMEDIATE_B1)
+    languageProficiencyDtos = Arrays.asList(
+        new LanguageProficiencyDto(1L, UKRAINE, NATIVE),
+        new LanguageProficiencyDto(2L, ENGLISH, INTERMEDIATE_B1)
     );
   }
 
@@ -194,11 +185,10 @@ class UserControllerTest {
 
   @Test
   @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
-  void createLanguageProficiencyTest() throws Exception {
-    String content = objectMapper.writeValueAsString(languageProficiencyDto);
-    when(
-        userService.createLanguageProficiency(anyLong(), any(LanguageProficiencyDto.class)))
-        .thenReturn(languageProficiencyDto);
+  void saveLanguageProficienciesTest() throws Exception {
+    String content = objectMapper.writeValueAsString(languageProficiencyDtos);
+    when(userService.saveLanguageProficiencies(anyLong(), anyList()))
+        .thenReturn(languageProficiencyDtos);
     mockMvc.perform(post("/users/{userId}/language-proficiencies", USER_ID)
             .contentType(MediaType.APPLICATION_JSON)
             .content(content))
@@ -209,11 +199,11 @@ class UserControllerTest {
   @Test
   @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
   void findAllLanguageProficienciesByUserIdTest() throws Exception {
-    String expectedContent = objectMapper.writeValueAsString(proficiencies);
-    when(userService.findAllLanguageProficienciesByUserId(USER_ID)).thenReturn(proficiencies);
+    String expectedContent = objectMapper.writeValueAsString(languageProficiencyDtos);
+    when(userService.findAllLanguageProficienciesByUserId(anyLong())).thenReturn(
+        languageProficiencyDtos);
     mockMvc.perform(get("/users/{userId}/language-proficiencies", USER_ID))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedContent));
   }
-
 }

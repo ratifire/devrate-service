@@ -1,10 +1,13 @@
 package com.ratifire.devrate.service.user;
 
 import static com.ratifire.devrate.enums.LanguageProficiencyLevel.INTERMEDIATE_B1;
+import static com.ratifire.devrate.enums.LanguageProficiencyLevel.NATIVE;
 import static com.ratifire.devrate.enums.LanguageProficiencyName.ENGLISH;
+import static com.ratifire.devrate.enums.LanguageProficiencyName.UKRAINE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -15,7 +18,6 @@ import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.exception.LanguageProficiencyAlreadyExistException;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.UserRepository;
@@ -47,13 +49,11 @@ class UserServiceTest {
   private UserRepository userRepository;
 
   private final long userId = 1L;
-  private final long languageProficiencyId = 1L;
   private User testUser;
   private UserDto testUserDto;
   private EmploymentRecordDto employmentRecordDto;
   private EmploymentRecord employmentRecord;
-  private LanguageProficiency testLanguageProficiency;
-  private LanguageProficiencyDto testLanguageProficiencyDto;
+  private List<LanguageProficiencyDto> languageProficiencyDtos;
 
   /**
    * Setup method executed before each test method.
@@ -90,17 +90,10 @@ class UserServiceTest {
         .responsibilities(Arrays.asList("Собирал одуванчики", "Hello World", "3"))
         .build();
 
-    testLanguageProficiency = LanguageProficiency.builder()
-        .id(languageProficiencyId)
-        .name(ENGLISH)
-        .level(INTERMEDIATE_B1)
-        .build();
-
-    testLanguageProficiencyDto = LanguageProficiencyDto.builder()
-        .id(languageProficiencyId)
-        .name(ENGLISH)
-        .level(INTERMEDIATE_B1)
-        .build();
+    languageProficiencyDtos = Arrays.asList(
+        new LanguageProficiencyDto(1L, ENGLISH, NATIVE),
+        new LanguageProficiencyDto(2L, UKRAINE, INTERMEDIATE_B1)
+    );
   }
 
   @Test
@@ -204,17 +197,16 @@ class UserServiceTest {
   }
 
   @Test
-  void findAllLanguageProficienciesByUserIdTest() {
+  void findAllLanguageProficienciesByUserId_UserExists_ReturnsListOfLanguageProficiencyDto() {
     when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
 
     List<LanguageProficiencyDto> result = userService.findAllLanguageProficienciesByUserId(userId);
 
     assertEquals(0, result.size());
-
   }
 
   @Test
-  void findAllLanguageProficienciesByUserIdThrowsUserNotFoundException() {
+  void findAllLanguageProficienciesByUserId_UserNotFound_ThrowsUserNotFoundException() {
     when(userRepository.findById(any())).thenReturn(Optional.empty());
 
     assertThrows(UserNotFoundException.class,
@@ -222,36 +214,27 @@ class UserServiceTest {
   }
 
   @Test
-  void createLanguageProficiencyTest() {
+  void saveLanguageProficiencies_Successful_ReturnLanguageProficiencyDtos() {
     when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
-    when(dataMapper.toEntity(any(LanguageProficiencyDto.class))).thenReturn(
-        testLanguageProficiency);
-    when(dataMapper.toDto(any(LanguageProficiency.class))).thenReturn(
-        testLanguageProficiencyDto);
+    when(dataMapper.toEntity(any(LanguageProficiencyDto.class))).then(invocation -> {
+      LanguageProficiencyDto proficiencyDto = invocation.getArgument(0);
+      return new LanguageProficiency(proficiencyDto.getId(), proficiencyDto.getName(),
+          proficiencyDto.getLevel());
+    });
+    when(dataMapper.toDto(anyList())).thenReturn(languageProficiencyDtos);
     when(userRepository.save(any(User.class))).thenReturn(testUser);
 
-    LanguageProficiencyDto result = userService.createLanguageProficiency(userId,
-        testLanguageProficiencyDto);
+    List<LanguageProficiencyDto> result = userService.saveLanguageProficiencies(userId,
+        languageProficiencyDtos);
 
-    assertEquals(testLanguageProficiencyDto, result);
+    assertEquals(languageProficiencyDtos, result);
   }
 
   @Test
-  void createLanguageProficiencyThrowUserNotFoundExceptionTest() {
+  void saveLanguageProficiencies_UserNotFound_ThrowsUserNotFoundException() {
     when(userRepository.findById(any())).thenReturn(Optional.empty());
 
     assertThrows(UserNotFoundException.class,
-        () -> userService.createLanguageProficiency(userId, testLanguageProficiencyDto));
-  }
-
-  @Test
-  void createLanguageProficiencyThrowAlreadyExistExceptionTest() {
-    testUser.getLanguageProficiencies().add(testLanguageProficiency);
-
-    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
-
-    assertThrows(LanguageProficiencyAlreadyExistException.class, () -> {
-      userService.createLanguageProficiency(userId, testLanguageProficiencyDto);
-    });
+        () -> userService.saveLanguageProficiencies(userId, languageProficiencyDtos));
   }
 }

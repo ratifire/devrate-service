@@ -31,8 +31,6 @@ tags:
     description: Endpoints for user contact management
   - name: employment records
     description: Endpoints for user Employment Records management
-  - name: "language proficiency"
-    description: Endpoints for user language proficiency management
 paths:
   /auth/signup:
     post:
@@ -383,13 +381,13 @@ paths:
     post:
       tags:
         - user info
-      summary: Create a new language proficiency
-      description: Create a new language proficiency of the specified user
-      operationId: createLanguageProficiency
+      summary: Save language proficiencies
+      description: Save language proficiencies of the specified user
+      operationId: saveLanguageProficiencies
       parameters:
         - in: path
           name: userId
-          description: The ID of the user to associate the new language proficiency with
+          description: The ID of the user to associate the new language proficiencies with
           required: true
           schema:
             type: integer
@@ -398,14 +396,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LanguageProficiencyDto'
+              type: array
+              items:
+                $ref: '#/components/schemas/LanguageProficiencyDto'
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LanguageProficiencyDto'
+                type: array
+                items:
+                  $ref: '#/components/schemas/LanguageProficiencyDto'
         '400':
           description: Bad request, e.g., missing or invalid parameters
           content:
@@ -908,108 +910,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /language-proficiencies/{id}:
-    get:
-      tags:
-        - "language proficiency"
-      summary: Get language proficiency by its ID
-      description: Retrieve a specific language proficiency based on the provided language ID
-      operationId: findById
-      parameters:
-        - in: path
-          name: id
-          description: The ID of the language proficiency to retrieve
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LanguageProficiencyDto'
-        '400':
-          description: Bad request, e.g., missing or invalid parameters
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-    put:
-      tags:
-        - "language proficiency"
-      summary: Update language proficiency by its ID
-      description: Updates an existing language proficiency with provided data
-      operationId: update
-      parameters:
-        - in: path
-          name: id
-          description: Unique identifier of the language proficiency to be updated
-          required: true
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LanguageProficiencyDto'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LanguageProficiencyDto'
-        '400':
-          description: Bad request, e.g., missing or invalid parameters
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-    delete:
-      tags:
-        - "language proficiency"
-      summary: Delete language proficiency by its ID
-      description: Deletes a language proficiency from the system based on the provided language ID
-      operationId: delete
-      parameters:
-        - in: path
-          name: id
-          description: Unique identifier of the language proficiency to be deleted
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Successful operation
-        '400':
-          description: Bad request, e.g., missing or invalid parameters
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     UserRegistrationDto:
@@ -1217,7 +1117,6 @@ components:
         - companyName
         - description
         - responsibilities
-
     LanguageProficiencyDto:
       type: object
       properties:
