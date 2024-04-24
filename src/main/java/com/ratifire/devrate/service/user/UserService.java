@@ -6,12 +6,11 @@ import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.exception.EmploymentRecordNotFoundException;
-import com.ratifire.devrate.exception.LanguageProficiencyAlreadyExistException;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.UserRepository;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -95,29 +94,33 @@ public class UserService {
   }
 
   /**
-   * Creates a new language proficiency for a user identified by userId.
+   * Saves new language proficiencies for a user identified by userId.
    *
-   * @param userId                 the ID of the user to whom the language proficiency belongs
-   * @param languageProficiencyDto the language proficiency information to create
-   * @return the created LanguageProficiencyDto
+   * @param userId                  the ID of the user to whom the language proficiency belongs
+   * @param languageProficiencyDtos the language proficiency information to save
+   * @return the list of saved LanguageProficiencyDto objects
    */
-  public LanguageProficiencyDto createLanguageProficiency(long userId,
-      LanguageProficiencyDto languageProficiencyDto) {
+  public List<LanguageProficiencyDto> saveLanguageProficiencies(long userId,
+      List<LanguageProficiencyDto> languageProficiencyDtos) {
     User user = findUserById(userId);
+    List<LanguageProficiency> existingProficiencies = user.getLanguageProficiencies();
 
-    if (user.getLanguageProficiencies().stream()
-        .anyMatch(languageProficiency -> languageProficiency.getName()
-            .equals(languageProficiencyDto.getName()))) {
-      throw new LanguageProficiencyAlreadyExistException(
-          "The language proficiency with name" + languageProficiencyDto.getName()
-              + "already exists");
+    existingProficiencies.removeIf(proficiency -> languageProficiencyDtos.stream()
+        .noneMatch(proficiencyDto -> proficiencyDto.getName().equals(proficiency.getName())));
+
+    for (LanguageProficiencyDto languageProficiencyDto : languageProficiencyDtos) {
+      Optional<LanguageProficiency> languageProficiency = existingProficiencies.stream()
+          .filter(proficiency -> proficiency.getName().equals(languageProficiencyDto.getName()))
+          .findFirst();
+
+      if (languageProficiency.isPresent()) {
+        languageProficiencyMapper.updateEntity(languageProficiencyDto, languageProficiency.get());
+      } else {
+        existingProficiencies.add(languageProficiencyMapper.toEntity(languageProficiencyDto));
+      }
     }
-
-    LanguageProficiency languageProficiency = languageProficiencyMapper.toEntity(
-        languageProficiencyDto);
-    user.getLanguageProficiencies().add(languageProficiency);
     userRepository.save(user);
-    return languageProficiencyMapper.toDto(languageProficiency);
+    return languageProficiencyMapper.toDto(user.getLanguageProficiencies());
   }
 
   /**
@@ -131,7 +134,6 @@ public class UserService {
     return userRepository.findById(id)
         .orElseThrow(() -> new UserNotFoundException("The user not found with id " + id));
   }
-
 
   /**
    * Retrieves EmploymentRecord (work experience) information by user ID.
