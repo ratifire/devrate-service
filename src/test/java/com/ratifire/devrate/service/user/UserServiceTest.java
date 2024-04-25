@@ -1,11 +1,12 @@
 package com.ratifire.devrate.service.user;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.UserDto;
@@ -179,5 +180,48 @@ class UserServiceTest {
 
     assertThrows(UserNotFoundException.class,
         () -> userService.getEmploymentRecordsByUserId(userId));
+  }
+
+  @Test
+  public void testGetUserPictureExists() {
+    long userId = 1L;
+    byte[] expectedPicture = new byte[] {1, 2, 3};
+    when(userRepository.findPictureByUserId(userId)).thenReturn(expectedPicture);
+
+    byte[] actualPicture = userService.getUserPicture(userId);
+
+    assertNotNull(actualPicture);
+    assertArrayEquals(expectedPicture, actualPicture);
+  }
+
+  @Test
+  public void testAddUserPictureNewPicture() {
+    long userId = 1L;
+    byte[] newPicture = new byte[] {4, 5, 6};
+    User user = new User();
+    user.setId(userId);
+    when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+    when(userRepository.save(any(User.class))).thenReturn(user);
+
+    byte[] actualPicture = userService.addUserPicture(userId, newPicture);
+
+    assertArrayEquals(newPicture, actualPicture);
+  }
+
+  @Test
+  public void testDeleteUserPicture() {
+    long userId = 1L;
+    byte[] picture = new byte[] {1, 2, 3};
+    User user = new User();
+    user.setId(userId);
+    user.setPicture(picture);
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+    userService.deleteUserPicture(userId);
+
+    assertNull(user.getPicture());
+
+    verify(userRepository).save(user);
   }
 }

@@ -3,13 +3,18 @@ package com.ratifire.devrate.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +25,7 @@ import com.ratifire.devrate.service.employmentrecord.EmploymentRecordService;
 import com.ratifire.devrate.service.user.UserService;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,6 +66,9 @@ class UserControllerTest {
   private EmploymentRecordService employmentRecordService;
   @MockBean
   private EmploymentRecordDto employmentRecordDto;
+  private final long userId = 1L;
+  private final byte[] userPicture = new byte[] {1, 2, 3};
+  private final String base64UserPicture = Base64.getEncoder().encodeToString(userPicture);
 
 
   @BeforeEach
@@ -171,5 +180,47 @@ class UserControllerTest {
         EmploymentRecordDto.class);
 
     assertEquals(employmentRecordDto, resultEmploymentRecordDto);
+  }
+
+  @Test
+  @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
+  public void getUserPictureWhenExists() throws Exception {
+
+    when(userService.getUserPicture(userId)).thenReturn(userPicture);
+
+    mockMvc
+        .perform(get("/users/{userId}/pictures", userId))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.picture").value(base64UserPicture));
+  }
+
+  @Test
+  @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
+  public void addUserPictureTest() throws Exception {
+
+    when(userService.addUserPicture(anyLong(), any(byte[].class))).thenReturn(userPicture);
+
+    mockMvc
+        .perform(
+            post("/users/{userId}/pictures", userId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    new ObjectMapper()
+                        .writeValueAsString(
+                            Collections.singletonMap("picture", base64UserPicture))))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.picture").value(base64UserPicture));
+  }
+
+  @Test
+  @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
+  public void removeUserPictureTest() throws Exception {
+    long userId = 1L;
+
+    doNothing().when(userService).deleteUserPicture(userId);
+
+    mockMvc.perform(delete("/users/{userId}/pictures", userId)).andExpect(status().isOk());
+
+    verify(userService, times(1)).deleteUserPicture(userId);
   }
 }
