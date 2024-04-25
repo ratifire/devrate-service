@@ -4,10 +4,10 @@ import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.exception.EmploymentRecordNotFoundException;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -116,5 +116,40 @@ public class UserService {
     user.getEmploymentRecords().add(employmentRecord);
     updateUser(user);
     return employmentRecordMapper.toDto(employmentRecord);
+  }
+
+  /**
+   * Retrieves the picture associated with a user by their user ID.
+   *
+   * @param userId the ID of the user whose picture is to be retrieved
+   * @return the user's picture as a byte array, or null if no picture is present
+   */
+  public byte[] getUserPicture(long userId) {
+    return userRepository.findPictureByUserId(userId);
+  }
+
+  /**
+   * Adds or updates a user's picture by user ID. If the user already has a picture, it is replaced.
+   *
+   * @param userId the ID of the user whose picture is to be added or updated
+   * @param userPicture the picture data as a byte array
+   * @return the byte array of the updated picture
+   */
+  public byte[] addUserPicture(long userId, byte[] userPicture) {
+    User user = findUserById(userId);
+    user.setPicture(userPicture);
+    updateUser(user);
+    return user.getPicture();
+  }
+
+  /**
+   * Removes a user's picture by user ID.
+   *
+   * @param userId the ID of the user whose picture is to be removed
+   */
+  public void deleteUserPicture(long userId) {
+    User user = findUserById(userId);
+    user.setPicture(null);
+    updateUser(user);
   }
 }

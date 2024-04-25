@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.List;
@@ -53,6 +54,8 @@ public class User {
   private boolean subscribed;
 
   private String description;
+
+  private byte[] picture;
 
   @OneToMany(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")

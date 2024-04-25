@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: 25.04.2024_11_change-table-users
+      author: Kyrylo Vasylchenko
+      preConditions:
+        - onFail: CONTINUE
+          comments: |
+            Checks if the "users" table was created and does not have the 'picture' column yet.
+          tableExists:
+            tableName: users
+          not:
+            columnExists:
+              tableName: users
+              columnName: picture
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: picture
+                  type: BYTEA
+                  constraints:
+                    nullable: true

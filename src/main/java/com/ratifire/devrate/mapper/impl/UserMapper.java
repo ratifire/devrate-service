@@ -17,11 +17,13 @@ public abstract class UserMapper implements DataMapper<UserDto, User> {
   @Mapping(target = "educations", ignore = true)
   @Mapping(target = "notifications", ignore = true)
   @Mapping(target = "employmentRecords", ignore = true)
+  @Mapping(target = "picture", ignore = true)
   public abstract User toEntity(UserDto dto);
 
   @Mapping(target = "contacts", ignore = true)
   @Mapping(target = "educations", ignore = true)
   @Mapping(target = "notifications", ignore = true)
   @Mapping(target = "employmentRecords", ignore = true)
+  @Mapping(target = "picture", ignore = true)
   public abstract User updateEntity(UserDto dto, @MappingTarget User entity);
 }
