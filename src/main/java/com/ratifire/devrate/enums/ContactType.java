@@ -8,6 +8,7 @@ public enum ContactType {
   PHONE_NUMBER,
   TELEGRAM_LINK,
   LINKEDIN_LINK,
-  GITHUB_LINK
+  GITHUB_LINK,
+  BEHANCE_LINK
 
 }
