@@ -110,8 +110,8 @@ paths:
     post:
       tags:
         - password-reset
-      summary: Request Password Reset Link
-      description: Requests a password reset link to be sent to the given email.
+      summary: Request Password Reset Code
+      description: Requests a password reset code to be sent to the given email.
       operationId: requestPasswordReset
       parameters:
         - in: query
@@ -123,7 +123,7 @@ paths:
           description: The email address of the user requesting a password reset.
       responses:
         '200':
-          description: Password reset link sent successfully.
+          description: Password reset code sent successfully.
           content:
             application/json:
               schema:
@@ -145,7 +145,7 @@ paths:
       tags:
         - password-reset
       summary: Reset Password
-      description: Resets the user's password using a unique code received in the password reset link.
+      description: Resets the user's password using a unique code received by the email.
       operationId: resetPassword
       parameters:
         - in: path
@@ -153,7 +153,7 @@ paths:
           required: true
           schema:
             type: string
-          description: The unique code received in the password reset link.
+          description: The unique code received by the email.
       requestBody:
         required: true
         content:

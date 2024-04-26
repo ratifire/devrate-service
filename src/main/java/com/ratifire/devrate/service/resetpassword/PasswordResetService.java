@@ -27,7 +27,6 @@ public class PasswordResetService {
    *
    * @param email The email address associated with the user account.
    */
-  @Transactional
   public boolean requestPasswordReset(String email) {
     UserSecurity userSecurity = userSecurityService.findByEmail(email);
     String code = emailConfirmationUuidService.generateAndPersistUuidCode(userSecurity.getId());
@@ -38,7 +37,7 @@ public class PasswordResetService {
   /**
    * Resets the password of the user associated with the provided confirmation code.
    *
-   * @param code        The confirmation code received in the password reset link.
+   * @param code        The reset password code.
    * @param newPassword The new password to be set for the user account.
    */
   @Transactional

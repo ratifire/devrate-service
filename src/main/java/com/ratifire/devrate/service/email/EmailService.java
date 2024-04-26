@@ -57,14 +57,14 @@ public class EmailService {
   }
 
   /**
-   * Sends an email with a password reset link to the user.
+   * Sends an email with a password reset code to the user.
    *
    * @param email The user's email address.
    * @param code  The unique password reset code.
    */
   public void sendPasswordResetEmail(String email, String code) {
     String subject = "Password Reset";
-    String text = "To reset your password, please click the link below:\n#" + code;
+    String text = buildTemplateEmailText("reset-password-email", Map.of("code", code));
     sendEmail(email, subject, text);
   }
 
