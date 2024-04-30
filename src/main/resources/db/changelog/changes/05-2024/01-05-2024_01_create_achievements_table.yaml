@@ -12,7 +12,7 @@ databaseChangeLog:
               tableName: achievements
       changes:
         - createTable:
-            tableName: educations
+            tableName: achievements
             columns:
               - column:
                   name: id
