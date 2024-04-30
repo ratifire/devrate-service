@@ -377,6 +377,83 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /users/{userId}/language-proficiencies:
+    post:
+      tags:
+        - user info
+      summary: Save language proficiencies
+      description: Save language proficiencies of the specified user
+      operationId: saveLanguageProficiencies
+      parameters:
+        - in: path
+          name: userId
+          description: The ID of the user to associate the new language proficiencies with
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/LanguageProficiencyDto'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LanguageProficiencyDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - user info
+      summary: Get all language proficiencies by user ID
+      description: Retrieve all language proficiencies of the specified user
+      operationId: findAllLanguageProficienciesByUserId
+      parameters:
+        - in: path
+          name: userId
+          description: The ID of the user to associate the language proficiencies with
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LanguageProficiencyDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /contacts/{id}:
     get:
       tags:
@@ -1040,3 +1117,39 @@ components:
         - companyName
         - description
         - responsibilities
+    LanguageProficiencyDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The unique identifier for the language proficiency
+          readOnly: true
+        name:
+          type: string
+          description: "The name of the language. The name can only be one of the following: 
+          UA, EN, FR, IT, DE, ES, PL, CS."
+          enum:
+            - UA
+            - EN
+            - FR
+            - IT
+            - DE
+            - ES
+            - PL
+            - CS
+        level:
+          type: string
+          description: "The level of the language proficiency. The level can only be one of 
+          the following: ELEMENTARY_A1, PRE_INTERMEDIATE_A2, INTERMEDIATE_B1, UPPER_INTERMEDIATE_B2, 
+          ADVANCED_C1, PROFESSIONAL_C2, NATIVE."
+          enum:
+            - ELEMENTARY_A1
+            - PRE_INTERMEDIATE_A2
+            - INTERMEDIATE_B1
+            - UPPER_INTERMEDIATE_B2
+            - ADVANCED_C1
+            - PROFESSIONAL_C2
+            - NATIVE
+      required:
+        - name
+        - level

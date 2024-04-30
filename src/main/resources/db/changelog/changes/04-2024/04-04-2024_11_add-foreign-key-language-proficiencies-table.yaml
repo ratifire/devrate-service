@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: 04-04-2024_11_add-foreign-key-language-proficiencies-table
+      author: Dmytro Abalmas
+      preConditions:
+        - onFail: MARK_RAN
+          comments: |
+            Checks if the foreign key constraint 'fk_user_language_proficiency' does not already exist 
+            on the "language proficiencies" table.
+            Marks the changeSet as executed if the foreign key constraint exists.
+          not:
+            foreignKeyConstraintExists:
+              foreignKeyName: fk_user_language_proficiency
+              baseTableName: language_proficiencies
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: language_proficiencies
+            baseColumnNames: user_id
+            constraintName: fk_user_language_proficiency
+            referencedTableName: users
+            referencedColumnNames: id
