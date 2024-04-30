@@ -29,40 +29,40 @@ jobs:
       - name: Build with Maven
         run: mvn clean install
 
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2  
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      #- name: Authenticate to Google Cloud
+      #  uses: google-github-actions/auth@v2  
+      #  with:
+      #    credentials_json: ${{ secrets.GCP_SA_KEY }}
         
-      - name: Set up Docker to region
-        run: gcloud auth configure-docker europe-west1-docker.pkg.dev 
+      #- name: Set up Docker to region
+      #  run: gcloud auth configure-docker europe-west1-docker.pkg.dev 
 
-      - name: Build and Push Docker image to Google Artifact Registry
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          push: true
-          tags: europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest
+      #- name: Build and Push Docker image to Google Artifact Registry
+      #  uses: docker/build-push-action@v3
+      #  with:
+      #    context: .
+      #    push: true
+      #    tags: europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest
 
-      # New step for deploying using GCP
-      - name: Deploy to GCP VM
-        run: |
-          # Authenticate with gcloud
-          gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+      ## New step for deploying using GCP
+      #- name: Deploy to GCP VM
+      #  run: |
+          ## Authenticate with gcloud
+     #     gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
 
-          # Commands to SSH into the VM and run the Docker commands 
-          gcloud compute ssh dev-rate-api --zone europe-west1-b --command " 
-            source ~/.bashrc && \
-            sudo docker pull europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest && \
-            sudo docker stop dev-rate-container || true && \
-            sudo docker rm dev-rate-container || true && \
-            sudo docker run -d --name dev-rate-container -p 80:8080 \
-            -e ACTIVE_PROFILE=\$ACTIVE_PROFILE \
-            -e PG_HOST=\$PG_HOST \
-            -e PG_PORT=\$PG_PORT \
-            -e PG_DATABASE=\$PG_DATABASE \
-            -e PG_USERNAME=\$PG_USERNAME \
-            -e PG_PASSWORD=\$PG_PASSWORD \
-            -e PG_SCHEMA=\$PG_SCHEMA \
-            europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest"
+          ## Commands to SSH into the VM and run the Docker commands 
+     #      gcloud compute ssh dev-rate-api --zone europe-west1-b --command " 
+     #       source ~/.bashrc && \
+     #       sudo docker pull europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest && \
+     #       sudo docker stop dev-rate-container || true && \
+     #       sudo docker rm dev-rate-container || true && \
+     #       sudo docker run -d --name dev-rate-container -p 80:8080 \
+     #       -e ACTIVE_PROFILE=\$ACTIVE_PROFILE \
+     #       -e PG_HOST=\$PG_HOST \
+     #       -e PG_PORT=\$PG_PORT \
+     #       -e PG_DATABASE=\$PG_DATABASE \
+     #       -e PG_USERNAME=\$PG_USERNAME \
+     #       -e PG_PASSWORD=\$PG_PASSWORD \
+     #       -e PG_SCHEMA=\$PG_SCHEMA \
+     #       europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest"
 
