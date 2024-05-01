@@ -110,8 +110,8 @@ paths:
     post:
       tags:
         - password-reset
-      summary: Request Password Reset Link
-      description: Requests a password reset link to be sent to the given email.
+      summary: Request Password Reset Code
+      description: Requests a password reset code to be sent to the given email.
       operationId: requestPasswordReset
       parameters:
         - in: query
@@ -123,7 +123,7 @@ paths:
           description: The email address of the user requesting a password reset.
       responses:
         '200':
-          description: Password reset link sent successfully.
+          description: Password reset code sent successfully.
           content:
             application/json:
               schema:
@@ -145,7 +145,7 @@ paths:
       tags:
         - password-reset
       summary: Reset Password
-      description: Resets the user's password using a unique code received in the password reset link.
+      description: Resets the user's password using a unique code received by the email.
       operationId: resetPassword
       parameters:
         - in: path
@@ -153,7 +153,7 @@ paths:
           required: true
           schema:
             type: string
-          description: The unique code received in the password reset link.
+          description: The unique code received by the email.
       requestBody:
         required: true
         content:
@@ -377,6 +377,83 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /users/{userId}/language-proficiencies:
+    post:
+      tags:
+        - user info
+      summary: Save language proficiencies
+      description: Save language proficiencies of the specified user
+      operationId: saveLanguageProficiencies
+      parameters:
+        - in: path
+          name: userId
+          description: The ID of the user to associate the new language proficiencies with
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/LanguageProficiencyDto'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LanguageProficiencyDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - user info
+      summary: Get all language proficiencies by user ID
+      description: Retrieve all language proficiencies of the specified user
+      operationId: findAllLanguageProficienciesByUserId
+      parameters:
+        - in: path
+          name: userId
+          description: The ID of the user to associate the language proficiencies with
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LanguageProficiencyDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /users/{userId}/pictures:
     get:
       tags:
@@ -505,7 +582,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'                  
   /contacts/{id}:
     get:
       tags:
@@ -1169,3 +1246,39 @@ components:
         - companyName
         - description
         - responsibilities
+    LanguageProficiencyDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The unique identifier for the language proficiency
+          readOnly: true
+        name:
+          type: string
+          description: "The name of the language. The name can only be one of the following: 
+          UA, EN, FR, IT, DE, ES, PL, CS."
+          enum:
+            - UA
+            - EN
+            - FR
+            - IT
+            - DE
+            - ES
+            - PL
+            - CS
+        level:
+          type: string
+          description: "The level of the language proficiency. The level can only be one of 
+          the following: ELEMENTARY_A1, PRE_INTERMEDIATE_A2, INTERMEDIATE_B1, UPPER_INTERMEDIATE_B2, 
+          ADVANCED_C1, PROFESSIONAL_C2, NATIVE."
+          enum:
+            - ELEMENTARY_A1
+            - PRE_INTERMEDIATE_A2
+            - INTERMEDIATE_B1
+            - UPPER_INTERMEDIATE_B2
+            - ADVANCED_C1
+            - PROFESSIONAL_C2
+            - NATIVE
+      required:
+        - name
+        - level
