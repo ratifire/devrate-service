@@ -3,7 +3,6 @@ package com.ratifire.devrate.controller;
 import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.UserDto;
-import com.ratifire.devrate.service.employmentrecord.EmploymentRecordService;
 import com.ratifire.devrate.service.user.UserService;
 import jakarta.validation.Valid;
 import java.util.List;
