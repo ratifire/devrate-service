@@ -7,6 +7,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+/**
+ * Mapper interface for mapping between Achievement and AchievementDto objects.
+ */
 @Mapper(componentModel = "spring")
 public abstract class AchievementMapper implements DataMapper<AchievementDto, Achievement> {
 

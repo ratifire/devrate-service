@@ -11,6 +11,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entity class representing an achievement in the system.
+ */
 @Data
 @Entity
 @Builder

@@ -7,6 +7,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.hibernate.validator.constraints.URL;
 
+/**
+ * Data transfer object (DTO) representing achievement.
+ */
 @Getter
 @Builder
 @EqualsAndHashCode
