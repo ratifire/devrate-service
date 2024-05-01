@@ -12,9 +12,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.User;
@@ -54,6 +56,9 @@ class UserServiceTest {
   private EmploymentRecordDto employmentRecordDto;
   private EmploymentRecord employmentRecord;
   private List<LanguageProficiencyDto> languageProficiencyDtos;
+  private Achievement achievement;
+  private AchievementDto achievementDto;
+  private List<AchievementDto> achievementDtoList;
 
   /**
    * Setup method executed before each test method.
@@ -64,6 +69,7 @@ class UserServiceTest {
         .id(userId)
         .employmentRecords(new ArrayList<>())
         .languageProficiencies(new ArrayList<>())
+        .achievements(new ArrayList<>())
         .build();
 
     testUserDto = UserDto.builder()
@@ -94,6 +100,19 @@ class UserServiceTest {
         new LanguageProficiencyDto(1L, ENGLISH, NATIVE),
         new LanguageProficiencyDto(2L, UKRAINE, INTERMEDIATE_B1)
     );
+
+    achievement = Achievement.builder()
+        .id(1).link("https://certificate.ithillel.ua/view/86277355")
+        .summary("summary")
+        .description("description")
+        .build();
+
+    achievementDto = AchievementDto.builder()
+        .id(1).link("https://certificate.ithillel.ua/view/86277355")
+        .summary("summary")
+        .description("description")
+        .build();
+    achievementDtoList = List.of(achievementDto);
   }
 
   @Test
@@ -236,5 +255,25 @@ class UserServiceTest {
 
     assertThrows(UserNotFoundException.class,
         () -> userService.saveLanguageProficiencies(userId, languageProficiencyDtos));
+  }
+
+  @Test
+  public void getAchievementsByUserIdTest() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(dataMapper.toDto(any())).thenReturn(achievementDtoList);
+
+    List<AchievementDto> result = userService.getAchievementsByUserId(userId);
+    assertEquals(achievementDtoList, result);
+  }
+
+  @Test
+  public void createAchievementTest() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(userRepository.save(any(User.class))).thenReturn(testUser);
+    when(dataMapper.toEntity(achievementDto)).thenReturn(achievement);
+    when(dataMapper.toDto(achievement)).thenReturn(achievementDto);
+
+    AchievementDto result = userService.createAchievement(userId, achievementDto);
+    assertEquals(achievementDto, result);
   }
 }
