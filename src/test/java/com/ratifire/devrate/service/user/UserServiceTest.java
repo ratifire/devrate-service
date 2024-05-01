@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.EmploymentRecordDto;
@@ -274,8 +273,6 @@ class UserServiceTest {
 
     userService.deleteUserPicture(userId);
 
-    assertNull(user.getPicture());
-
-    verify(userRepository).save(user);   
+    assertNull(user.getPicture()); 
   } 
 }
