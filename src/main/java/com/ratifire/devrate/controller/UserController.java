@@ -1,7 +1,7 @@
 package com.ratifire.devrate.controller;
 
-import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
+import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.service.user.UserService;
 import jakarta.validation.Valid;
@@ -82,27 +82,31 @@ public class UserController {
     return userService.createEmploymentRecord(employmentRecordDto, userId);
   }
 
+
   /**
-   * Retrieves a list of achievements for a specific user by their ID.
+   * Retrieves all language proficiencies associated with a user.
    *
-   * @param userId The ID of the user whose achievements are to be retrieved.
-   * @return A list of AchievementDto objects representing the achievements of the user.
+   * @param userId the ID of the user to associate the language proficiencies with
+   * @return A list of LanguageProficiencyDto objects.
    */
-  @GetMapping("/{userId}/achievements")
-  public List<AchievementDto> getAchievementsByUserId(@PathVariable long userId) {
-    return userService.getAchievementsByUserId(userId);
+  @GetMapping("/{userId}/language-proficiencies")
+  public List<LanguageProficiencyDto> findAllLanguageProficienciesByUserId(
+      @PathVariable long userId) {
+    return userService.findAllLanguageProficienciesByUserId(userId);
   }
 
   /**
-   * Creates a new achievement for a specific user.
+   * Saves new language proficiencies for a user.
    *
-   * @param userId         The ID of the user for whom the achievement is to be created.
-   * @param achievementDto The AchievementDto object containing details of the achievement to be created.
-   * @return The AchievementDto object representing the created achievement.
+   * @param userId                  the ID of the user to associate the new language proficiencies
+   *                                with
+   * @param languageProficiencyDtos the language proficiency information to save
+   * @return the list of saved LanguageProficiencyDto objects
    */
-  @PostMapping("/{userId}/achievements")
-  public AchievementDto createAchievement(@PathVariable long userId,
-      @RequestBody @Valid AchievementDto achievementDto) {
-    return userService.createAchievement(userId, achievementDto);
+  @PostMapping("/{userId}/language-proficiencies")
+  public List<LanguageProficiencyDto> saveLanguageProficiencies(@PathVariable long userId,
+      @Valid @RequestBody List<LanguageProficiencyDto> languageProficiencyDtos) {
+    return userService.saveLanguageProficiencies(userId, languageProficiencyDtos);
   }
+
 }

@@ -1,15 +1,22 @@
 package com.ratifire.devrate.service.user;
 
+import static com.ratifire.devrate.enums.LanguageProficiencyLevel.INTERMEDIATE_B1;
+import static com.ratifire.devrate.enums.LanguageProficiencyLevel.NATIVE;
+import static com.ratifire.devrate.enums.LanguageProficiencyName.ENGLISH;
+import static com.ratifire.devrate.enums.LanguageProficiencyName.UKRAINE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.EmploymentRecordDto;
+import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.EmploymentRecord;
+import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
@@ -17,6 +24,7 @@ import com.ratifire.devrate.repository.UserRepository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,6 +53,7 @@ class UserServiceTest {
   private UserDto testUserDto;
   private EmploymentRecordDto employmentRecordDto;
   private EmploymentRecord employmentRecord;
+  private List<LanguageProficiencyDto> languageProficiencyDtos;
 
   /**
    * Setup method executed before each test method.
@@ -54,6 +63,7 @@ class UserServiceTest {
     testUser = User.builder()
         .id(userId)
         .employmentRecords(new ArrayList<>())
+        .languageProficiencies(new ArrayList<>())
         .build();
 
     testUserDto = UserDto.builder()
@@ -79,6 +89,11 @@ class UserServiceTest {
         .description("Worked on various projects")
         .responsibilities(Arrays.asList("Собирал одуванчики", "Hello World", "3"))
         .build();
+
+    languageProficiencyDtos = Arrays.asList(
+        new LanguageProficiencyDto(1L, ENGLISH, NATIVE),
+        new LanguageProficiencyDto(2L, UKRAINE, INTERMEDIATE_B1)
+    );
   }
 
   @Test
@@ -179,5 +194,47 @@ class UserServiceTest {
 
     assertThrows(UserNotFoundException.class,
         () -> userService.getEmploymentRecordsByUserId(userId));
+  }
+
+  @Test
+  void findAllLanguageProficienciesByUserId_UserExists_ReturnsListOfLanguageProficiencyDto() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+
+    List<LanguageProficiencyDto> result = userService.findAllLanguageProficienciesByUserId(userId);
+
+    assertEquals(0, result.size());
+  }
+
+  @Test
+  void findAllLanguageProficienciesByUserId_UserNotFound_ThrowsUserNotFoundException() {
+    when(userRepository.findById(any())).thenReturn(Optional.empty());
+
+    assertThrows(UserNotFoundException.class,
+        () -> userService.findAllLanguageProficienciesByUserId(userId));
+  }
+
+  @Test
+  void saveLanguageProficiencies_Successful_ReturnLanguageProficiencyDtos() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(dataMapper.toEntity(any(LanguageProficiencyDto.class))).then(invocation -> {
+      LanguageProficiencyDto proficiencyDto = invocation.getArgument(0);
+      return new LanguageProficiency(proficiencyDto.getId(), proficiencyDto.getName(),
+          proficiencyDto.getLevel());
+    });
+    when(dataMapper.toDto(anyList())).thenReturn(languageProficiencyDtos);
+    when(userRepository.save(any(User.class))).thenReturn(testUser);
+
+    List<LanguageProficiencyDto> result = userService.saveLanguageProficiencies(userId,
+        languageProficiencyDtos);
+
+    assertEquals(languageProficiencyDtos, result);
+  }
+
+  @Test
+  void saveLanguageProficiencies_UserNotFound_ThrowsUserNotFoundException() {
+    when(userRepository.findById(any())).thenReturn(Optional.empty());
+
+    assertThrows(UserNotFoundException.class,
+        () -> userService.saveLanguageProficiencies(userId, languageProficiencyDtos));
   }
 }
