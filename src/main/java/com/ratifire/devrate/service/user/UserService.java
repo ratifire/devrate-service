@@ -182,8 +182,7 @@ public class UserService {
    * @param contactDtos the contact information to save
    * @return the list of saved ContactDto objects
    */
-  public List<ContactDto> saveContacts(long userId,
-      List<ContactDto> contactDtos) {
+  public List<ContactDto> saveContacts(long userId, List<ContactDto> contactDtos) {
     User user = findUserById(userId);
     List<Contact> existingContacts = user.getContacts();
 
