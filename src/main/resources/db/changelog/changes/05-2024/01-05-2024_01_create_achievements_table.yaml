@@ -27,12 +27,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: summary
-                  type: VARCHAR
+                  type: VARCHAR(65)
                   constraints:
                     nullable: false
               - column:
                   name: description
-                  type: VARCHAR
+                  type: VARCHAR(150)
                   constraints:
                     nullable: false
               - column:
