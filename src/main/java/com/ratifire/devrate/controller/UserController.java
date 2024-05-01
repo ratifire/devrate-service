@@ -1,5 +1,6 @@
 package com.ratifire.devrate.controller;
 
+import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.service.employmentrecord.EmploymentRecordService;
@@ -82,4 +83,27 @@ public class UserController {
     return userService.createEmploymentRecord(employmentRecordDto, userId);
   }
 
+  /**
+   * Retrieves a list of achievements for a specific user by their ID.
+   *
+   * @param userId The ID of the user whose achievements are to be retrieved.
+   * @return A list of AchievementDto objects representing the achievements of the user.
+   */
+  @GetMapping("/{userId}/achievements")
+  public List<AchievementDto> getAchievementsByUserId(@PathVariable long userId) {
+    return userService.getAchievementsByUserId(userId);
+  }
+
+  /**
+   * Creates a new achievement for a specific user.
+   *
+   * @param userId         The ID of the user for whom the achievement is to be created.
+   * @param achievementDto The AchievementDto object containing details of the achievement to be created.
+   * @return The AchievementDto object representing the created achievement.
+   */
+  @PostMapping("/{userId}/achievements")
+  public AchievementDto createAchievement(@PathVariable long userId,
+      @RequestBody @Valid AchievementDto achievementDto) {
+    return userService.createAchievement(userId, achievementDto);
+  }
 }

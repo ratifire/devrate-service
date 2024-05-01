@@ -64,6 +64,10 @@ public class User {
 
   @OneToMany(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
+  private List<Achievement> achievements;
+
+  @OneToMany(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
   private List<Notification> notifications;
 
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

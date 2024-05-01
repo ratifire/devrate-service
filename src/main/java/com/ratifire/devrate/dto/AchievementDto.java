@@ -18,7 +18,6 @@ public class AchievementDto {
   private long id;
 
   @URL
-  @NotBlank(message = "must not be null or empty")
   private String link;
 
   @Size(max = 65)

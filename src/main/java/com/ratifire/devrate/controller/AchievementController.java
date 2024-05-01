@@ -15,8 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Controller class for managing achievements. This controller handles HTTP requests related to
- * achievements, such as retrieving, creating, updating, and deleting achievements.
+ * Controller class for managing achievements.
  */
 @RestController
 @RequiredArgsConstructor
@@ -24,17 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AchievementController {
 
   private final AchievementService achievementService;
-
-  /**
-   * Retrieves all achievements for a given user.
-   *
-   * @param userId The ID of the user whose achievements are to be retrieved.
-   * @return A list of AchievementDto objects representing the achievements.
-   */
-  @GetMapping("/all/{userId}")
-  public List<AchievementDto> getAllByUserId(@PathVariable long userId) {
-    return achievementService.getAllByUserId(userId);
-  }
 
   /**
    * Retrieves a specific achievement by its ID.
@@ -45,20 +33,6 @@ public class AchievementController {
   @GetMapping("/{id}")
   public AchievementDto getById(@PathVariable long id) {
     return achievementService.getById(id);
-  }
-
-  /**
-   * Creates a new achievement for a user.
-   *
-   * @param userId         The ID of the user for whom the achievement is created.
-   * @param achievementDto The AchievementDto object containing information about the achievement to
-   *                       be created.
-   * @return The AchievementDto object representing the newly created achievement.
-   */
-  @PostMapping("/{userId}")
-  public AchievementDto create(@PathVariable long userId,
-      @RequestBody @Valid AchievementDto achievementDto) {
-    return achievementService.create(userId, achievementDto);
   }
 
   /**
