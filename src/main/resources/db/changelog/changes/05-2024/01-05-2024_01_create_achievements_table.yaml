@@ -37,6 +37,6 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: user_id
-                  type: BIGSERIAL
+                  type: BIGINT
                   constraints:
                     nullable: false

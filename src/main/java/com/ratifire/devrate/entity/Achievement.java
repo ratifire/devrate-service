@@ -30,5 +30,4 @@ public class Achievement {
   private String summary;
 
   private String description;
-
 }

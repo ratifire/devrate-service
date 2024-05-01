@@ -16,11 +16,9 @@ public abstract class AchievementMapper implements DataMapper<AchievementDto, Ac
   public abstract AchievementDto toDto(Achievement achievement);
 
   @Mapping(target = "id", ignore = true)
-  @Mapping(target = "userId", ignore = true)
   public abstract Achievement toEntity(AchievementDto achievementDto);
 
   @Mapping(target = "id", ignore = true)
-  @Mapping(target = "userId", ignore = true)
   public abstract Achievement updateEntity(AchievementDto achievementDto,
       @MappingTarget Achievement achievement);
 }
