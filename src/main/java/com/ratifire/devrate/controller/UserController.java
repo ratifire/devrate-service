@@ -2,6 +2,7 @@ package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
+import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.service.user.UserService;
 import jakarta.validation.Valid;
@@ -104,6 +105,33 @@ public class UserController {
       @Valid @RequestBody EmploymentRecordDto employmentRecordDto,
       @PathVariable long userId) {
     return userService.createEmploymentRecord(employmentRecordDto, userId);
+  }
+
+
+  /**
+   * Retrieves all language proficiencies associated with a user.
+   *
+   * @param userId the ID of the user to associate the language proficiencies with
+   * @return A list of LanguageProficiencyDto objects.
+   */
+  @GetMapping("/{userId}/language-proficiencies")
+  public List<LanguageProficiencyDto> findAllLanguageProficienciesByUserId(
+      @PathVariable long userId) {
+    return userService.findAllLanguageProficienciesByUserId(userId);
+  }
+
+  /**
+   * Saves new language proficiencies for a user.
+   *
+   * @param userId                  the ID of the user to associate the new language proficiencies
+   *                                with
+   * @param languageProficiencyDtos the language proficiency information to save
+   * @return the list of saved LanguageProficiencyDto objects
+   */
+  @PostMapping("/{userId}/language-proficiencies")
+  public List<LanguageProficiencyDto> saveLanguageProficiencies(@PathVariable long userId,
+      @Valid @RequestBody List<LanguageProficiencyDto> languageProficiencyDtos) {
+    return userService.saveLanguageProficiencies(userId, languageProficiencyDtos);
   }
 
 }

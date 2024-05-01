@@ -2,9 +2,11 @@ package com.ratifire.devrate.service.user;
 
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
+import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.entity.EmploymentRecord;
+import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
@@ -25,6 +27,7 @@ public class UserService {
   private final DataMapper<UserDto, User> userMapper;
   private final DataMapper<ContactDto, Contact> contactMapper;
   private final DataMapper<EmploymentRecordDto, EmploymentRecord> employmentRecordMapper;
+  private final DataMapper<LanguageProficiencyDto, LanguageProficiency> languageProficiencyMapper;
 
   /**
    * Retrieves a user by ID.
@@ -83,6 +86,47 @@ public class UserService {
   }
 
   /**
+   * Retrieves all language proficiencies associated with the user.
+   *
+   * @param userId the ID of the user to associate the language proficiencies with
+   * @return A list of LanguageProficiencyDto objects.
+   */
+  public List<LanguageProficiencyDto> findAllLanguageProficienciesByUserId(long userId) {
+    User user = findUserById(userId);
+    return languageProficiencyMapper.toDto(user.getLanguageProficiencies());
+  }
+
+  /**
+   * Saves new language proficiencies for a user identified by userId.
+   *
+   * @param userId                  the ID of the user to whom the language proficiency belongs
+   * @param languageProficiencyDtos the language proficiency information to save
+   * @return the list of saved LanguageProficiencyDto objects
+   */
+  public List<LanguageProficiencyDto> saveLanguageProficiencies(long userId,
+      List<LanguageProficiencyDto> languageProficiencyDtos) {
+    User user = findUserById(userId);
+    List<LanguageProficiency> existingProficiencies = user.getLanguageProficiencies();
+
+    existingProficiencies.removeIf(proficiency -> languageProficiencyDtos.stream()
+        .noneMatch(proficiencyDto -> proficiencyDto.getName().equals(proficiency.getName())));
+
+    for (LanguageProficiencyDto languageProficiencyDto : languageProficiencyDtos) {
+      Optional<LanguageProficiency> languageProficiency = existingProficiencies.stream()
+          .filter(proficiency -> proficiency.getName().equals(languageProficiencyDto.getName()))
+          .findFirst();
+
+      if (languageProficiency.isPresent()) {
+        languageProficiencyMapper.updateEntity(languageProficiencyDto, languageProficiency.get());
+      } else {
+        existingProficiencies.add(languageProficiencyMapper.toEntity(languageProficiencyDto));
+      }
+    }
+    userRepository.save(user);
+    return languageProficiencyMapper.toDto(user.getLanguageProficiencies());
+  }
+
+  /**
    * Retrieves a user entity by ID.
    *
    * @param id the ID of the user to retrieve
@@ -93,7 +137,6 @@ public class UserService {
     return userRepository.findById(id)
         .orElseThrow(() -> new UserNotFoundException("The user not found with id " + id));
   }
-
 
   /**
    * Retrieves EmploymentRecord (work experience) information by user ID.

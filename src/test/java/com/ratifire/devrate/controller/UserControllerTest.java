@@ -1,7 +1,12 @@
 package com.ratifire.devrate.controller;
 
+import static com.ratifire.devrate.enums.LanguageProficiencyLevel.INTERMEDIATE_B1;
+import static com.ratifire.devrate.enums.LanguageProficiencyLevel.NATIVE;
+import static com.ratifire.devrate.enums.LanguageProficiencyName.ENGLISH;
+import static com.ratifire.devrate.enums.LanguageProficiencyName.UKRAINE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -15,6 +20,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.configuration.SecurityConfiguration;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
+import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.service.employmentrecord.EmploymentRecordService;
 import com.ratifire.devrate.service.user.UserService;
@@ -54,13 +60,12 @@ class UserControllerTest {
 
   @MockBean
   private UserDetailsService userDetailsService;
-
   private UserDto userDto;
   @MockBean
   private EmploymentRecordService employmentRecordService;
   @MockBean
   private EmploymentRecordDto employmentRecordDto;
-
+  private List<LanguageProficiencyDto> languageProficiencyDtos;
 
   @BeforeEach
   public void setUp() {
@@ -83,8 +88,13 @@ class UserControllerTest {
         .position("Java Developer")
         .companyName("New Company")
         .description("Worked on various projects")
-        .responsibilities(Arrays.asList("1", "2", "3")) // Создание списка из строк
+        .responsibilities(Arrays.asList("1", "2", "3"))
         .build();
+
+    languageProficiencyDtos = Arrays.asList(
+        new LanguageProficiencyDto(1L, UKRAINE, NATIVE),
+        new LanguageProficiencyDto(2L, ENGLISH, INTERMEDIATE_B1)
+    );
   }
 
   @Test
@@ -171,5 +181,29 @@ class UserControllerTest {
         EmploymentRecordDto.class);
 
     assertEquals(employmentRecordDto, resultEmploymentRecordDto);
+  }
+
+  @Test
+  @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
+  void saveLanguageProficienciesTest() throws Exception {
+    String content = objectMapper.writeValueAsString(languageProficiencyDtos);
+    when(userService.saveLanguageProficiencies(anyLong(), anyList()))
+        .thenReturn(languageProficiencyDtos);
+    mockMvc.perform(post("/users/{userId}/language-proficiencies", USER_ID)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(content))
+        .andExpect(status().isOk())
+        .andExpect(content().json(content));
+  }
+
+  @Test
+  @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
+  void findAllLanguageProficienciesByUserIdTest() throws Exception {
+    String expectedContent = objectMapper.writeValueAsString(languageProficiencyDtos);
+    when(userService.findAllLanguageProficienciesByUserId(anyLong())).thenReturn(
+        languageProficiencyDtos);
+    mockMvc.perform(get("/users/{userId}/language-proficiencies", USER_ID))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedContent));
   }
 }
