@@ -179,7 +179,8 @@ public class UserService {
    * Creates a new achievement for a specific user.
    *
    * @param userId         The ID of the user for whom the achievement is to be created.
-   * @param achievementDto The AchievementDto object containing details of the achievement to be created.
+   * @param achievementDto The AchievementDto object containing details of the achievement to be
+   *                       created.
    * @return The AchievementDto object representing the created achievement.
    */
   public AchievementDto createAchievement(long userId, AchievementDto achievementDto) {
