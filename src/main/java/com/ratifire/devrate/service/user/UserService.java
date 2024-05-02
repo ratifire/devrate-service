@@ -1,9 +1,13 @@
 package com.ratifire.devrate.service.user;
 
+import com.ratifire.devrate.dto.AchievementDto;
+import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.PictureDto;
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.entity.Achievement;
+import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.User;
@@ -24,6 +28,8 @@ public class UserService {
 
   private final UserRepository userRepository;
   private final DataMapper<UserDto, User> userMapper;
+  private final DataMapper<AchievementDto, Achievement> achievementMapper;
+  private final DataMapper<ContactDto, Contact> contactMapper;
   private final DataMapper<EmploymentRecordDto, EmploymentRecord> employmentRecordMapper;
   private final DataMapper<LanguageProficiencyDto, LanguageProficiency> languageProficiencyMapper;
 
@@ -196,4 +202,72 @@ public class UserService {
     user.setPicture(null);
     updateUser(user);
   }
+
+  /**
+   * Retrieves a list of achievements for a specific user by their ID.
+   *
+   * @param userId The ID of the user whose achievements are to be retrieved.
+   * @return A list of AchievementDto objects representing the achievements of the user.
+   */
+  public List<AchievementDto> getAchievementsByUserId(long userId) {
+    User user = findUserById(userId);
+    return achievementMapper.toDto(user.getAchievements());
+  }
+
+  /**
+   * Creates a new achievement for a specific user.
+   *
+   * @param userId         The ID of the user for whom the achievement is to be created.
+   * @param achievementDto The AchievementDto object containing details of the achievement to be
+   *                       created.
+   * @return The AchievementDto object representing the created achievement.
+   */
+  public AchievementDto createAchievement(long userId, AchievementDto achievementDto) {
+    User user = findUserById(userId);
+    Achievement achievement = achievementMapper.toEntity(achievementDto);
+    user.getAchievements().add(achievement);
+    updateUser(user);
+    return achievementMapper.toDto(achievement);
+  }
+
+  /**
+   * Retrieves all contacts associated with the user.
+   *
+   * @param userId the ID of the user to associate the contacts with
+   * @return A list of ContactDto objects.
+   */
+  public List<ContactDto> findAllContactsByUserId(long userId) {
+    User user = findUserById(userId);
+    return contactMapper.toDto(user.getContacts());
+  }
+
+  /**
+   * Saves contacts for a user identified by userId.
+   *
+   * @param userId      the ID of the user to whom the contacts belongs
+   * @param contactDtos the contact information to save
+   * @return the list of saved ContactDto objects
+   */
+  public List<ContactDto> saveContacts(long userId, List<ContactDto> contactDtos) {
+    User user = findUserById(userId);
+    List<Contact> existingContacts = user.getContacts();
+
+    existingContacts.removeIf(contact -> contactDtos.stream()
+        .noneMatch(contactDto -> contactDto.getType().equals(contact.getType())));
+
+    for (ContactDto contactDto : contactDtos) {
+      Optional<Contact> contact = existingContacts.stream()
+          .filter(c -> c.getType().equals(contactDto.getType()))
+          .findFirst();
+
+      if (contact.isPresent()) {
+        contactMapper.updateEntity(contactDto, contact.get());
+      } else {
+        existingContacts.add(contactMapper.toEntity(contactDto));
+      }
+    }
+    userRepository.save(user);
+    return contactMapper.toDto(user.getContacts());
+  }
+
 }

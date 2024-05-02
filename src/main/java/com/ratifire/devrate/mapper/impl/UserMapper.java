@@ -15,6 +15,7 @@ public abstract class UserMapper implements DataMapper<UserDto, User> {
 
   @Mapping(target = "contacts", ignore = true)
   @Mapping(target = "educations", ignore = true)
+  @Mapping(target = "achievements", ignore = true)
   @Mapping(target = "notifications", ignore = true)
   @Mapping(target = "employmentRecords", ignore = true)
   @Mapping(target = "languageProficiencies", ignore = true)
@@ -23,6 +24,7 @@ public abstract class UserMapper implements DataMapper<UserDto, User> {
 
   @Mapping(target = "contacts", ignore = true)
   @Mapping(target = "educations", ignore = true)
+  @Mapping(target = "achievements", ignore = true)
   @Mapping(target = "notifications", ignore = true)
   @Mapping(target = "employmentRecords", ignore = true)
   @Mapping(target = "languageProficiencies", ignore = true)
