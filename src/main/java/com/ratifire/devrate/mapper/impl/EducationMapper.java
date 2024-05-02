@@ -3,7 +3,6 @@ package com.ratifire.devrate.mapper.impl;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.mapper.DataMapper;
-import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
