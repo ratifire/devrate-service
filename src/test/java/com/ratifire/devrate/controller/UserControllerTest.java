@@ -1,5 +1,7 @@
 package com.ratifire.devrate.controller;
 
+import static com.ratifire.devrate.enums.ContactType.GITHUB_LINK;
+import static com.ratifire.devrate.enums.ContactType.TELEGRAM_LINK;
 import static com.ratifire.devrate.enums.LanguageProficiencyLevel.INTERMEDIATE_B1;
 import static com.ratifire.devrate.enums.LanguageProficiencyLevel.NATIVE;
 import static com.ratifire.devrate.enums.LanguageProficiencyName.ENGLISH;
@@ -20,6 +22,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.configuration.SecurityConfiguration;
 import com.ratifire.devrate.dto.AchievementDto;
+import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.UserDto;
@@ -68,6 +71,7 @@ class UserControllerTest {
   private EmploymentRecordService employmentRecordService;
   private EmploymentRecordDto employmentRecordDto;
   private List<LanguageProficiencyDto> languageProficiencyDtos;
+  private List<ContactDto> contactDtos;
 
   @MockBean
   private AchievementService achievementService;
@@ -108,6 +112,11 @@ class UserControllerTest {
     languageProficiencyDtos = Arrays.asList(
         new LanguageProficiencyDto(1L, UKRAINE, NATIVE),
         new LanguageProficiencyDto(2L, ENGLISH, INTERMEDIATE_B1)
+    );
+
+    contactDtos = Arrays.asList(
+        new ContactDto(1L, TELEGRAM_LINK, "https://t.me/test"),
+        new ContactDto(2L, GITHUB_LINK, "https://github.com/test")
     );
   }
 
@@ -156,7 +165,7 @@ class UserControllerTest {
 
   @Test
   @WithMockUser(username = "Maksim Matveychuk", roles = {"USER", "ADMIN"})
-  public void getByIdTest() throws Exception {
+  void getByIdTest() throws Exception {
     List<EmploymentRecordDto> expectedDtoList = Collections.singletonList(employmentRecordDto);
     when(userService.getEmploymentRecordsByUserId(anyLong())).thenReturn(
         Collections.singletonList(employmentRecordDto));
@@ -175,7 +184,7 @@ class UserControllerTest {
   }
 
   @Test
-  public void createEmploymentRecordTest() throws Exception {
+  void createEmploymentRecordTest() throws Exception {
     EmploymentRecordDto employmentRecordDto1 = employmentRecordDto;
     when(userService.createEmploymentRecord(employmentRecordDto, USER_ID)).thenReturn(
         employmentRecordDto1);
@@ -240,5 +249,27 @@ class UserControllerTest {
             .content(objectMapper.writeValueAsString(achievementDto)))
         .andExpect(status().isOk())
         .andExpect(content().json(objectMapper.writeValueAsString(achievementDto)));
+  }
+
+  @Test
+  @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
+  void saveContactsTest() throws Exception {
+    String content = objectMapper.writeValueAsString(contactDtos);
+    when(userService.saveContacts(anyLong(), anyList())).thenReturn(contactDtos);
+    mockMvc.perform(post("/users/{userId}/contacts", USER_ID)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(content))
+        .andExpect(status().isOk())
+        .andExpect(content().json(content));
+  }
+
+  @Test
+  @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
+  void findAllContactsByUserIdTest() throws Exception {
+    String expectedContent = objectMapper.writeValueAsString(contactDtos);
+    when(userService.findAllContactsByUserId(anyLong())).thenReturn(contactDtos);
+    mockMvc.perform(get("/users/{userId}/contacts", USER_ID))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedContent));
   }
 }

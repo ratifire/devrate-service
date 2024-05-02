@@ -1,6 +1,7 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.AchievementDto;
+import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.UserDto;
@@ -57,6 +58,30 @@ public class UserController {
   @DeleteMapping("/{id}")
   public void delete(@PathVariable long id) {
     userService.delete(id);
+  }
+
+  /**
+   * Retrieves all contacts associated with a user.
+   *
+   * @param userId the ID of the user to associate the contacts with
+   * @return A list of ContactDto objects.
+   */
+  @GetMapping("/{userId}/contacts")
+  public List<ContactDto> findAllContactsByUserId(@PathVariable long userId) {
+    return userService.findAllContactsByUserId(userId);
+  }
+
+  /**
+   * Saves contacts for a user.
+   *
+   * @param userId                  the ID of the user to associate the contacts with
+   * @param contactDtos the contact information to save
+   * @return the list of saved ContactDto objects
+   */
+  @PostMapping("/{userId}/contacts")
+  public List<ContactDto> saveContacts(@PathVariable long userId,
+      @Valid @RequestBody List<ContactDto> contactDtos) {
+    return userService.saveContacts(userId, contactDtos);
   }
 
   /**
