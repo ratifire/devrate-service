@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: 01-05-2024_02_add-foreign-key-skills-table
+      author: Maksim Matveychuk
+      preConditions:
+        - onFail: MARK_RAN
+          comments: |
+            Checks if the foreign key constraint 'fk_skills_user' does not
+            already exist on the "skills" table.
+            Marks the changeSet as executed if the foreign key constraint exists.
+          not:
+            foreignKeyConstraintExists:
+              foreignKeyName: fk_skills_user
+              baseTableName: skills
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: skills
+            baseColumnNames: user_id
+            constraintName: fk_skills_user
+            referencedTableName: users
+            referencedColumnNames: id

@@ -74,4 +74,8 @@ public class User {
   @JoinColumn(name = "user_id", nullable = false)
   private List<LanguageProficiency> languageProficiencies;
 
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "user_id", nullable = false)
+  private List<Skill> skills;
+
 }

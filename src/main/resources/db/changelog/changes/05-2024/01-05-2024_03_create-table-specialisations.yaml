@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 01-05-2024_03_create-table-specialisations
+      author: Maksim Matveychuk
+      preConditions:
+        - onFail: MARK_RAN
+          comments: |
+            Checks if the "specialisations" table already exists.
+            Marks the changeSet as executed if the table exists.
+          not:
+            tableExists:
+              tableName: specialisations
+      changes:
+        - createTable:
+            tableName: specialisations
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: specialisation
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false

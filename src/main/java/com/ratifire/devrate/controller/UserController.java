@@ -2,6 +2,7 @@ package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
+import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.service.user.UserService;
 import jakarta.validation.Valid;
@@ -107,6 +108,30 @@ public class UserController {
   public List<LanguageProficiencyDto> saveLanguageProficiencies(@PathVariable long userId,
       @Valid @RequestBody List<LanguageProficiencyDto> languageProficiencyDtos) {
     return userService.saveLanguageProficiencies(userId, languageProficiencyDtos);
+  }
+
+  /**
+   * Retrieves user skill information by user ID.
+   *
+   * @param userId the ID of the user
+   * @return the list of user's skill information as a DTO
+   */
+  @GetMapping("/{userId}/skills")
+  public List<SkillDto> getSkillsByUserId(@PathVariable long userId) {
+    return userService.getSkillsByUserId(userId);
+  }
+
+  /**
+   * Creates user skill information by user ID.
+   *
+   * @param skillDto the user's skill information as a DTO
+   * @return the created user skill information as a DTO
+   */
+  @PostMapping("/{userId}/skills")
+  public SkillDto createSkill(
+      @Valid @RequestBody SkillDto skillDto,
+      @PathVariable long userId) {
+    return userService.createSkill(skillDto, userId);
   }
 
 }

@@ -21,3 +21,70 @@ SELECT * FROM (
 WHERE NOT EXISTS (
     SELECT 1 FROM user_security WHERE id = new_user_security.id OR email = new_user_security.email
 );
+
+--  Create specialisations
+INSERT INTO specialisations (id, specialisation)
+SELECT * FROM (
+    VALUES
+    (1, 'SOFTWARE_ENGINEERING'),
+    (2, 'DATA_SCIENCE'),
+    (3, 'CYBER_SECURITY'),
+    (4, 'NETWORK_ENGINEERING'),
+    (5, 'WEB_DEVELOPMENT'),
+    (6, 'MOBILE_APP_DEVELOPMENT'),
+    (7, 'DATABASE_ADMINISTRATION'),
+    (8, 'CLOUD_COMPUTING'),
+    (9, 'MACHINE_LEARNING'),
+    (10, 'ARTIFICIAL_INTELLIGENCE'),
+    (11, 'GAME_DEVELOPMENT'),
+    (12, 'DEVOPS'),
+    (13, 'UI_UX_DESIGN'),
+    (14, 'IT_PROJECT_MANAGEMENT'),
+    (15, 'BLOCKCHAIN_TECHNOLOGY'),
+    (16, 'COMPUTER_GRAPHICS'),
+    (17, 'IT_SUPPORT'),
+    (18, 'COMPUTER_HARDWARE_ENGINEERING'),
+    (19, 'INTERNET_OF_THINGS'),
+    (20, 'BIG_DATA_ANALYTICS'),
+    (21, 'COMPUTER_VISION'),
+    (22, 'ROBOTICS'),
+    (23, 'QA_TESTING'),
+    (24, 'TECHNICAL_WRITING'),
+    (25, 'IT_TRAINING_AND_EDUCATION'),
+    (26, 'COMPUTER_FORENSICS'),
+    (27, 'IT_POLICY_AND_GOVERNANCE'),
+    (28, 'EMBEDDED_SYSTEMS'),
+    (29, 'AUGMENTED_VIRTUAL_REALITY'),
+    (30, 'IT_CONSULTING'),
+    (31, 'QUANTUM_COMPUTING'),
+    (32, 'JAVA'),
+    (33, 'PYTHON'),
+    (34, 'JAVASCRIPT'),
+    (35, 'C_SHARP'),
+    (36, 'C_PLUS_PLUS'),
+    (37, 'RUBY'),
+    (38, 'SWIFT'),
+    (39, 'KOTLIN'),
+    (40, 'GO'),
+    (41, 'PHP'),
+    (42, 'HTML_CSS'),
+    (43, 'SQL'),
+    (44, 'R'),
+    (45, 'MATLAB'),
+    (46, 'PERL'),
+    (47, 'TYPESCRIPT'),
+    (48, 'SCALA'),
+    (49, 'OBJECTIVE_C'),
+    (50, 'LUA'),
+    (51, 'HASKELL'),
+    (52, 'JULIA'),
+    (53, 'COBOL'),
+    (54, 'FORTRAN'),
+    (55, 'ADA'),
+    (56, 'DART'),
+    (57, 'COFFEESCRIPT'),
+    (58, 'SHELL_SCRIPTING')
+) AS new_specialisations (id, specialisation)
+WHERE NOT EXISTS (
+    SELECT 1 FROM specialisations WHERE id = new_specialisations.id
+);

@@ -1,0 +1,37 @@
+databaseChangeLog:
+  - changeSet:
+      id: 01-05-2024_01_create-table-skills
+      author: Maksim Matveychuk
+      preConditions:
+        - onFail: MARK_RAN
+          comments: |
+            Checks if the "skills" table already exists.
+            Marks the changeSet as executed if the table exists.
+          not:
+            tableExists:
+              tableName: skills
+      changes:
+        - createTable:
+            tableName: skills
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: specialisation
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: skills
+                  type: VARCHAR(2500) ARRAY
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false

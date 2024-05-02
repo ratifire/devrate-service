@@ -2,9 +2,11 @@ package com.ratifire.devrate.service.user;
 
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
+import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
+import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
@@ -25,6 +27,7 @@ public class UserService {
   private final DataMapper<UserDto, User> userMapper;
   private final DataMapper<EmploymentRecordDto, EmploymentRecord> employmentRecordMapper;
   private final DataMapper<LanguageProficiencyDto, LanguageProficiency> languageProficiencyMapper;
+  private final DataMapper<SkillDto, Skill> skillDtoSkillDataMapper;
 
   /**
    * Retrieves a user by ID.
@@ -159,5 +162,31 @@ public class UserService {
     user.getEmploymentRecords().add(employmentRecord);
     updateUser(user);
     return employmentRecordMapper.toDto(employmentRecord);
+  }
+
+  /**
+   * Retrieves skill by user ID.
+   *
+   * @param userId the ID of the user
+   * @return the user's skill as a DTO
+   */
+  public List<SkillDto> getSkillsByUserId(long userId) {
+    User user = findUserById(userId);
+    return skillDtoSkillDataMapper.toDto(user.getSkills());
+  }
+
+  /**
+   * Creates skill information.
+   *
+   * @param skillDto the user's skill information as a DTO
+   * @return the created user skill information as a DTO
+   */
+  public SkillDto createSkill(SkillDto skillDto,
+      long userId) {
+    User user = findUserById(userId);
+    Skill skill = skillDtoSkillDataMapper.toEntity(skillDto);
+    user.getSkills().add(skill);
+    updateUser(user);
+    return skillDtoSkillDataMapper.toDto(skill);
   }
 }
