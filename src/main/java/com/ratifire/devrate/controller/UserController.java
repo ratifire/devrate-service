@@ -175,8 +175,10 @@ public class UserController {
   /**
    * Creates a new education record for the specified user.
    *
-   * @param userId       The unique identifier of the user for whom the education record is created.
-   * @param educationDto The {@link EducationDto} object containing the details of the education to be created.
+   * @param userId       The unique identifier of the user for whom the education record is
+   *                     created.
+   * @param educationDto The {@link EducationDto} object containing the details of the education to
+   *                     be created.
    * @return The {@link EducationDto} object representing the newly created education record.
    */
   @PostMapping("/{userId}/educations")
