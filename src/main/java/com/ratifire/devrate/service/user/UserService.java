@@ -193,7 +193,6 @@ public class UserService {
     updateUser(user);
     return achievementMapper.toDto(achievement);
   }
-}
 
   /**
    * Retrieves all contacts associated with the user.
