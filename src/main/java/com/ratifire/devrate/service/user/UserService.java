@@ -2,6 +2,7 @@ package com.ratifire.devrate.service.user;
 
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
+import com.ratifire.devrate.dto.PictureDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
@@ -167,8 +168,8 @@ public class UserService {
    * @param userId the ID of the user whose picture is to be retrieved
    * @return the user's picture as a byte array, or null if no picture is present
    */
-  public byte[] getUserPicture(long userId) {
-    return userRepository.findPictureByUserId(userId);
+  public PictureDto getUserPicture(long userId) {
+    return new PictureDto(userRepository.findPictureByUserId(userId));
   }
 
   /**
@@ -178,11 +179,11 @@ public class UserService {
    * @param userPicture the picture data as a byte array
    * @return the byte array of the updated picture
    */
-  public byte[] addUserPicture(long userId, byte[] userPicture) {
+  public PictureDto addUserPicture(long userId, byte[] userPicture) {
     User user = findUserById(userId);
     user.setPicture(userPicture);
     updateUser(user);
-    return user.getPicture();
+    return new PictureDto(user.getPicture());
   }
 
   /**

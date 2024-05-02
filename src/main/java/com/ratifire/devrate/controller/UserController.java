@@ -2,12 +2,11 @@ package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
+import com.ratifire.devrate.dto.PictureDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.service.user.UserService;
 import jakarta.validation.Valid;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -110,7 +109,7 @@ public class UserController {
       @Valid @RequestBody List<LanguageProficiencyDto> languageProficiencyDtos) {
     return userService.saveLanguageProficiencies(userId, languageProficiencyDtos);
   }
-  
+
   /**
    * Retrieves the picture associated with a user by their user ID.
    *
@@ -119,12 +118,11 @@ public class UserController {
    *     present; otherwise, returns no content status
    */
   @GetMapping("/{userId}/pictures")
-  public ResponseEntity<Map<String, byte[]>> getUserPicture(@PathVariable long userId) {
-    byte[] userPicture = userService.getUserPicture(userId);
-    if (userPicture == null) {
-      return ResponseEntity.noContent().build();
-    }
-    return ResponseEntity.ok(Collections.singletonMap("picture", userPicture));
+  public ResponseEntity<PictureDto> getUserPicture(@PathVariable long userId) {
+    PictureDto userPicture = userService.getUserPicture(userId);
+    return userPicture.getPicture() == null
+        ? ResponseEntity.noContent().build()
+        : ResponseEntity.ok(userPicture);
   }
 
   /**
@@ -136,9 +134,8 @@ public class UserController {
    *     value
    */
   @PostMapping("/{userId}/pictures")
-  public Map<String, byte[]> addUserPicture(
-      @PathVariable long userId, @RequestBody byte[] userPicture) {
-    return Collections.singletonMap("picture", userService.addUserPicture(userId, userPicture));
+  public PictureDto addUserPicture(@PathVariable long userId, @RequestBody byte[] userPicture) {
+    return userService.addUserPicture(userId, userPicture);
   }
 
   /** Removes a user's picture. */

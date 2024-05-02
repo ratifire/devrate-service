@@ -18,6 +18,7 @@ import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
+import com.ratifire.devrate.dto.PictureDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
@@ -59,6 +60,7 @@ class UserServiceTest {
   private EmploymentRecord employmentRecord;
   private List<LanguageProficiencyDto> languageProficiencyDtos;
   private final  byte[] picture = new byte[] {4, 5, 6};
+  PictureDto expectedDto = new PictureDto(picture);
 
   /**
    * Setup method executed before each test method.
@@ -246,10 +248,10 @@ class UserServiceTest {
   public void testGetUserPictureExists() {
     when(userRepository.findPictureByUserId(userId)).thenReturn(picture);
 
-    byte[] actualPicture = userService.getUserPicture(userId);
+    PictureDto actualDto = userService.getUserPicture(userId);
 
-    assertNotNull(actualPicture);
-    assertArrayEquals(picture, actualPicture);
+    assertNotNull(actualDto);
+    assertArrayEquals(expectedDto.getPicture(), actualDto.getPicture());;
   }
 
   @Test
@@ -259,9 +261,9 @@ class UserServiceTest {
     when(userRepository.findById(userId)).thenReturn(Optional.of(user));
     when(userRepository.save(any(User.class))).thenReturn(user);
 
-    byte[] actualPicture = userService.addUserPicture(userId, picture);
+    PictureDto actualDto = userService.addUserPicture(userId, picture);
 
-    assertArrayEquals(picture, actualPicture);
+    assertArrayEquals(expectedDto.getPicture(), actualDto.getPicture());
   }
 
   @Test
@@ -274,6 +276,6 @@ class UserServiceTest {
 
     userService.deleteUserPicture(userId);
 
-    assertNull(user.getPicture()); 
+    assertNull(user.getPicture());
   } 
 }
