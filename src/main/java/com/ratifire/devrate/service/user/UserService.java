@@ -1,8 +1,10 @@
 package com.ratifire.devrate.service.user;
 
+import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.User;
@@ -23,6 +25,7 @@ public class UserService {
 
   private final UserRepository userRepository;
   private final DataMapper<UserDto, User> userMapper;
+  private final DataMapper<AchievementDto, Achievement> achievementMapper;
   private final DataMapper<EmploymentRecordDto, EmploymentRecord> employmentRecordMapper;
   private final DataMapper<LanguageProficiencyDto, LanguageProficiency> languageProficiencyMapper;
 
@@ -159,5 +162,32 @@ public class UserService {
     user.getEmploymentRecords().add(employmentRecord);
     updateUser(user);
     return employmentRecordMapper.toDto(employmentRecord);
+  }
+
+  /**
+   * Retrieves a list of achievements for a specific user by their ID.
+   *
+   * @param userId The ID of the user whose achievements are to be retrieved.
+   * @return A list of AchievementDto objects representing the achievements of the user.
+   */
+  public List<AchievementDto> getAchievementsByUserId(long userId) {
+    User user = findUserById(userId);
+    return achievementMapper.toDto(user.getAchievements());
+  }
+
+  /**
+   * Creates a new achievement for a specific user.
+   *
+   * @param userId         The ID of the user for whom the achievement is to be created.
+   * @param achievementDto The AchievementDto object containing details of the achievement to be
+   *                       created.
+   * @return The AchievementDto object representing the created achievement.
+   */
+  public AchievementDto createAchievement(long userId, AchievementDto achievementDto) {
+    User user = findUserById(userId);
+    Achievement achievement = achievementMapper.toEntity(achievementDto);
+    user.getAchievements().add(achievement);
+    updateUser(user);
+    return achievementMapper.toDto(achievement);
   }
 }

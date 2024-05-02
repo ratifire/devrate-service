@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: 01-05-2024_01_create_achievements_table
+      author: V Hubersky
+      preConditions:
+        - onFail: MARK_RAN
+          comments: |
+            Checks if the "achievements" table already exists.
+            Marks the changeSet as executed if the table exists.
+          not:
+            tableExists:
+              tableName: achievements
+      changes:
+        - createTable:
+            tableName: achievements
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: link
+                  type: VARCHAR
+                  constraints:
+                    nullable: false
+              - column:
+                  name: summary
+                  type: VARCHAR(65)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
