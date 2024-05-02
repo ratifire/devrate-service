@@ -222,7 +222,6 @@ public class UserService {
     updateUser(user);
     return skillDtoSkillDataMapper.toDto(skill);
   }
-}
 
   /**
    * Retrieves all contacts associated with the user.
