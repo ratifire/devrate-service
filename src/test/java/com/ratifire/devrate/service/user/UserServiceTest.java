@@ -308,7 +308,6 @@ class UserServiceTest {
 
     assertNull(user.getPicture());
   } 
-}
 
   @Test
   public void getAchievementsByUserIdTest() {
