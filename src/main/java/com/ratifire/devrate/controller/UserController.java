@@ -1,5 +1,7 @@
 package com.ratifire.devrate.controller;
 
+import com.ratifire.devrate.dto.AchievementDto;
+import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.SkillDto;
@@ -57,6 +59,30 @@ public class UserController {
   @DeleteMapping("/{id}")
   public void delete(@PathVariable long id) {
     userService.delete(id);
+  }
+
+  /**
+   * Retrieves all contacts associated with a user.
+   *
+   * @param userId the ID of the user to associate the contacts with
+   * @return A list of ContactDto objects.
+   */
+  @GetMapping("/{userId}/contacts")
+  public List<ContactDto> findAllContactsByUserId(@PathVariable long userId) {
+    return userService.findAllContactsByUserId(userId);
+  }
+
+  /**
+   * Saves contacts for a user.
+   *
+   * @param userId                  the ID of the user to associate the contacts with
+   * @param contactDtos the contact information to save
+   * @return the list of saved ContactDto objects
+   */
+  @PostMapping("/{userId}/contacts")
+  public List<ContactDto> saveContacts(@PathVariable long userId,
+      @Valid @RequestBody List<ContactDto> contactDtos) {
+    return userService.saveContacts(userId, contactDtos);
   }
 
   /**
@@ -134,4 +160,28 @@ public class UserController {
     return userService.createSkill(skillDto, userId);
   }
 
+  /**
+   * Retrieves a list of achievements for a specific user by their ID.
+   *
+   * @param userId The ID of the user whose achievements are to be retrieved.
+   * @return A list of AchievementDto objects representing the achievements of the user.
+   */
+  @GetMapping("/{userId}/achievements")
+  public List<AchievementDto> getAchievementsByUserId(@PathVariable long userId) {
+    return userService.getAchievementsByUserId(userId);
+  }
+
+  /**
+   * Creates a new achievement for a specific user.
+   *
+   * @param userId         The ID of the user for whom the achievement is to be created.
+   * @param achievementDto The AchievementDto object containing details of the achievement to be
+   *                       created.
+   * @return The AchievementDto object representing the created achievement.
+   */
+  @PostMapping("/{userId}/achievements")
+  public AchievementDto createAchievement(@PathVariable long userId,
+      @RequestBody @Valid AchievementDto achievementDto) {
+    return userService.createAchievement(userId, achievementDto);
+  }
 }

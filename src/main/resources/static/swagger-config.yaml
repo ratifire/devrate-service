@@ -27,10 +27,10 @@ tags:
     description: Endpoints for password reset functionality
   - name: user info
     description: Endpoints for user personal info functionality
-  - name: contact
-    description: Endpoints for user contact management
   - name: employment records
     description: Endpoints for user Employment Records management
+  - name: achievement
+    description: Endpoints for user achievement management
 paths:
   /auth/signup:
     post:
@@ -454,119 +454,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /contacts/{id}:
-    get:
-      tags:
-        - contact
-      summary: Get contact by its ID
-      description: Retrieve a specific contact based on the provided contact ID
-      operationId: findById
-      parameters:
-        - in: path
-          name: id
-          description: The ID of the contact to retrieve
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ContactDto'
-        '400':
-          description: Bad request, e.g., missing or invalid parameters
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-    put:
-      tags:
-        - contact
-      summary: Update contact by its ID
-      description: Updates an existing contact with provided data
-      operationId: update
-      parameters:
-        - in: path
-          name: id
-          description: Unique identifier of the contact to be updated
-          required: true
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ContactDto'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ContactDto'
-        '400':
-          description: Bad request, e.g., missing or invalid parameters
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-    delete:
-      tags:
-        - contact
-      summary: Delete contact by its ID
-      description: Deletes a contact from the system based on the provided contact ID
-      operationId: delete
-      parameters:
-        - in: path
-          name: id
-          description: Unique identifier of the contact to be deleted
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Successful operation
-        '400':
-          description: Bad request, e.g., missing or invalid parameters
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-  /contacts/{userId}:
+  /users/{userId}/contacts:
     post:
       tags:
-        - contact
-      summary: Create a new contact
-      description: Create a new contact of the specified user
-      operationId: create
+        - user info
+      summary: Save contacts
+      description: Save contacts of the specified users
+      operationId: saveContacts
       parameters:
         - in: path
           name: userId
-          description: The ID of the user to associate the new contact with
+          description: The ID of the user to associate the contacts with
           required: true
           schema:
             type: integer
@@ -575,14 +473,52 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ContactDto'
+              type: array
+              items:
+                $ref: '#/components/schemas/ContactDto'
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ContactDto'
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContactDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - user info
+      summary: Get all contacts by user ID
+      description: Retrieve all contacts of the specified user
+      operationId: findAllContactsByUserId
+      parameters:
+        - in: path
+          name: userId
+          description: The ID of the user to associate the contacts with
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContactDto'
         '400':
           description: Bad request, e.g., missing or invalid parameters
           content:
@@ -910,6 +846,180 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /users/{userId}/achievements:
+    get:
+      tags:
+        - achievement
+      summary: Get Achievements By UserId
+      description: Retrieves all user`s achievements based on the provided UserId.
+      operationId: getAchievementsByUserId
+      parameters:
+        - in: path
+          name: userId
+          description: The userId of the achievements to retrieve.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The achievements corresponding to the provided userId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AchievementDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+        - achievement
+      summary: Create New Achievement
+      description: Creates a new achievement for a specified user.
+      operationId: createAchievement
+      parameters:
+        - in: path
+          name: userId
+          description: The ID of the user for whom the achievement is being created.
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AchievementDto'
+      responses:
+        '200':
+          description: The created achievement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AchievementDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /achievements/{id}:
+    get:
+      tags:
+        - achievement
+      summary: Get Achievement By ID
+      description: Retrieves achievement based on the provided ID.
+      operationId: getById
+      parameters:
+        - in: path
+          name: ID
+          description: The ID of the achievement to retrieve.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The achievement corresponding to the provided ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AchievementDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - achievement
+      summary: Update Achievement By ID
+      description: Updates an existing achievement identified by the provided ID.
+      operationId: update
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the achievement to update.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AchievementDto'
+      responses:
+        '200':
+          description: The updated achievement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AchievementDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - achievement
+      summary: Delete Achievement By ID
+      description: Deletes achievement identified by the provided ID.
+      operationId: delete
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the employment record to delete.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Achievement deleted successfully
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     UserRegistrationDto:
@@ -1038,13 +1148,14 @@ components:
         type:
           type: string
           description: "The type of the contact. The type can only be one of the following: 
-          EMAIL, PHONE_NUMBER, TELEGRAM_LINK, LINKEDIN_LINK, GITHUB_LINK."
+          EMAIL, PHONE_NUMBER, TELEGRAM_LINK, LINKEDIN_LINK, GITHUB_LINK, BEHANCE_LINK."
           enum:
             - EMAIL
             - PHONE_NUMBER
             - TELEGRAM_LINK
             - LINKEDIN_LINK
             - GITHUB_LINK
+            - BEHANCE_LINK
         value:
           type: string
           description: The value of the contact
@@ -1153,3 +1264,24 @@ components:
       required:
         - name
         - level
+    AchievementDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The unique identifier for the achievement
+          readOnly: true
+        link:
+          type: string
+          description: The link of achievement
+        summary:
+          type: string
+          description: The summary of the achievement
+        description:
+          type: string
+          description: Description of the achievement
+      required:
+        - link
+        - summary
+        - description

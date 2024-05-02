@@ -1,5 +1,7 @@
 package com.ratifire.devrate.service.user;
 
+import static com.ratifire.devrate.enums.ContactType.GITHUB_LINK;
+import static com.ratifire.devrate.enums.ContactType.TELEGRAM_LINK;
 import static com.ratifire.devrate.enums.LanguageProficiencyLevel.INTERMEDIATE_B1;
 import static com.ratifire.devrate.enums.LanguageProficiencyLevel.NATIVE;
 import static com.ratifire.devrate.enums.LanguageProficiencyName.ENGLISH;
@@ -12,9 +14,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.ratifire.devrate.dto.AchievementDto;
+import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.entity.Achievement;
+import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.User;
@@ -54,6 +60,10 @@ class UserServiceTest {
   private EmploymentRecordDto employmentRecordDto;
   private EmploymentRecord employmentRecord;
   private List<LanguageProficiencyDto> languageProficiencyDtos;
+  private Achievement achievement;
+  private AchievementDto achievementDto;
+  private List<AchievementDto> achievementDtoList;
+  private List<ContactDto> contactDtos;
 
   /**
    * Setup method executed before each test method.
@@ -64,6 +74,8 @@ class UserServiceTest {
         .id(userId)
         .employmentRecords(new ArrayList<>())
         .languageProficiencies(new ArrayList<>())
+        .achievements(new ArrayList<>())
+        .contacts(new ArrayList<>())
         .build();
 
     testUserDto = UserDto.builder()
@@ -93,6 +105,24 @@ class UserServiceTest {
     languageProficiencyDtos = Arrays.asList(
         new LanguageProficiencyDto(1L, ENGLISH, NATIVE),
         new LanguageProficiencyDto(2L, UKRAINE, INTERMEDIATE_B1)
+    );
+
+    achievement = Achievement.builder()
+        .id(1).link("https://certificate.ithillel.ua/view/86277355")
+        .summary("summary")
+        .description("description")
+        .build();
+
+    achievementDto = AchievementDto.builder()
+        .id(1).link("https://certificate.ithillel.ua/view/86277355")
+        .summary("summary")
+        .description("description")
+        .build();
+    achievementDtoList = List.of(achievementDto);
+
+    contactDtos = Arrays.asList(
+        new ContactDto(1L, TELEGRAM_LINK, "https://t.me/test"),
+        new ContactDto(2L, GITHUB_LINK, "https://github.com/test")
     );
   }
 
@@ -236,5 +266,65 @@ class UserServiceTest {
 
     assertThrows(UserNotFoundException.class,
         () -> userService.saveLanguageProficiencies(userId, languageProficiencyDtos));
+  }
+
+  @Test
+  public void getAchievementsByUserIdTest() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(dataMapper.toDto(any())).thenReturn(achievementDtoList);
+
+    List<AchievementDto> result = userService.getAchievementsByUserId(userId);
+    assertEquals(achievementDtoList, result);
+  }
+
+  @Test
+  public void createAchievementTest() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(userRepository.save(any(User.class))).thenReturn(testUser);
+    when(dataMapper.toEntity(achievementDto)).thenReturn(achievement);
+    when(dataMapper.toDto(achievement)).thenReturn(achievementDto);
+
+    AchievementDto result = userService.createAchievement(userId, achievementDto);
+    assertEquals(achievementDto, result);
+  }
+
+  @Test
+  void findAllContactsByUserId_UserExists_ReturnsListOfContactDto() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+
+    List<ContactDto> result = userService.findAllContactsByUserId(userId);
+
+    assertEquals(0, result.size());
+  }
+
+  @Test
+  void findAllContactsByUserId_UserNotFound_ThrowsUserNotFoundException() {
+    when(userRepository.findById(any())).thenReturn(Optional.empty());
+
+    assertThrows(UserNotFoundException.class,
+        () -> userService.findAllContactsByUserId(userId));
+  }
+
+  @Test
+  void saveContacts_Successful_ReturnContactDtos() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(dataMapper.toEntity(any(ContactDto.class))).then(invocation -> {
+      ContactDto contactDto = invocation.getArgument(0);
+      return new Contact(contactDto.getId(), contactDto.getType(), contactDto.getValue());
+    });
+    when(dataMapper.toDto(anyList())).thenReturn(contactDtos);
+    when(userRepository.save(any(User.class))).thenReturn(testUser);
+
+    List<ContactDto> result = userService.saveContacts(userId, contactDtos);
+
+    assertEquals(contactDtos, result);
+  }
+
+  @Test
+  void saveContacts_UserNotFound_ThrowsUserNotFoundException() {
+    when(userRepository.findById(any())).thenReturn(Optional.empty());
+
+    assertThrows(UserNotFoundException.class,
+        () -> userService.saveContacts(userId, contactDtos));
   }
 }
