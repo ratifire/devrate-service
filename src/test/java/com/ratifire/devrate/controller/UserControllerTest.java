@@ -21,10 +21,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.configuration.SecurityConfiguration;
+import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.service.AchievementService;
 import com.ratifire.devrate.service.employmentrecord.EmploymentRecordService;
 import com.ratifire.devrate.service.user.UserService;
 import java.time.LocalDate;
@@ -64,12 +66,17 @@ class UserControllerTest {
   @MockBean
   private UserDetailsService userDetailsService;
   private UserDto userDto;
+
   @MockBean
   private EmploymentRecordService employmentRecordService;
-  @MockBean
   private EmploymentRecordDto employmentRecordDto;
   private List<LanguageProficiencyDto> languageProficiencyDtos;
   private List<ContactDto> contactDtos;
+
+  @MockBean
+  private AchievementService achievementService;
+  private AchievementDto achievementDto;
+  private List<AchievementDto> achievementDtoList;
 
   @BeforeEach
   public void setUp() {
@@ -94,6 +101,13 @@ class UserControllerTest {
         .description("Worked on various projects")
         .responsibilities(Arrays.asList("1", "2", "3"))
         .build();
+
+    achievementDto = AchievementDto.builder()
+        .id(1).link("https://certificate.ithillel.ua/view/86277355")
+        .summary("summary")
+        .description("description")
+        .build();
+    achievementDtoList = List.of(achievementDto);
 
     languageProficiencyDtos = Arrays.asList(
         new LanguageProficiencyDto(1L, UKRAINE, NATIVE),
@@ -214,6 +228,27 @@ class UserControllerTest {
     mockMvc.perform(get("/users/{userId}/language-proficiencies", USER_ID))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedContent));
+  }
+
+  @Test
+  @WithMockUser(username = "Hubersky", roles = {"USER", "ADMIN"})
+  public void getAchievementsByUserIdTest() throws Exception {
+    when(userService.getAchievementsByUserId(anyLong())).thenReturn(achievementDtoList);
+    mockMvc.perform(get("/users/{userId}/achievements", USER_ID))
+        .andExpect(status().isOk())
+        .andExpect(content().json(objectMapper.writeValueAsString(achievementDtoList)));
+  }
+
+  @Test
+  @WithMockUser(username = "Hubersky", roles = {"USER", "ADMIN"})
+  public void createAchievementTest() throws Exception {
+    when(userService.createAchievement(anyLong(), any()))
+        .thenReturn(achievementDto);
+    mockMvc.perform(post("/users/{userId}/achievements", USER_ID)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(achievementDto)))
+        .andExpect(status().isOk())
+        .andExpect(content().json(objectMapper.writeValueAsString(achievementDto)));
   }
 
   @Test
