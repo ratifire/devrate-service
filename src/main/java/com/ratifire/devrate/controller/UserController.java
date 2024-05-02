@@ -169,6 +169,7 @@ public class UserController {
   public void removeUserPicture(@PathVariable long userId) {
     userService.deleteUserPicture(userId);
   }
+  
   /**
    * Retrieves a list of achievements for a specific user by their ID.
    *
