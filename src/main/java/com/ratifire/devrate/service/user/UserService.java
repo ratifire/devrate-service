@@ -2,11 +2,13 @@ package com.ratifire.devrate.service.user;
 
 import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.ContactDto;
+import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.Contact;
+import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.User;
@@ -27,8 +29,9 @@ public class UserService {
 
   private final UserRepository userRepository;
   private final DataMapper<UserDto, User> userMapper;
-  private final DataMapper<AchievementDto, Achievement> achievementMapper;
   private final DataMapper<ContactDto, Contact> contactMapper;
+  private final DataMapper<EducationDto, Education> educationMapper;
+  private final DataMapper<AchievementDto, Achievement> achievementMapper;
   private final DataMapper<EmploymentRecordDto, EmploymentRecord> employmentRecordMapper;
   private final DataMapper<LanguageProficiencyDto, LanguageProficiency> languageProficiencyMapper;
 
@@ -192,6 +195,19 @@ public class UserService {
     user.getAchievements().add(achievement);
     updateUser(user);
     return achievementMapper.toDto(achievement);
+  }
+
+  public List<EducationDto> getEducationsByUserId(long userId) {
+    User user = findUserById(userId);
+    return educationMapper.toDto(user.getEducations());
+  }
+
+  public EducationDto createEducation(long userId, EducationDto educationDto) {
+    User user = findUserById(userId);
+    Education education = educationMapper.toEntity(educationDto);
+    user.getEducations().add(education);
+    updateUser(user);
+    return educationMapper.toDto(education);
   }
 
   /**
