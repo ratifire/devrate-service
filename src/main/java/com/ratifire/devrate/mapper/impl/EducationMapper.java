@@ -15,7 +15,7 @@ public abstract class EducationMapper implements DataMapper<EducationDto, Educat
 
   public abstract EducationDto toDto(Education education);
 
-  @Mapping(target = "userId", ignore = true)
+  @Mapping(target = "id", ignore = true)
   public abstract Education toEntity(EducationDto educationDto);
 
   @Mapping(target = "id", ignore = true)

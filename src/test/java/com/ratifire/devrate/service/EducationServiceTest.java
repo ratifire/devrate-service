@@ -64,7 +64,6 @@ public class EducationServiceTest {
         .description("I learned a lot of knowledge")
         .startYear(2013)
         .endYear(2013)
-        .userId(1)
         .build();
   }
 
@@ -82,17 +81,6 @@ public class EducationServiceTest {
   public void getByWithUnExpectedIdTest() {
     when(educationRepository.findById(anyLong())).thenThrow(EducationNotFoundException.class);
     assertThrows(EducationNotFoundException.class, () -> educationService.getById(anyLong()));
-  }
-
-  @Test
-  public void crateTest() {
-    when(educationRepository.save(any())).thenReturn(education);
-    when(mapper.toEntity(educationDto)).thenReturn(education);
-    when(mapper.toDto(education)).thenReturn(educationDto);
-
-    EducationDto result = educationService.create(anyLong(), educationDto);
-
-    assertEquals(educationDto, result);
   }
 
   @Test

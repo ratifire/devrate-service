@@ -197,11 +197,26 @@ public class UserService {
     return achievementMapper.toDto(achievement);
   }
 
+  /**
+   * Retrieves a list of education details for a specific user identified by their user ID.
+   *
+   * @param userId The unique identifier of the user.
+   * @return A list of {@link EducationDto} objects representing the education details.
+   */
   public List<EducationDto> getEducationsByUserId(long userId) {
     User user = findUserById(userId);
     return educationMapper.toDto(user.getEducations());
   }
 
+  /**
+   * Creates a new education record for the specified user.
+   *
+   * @param userId       The unique identifier of the user for whom the education record is
+   *                     created.
+   * @param educationDto The {@link EducationDto} object containing the details of the education to
+   *                     be created.
+   * @return The {@link EducationDto} object representing the newly created education record.
+   */
   public EducationDto createEducation(long userId, EducationDto educationDto) {
     User user = findUserById(userId);
     Education education = educationMapper.toEntity(educationDto);

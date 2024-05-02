@@ -160,14 +160,29 @@ public class UserController {
     return userService.createAchievement(userId, achievementDto);
   }
 
+  /**
+   * Retrieves a list of education details for a specific user identified by their user ID.
+   *
+   * @param userId The unique identifier of the user.
+   * @return A list of {@link EducationDto} objects representing the education details.
+   */
   @GetMapping("/{userId}/educations")
   public List<EducationDto> getEducationsByUserId(@PathVariable long userId) {
     return userService.getEducationsByUserId(userId);
+
   }
 
-  @PostMapping("/{userId/educations}")
+  /**
+   * Creates a new education record for the specified user.
+   *
+   * @param userId       The unique identifier of the user for whom the education record is created.
+   * @param educationDto The {@link EducationDto} object containing the details of the education to be created.
+   * @return The {@link EducationDto} object representing the newly created education record.
+   */
+  @PostMapping("/{userId}/educations")
   public EducationDto createEducation(@PathVariable long userId,
-      @Valid @RequestBody EducationDto educationDto) {
+      @RequestBody @Valid EducationDto educationDto) {
     return userService.createEducation(userId, educationDto);
+
   }
 }
