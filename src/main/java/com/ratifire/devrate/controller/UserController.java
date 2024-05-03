@@ -169,7 +169,6 @@ public class UserController {
   @GetMapping("/{userId}/educations")
   public List<EducationDto> getEducationsByUserId(@PathVariable long userId) {
     return userService.getEducationsByUserId(userId);
-
   }
 
   /**
@@ -185,6 +184,5 @@ public class UserController {
   public EducationDto createEducation(@PathVariable long userId,
       @RequestBody @Valid EducationDto educationDto) {
     return userService.createEducation(userId, educationDto);
-
   }
 }
