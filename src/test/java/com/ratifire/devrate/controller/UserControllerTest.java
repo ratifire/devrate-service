@@ -115,7 +115,7 @@ class UserControllerTest {
             .position("Java Developer")
             .companyName("New Company")
             .description("Worked on various projects")
-            .responsibilities(Arrays.asList("1", "2", "3")) // Создание списка из строк
+            .responsibilities(Arrays.asList("1", "2", "3"))
             .build();
     
     employmentRecordDto = EmploymentRecordDto.builder()
