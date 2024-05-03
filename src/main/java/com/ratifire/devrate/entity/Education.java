@@ -35,8 +35,4 @@ public class Education {
   private int startYear;
 
   private int endYear;
-
-  @Column(name = "user_id", nullable = false)
-  private long userId;
-
 }

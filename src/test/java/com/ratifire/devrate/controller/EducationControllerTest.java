@@ -6,7 +6,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -64,25 +63,6 @@ public class EducationControllerTest {
     String responseAsString = mockMvc.perform(get("/educations/{id}", 1))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andReturn()
-        .getResponse()
-        .getContentAsString();
-
-    EducationDto resultEducationDto = objectMapper.readValue(responseAsString, EducationDto.class);
-
-    assertEquals(educationDto, resultEducationDto);
-  }
-
-  @Test
-  public void createTest() throws Exception {
-    when(educationService.create(anyLong(), any())).thenReturn(educationDto);
-
-    String responseAsString = mockMvc.perform(post("/educations/{userId}", 1)
-            .with(SecurityMockMvcRequestPostProcessors.user("Hubersky").roles("USER"))
-            .with(SecurityMockMvcRequestPostProcessors.csrf())
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(educationDto)))
-        .andExpect(status().isOk())
         .andReturn()
         .getResponse()
         .getContentAsString();

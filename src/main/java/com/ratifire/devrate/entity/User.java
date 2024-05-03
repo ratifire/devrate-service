@@ -58,8 +58,8 @@ public class User {
   @JoinColumn(name = "user_id", nullable = false)
   private List<Contact> contacts;
 
-  @OneToMany(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id")
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "user_id", nullable = false)
   private List<Education> educations;
 
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
