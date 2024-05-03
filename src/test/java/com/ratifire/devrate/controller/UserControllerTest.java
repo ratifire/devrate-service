@@ -1,6 +1,5 @@
 package com.ratifire.devrate.controller;
 
-
 import static com.ratifire.devrate.enums.ContactType.GITHUB_LINK;
 import static com.ratifire.devrate.enums.ContactType.TELEGRAM_LINK;
 import static com.ratifire.devrate.enums.LanguageProficiencyLevel.INTERMEDIATE_B1;
@@ -227,7 +226,8 @@ class UserControllerTest {
         employmentRecordDto1);
     String responseAsString = mockMvc
         .perform(post("/users/{userId}/employment-records", USER_ID)
-            .with(user("Maksim Matveychuk").roles("USER"))
+            .with(SecurityMockMvcRequestPostProcessors
+                .user("Maksim Matveychuk").roles("USER"))
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(employmentRecordDto1)))
@@ -242,6 +242,30 @@ class UserControllerTest {
     assertEquals(employmentRecordDto, resultEmploymentRecordDto);
   }
 
+  @Test
+  @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
+  void saveLanguageProficienciesTest() throws Exception {
+    String content = objectMapper.writeValueAsString(languageProficiencyDtos);
+    when(userService.saveLanguageProficiencies(anyLong(), anyList()))
+        .thenReturn(languageProficiencyDtos);
+    mockMvc.perform(post("/users/{userId}/language-proficiencies", USER_ID)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(content))
+        .andExpect(status().isOk())
+        .andExpect(content().json(content));
+  }
+
+  @Test
+  @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
+  void findAllLanguageProficienciesByUserIdTest() throws Exception {
+    String expectedContent = objectMapper.writeValueAsString(languageProficiencyDtos);
+    when(userService.findAllLanguageProficienciesByUserId(anyLong())).thenReturn(
+        languageProficiencyDtos);
+    mockMvc.perform(get("/users/{userId}/language-proficiencies", USER_ID))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedContent));
+  }
+  
   @Test
   @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
   public void getUserPictureWhenExists() throws Exception {
