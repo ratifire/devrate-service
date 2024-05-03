@@ -260,6 +260,7 @@ class UserServiceTest {
         () -> userService.getEmploymentRecordsByUserId(userId));
   }
 
+  @Test
   void findAllLanguageProficienciesByUserId_UserExists_ReturnsListOfLanguageProficiencyDto() {
     when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
 
