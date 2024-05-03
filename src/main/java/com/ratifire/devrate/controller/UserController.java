@@ -4,7 +4,6 @@ import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
-import com.ratifire.devrate.dto.PictureDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.service.user.UserService;
 import jakarta.validation.Valid;
@@ -144,11 +143,11 @@ public class UserController {
    *     present; otherwise, returns no content status
    */
   @GetMapping("/{userId}/pictures")
-  public ResponseEntity<PictureDto> getUserPicture(@PathVariable long userId) {
-    PictureDto userPicture = userService.getUserPicture(userId);
-    return userPicture.getPicture() == null
-        ? ResponseEntity.noContent().build()
-        : ResponseEntity.ok(userPicture);
+  public ResponseEntity<byte[]> getUserPicture(@PathVariable long userId) {
+    byte[] userPicture = userService.getUserPicture(userId);
+    return userPicture != null
+        ? ResponseEntity.ok(userPicture)
+        : ResponseEntity.noContent().build();
   }
 
   /**
@@ -156,12 +155,10 @@ public class UserController {
    *
    * @param userId the ID of the user for whom the picture is to be added or updated
    * @param userPicture the picture data as a byte array to upload
-   * @return a Map containing the key 'picture' with the byte array of the uploaded picture as the
-   *     value
    */
   @PostMapping("/{userId}/pictures")
-  public PictureDto addUserPicture(@PathVariable long userId, @RequestBody byte[] userPicture) {
-    return userService.addUserPicture(userId, userPicture);
+  public void addUserPicture(@PathVariable long userId, @RequestBody byte[] userPicture) {
+    userService.addUserPicture(userId, userPicture);
   }
 
   /** Removes a user's picture. */
@@ -169,6 +166,7 @@ public class UserController {
   public void removeUserPicture(@PathVariable long userId) {
     userService.deleteUserPicture(userId);
   }
+
   /**
    * Retrieves a list of achievements for a specific user by their ID.
    *

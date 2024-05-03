@@ -4,7 +4,6 @@ import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
-import com.ratifire.devrate.dto.PictureDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.Contact;
@@ -174,8 +173,8 @@ public class UserService {
    * @param userId the ID of the user whose picture is to be retrieved
    * @return the user's picture as a byte array, or null if no picture is present
    */
-  public PictureDto getUserPicture(long userId) {
-    return new PictureDto(userRepository.findPictureByUserId(userId));
+  public byte[] getUserPicture(long userId) {
+    return userRepository.findPictureByUserId(userId);
   }
 
   /**
@@ -183,13 +182,11 @@ public class UserService {
    *
    * @param userId the ID of the user whose picture is to be added or updated
    * @param userPicture the picture data as a byte array
-   * @return the byte array of the updated picture
    */
-  public PictureDto addUserPicture(long userId, byte[] userPicture) {
+  public void addUserPicture(long userId, byte[] userPicture) {
     User user = findUserById(userId);
     user.setPicture(userPicture);
     updateUser(user);
-    return new PictureDto(user.getPicture());
   }
 
   /**

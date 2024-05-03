@@ -478,6 +478,7 @@ paths:
                 properties:
                   picture:
                     type: string
+                    format: byte
         '204':
           description: No content, if the user has no picture
         '400':
@@ -521,15 +522,7 @@ paths:
               format: binary
       responses:
         '200':
-          description: A base64-encoded string of the user's picture.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  picture:
-                    type: string
-                    format: binary
+          description: Picture successfully added or updated.
         '400':
           description: Invalid input
           content:

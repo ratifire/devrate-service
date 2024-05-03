@@ -21,7 +21,6 @@ import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
-import com.ratifire.devrate.dto.PictureDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.Contact;
@@ -39,6 +38,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -65,7 +66,8 @@ class UserServiceTest {
   private EmploymentRecord employmentRecord;
   private List<LanguageProficiencyDto> languageProficiencyDtos;
   private final  byte[] picture = new byte[] {4, 5, 6};
-  PictureDto expectedDto = new PictureDto(picture);
+  @Captor
+  private ArgumentCaptor<User> userCaptor;
 
   private Achievement achievement;
   private AchievementDto achievementDto;
@@ -278,22 +280,25 @@ class UserServiceTest {
   public void testGetUserPictureExists() {
     when(userRepository.findPictureByUserId(userId)).thenReturn(picture);
 
-    PictureDto actualDto = userService.getUserPicture(userId);
+    byte[] actualPicture = userService.getUserPicture(userId);
 
-    assertNotNull(actualDto);
-    assertArrayEquals(expectedDto.getPicture(), actualDto.getPicture());;
+    assertNotNull(actualPicture);
+    assertArrayEquals(picture, actualPicture);
   }
 
   @Test
   public void testAddUserPictureNewPicture() {
     User user = new User();
     user.setId(userId);
+
     when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-    when(userRepository.save(any(User.class))).thenReturn(user);
 
-    PictureDto actualDto = userService.addUserPicture(userId, picture);
+    when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-    assertArrayEquals(expectedDto.getPicture(), actualDto.getPicture());
+    userService.addUserPicture(userId, picture);
+
+    assertArrayEquals(picture, user.getPicture());
+
   }
 
   @Test
@@ -307,8 +312,7 @@ class UserServiceTest {
     userService.deleteUserPicture(userId);
 
     assertNull(user.getPicture());
-  } 
-}
+  }
 
   @Test
   public void getAchievementsByUserIdTest() {

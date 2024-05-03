@@ -9,9 +9,11 @@ import static com.ratifire.devrate.enums.LanguageProficiencyName.ENGLISH;
 import static com.ratifire.devrate.enums.LanguageProficiencyName.UKRAINE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -26,14 +28,13 @@ import com.ratifire.devrate.configuration.SecurityConfiguration;
 import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
-import com.ratifire.devrate.dto.PictureDto;
+import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.service.AchievementService;
 import com.ratifire.devrate.service.employmentrecord.EmploymentRecordService;
 import com.ratifire.devrate.service.user.UserService;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -77,8 +78,6 @@ class UserControllerTest {
 
   private final long userId = 1L;
   private final byte[] userPicture = new byte[] {1, 2, 3};
-  private final String base64UserPicture = Base64.getEncoder().encodeToString(userPicture);
-  PictureDto userPictureDto = new PictureDto(userPicture);
 
   private List<LanguageProficiencyDto> languageProficiencyDtos;
   private List<ContactDto> contactDtos;
@@ -212,8 +211,7 @@ class UserControllerTest {
         employmentRecordDto1);
     String responseAsString = mockMvc
         .perform(post("/users/{userId}/employment-records", USER_ID)
-            .with(SecurityMockMvcRequestPostProcessors
-                .user("Maksim Matveychuk").roles("USER"))
+            .with(user("Maksim Matveychuk").roles("USER"))
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(employmentRecordDto1)))
@@ -232,27 +230,24 @@ class UserControllerTest {
   @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
   public void getUserPictureWhenExists() throws Exception {
 
-    when(userService.getUserPicture(userId)).thenReturn(userPictureDto);
+    when(userService.getUserPicture(userId)).thenReturn(userPicture);
 
-    mockMvc
-        .perform(get("/users/{userId}/pictures", userId))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.picture").value(Base64.getEncoder().encodeToString(userPicture)));
+    mockMvc.perform(get("/users/{userId}/pictures", userId)
+                    .with(user("test@gmail.com").password("test").roles("USER")))
+            .andExpect(status().isOk())
+            .andExpect(content().bytes(userPicture));
   }
 
   @Test
   @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
   public void addUserPictureTest() throws Exception {
 
-    when(userService.addUserPicture(anyLong(), any(byte[].class))).thenReturn(userPictureDto);
+    doNothing().when(userService).addUserPicture(userId, userPicture);
 
-    mockMvc
-        .perform(
-            post("/users/{userId}/pictures", userId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(new PictureDto(userPicture))))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.picture").value(Base64.getEncoder().encodeToString(userPicture)));
+    mockMvc.perform(post("/users/{userId}/pictures", userId)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .content(userPicture))
+            .andExpect(status().isOk());
   }
 
   @Test
