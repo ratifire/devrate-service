@@ -19,11 +19,13 @@ import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.ContactDto;
+import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.Contact;
+import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.User;
@@ -72,6 +74,9 @@ class UserServiceTest {
   private Achievement achievement;
   private AchievementDto achievementDto;
   private List<AchievementDto> achievementDtoList;
+  private Education education;
+  private EducationDto educationDto;
+  private List<EducationDto> educationDtoList;
   private List<ContactDto> contactDtos;
 
   /**
@@ -84,6 +89,7 @@ class UserServiceTest {
         .employmentRecords(new ArrayList<>())
         .languageProficiencies(new ArrayList<>())
         .achievements(new ArrayList<>())
+        .educations(new ArrayList<>())
         .contacts(new ArrayList<>())
         .build();
 
@@ -128,6 +134,25 @@ class UserServiceTest {
         .description("description")
         .build();
     achievementDtoList = List.of(achievementDto);
+
+    education = Education.builder()
+        .id(1)
+        .type("Course")
+        .name("Hillel")
+        .description("I learned a lot of knowledge")
+        .startYear(2013)
+        .endYear(2013)
+        .build();
+
+    educationDto = EducationDto.builder()
+        .id(1)
+        .type("Course")
+        .name("Hillel")
+        .description("I learned a lot of knowledge")
+        .startYear(2013)
+        .endYear(2013)
+        .build();
+    educationDtoList = List.of(educationDto);
 
     contactDtos = Arrays.asList(
         new ContactDto(1L, TELEGRAM_LINK, "https://t.me/test"),
@@ -332,6 +357,26 @@ class UserServiceTest {
 
     AchievementDto result = userService.createAchievement(userId, achievementDto);
     assertEquals(achievementDto, result);
+  }
+
+  @Test
+  public void getEducationsByUserIdTest() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(dataMapper.toDto(any())).thenReturn(educationDtoList);
+
+    List<EducationDto> result = userService.getEducationsByUserId(userId);
+    assertEquals(educationDtoList, result);
+  }
+
+  @Test
+  public void createEducationTest() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(userRepository.save(any(User.class))).thenReturn(testUser);
+    when(dataMapper.toEntity(educationDto)).thenReturn(education);
+    when(dataMapper.toDto(education)).thenReturn(educationDto);
+
+    EducationDto result = userService.createEducation(userId, educationDto);
+    assertEquals(educationDto, result);
   }
 
   @Test

@@ -2,6 +2,7 @@ package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.ContactDto;
+import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.UserDto;
@@ -75,7 +76,7 @@ public class UserController {
   /**
    * Saves contacts for a user.
    *
-   * @param userId                  the ID of the user to associate the contacts with
+   * @param userId      the ID of the user to associate the contacts with
    * @param contactDtos the contact information to save
    * @return the list of saved ContactDto objects
    */
@@ -190,5 +191,31 @@ public class UserController {
   public AchievementDto createAchievement(@PathVariable long userId,
       @RequestBody @Valid AchievementDto achievementDto) {
     return userService.createAchievement(userId, achievementDto);
+  }
+
+  /**
+   * Retrieves a list of education details for a specific user identified by their user ID.
+   *
+   * @param userId The unique identifier of the user.
+   * @return A list of {@link EducationDto} objects representing the education details.
+   */
+  @GetMapping("/{userId}/educations")
+  public List<EducationDto> getEducationsByUserId(@PathVariable long userId) {
+    return userService.getEducationsByUserId(userId);
+  }
+
+  /**
+   * Creates a new education record for the specified user.
+   *
+   * @param userId       The unique identifier of the user for whom the education record is
+   *                     created.
+   * @param educationDto The {@link EducationDto} object containing the details of the education to
+   *                     be created.
+   * @return The {@link EducationDto} object representing the newly created education record.
+   */
+  @PostMapping("/{userId}/educations")
+  public EducationDto createEducation(@PathVariable long userId,
+      @RequestBody @Valid EducationDto educationDto) {
+    return userService.createEducation(userId, educationDto);
   }
 }
