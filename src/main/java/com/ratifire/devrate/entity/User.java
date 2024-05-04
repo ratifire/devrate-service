@@ -54,6 +54,8 @@ public class User {
 
   private String description;
 
+  private byte[] picture;
+
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "user_id", nullable = false)
   private List<Contact> contacts;

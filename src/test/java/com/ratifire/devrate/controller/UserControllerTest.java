@@ -10,12 +10,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -67,11 +70,16 @@ class UserControllerTest {
 
   @MockBean
   private UserDetailsService userDetailsService;
+
   private UserDto userDto;
 
   @MockBean
   private EmploymentRecordService employmentRecordService;
   private EmploymentRecordDto employmentRecordDto;
+
+  private final long userId = 1L;
+  private final byte[] userPicture = new byte[] {1, 2, 3};
+
   private List<LanguageProficiencyDto> languageProficiencyDtos;
   private List<ContactDto> contactDtos;
 
@@ -98,7 +106,18 @@ class UserControllerTest {
         .subscribed(true)
         .description("description")
         .build();
-
+    
+    employmentRecordDto =
+        EmploymentRecordDto.builder()
+            .id(1L)
+            .startDate(LocalDate.ofEpochDay(2023 - 1 - 1))
+            .endDate(LocalDate.ofEpochDay(2022 - 1 - 1))
+            .position("Java Developer")
+            .companyName("New Company")
+            .description("Worked on various projects")
+            .responsibilities(Arrays.asList("1", "2", "3"))
+            .build();
+    
     employmentRecordDto = EmploymentRecordDto.builder()
         .id(1L)
         .startDate(LocalDate.ofEpochDay(2023 - 1 - 1))
@@ -245,6 +264,41 @@ class UserControllerTest {
     mockMvc.perform(get("/users/{userId}/language-proficiencies", USER_ID))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedContent));
+  }
+  
+  @Test
+  @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
+  public void getUserPictureWhenExists() throws Exception {
+
+    when(userService.getUserPicture(userId)).thenReturn(userPicture);
+
+    mockMvc.perform(get("/users/{userId}/pictures", userId)
+                    .with(user("test@gmail.com").password("test").roles("USER")))
+            .andExpect(status().isOk())
+            .andExpect(content().bytes(userPicture));
+  }
+
+  @Test
+  @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
+  public void addUserPictureTest() throws Exception {
+
+    doNothing().when(userService).addUserPicture(userId, userPicture);
+
+    mockMvc.perform(post("/users/{userId}/pictures", userId)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .content(userPicture))
+            .andExpect(status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "test@gmail.com", password = "test", roles = "USER")
+  public void removeUserPictureTest() throws Exception {
+    long userId = 1L;
+
+    doNothing().when(userService).deleteUserPicture(userId);
+
+    mockMvc.perform(delete("/users/{userId}/pictures", userId)).andExpect(status().isOk());
+
   }
 
   @Test

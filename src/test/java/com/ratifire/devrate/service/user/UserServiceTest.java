@@ -6,7 +6,10 @@ import static com.ratifire.devrate.enums.LanguageProficiencyLevel.INTERMEDIATE_B
 import static com.ratifire.devrate.enums.LanguageProficiencyLevel.NATIVE;
 import static com.ratifire.devrate.enums.LanguageProficiencyName.ENGLISH;
 import static com.ratifire.devrate.enums.LanguageProficiencyName.UKRAINE;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -62,6 +65,8 @@ class UserServiceTest {
   private EmploymentRecordDto employmentRecordDto;
   private EmploymentRecord employmentRecord;
   private List<LanguageProficiencyDto> languageProficiencyDtos;
+  private final  byte[] picture = new byte[] {4, 5, 6};
+
   private Achievement achievement;
   private AchievementDto achievementDto;
   private List<AchievementDto> achievementDtoList;
@@ -294,6 +299,44 @@ class UserServiceTest {
   }
 
   @Test
+  public void testGetUserPictureExists() {
+    when(userRepository.findPictureByUserId(userId)).thenReturn(picture);
+
+    byte[] actualPicture = userService.getUserPicture(userId);
+
+    assertNotNull(actualPicture);
+    assertArrayEquals(picture, actualPicture);
+  }
+
+  @Test
+  public void testAddUserPictureNewPicture() {
+    User user = new User();
+    user.setId(userId);
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+    when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+    userService.addUserPicture(userId, picture);
+
+    assertArrayEquals(picture, user.getPicture());
+
+  }
+
+  @Test
+  public void testDeleteUserPicture() {
+    User user = new User();
+    user.setId(userId);
+    user.setPicture(picture);
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+    userService.deleteUserPicture(userId);
+
+    assertNull(user.getPicture());
+  }
+
+  @Test
   public void getAchievementsByUserIdTest() {
     when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
     when(dataMapper.toDto(any())).thenReturn(achievementDtoList);
@@ -373,3 +416,4 @@ class UserServiceTest {
         () -> userService.saveContacts(userId, contactDtos));
   }
 }
+

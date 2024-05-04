@@ -171,6 +171,39 @@ public class UserService {
   }
 
   /**
+   * Retrieves the picture associated with a user by their user ID.
+   *
+   * @param userId the ID of the user whose picture is to be retrieved
+   * @return the user's picture as a byte array, or null if no picture is present
+   */
+  public byte[] getUserPicture(long userId) {
+    return userRepository.findPictureByUserId(userId);
+  }
+
+  /**
+   * Adds or updates a user's picture by user ID. If the user already has a picture, it is replaced.
+   *
+   * @param userId the ID of the user whose picture is to be added or updated
+   * @param userPicture the picture data as a byte array
+   */
+  public void addUserPicture(long userId, byte[] userPicture) {
+    User user = findUserById(userId);
+    user.setPicture(userPicture);
+    updateUser(user);
+  }
+
+  /**
+   * Removes a user's picture by user ID.
+   *
+   * @param userId the ID of the user whose picture is to be removed
+   */
+  public void deleteUserPicture(long userId) {
+    User user = findUserById(userId);
+    user.setPicture(null);
+    updateUser(user);
+  }
+
+  /**
    * Retrieves a list of achievements for a specific user by their ID.
    *
    * @param userId The ID of the user whose achievements are to be retrieved.
