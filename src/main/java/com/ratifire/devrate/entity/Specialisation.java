@@ -13,7 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Entity class representing Specialisation in the system.
+ * Entity class representing specialisation in the system.
  */
 @Entity
 @Builder
@@ -29,4 +29,7 @@ public class Specialisation {
 
   @Column(name = "specialisation", nullable = false)
   private String specialisation;
+
+  @Column(name = "skills", columnDefinition = "text[]")
+  private List<String> skills;
 }

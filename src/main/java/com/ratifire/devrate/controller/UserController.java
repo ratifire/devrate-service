@@ -4,7 +4,7 @@ import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
-import com.ratifire.devrate.dto.SkillDto;
+import com.ratifire.devrate.dto.SpecialisationDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.service.user.UserService;
 import jakarta.validation.Valid;
@@ -137,27 +137,27 @@ public class UserController {
   }
 
   /**
-   * Retrieves user skill information by user ID.
+   * Retrieves user Specialisation information by user ID.
    *
    * @param userId the ID of the user
-   * @return the list of user's skill information as a DTO
+   * @return the list of user's Specialisation information as a DTO
    */
-  @GetMapping("/{userId}/skills")
-  public List<SkillDto> getSkillsByUserId(@PathVariable long userId) {
-    return userService.getSkillsByUserId(userId);
+  @GetMapping("/{userId}/specialisations")
+  public List<SpecialisationDto> getSpecialisationsByUserId(@PathVariable long userId) {
+    return userService.getSpecialisationsByUserId(userId);
   }
 
   /**
-   * Creates user skill information by user ID.
+   * Creates user Specialisation information by user ID.
    *
-   * @param skillDto the user's skill information as a DTO
-   * @return the created user skill information as a DTO
+   * @param specialisationDto the user's Specialisation information as a DTO
+   * @return the created user Specialisation information as a DTO
    */
-  @PostMapping("/{userId}/skills")
-  public SkillDto createSkill(
-      @Valid @RequestBody SkillDto skillDto,
+  @PostMapping("/{userId}/specialisations")
+  public SpecialisationDto createSpecialisation(
+      @Valid @RequestBody SpecialisationDto specialisationDto,
       @PathVariable long userId) {
-    return userService.createSkill(skillDto, userId);
+    return userService.createSpecialisation(specialisationDto, userId);
   }
 
   /**

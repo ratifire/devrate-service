@@ -4,13 +4,13 @@ import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
-import com.ratifire.devrate.dto.SkillDto;
+import com.ratifire.devrate.dto.SpecialisationDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
-import com.ratifire.devrate.entity.Skill;
+import com.ratifire.devrate.entity.Specialisation;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
@@ -33,7 +33,7 @@ public class UserService {
   private final DataMapper<ContactDto, Contact> contactMapper;
   private final DataMapper<EmploymentRecordDto, EmploymentRecord> employmentRecordMapper;
   private final DataMapper<LanguageProficiencyDto, LanguageProficiency> languageProficiencyMapper;
-  private final DataMapper<SkillDto, Skill> skillDtoSkillDataMapper;
+  private final DataMapper<SpecialisationDto, Specialisation> specialisationDataMapper;
 
   /**
    * Retrieves a user by ID.
@@ -198,29 +198,29 @@ public class UserService {
   }
 
   /**
-   * Retrieves skill by user ID.
+   * Retrieves Specialisation by user ID.
    *
    * @param userId the ID of the user
-   * @return the user's skill as a DTO
+   * @return the user's Specialisation as a DTO
    */
-  public List<SkillDto> getSkillsByUserId(long userId) {
+  public List<SpecialisationDto> getSpecialisationsByUserId(long userId) {
     User user = findUserById(userId);
-    return skillDtoSkillDataMapper.toDto(user.getSkills());
+    return specialisationDataMapper.toDto(user.getSpecialisations());
   }
 
   /**
-   * Creates skill information.
+   * Creates Specialisation information.
    *
-   * @param skillDto the user's skill information as a DTO
-   * @return the created user skill information as a DTO
+   * @param specialisationDto the user's Specialisation information as a DTO
+   * @return the created user Specialisation information as a DTO
    */
-  public SkillDto createSkill(SkillDto skillDto,
+  public SpecialisationDto createSpecialisation(SpecialisationDto specialisationDto,
       long userId) {
     User user = findUserById(userId);
-    Skill skill = skillDtoSkillDataMapper.toEntity(skillDto);
-    user.getSkills().add(skill);
+    Specialisation specialisation = specialisationDataMapper.toEntity(specialisationDto);
+    user.getSpecialisations().add(specialisation);
     updateUser(user);
-    return skillDtoSkillDataMapper.toDto(skill);
+    return specialisationDataMapper.toDto(specialisation);
   }
 
   /**

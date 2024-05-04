@@ -1,18 +1,18 @@
 databaseChangeLog:
   - changeSet:
-      id: 01-05-2024_01_create-table-skills
+      id: 01-05-2024_01_create-table-specialisations
       author: Maksim Matveychuk
       preConditions:
         - onFail: MARK_RAN
           comments: |
-            Checks if the "skills" table already exists.
+            Checks if the "specialisations" table already exists.
             Marks the changeSet as executed if the table exists.
           not:
             tableExists:
-              tableName: skills
+              tableName: specialisations
       changes:
         - createTable:
-            tableName: skills
+            tableName: specialisations
             columns:
               - column:
                   name: id
