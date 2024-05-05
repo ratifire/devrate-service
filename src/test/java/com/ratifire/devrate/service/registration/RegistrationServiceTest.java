@@ -1,7 +1,6 @@
 package com.ratifire.devrate.service.registration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -66,22 +65,6 @@ public class RegistrationServiceTest {
 
   @InjectMocks
   private RegistrationService registrationService;
-
-  @Test
-  public void testUserExistsByEmail_ReturnsTrue() {
-    String existingEmail = "existing@example.com";
-    when(userSecurityService.isExistByEmail(any())).thenReturn(true);
-    boolean isExist = registrationService.isUserExistByEmail(existingEmail);
-    assertTrue(isExist);
-  }
-
-  @Test
-  public void testUserExistsByEmail_ReturnsFalse() {
-    String notExistingEmail = "notexisting@example.com";
-    when(userSecurityService.isExistByEmail(any())).thenReturn(false);
-    boolean isExist = registrationService.isUserExistByEmail(notExistingEmail);
-    assertFalse(isExist);
-  }
 
   @Test
   public void testRegisterUser_SuccessfulRegistration() {

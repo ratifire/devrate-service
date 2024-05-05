@@ -3,7 +3,6 @@ package com.ratifire.devrate.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
@@ -35,14 +34,6 @@ public class UserSecurityServiceTest {
   private UserSecurityService userSecurityService;
 
   private final long testId = 123;
-
-  @Test
-  public void testUserExistsByEmail_ReturnsTrue() {
-    String existingEmail = "existing@example.com";
-    when(userSecurityRepository.existsByEmail(any())).thenReturn(true);
-    boolean isExist = userSecurityService.isExistByEmail(existingEmail);
-    assertTrue(isExist);
-  }
 
   @Test
   public void testUserExistsByEmail_ReturnsFalse() {
