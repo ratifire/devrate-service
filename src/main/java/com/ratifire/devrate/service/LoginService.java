@@ -33,12 +33,12 @@ public class LoginService {
 
     try {
       request.login(login, password);
+      return userMapper.toDto(userSecurityService.findByEmail(login).getUser());
     } catch (ServletException exception) {
       if (exception.getCause().getClass() == DisabledException.class) {
         throw new DisabledException("User was not verified.");
       }
       throw new AuthenticationException("User was not authenticated.");
     }
-    return userMapper.toDto(userSecurityService.findByEmail(login).getUser());
   }
 }
