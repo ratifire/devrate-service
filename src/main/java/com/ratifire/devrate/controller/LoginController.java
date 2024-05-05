@@ -3,6 +3,7 @@ package com.ratifire.devrate.controller;
 import com.ratifire.devrate.dto.LoginDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.service.LoginService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +27,7 @@ public class LoginController {
    * @return A UserDto object representing the authenticated user.
    */
   @PostMapping
-  public UserDto authenticateUser(@RequestBody LoginDto loginDto) {
-    return loginService.authenticate(loginDto);
+  public UserDto authenticateUser(@RequestBody LoginDto loginDto, HttpServletRequest request) {
+    return loginService.authenticate(loginDto, request);
   }
 }

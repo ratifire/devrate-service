@@ -3,12 +3,12 @@ package com.ratifire.devrate.service;
 import com.ratifire.devrate.dto.LoginDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.exception.AuthenticationException;
 import com.ratifire.devrate.mapper.DataMapper;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 public class LoginService {
 
   private final UserSecurityService userSecurityService;
-  private final AuthenticationManager authenticationManager;
   private final DataMapper<UserDto, User> userMapper;
 
   /**
@@ -28,14 +27,19 @@ public class LoginService {
    * @param loginDto The data transfer object containing the user's login information.
    * @return A UserDto object representing the authenticated user.
    */
-  public UserDto authenticate(LoginDto loginDto) {
+  public UserDto authenticate(LoginDto loginDto, HttpServletRequest request) {
     String login = loginDto.getEmail();
     String password = loginDto.getPassword();
 
-    Authentication authentication = authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(login, password));
-
-    SecurityContextHolder.getContext().setAuthentication(authentication);
+    try {
+      request.login(login, password);
+    } catch (ServletException exception) {
+      if (exception.getCause().getClass() == DisabledException.class) {
+        throw new DisabledException("User was not verified.");
+      } else {
+        throw new AuthenticationException("User was not authenticated.");
+      }
+    }
     return userMapper.toDto(userSecurityService.findByEmail(login).getUser());
   }
 }
