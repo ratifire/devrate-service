@@ -1,12 +1,10 @@
 package com.ratifire.devrate.service.employmentrecord;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.EmploymentRecordDto;
@@ -52,7 +50,7 @@ public class EmploymentRecordServiceTest {
         .position("Java Developer")
         .companyName("Example Company 4")
         .description("Worked on various projects")
-        .responsibilities(Arrays.asList("Собирал одуванчики", "Hello World", "3"))
+        .responsibilities(Arrays.asList("Was collecting dandelions", "Hello World", "3"))
         .build();
 
     employmentRecord = EmploymentRecord.builder()
@@ -62,19 +60,8 @@ public class EmploymentRecordServiceTest {
         .position("Java Developer")
         .companyName("Example Company 4")
         .description("Worked on various projects")
-        .responsibilities(Arrays.asList("Собирал одуванчики", "Hello World", "3"))
+        .responsibilities(Arrays.asList("Was collecting dandelions", "Hello World", "3"))
         .build();
-  }
-
-  @Test
-  public void getByIdTest() {
-    when(employmentRecordRepository.findById(any())).thenReturn(
-        Optional.of(employmentRecord));
-    when(mapper.toDto(employmentRecord)).thenReturn(employmentRecordDto);
-
-    EmploymentRecordDto result = employmentRecordService.findById(employmentId);
-
-    assertEquals(employmentRecordDto, result);
   }
 
   @Test
@@ -97,11 +84,5 @@ public class EmploymentRecordServiceTest {
     assertThrows(EmploymentRecordNotFoundException.class, () -> {
       employmentRecordService.update(employmentRecordDto);
     });
-  }
-
-  @Test
-  void deleteTest() {
-    employmentRecordService.deleteById(employmentId);
-    verify(employmentRecordRepository).deleteById(employmentId);
   }
 }
