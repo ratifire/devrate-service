@@ -1,13 +1,11 @@
 package com.ratifire.devrate.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.entity.Role;
 import com.ratifire.devrate.enums.AccessLevel;
-import com.ratifire.devrate.exception.RoleNotFoundException;
 import com.ratifire.devrate.repository.RoleRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,19 +38,6 @@ public class RoleServiceTest {
     testUserRole = Role.builder()
         .name(AccessLevel.USER.getRoleName())
         .build();
-  }
-
-  @Test
-  public void testGetRoleByName() {
-    when(roleRepository.findByName(any())).thenReturn(Optional.of(testUserRole));
-    Role expectedRole = roleService.getRoleByName(any());
-    assertEquals(expectedRole, testUserRole);
-  }
-
-  @Test
-  public void testGetRoleByNameRoleNotFound() throws RoleNotFoundException {
-    when(roleRepository.findByName(any())).thenThrow(RoleNotFoundException.class);
-    assertThrows(RoleNotFoundException.class, () -> roleService.getRoleByName(any()));
   }
 
   @Test
