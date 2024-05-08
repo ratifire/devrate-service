@@ -1,6 +1,7 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.AchievementDto;
+import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
@@ -154,7 +155,7 @@ public class UserController {
   /**
    * Adds or updates a picture for a user by their user ID.
    *
-   * @param userId the ID of the user for whom the picture is to be added or updated
+   * @param userId      the ID of the user for whom the picture is to be added or updated
    * @param userPicture the picture data as a byte array to upload
    */
   @PostMapping("/{userId}/pictures")
@@ -162,7 +163,9 @@ public class UserController {
     userService.addUserPicture(userId, userPicture);
   }
 
-  /** Removes a user's picture. */
+  /**
+   * Removes a user's picture.
+   */
   @DeleteMapping("/{userId}/pictures")
   public void removeUserPicture(@PathVariable long userId) {
     userService.deleteUserPicture(userId);
@@ -217,5 +220,29 @@ public class UserController {
   public EducationDto createEducation(@PathVariable long userId,
       @RequestBody @Valid EducationDto educationDto) {
     return userService.createEducation(userId, educationDto);
+  }
+
+  /**
+   * Retrieves a list of bookmarks for a specific user by their ID.
+   *
+   * @param userId The ID of the user whose bookmarks are to be retrieved.
+   * @return A list of BookmarkDto objects representing the bookmarks of the user.
+   */
+  @GetMapping("/{userId}/bookmarks")
+  public List<BookmarkDto> getBookmarksByUserId(@PathVariable long userId) {
+    return userService.getBookmarksByUserId(userId);
+  }
+
+  /**
+   * Creates a new bookmark for a specific user.
+   *
+   * @param userId      The ID of the user for whom the bookmark is to be created.
+   * @param bookmarkDto The BookmarkDto object containing details of the bookmark to be created.
+   * @return The BookmarkDto object representing the created bookmark.
+   */
+  @PostMapping("/{userId}/bookmarks")
+  public BookmarkDto createBookmark(@PathVariable long userId,
+      @RequestBody @Valid BookmarkDto bookmarkDto) {
+    return userService.createBookmark(userId, bookmarkDto);
   }
 }
