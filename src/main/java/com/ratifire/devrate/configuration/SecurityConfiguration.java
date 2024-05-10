@@ -3,9 +3,9 @@ package com.ratifire.devrate.configuration;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -75,7 +75,7 @@ public class SecurityConfiguration {
    * @return Configured CorsConfigurationSource for cross-origin requests.
    */
   @Bean
-  @Profile("local")
+  @ConditionalOnProperty(prefix = "cors", name = "enabled", havingValue = "false")
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(List.of("*"));
