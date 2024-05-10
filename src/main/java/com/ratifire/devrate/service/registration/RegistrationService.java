@@ -16,6 +16,7 @@ import com.ratifire.devrate.service.user.UserService;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,7 +100,7 @@ public class RegistrationService {
    * @throws MailConfirmationCodeExpiredException If the confirmation code is expired.
    */
   public long confirmRegistration(String confirmationCode) {
-    if (confirmationCode == null || confirmationCode.isEmpty()) {
+    if (StringUtils.isEmpty(confirmationCode)) {
       throw new MailConfirmationCodeRequestException("The confirmation code is a required "
           + "argument");
     }
