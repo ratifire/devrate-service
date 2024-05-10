@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -35,6 +36,7 @@ public class SecurityConfiguration {
       "/actuator/**",
       // -- authentication
       "/auth/**",
+      "/users/**",
       // -- swagger ui
       "/swagger-ui/**",
       "/swagger-config.yaml",
@@ -73,14 +75,12 @@ public class SecurityConfiguration {
    * @return Configured CorsConfigurationSource for cross-origin requests.
    */
   @Bean
+  @Profile("local")
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(List.of("*"));
     configuration.setAllowedMethods(List.of("*"));
     configuration.setAllowedHeaders(List.of("*"));
-    configuration.setExposedHeaders(List.of("*"));
-    configuration.setMaxAge(3600L);
-    configuration.setAllowCredentials(true);
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
     return source;
