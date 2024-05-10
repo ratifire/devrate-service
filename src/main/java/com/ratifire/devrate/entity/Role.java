@@ -36,6 +36,7 @@ public class Role implements GrantedAuthority {
   private String name;
 
   @NotEmpty
+  @Column(nullable = false)
   private String description;
 
   @Override

@@ -2,6 +2,7 @@ package com.ratifire.devrate.entity;
 
 import com.ratifire.devrate.enums.LanguageProficiencyLevel;
 import com.ratifire.devrate.enums.LanguageProficiencyName;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -30,9 +31,11 @@ public class LanguageProficiency {
   private long id;
 
   @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
   private LanguageProficiencyName name;
 
   @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
   private LanguageProficiencyLevel level;
 
 }
