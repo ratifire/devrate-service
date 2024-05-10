@@ -36,7 +36,6 @@ public class SecurityConfiguration {
       "/actuator/**",
       // -- authentication
       "/auth/**",
-      "/users/**",
       // -- swagger ui
       "/swagger-ui/**",
       "/swagger-config.yaml",
@@ -64,6 +63,7 @@ public class SecurityConfiguration {
             .requestMatchers(WHITELIST).permitAll()
             .anyRequest().authenticated()
         )
+        .httpBasic(Customizer.withDefaults())
         .exceptionHandling(
             e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
         .build();
