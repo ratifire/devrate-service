@@ -1143,6 +1143,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
   schemas:
     UserRegistrationDto:
       type: object
@@ -1407,3 +1411,5 @@ components:
         - link
         - summary
         - description
+security:
+  - basicAuth: []
