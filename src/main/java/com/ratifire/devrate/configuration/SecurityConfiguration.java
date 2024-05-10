@@ -67,6 +67,11 @@ public class SecurityConfiguration {
         .build();
   }
 
+  /**
+   * Configures a CORS (Cross-Origin Resource Sharing) setup to allow all origins, methods etc.
+   *
+   * @return Configured CorsConfigurationSource for cross-origin requests.
+   */
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
