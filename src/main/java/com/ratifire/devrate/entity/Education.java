@@ -26,13 +26,18 @@ public class Education {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
+  @Column(nullable = false)
   private String type;
 
+  @Column(nullable = false)
   private String name;
 
+  @Column(nullable = false)
   private String description;
 
+  @Column(nullable = false)
   private int startYear;
 
+  @Column(nullable = false)
   private int endYear;
 }
