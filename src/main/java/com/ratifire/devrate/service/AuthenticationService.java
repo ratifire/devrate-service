@@ -8,15 +8,16 @@ import com.ratifire.devrate.mapper.DataMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.stereotype.Service;
 
 /**
- * Service class responsible for user authentication.
+ * Service class for handling authentication logic.
  */
 @Service
 @RequiredArgsConstructor
-public class LoginService {
+public class AuthenticationService {
 
   private final UserSecurityService userSecurityService;
   private final DataMapper<UserDto, User> userMapper;
@@ -27,7 +28,7 @@ public class LoginService {
    * @param loginDto The data transfer object containing the user's login information.
    * @return A UserDto object representing the authenticated user.
    */
-  public UserDto authenticate(LoginDto loginDto, HttpServletRequest request) {
+  public UserDto login(LoginDto loginDto, HttpServletRequest request) {
     String login = loginDto.getEmail();
     String password = loginDto.getPassword();
 
@@ -39,6 +40,21 @@ public class LoginService {
         throw new DisabledException("User was not verified.");
       }
       throw new AuthenticationException("User was not authenticated.");
+    }
+  }
+
+  /**
+   * Logout the currently authenticated user.
+   *
+   * @param request The HTTP servlet request.
+   * @return A ResponseEntity indicating the success of the logout operation.
+   */
+  public ResponseEntity<String> logout(HttpServletRequest request) {
+    try {
+      request.logout();
+      return ResponseEntity.ok().body("Successfully logged out.");
+    } catch (ServletException e) {
+      throw new AuthenticationException("Error while logout.");
     }
   }
 }
