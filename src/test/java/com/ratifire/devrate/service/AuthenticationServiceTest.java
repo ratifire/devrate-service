@@ -86,6 +86,7 @@ public class AuthenticationServiceTest {
   @Test
   public void login_withBadCredentials() throws ServletException {
     doThrow(AuthenticationException.class).when(request).login(anyString(), anyString());
-    assertThrows(AuthenticationException.class, () -> authenticationService.login(loginDto, request));
+    assertThrows(AuthenticationException.class,
+        () -> authenticationService.login(loginDto, request));
   }
 }
