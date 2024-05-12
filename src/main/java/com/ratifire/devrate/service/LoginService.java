@@ -36,7 +36,7 @@ public class LoginService {
       return userMapper.toDto(userSecurityService.findByEmail(login).getUser());
     } catch (ServletException exception) {
       Throwable cause = exception.getCause();
-      if (cause != null && cause.getClass() == DisabledException.class) {
+      if (cause instanceof DisabledException) {
         throw new DisabledException("User was not verified.");
       }
       throw new AuthenticationException("User was not authenticated.");
