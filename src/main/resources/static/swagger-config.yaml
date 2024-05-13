@@ -37,6 +37,7 @@ paths:
       tags:
         - registration
       description: Register a new user
+      security: []
       operationId: registerUser
       requestBody:
         required: true
@@ -66,6 +67,7 @@ paths:
       tags:
         - registration
       description: Confirming the user's email by matching the code
+      security: []
       operationId: confirmEmail
       parameters:
         - in: path
@@ -112,6 +114,7 @@ paths:
         - password-reset
       summary: Request Password Reset Code
       description: Requests a password reset code to be sent to the given email.
+      security: []
       operationId: requestPasswordReset
       parameters:
         - in: query
@@ -146,6 +149,7 @@ paths:
         - password-reset
       summary: Reset Password
       description: Resets the user's password using a unique code received by the email.
+      security: []
       operationId: resetPassword
       parameters:
         - in: path
@@ -186,6 +190,7 @@ paths:
         - authentication
       summary: Authenticate user
       description: Authenticates a user based on the provided login credentials.
+      security: []
       operationId: authenticateUser
       requestBody:
         required: true
@@ -212,6 +217,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: User was not verified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /auth/logout:
+    post:
+      tags:
+        - authentication
+      summary: Logs out the user
+      description: Logs out the currently authenticated user.
+      security: []
+      parameters:
+        - in: cookie
+          name: JSESSIONID
+          description: Session ID cookie
+          required: true
+      responses:
+        '200':
+          description: Successful logout
         '500':
           description: Internal server error.
           content:
