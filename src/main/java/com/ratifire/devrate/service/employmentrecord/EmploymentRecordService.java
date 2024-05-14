@@ -37,13 +37,13 @@ public class EmploymentRecordService {
   /**
    * Updates user EmploymentRecord information.
    *
+   * @param id           The ID of the employment record entity to be updated.
    * @param employmentRecordDto the updated user's EmploymentRecord information as a DTO
    * @return the updated user EmploymentRecord information as a DTO
    * @throws EmploymentRecordNotFoundException if the user EmploymentRecord info does not exist by
    *                                             Employment record`s id
    */
-  public EmploymentRecordDto update(EmploymentRecordDto employmentRecordDto) {
-    long id = employmentRecordDto.getId();
+  public EmploymentRecordDto update(long id, EmploymentRecordDto employmentRecordDto) {
     Optional<EmploymentRecord> optionalEmploymentRecord = employmentRecordRepository.findById(id);
 
     return optionalEmploymentRecord.map(employmentRecord -> {
