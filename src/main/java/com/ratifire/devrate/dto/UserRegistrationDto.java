@@ -1,6 +1,5 @@
 package com.ratifire.devrate.dto;
 
-import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -21,10 +20,6 @@ public class UserRegistrationDto {
 
   private boolean subscribed;
 
-  private boolean verified;
-
   private String password;
-
-  private LocalDateTime createdAt;
 
 }
