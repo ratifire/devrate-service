@@ -685,7 +685,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /educations/{userId}:
+  /users/{userId}/educations:
     post:
       tags:
         - education
@@ -694,7 +694,7 @@ paths:
       operationId: createEducation
       parameters:
         - in: path
-          name: user_id
+          name: userId
           description: The ID of the user for whom the education is being created.
           required: true
           schema:
@@ -720,6 +720,40 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - education
+      summary: Get all educations by user ID
+      description: Retrieve all educations of the specified user
+      operationId: getEducationsByUserId
+      parameters:
+        - in: path
+          name: userId
+          description: The ID of the user to associate the educations with
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContactDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -898,16 +932,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /employment-record/{id}:
+  /employment-records/{id}:
     get:
       tags:
         - employment records
       summary: Get Employment record By ID
       description: Retrieves all user`s employment records based on the provided ID.
-      operationId: findByUserId
+      operationId: findById
       parameters:
         - in: path
-          name: ID
+          name: id
           description: The ID of the employment record to retrieve.
           required: true
           schema:
@@ -1081,7 +1115,7 @@ paths:
       operationId: getById
       parameters:
         - in: path
-          name: ID
+          name: id
           description: The ID of the achievement to retrieve.
           required: true
           schema:
@@ -1200,17 +1234,9 @@ components:
         subscribed:
           type: boolean
           description: Flag indicating whether the user is subscribed to the newsletter
-        verified:
-          type: boolean
-          description: Flag indicating whether the user's email is verified
         password:
           type: string
           description: The password chosen by the user for their account
-        createdAt:
-          type: string
-          format: date-time
-          description: The timestamp when the user account was created
-          readOnly: true
       required:
         - email
         - firstName

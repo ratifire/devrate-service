@@ -26,7 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * Unit tests for the EducationService class.
  */
 @ExtendWith(MockitoExtension.class)
-public class EmploymentRecordServiceTest {
+class EmploymentRecordServiceTest {
 
   @InjectMocks
   private EmploymentRecordService employmentRecordService;
@@ -65,24 +65,24 @@ public class EmploymentRecordServiceTest {
   }
 
   @Test
-  public void updateTest() {
+  void updateTest() {
     when(mapper.toDto(any(EmploymentRecord.class))).thenReturn(employmentRecordDto);
     when(employmentRecordRepository.findById(anyLong())).thenReturn(Optional.of(employmentRecord));
     when(employmentRecordRepository.save(any())).thenReturn(new EmploymentRecord());
 
-    EmploymentRecordDto result = employmentRecordService.update(employmentRecordDto);
+    EmploymentRecordDto result = employmentRecordService.update(anyLong(), employmentRecordDto);
 
     assertNotNull(result);
     assertEquals(employmentRecordDto, result);
   }
 
   @Test
-  public void updateWithUnExpectedIdTest() {
+  void updateWithUnExpectedIdTest() {
     when(employmentRecordRepository.findById(anyLong())).thenThrow(
         EmploymentRecordNotFoundException.class);
 
     assertThrows(EmploymentRecordNotFoundException.class, () -> {
-      employmentRecordService.update(employmentRecordDto);
+      employmentRecordService.update(anyLong(), employmentRecordDto);
     });
   }
 }
