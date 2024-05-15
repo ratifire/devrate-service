@@ -17,7 +17,6 @@ public class BookmarkController {
 
   private final BookmarkService bookmarkService;
 
-
   /**
    * Deletes a bookmark.
    *
