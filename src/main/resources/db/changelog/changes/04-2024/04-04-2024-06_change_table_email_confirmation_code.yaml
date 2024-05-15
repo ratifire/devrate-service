@@ -1,9 +1,0 @@
-databaseChangeLog:
-  - changeSet:
-      id: 04-04-2024-06_change_table_email_confirmation_code
-      author: Ivan Ivashchenko
-      changes:
-        - renameColumn:
-            tableName: email_confirmation_code
-            oldColumnName: user_id
-            newColumnName: user_security_id

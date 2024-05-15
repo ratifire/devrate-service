@@ -2,6 +2,7 @@ package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.service.employmentrecord.EmploymentRecordService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,12 +36,14 @@ public class EmploymentRecordController {
   /**
    * Updates user EmploymentRecord information by EmploymentRecord`s ID.
    *
+   * @param id                  The ID of the employment record entity to be updated.
    * @param employmentRecordDto the updated user's EmploymentRecord information as a DTO
    * @return the updated user EmploymentRecord information as a DTO
    */
-  @PutMapping
-  public EmploymentRecordDto update(@RequestBody EmploymentRecordDto employmentRecordDto) {
-    return employmentRecordService.update(employmentRecordDto);
+  @PutMapping("/{id}")
+  public EmploymentRecordDto update(@PathVariable long id,
+      @RequestBody @Valid EmploymentRecordDto employmentRecordDto) {
+    return employmentRecordService.update(id, employmentRecordDto);
   }
 
   /**

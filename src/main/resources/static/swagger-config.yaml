@@ -37,6 +37,7 @@ paths:
       tags:
         - registration
       description: Register a new user
+      security: []
       operationId: registerUser
       requestBody:
         required: true
@@ -66,6 +67,7 @@ paths:
       tags:
         - registration
       description: Confirming the user's email by matching the code
+      security: []
       operationId: confirmEmail
       parameters:
         - in: path
@@ -112,6 +114,7 @@ paths:
         - password-reset
       summary: Request Password Reset Code
       description: Requests a password reset code to be sent to the given email.
+      security: []
       operationId: requestPasswordReset
       parameters:
         - in: query
@@ -146,6 +149,7 @@ paths:
         - password-reset
       summary: Reset Password
       description: Resets the user's password using a unique code received by the email.
+      security: []
       operationId: resetPassword
       parameters:
         - in: path
@@ -186,6 +190,7 @@ paths:
         - authentication
       summary: Authenticate user
       description: Authenticates a user based on the provided login credentials.
+      security: []
       operationId: authenticateUser
       requestBody:
         required: true
@@ -212,6 +217,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: User was not verified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /auth/logout:
+    post:
+      tags:
+        - authentication
+      summary: Logs out the user
+      description: Logs out the currently authenticated user.
+      security: []
+      parameters:
+        - in: cookie
+          name: JSESSIONID
+          description: Session ID cookie
+          required: true
+      responses:
+        '200':
+          description: Successful logout
         '500':
           description: Internal server error.
           content:
@@ -653,7 +685,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /educations/{userId}:
+  /users/{userId}/educations:
     post:
       tags:
         - education
@@ -662,7 +694,7 @@ paths:
       operationId: createEducation
       parameters:
         - in: path
-          name: user_id
+          name: userId
           description: The ID of the user for whom the education is being created.
           required: true
           schema:
@@ -688,6 +720,40 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - education
+      summary: Get all educations by user ID
+      description: Retrieve all educations of the specified user
+      operationId: getEducationsByUserId
+      parameters:
+        - in: path
+          name: userId
+          description: The ID of the user to associate the educations with
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContactDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -866,16 +932,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /employment-record/{id}:
+  /employment-records/{id}:
     get:
       tags:
         - employment records
       summary: Get Employment record By ID
       description: Retrieves all user`s employment records based on the provided ID.
-      operationId: findByUserId
+      operationId: findById
       parameters:
         - in: path
-          name: ID
+          name: id
           description: The ID of the employment record to retrieve.
           required: true
           schema:
@@ -1049,7 +1115,7 @@ paths:
       operationId: getById
       parameters:
         - in: path
-          name: ID
+          name: id
           description: The ID of the achievement to retrieve.
           required: true
           schema:
@@ -1143,6 +1209,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
   schemas:
     UserRegistrationDto:
       type: object
@@ -1164,17 +1234,9 @@ components:
         subscribed:
           type: boolean
           description: Flag indicating whether the user is subscribed to the newsletter
-        verified:
-          type: boolean
-          description: Flag indicating whether the user's email is verified
         password:
           type: string
           description: The password chosen by the user for their account
-        createdAt:
-          type: string
-          format: date-time
-          description: The timestamp when the user account was created
-          readOnly: true
       required:
         - email
         - firstName
@@ -1407,3 +1469,5 @@ components:
         - link
         - summary
         - description
+security:
+  - basicAuth: []

@@ -23,12 +23,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.test.context.TestPropertySource;
 
 /**
- * Unit tests for the {@link LoginService} class.
+ * Test class for the {@link AuthenticationService}.
  */
 @ExtendWith(MockitoExtension.class)
-public class LoginServiceTest {
+@TestPropertySource(locations = "classpath:application.properties")
+public class AuthenticationServiceTest {
 
   @Mock
   private UserSecurityService userSecurityService;
@@ -38,7 +40,7 @@ public class LoginServiceTest {
   private HttpServletRequest request;
 
   @InjectMocks
-  private LoginService loginService;
+  private AuthenticationService authenticationService;
 
   private final String email = "test@example.com";
   private final String password = "password";
@@ -56,7 +58,7 @@ public class LoginServiceTest {
   }
 
   @Test
-  void authenticate_successful() throws ServletException {
+  void login_successful() throws ServletException {
     User user = User.builder().build();
     UserDto expectedDto = UserDto.builder().build();
 
@@ -70,20 +72,21 @@ public class LoginServiceTest {
     when(userSecurityService.findByEmail(any())).thenReturn(userSecurity);
     when(userMapper.toDto(any(User.class))).thenReturn(expectedDto);
 
-    UserDto resultDto = loginService.authenticate(loginDto, request);
+    UserDto resultDto = authenticationService.login(loginDto, request);
 
     assertEquals(expectedDto, resultDto);
   }
 
   @Test
-  public void authenticate_disabledUser() throws ServletException {
+  public void login_disabledUser() throws ServletException {
     doThrow(DisabledException.class).when(request).login(anyString(), anyString());
-    assertThrows(DisabledException.class, () -> loginService.authenticate(loginDto, request));
+    assertThrows(DisabledException.class, () -> authenticationService.login(loginDto, request));
   }
 
   @Test
-  public void authenticate_withBadCredentials() throws ServletException {
+  public void login_withBadCredentials() throws ServletException {
     doThrow(AuthenticationException.class).when(request).login(anyString(), anyString());
-    assertThrows(AuthenticationException.class, () -> loginService.authenticate(loginDto, request));
+    assertThrows(AuthenticationException.class,
+        () -> authenticationService.login(loginDto, request));
   }
 }
