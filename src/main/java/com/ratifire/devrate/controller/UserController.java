@@ -223,7 +223,7 @@ public class UserController {
   }
 
   /**
-   * Retrieves a list of bookmarks for a specific user by their ID.
+   * Retrieves a list of bookmarks for the specified user by their ID.
    *
    * @param userId The ID of the user whose bookmarks are to be retrieved.
    * @return A list of BookmarkDto objects representing the bookmarks of the user.
@@ -234,7 +234,7 @@ public class UserController {
   }
 
   /**
-   * Creates a new bookmark for a specific user.
+   * Creates a new bookmark for the specified user.
    *
    * @param userId      The ID of the user for whom the bookmark is to be created.
    * @param bookmarkDto The BookmarkDto object containing details of the bookmark to be created.
