@@ -1,3 +1,14 @@
+-- Create roles records
+INSERT INTO roles (id, name, description)
+SELECT * FROM (
+    VALUES
+    (1, 'Admin', 'Admin role'),
+    (2, 'User', 'User role')
+) AS new_roles (id, name, description)
+WHERE NOT EXISTS (
+    SELECT 1 FROM roles WHERE name IN ('Admin', 'User')
+);
+
 --  Create user_security records
 INSERT INTO users (id, first_name, last_name, position, country, region, city, is_subscribed, description)
 SELECT * FROM (

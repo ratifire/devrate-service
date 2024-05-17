@@ -1,9 +1,8 @@
 package com.ratifire.devrate.repository;
 
-import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.entity.EmploymentRecord;
-import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Repository;
  * provides methods for accessing and managing employment-record entities in the database.
  */
 @Repository
+@RepositoryRestResource(exported = false)
 public interface EmploymentRecordRepository extends JpaRepository<EmploymentRecord, Long> {
 
 }

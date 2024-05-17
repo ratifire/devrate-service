@@ -1,6 +1,7 @@
 package com.ratifire.devrate.entity;
 
 import com.ratifire.devrate.enums.ContactType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -29,8 +30,10 @@ public class Contact {
   private long id;
 
   @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
   private ContactType type;
 
+  @Column(nullable = false)
   private String value;
 
 }

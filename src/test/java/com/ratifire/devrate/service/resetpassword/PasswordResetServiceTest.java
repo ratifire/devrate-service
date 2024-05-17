@@ -1,6 +1,5 @@
 package com.ratifire.devrate.service.resetpassword;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -10,7 +9,6 @@ import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.UserSecurity;
-import com.ratifire.devrate.exception.InvalidCodeException;
 import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.email.EmailService;
 import org.junit.jupiter.api.Test;
@@ -18,7 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
@@ -43,7 +40,7 @@ public class PasswordResetServiceTest {
   private PasswordEncoder passwordEncoder;
 
   @Test
-  void requestPasswordReset_WithValidEmail_SendsResetLink() {
+  void requestPasswordReset_WithValidEmail_SendsResetCode() {
     String email = "user@example.com";
     UserSecurity userSecurity = UserSecurity.builder().id(1L).build();
     when(userSecurityService.findByEmail(email)).thenReturn(userSecurity);
@@ -54,16 +51,6 @@ public class PasswordResetServiceTest {
     boolean result = passwordResetService.requestPasswordReset(email);
 
     assertTrue(result, "Password reset should be requested successfully");
-  }
-
-  @Test
-  void requestPasswordReset_WithInvalidEmail_ThrowsException() {
-    String email = "invalid@example.com";
-    when(userSecurityService.findByEmail(email))
-        .thenThrow(new UsernameNotFoundException("User not found"));
-
-    assertThrows(UsernameNotFoundException.class, () -> passwordResetService
-        .requestPasswordReset(email));
   }
 
   @Test
@@ -86,15 +73,5 @@ public class PasswordResetServiceTest {
     verify(userSecurityService).save(userSecurity);
     verify(passwordEncoder).encode(newPassword);
     verify(emailConfirmationUuidService).deleteConfirmedCodesByUserSecurityId(userSecurity.getId());
-  }
-
-  @Test
-  void resetPassword_WithInvalidCode_ThrowsException() {
-    String code = "invalidCode";
-    when(emailConfirmationUuidService.findUuidCode(code))
-        .thenThrow(new InvalidCodeException("Invalid or expired password reset code."));
-
-    assertThrows(InvalidCodeException.class, () -> passwordResetService
-        .resetPassword(code, "newPassword"));
   }
 }

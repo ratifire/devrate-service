@@ -2,12 +2,14 @@ package com.ratifire.devrate.service.user;
 
 import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.ContactDto;
+import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.NicheDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.Contact;
+import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.Niche;
@@ -30,8 +32,9 @@ public class UserService {
 
   private final UserRepository userRepository;
   private final DataMapper<UserDto, User> userMapper;
-  private final DataMapper<AchievementDto, Achievement> achievementMapper;
   private final DataMapper<ContactDto, Contact> contactMapper;
+  private final DataMapper<EducationDto, Education> educationMapper;
+  private final DataMapper<AchievementDto, Achievement> achievementMapper;
   private final DataMapper<EmploymentRecordDto, EmploymentRecord> employmentRecordMapper;
   private final DataMapper<LanguageProficiencyDto, LanguageProficiency> languageProficiencyMapper;
   private final DataMapper<NicheDto, Niche> nicheDataMapper;
@@ -172,6 +175,39 @@ public class UserService {
   }
 
   /**
+   * Retrieves the picture associated with a user by their user ID.
+   *
+   * @param userId the ID of the user whose picture is to be retrieved
+   * @return the user's picture as a byte array, or null if no picture is present
+   */
+  public byte[] getUserPicture(long userId) {
+    return userRepository.findPictureByUserId(userId);
+  }
+
+  /**
+   * Adds or updates a user's picture by user ID. If the user already has a picture, it is replaced.
+   *
+   * @param userId the ID of the user whose picture is to be added or updated
+   * @param userPicture the picture data as a byte array
+   */
+  public void addUserPicture(long userId, byte[] userPicture) {
+    User user = findUserById(userId);
+    user.setPicture(userPicture);
+    updateUser(user);
+  }
+
+  /**
+   * Removes a user's picture by user ID.
+   *
+   * @param userId the ID of the user whose picture is to be removed
+   */
+  public void deleteUserPicture(long userId) {
+    User user = findUserById(userId);
+    user.setPicture(null);
+    updateUser(user);
+  }
+
+  /**
    * Retrieves a list of achievements for a specific user by their ID.
    *
    * @param userId The ID of the user whose achievements are to be retrieved.
@@ -230,6 +266,34 @@ public class UserService {
     user.getNiches().add(niche);
     updateUser(user);
     return nicheDataMapper.toDto(niche);
+  }
+
+  /**
+   * Retrieves a list of education details for a specific user identified by their user ID.
+   *
+   * @param userId The unique identifier of the user.
+   * @return A list of {@link EducationDto} objects representing the education details.
+   */
+  public List<EducationDto> getEducationsByUserId(long userId) {
+    User user = findUserById(userId);
+    return educationMapper.toDto(user.getEducations());
+  }
+
+  /**
+   * Creates a new education record for the specified user.
+   *
+   * @param userId       The unique identifier of the user for whom the education record is
+   *                     created.
+   * @param educationDto The {@link EducationDto} object containing the details of the education to
+   *                     be created.
+   * @return The {@link EducationDto} object representing the newly created education record.
+   */
+  public EducationDto createEducation(long userId, EducationDto educationDto) {
+    User user = findUserById(userId);
+    Education education = educationMapper.toEntity(educationDto);
+    user.getEducations().add(education);
+    updateUser(user);
+    return educationMapper.toDto(education);
   }
 
   /**

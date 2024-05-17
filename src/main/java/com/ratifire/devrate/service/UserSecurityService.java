@@ -48,8 +48,7 @@ public class UserSecurityService {
    */
   public UserSecurity getById(long id) {
     return userSecurityRepository.findById(id)
-        .orElseThrow(() -> new UserSecurityNotFoundException("The user security cannot be "
-            + "found."));
+        .orElseThrow(UserSecurityNotFoundException::new);
   }
 
   /**
@@ -62,8 +61,7 @@ public class UserSecurityService {
    */
   public UserSecurity getByUserId(long userId) {
     return userSecurityRepository.findByUserId(userId)
-        .orElseThrow(() -> new UserSecurityNotFoundException("The user security cannot be "
-            + "found."));
+        .orElseThrow(UserSecurityNotFoundException::new);
   }
 
   /**
@@ -73,7 +71,8 @@ public class UserSecurityService {
    * @return The user security entity if found, otherwise throws UsernameNotFoundException.
    * @throws UsernameNotFoundException if the user security with the given email is not found.
    */
-  public UserSecurity findByEmail(String email) throws UsernameNotFoundException {
-    return userSecurityRepository.findByEmail(email).orElseThrow();
+  public UserSecurity findByEmail(String email) {
+    return userSecurityRepository.findByEmail(email)
+        .orElseThrow(UserSecurityNotFoundException::new);
   }
 }

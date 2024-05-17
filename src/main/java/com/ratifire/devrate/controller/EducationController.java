@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,19 +35,6 @@ public class EducationController {
   }
 
   /**
-   * Creates a new education entity.
-   *
-   * @param userId       The ID of the user to whom the education belongs.
-   * @param educationDto The data representing the education entity to be created.
-   * @return EducationDto representing the newly created education entity.
-   */
-  @PostMapping("/{userId}")
-  public EducationDto create(@PathVariable long userId,
-      @RequestBody @Valid EducationDto educationDto) {
-    return educationService.create(userId, educationDto);
-  }
-
-  /**
    * Updates an existing education entity.
    *
    * @param id           The ID of the education entity to be updated.
@@ -56,7 +42,7 @@ public class EducationController {
    * @return EducationDto representing the updated education entity.
    */
   @PutMapping("/{id}")
-  public EducationDto update(@PathVariable long id, @RequestBody EducationDto educationDto) {
+  public EducationDto update(@PathVariable long id, @RequestBody @Valid EducationDto educationDto) {
     return educationService.update(id, educationDto);
   }
 

@@ -1,5 +1,6 @@
 package com.ratifire.devrate.controller;
 
+import com.ratifire.devrate.exception.AuthenticationException;
 import com.ratifire.devrate.exception.MailException;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
@@ -9,9 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -76,9 +75,7 @@ public class HandlerException {
    * Handles the authorizing exceptions by returning an HTTP status 401.
    */
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
-  @ExceptionHandler({
-      InternalAuthenticationServiceException.class,
-      BadCredentialsException.class})
+  @ExceptionHandler({AuthenticationException.class})
   public void handleAuthenticationExceptions() {
   }
 

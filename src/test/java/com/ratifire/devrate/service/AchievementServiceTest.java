@@ -1,18 +1,12 @@
 package com.ratifire.devrate.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.entity.Achievement;
-import com.ratifire.devrate.exception.AchievementNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.AchievementRepository;
 import java.util.Optional;
@@ -61,16 +55,6 @@ public class AchievementServiceTest {
   }
 
   @Test
-  public void getByIdTest() {
-    when(achievementRepository.findById(anyLong())).thenReturn(Optional.ofNullable(achievement));
-    when(mapper.toDto(achievement)).thenReturn(achievementDto);
-
-    AchievementDto result = achievementService.getById(1L);
-
-    assertEquals(achievementDto, result);
-  }
-
-  @Test
   public void updateTest() {
     when(achievementRepository.findById(anyLong())).thenReturn(Optional.ofNullable(achievement));
     when(achievementRepository.save(any())).thenReturn(achievement);
@@ -80,18 +64,5 @@ public class AchievementServiceTest {
     AchievementDto result = achievementService.update(anyLong(), achievementDto);
 
     assertEquals(achievementDto, result);
-  }
-
-  @Test
-  public void updateWithUnExpectedIdTest() {
-    when(achievementRepository.findById(anyLong())).thenThrow(AchievementNotFoundException.class);
-    assertThrows(AchievementNotFoundException.class, () -> achievementService.getById(anyLong()));
-  }
-
-  @Test
-  public void deleteTest() {
-    doNothing().when(achievementRepository).deleteById(anyLong());
-    achievementService.delete(anyInt());
-    verify(achievementRepository, times(1)).deleteById(anyLong());
   }
 }

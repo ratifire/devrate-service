@@ -46,7 +46,6 @@ public class User {
 
   private String region;
 
-  @Column(nullable = false)
   private String city;
 
   @Column(name = "is_subscribed", nullable = false)
@@ -54,20 +53,22 @@ public class User {
 
   private String description;
 
+  private byte[] picture;
+
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "user_id", nullable = false)
   private List<Contact> contacts;
 
-  @OneToMany(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id")
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "user_id", nullable = false)
   private List<Education> educations;
 
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "user_id", nullable = false)
   private List<Achievement> achievements;
 
-  @OneToMany(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id")
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "user_id", nullable = false)
   private List<Notification> notifications;
 
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

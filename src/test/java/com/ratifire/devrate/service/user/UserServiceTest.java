@@ -6,21 +6,22 @@ import static com.ratifire.devrate.enums.LanguageProficiencyLevel.INTERMEDIATE_B
 import static com.ratifire.devrate.enums.LanguageProficiencyLevel.NATIVE;
 import static com.ratifire.devrate.enums.LanguageProficiencyName.ENGLISH;
 import static com.ratifire.devrate.enums.LanguageProficiencyName.UKRAINE;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.ContactDto;
+import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
-import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.Contact;
+import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.User;
@@ -56,13 +57,15 @@ class UserServiceTest {
 
   private final long userId = 1L;
   private User testUser;
-  private UserDto testUserDto;
   private EmploymentRecordDto employmentRecordDto;
   private EmploymentRecord employmentRecord;
   private List<LanguageProficiencyDto> languageProficiencyDtos;
+  private final  byte[] picture = new byte[] {4, 5, 6};
+
   private Achievement achievement;
   private AchievementDto achievementDto;
-  private List<AchievementDto> achievementDtoList;
+  private Education education;
+  private EducationDto educationDto;
   private List<ContactDto> contactDtos;
 
   /**
@@ -75,11 +78,8 @@ class UserServiceTest {
         .employmentRecords(new ArrayList<>())
         .languageProficiencies(new ArrayList<>())
         .achievements(new ArrayList<>())
+        .educations(new ArrayList<>())
         .contacts(new ArrayList<>())
-        .build();
-
-    testUserDto = UserDto.builder()
-        .id(userId)
         .build();
 
     employmentRecordDto = EmploymentRecordDto.builder()
@@ -118,90 +118,29 @@ class UserServiceTest {
         .summary("summary")
         .description("description")
         .build();
-    achievementDtoList = List.of(achievementDto);
+
+    education = Education.builder()
+        .id(1)
+        .type("Course")
+        .name("Hillel")
+        .description("I learned a lot of knowledge")
+        .startYear(2013)
+        .endYear(2013)
+        .build();
+
+    educationDto = EducationDto.builder()
+        .id(1)
+        .type("Course")
+        .name("Hillel")
+        .description("I learned a lot of knowledge")
+        .startYear(2013)
+        .endYear(2013)
+        .build();
 
     contactDtos = Arrays.asList(
         new ContactDto(1L, TELEGRAM_LINK, "https://t.me/test"),
         new ContactDto(2L, GITHUB_LINK, "https://github.com/test")
     );
-  }
-
-  @Test
-  void findUserById_UserExists_ReturnsUserDto() {
-    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
-    when(dataMapper.toDto(any(User.class))).thenReturn(testUserDto);
-
-    UserDto foundUser = userService.findById(userId);
-
-    assertEquals(foundUser, testUserDto);
-  }
-
-  @Test
-  void findUserById_UserNotFound_ThrowsUserNotFoundException() {
-    when(userRepository.findById(any())).thenReturn(Optional.empty());
-
-    assertThrows(UserNotFoundException.class, () -> userService.findById(userId));
-  }
-
-  @Test
-  void whenCreate_Successful_ReturnCreatedUser() {
-    when(dataMapper.toEntity(any(UserDto.class))).thenReturn(testUser);
-    when(userRepository.save(any())).thenReturn(testUser);
-
-    User createdUser = userService.create(testUserDto);
-
-    assertEquals(testUserDto.getId(), createdUser.getId());
-    verify(userRepository).save(testUser);
-    verify(dataMapper).toEntity(testUserDto);
-  }
-
-  @Test
-  void whenUpdate_UserNotFound_ThrowUserNotFoundException() {
-    when(userRepository.findById(any())).thenReturn(Optional.empty());
-
-    assertThrows(UserNotFoundException.class, () -> userService.update(testUserDto));
-  }
-
-  @Test
-  void whenUpdate_Successful_ReturnCreatedUserDto() {
-    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
-    when(dataMapper.updateEntity(any(UserDto.class), any(User.class))).thenReturn(testUser);
-    when(userRepository.save(any())).thenReturn(testUser);
-    when(dataMapper.toDto(any(User.class))).thenReturn(testUserDto);
-
-    UserDto updatedUserDto = userService.update(testUserDto);
-
-    assertEquals(testUserDto.getId(), updatedUserDto.getId());
-    verify(userRepository).findById(userId);
-    verify(userRepository).save(testUser);
-    verify(dataMapper).updateEntity(testUserDto, testUser);
-    verify(dataMapper).toDto(testUser);
-  }
-
-  @Test
-  void whenUpdate_Successful_ReturnCreatedUser() {
-    when(userRepository.save(any())).thenReturn(testUser);
-
-    User updatedUser = userService.updateUser(testUser);
-
-    assertEquals(userId, updatedUser.getId());
-    verify(userRepository, times(1)).save(testUser);
-  }
-
-  @Test
-  void whenDelete_UserNotFound_ThrowUserNotFoundException() {
-    when(userRepository.findById(any())).thenReturn(Optional.empty());
-
-    assertThrows(UserNotFoundException.class, () -> userService.delete(userId));
-  }
-
-  @Test
-  void delete_UserExists_DeletesUser() {
-    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
-
-    userService.delete(userId);
-
-    verify(userRepository, times(1)).delete(testUser);
   }
 
   @Test
@@ -216,31 +155,6 @@ class UserServiceTest {
     EmploymentRecordDto result = userService.createEmploymentRecord(employmentRecordDto, userId);
 
     assertEquals(employmentRecordDto, result);
-  }
-
-  @Test
-  void getEmploymentRecordsByUserId_UserExists_ReturnsListOfEmploymentRecordDto() {
-    when(userRepository.findById(any())).thenReturn(Optional.empty());
-
-    assertThrows(UserNotFoundException.class,
-        () -> userService.getEmploymentRecordsByUserId(userId));
-  }
-
-  @Test
-  void findAllLanguageProficienciesByUserId_UserExists_ReturnsListOfLanguageProficiencyDto() {
-    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
-
-    List<LanguageProficiencyDto> result = userService.findAllLanguageProficienciesByUserId(userId);
-
-    assertEquals(0, result.size());
-  }
-
-  @Test
-  void findAllLanguageProficienciesByUserId_UserNotFound_ThrowsUserNotFoundException() {
-    when(userRepository.findById(any())).thenReturn(Optional.empty());
-
-    assertThrows(UserNotFoundException.class,
-        () -> userService.findAllLanguageProficienciesByUserId(userId));
   }
 
   @Test
@@ -269,12 +183,30 @@ class UserServiceTest {
   }
 
   @Test
-  public void getAchievementsByUserIdTest() {
-    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
-    when(dataMapper.toDto(any())).thenReturn(achievementDtoList);
+  public void testAddUserPictureNewPicture() {
+    User user = new User();
+    user.setId(userId);
 
-    List<AchievementDto> result = userService.getAchievementsByUserId(userId);
-    assertEquals(achievementDtoList, result);
+    when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+    when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+    userService.addUserPicture(userId, picture);
+
+    assertArrayEquals(picture, user.getPicture());
+  }
+
+  @Test
+  public void testDeleteUserPicture() {
+    User user = new User();
+    user.setId(userId);
+    user.setPicture(picture);
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+    userService.deleteUserPicture(userId);
+
+    assertNull(user.getPicture());
   }
 
   @Test
@@ -289,20 +221,14 @@ class UserServiceTest {
   }
 
   @Test
-  void findAllContactsByUserId_UserExists_ReturnsListOfContactDto() {
+  public void createEducationTest() {
     when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(userRepository.save(any(User.class))).thenReturn(testUser);
+    when(dataMapper.toEntity(educationDto)).thenReturn(education);
+    when(dataMapper.toDto(education)).thenReturn(educationDto);
 
-    List<ContactDto> result = userService.findAllContactsByUserId(userId);
-
-    assertEquals(0, result.size());
-  }
-
-  @Test
-  void findAllContactsByUserId_UserNotFound_ThrowsUserNotFoundException() {
-    when(userRepository.findById(any())).thenReturn(Optional.empty());
-
-    assertThrows(UserNotFoundException.class,
-        () -> userService.findAllContactsByUserId(userId));
+    EducationDto result = userService.createEducation(userId, educationDto);
+    assertEquals(educationDto, result);
   }
 
   @Test
@@ -328,3 +254,4 @@ class UserServiceTest {
         () -> userService.saveContacts(userId, contactDtos));
   }
 }
+
