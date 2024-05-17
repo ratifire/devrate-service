@@ -12,7 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Entity class representing Specialisation in the system.
+ * Entity class representing Specialisation name in the system.
  */
 @Entity
 @Builder
@@ -26,6 +26,6 @@ public class SpecialisationName {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "specialisation", nullable = false)
-  private String specialisation;
+  @Column(name = "name", nullable = false)
+  private String name;
 }

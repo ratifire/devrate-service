@@ -34,7 +34,7 @@ WHERE NOT EXISTS (
 );
 
 --  Create specialisations
-INSERT INTO specialisations_name (id, specialisation_name)
+INSERT INTO specialisations_name (id, name)
 SELECT * FROM (
     VALUES
     (1, 'SOFTWARE_ENGINEERING'),
@@ -95,7 +95,7 @@ SELECT * FROM (
     (56, 'DART'),
     (57, 'COFFEESCRIPT'),
     (58, 'SHELL_SCRIPTING')
-) AS new_specialisations_name (id, specialisation_name)
+) AS new_specialisations_name (id, name)
 WHERE NOT EXISTS (
     SELECT 1 FROM specialisations_name WHERE id = new_specialisations_name.id
 );

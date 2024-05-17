@@ -15,9 +15,13 @@ public abstract class SkillMapper implements
     DataMapper<SkillDto, Skill> {
 
   @Mapping(target = "id", ignore = true)
+  @Mapping(target = "mark", ignore = true)
+  @Mapping(target = "counter", ignore = true)
   public abstract Skill toEntity(SkillDto skillDto);
 
   @Mapping(target = "id", ignore = true)
+  @Mapping(target = "mark", ignore = true)
+  @Mapping(target = "counter", ignore = true)
   public abstract Skill updateEntity(SkillDto skillDto,
       @MappingTarget Skill skill);
 }

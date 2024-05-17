@@ -21,7 +21,7 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: specialisation_name
+                  name: name
                   type: VARCHAR(255)
                   constraints:
                     nullable: false

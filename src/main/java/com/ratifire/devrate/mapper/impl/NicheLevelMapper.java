@@ -16,10 +16,14 @@ public abstract class NicheLevelMapper implements
 
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "skills", ignore = true)
+  @Mapping(target = "softSkill", ignore = true)
+  @Mapping(target = "hardSkill", ignore = true)
   public abstract NicheLevel toEntity(NicheLevelDto nicheLevelDto);
 
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "skills", ignore = true)
+  @Mapping(target = "softSkill", ignore = true)
+  @Mapping(target = "hardSkill", ignore = true)
   public abstract NicheLevel updateEntity(NicheLevelDto nicheLevelDto,
       @MappingTarget NicheLevel nicheLevel);
 }

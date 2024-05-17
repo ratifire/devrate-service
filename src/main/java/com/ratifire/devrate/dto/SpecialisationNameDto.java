@@ -20,5 +20,5 @@ public class SpecialisationNameDto {
   private Long id;
 
   @NotNull
-  private String specialisationName;
+  private String name;
 }
