@@ -1,21 +1,21 @@
 databaseChangeLog:
   - changeSet:
-      id: 01-05-2024_02_add-foreign-key-specialisations-table
+      id: 01-05-2024_02_add-foreign-key-niche-table
       author: Maksim Matveychuk
       preConditions:
         - onFail: MARK_RAN
           comments: |
-            Checks if the foreign key constraint 'fk_specialisations_user' does not
-            already exist on the "specialisations" table.
+            Checks if the foreign key constraint 'fk_niche_user' does not
+            already exist on the "niche" table.
             Marks the changeSet as executed if the foreign key constraint exists.
           not:
             foreignKeyConstraintExists:
-              foreignKeyName: fk_specialisations_user
-              baseTableName: specialisations
+              foreignKeyName: fk_niche_user
+              baseTableName: niche
       changes:
         - addForeignKeyConstraint:
-            baseTableName: specialisations
+            baseTableName: niche
             baseColumnNames: user_id
-            constraintName: fk_specialisations_user
+            constraintName: fk_niche_user
             referencedTableName: users
             referencedColumnNames: id

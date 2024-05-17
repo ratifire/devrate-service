@@ -4,7 +4,7 @@ import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
-import com.ratifire.devrate.dto.SpecialisationDto;
+import com.ratifire.devrate.dto.NicheDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.service.user.UserService;
 import jakarta.validation.Valid;
@@ -137,27 +137,27 @@ public class UserController {
   }
 
   /**
-   * Retrieves user Specialisation information by user ID.
+   * Retrieves user`s niche information by user ID.
    *
    * @param userId the ID of the user
-   * @return the list of user's Specialisation information as a DTO
+   * @return the list of user's niche information as a DTO
    */
-  @GetMapping("/{userId}/specialisations")
-  public List<SpecialisationDto> getSpecialisationsByUserId(@PathVariable long userId) {
-    return userService.getSpecialisationsByUserId(userId);
+  @GetMapping("/{userId}/niches")
+  public List<NicheDto> getNichesByUserId(@PathVariable long userId) {
+    return userService.getNichesByUserId(userId);
   }
 
   /**
-   * Creates user Specialisation information by user ID.
+   * Creates user`s niche information by user ID.
    *
-   * @param specialisationDto the user's Specialisation information as a DTO
-   * @return the created user Specialisation information as a DTO
+   * @param nicheDto the user's niche information as a DTO
+   * @return the created user niche information as a DTO
    */
-  @PostMapping("/{userId}/specialisations")
-  public SpecialisationDto createSpecialisation(
-      @Valid @RequestBody SpecialisationDto specialisationDto,
+  @PostMapping("/{userId}/niches")
+  public NicheDto createNiche(
+      @Valid @RequestBody NicheDto nicheDto,
       @PathVariable long userId) {
-    return userService.createSpecialisation(specialisationDto, userId);
+    return userService.createNiche(nicheDto, userId);
   }
 
   /**

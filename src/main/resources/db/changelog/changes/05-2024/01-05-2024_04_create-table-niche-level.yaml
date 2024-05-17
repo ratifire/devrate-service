@@ -1,0 +1,37 @@
+databaseChangeLog:
+  - changeSet:
+      id: 01-05-2024_04_create-table-niche-level
+      author: Maksim Matveychuk
+      preConditions:
+        - onFail: MARK_RAN
+          comments: |
+            Checks if the "niche_level" table already exists.
+            Marks the changeSet as executed if the table exists.
+          not:
+            tableExists:
+              tableName: niche_level
+      changes:
+        - createTable:
+            tableName: niche_level
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: niche_level_name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: soft_skill
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: hard_skill
+                  type: BIGINT
+                  constraints:
+                    nullable: true

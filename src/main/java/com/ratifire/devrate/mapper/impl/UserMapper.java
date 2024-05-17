@@ -19,7 +19,7 @@ public abstract class UserMapper implements DataMapper<UserDto, User> {
   @Mapping(target = "notifications", ignore = true)
   @Mapping(target = "employmentRecords", ignore = true)
   @Mapping(target = "languageProficiencies", ignore = true)
-  @Mapping(target = "specialisations", ignore = true)
+  @Mapping(target = "niches", ignore = true)
   public abstract User toEntity(UserDto dto);
 
   @Mapping(target = "contacts", ignore = true)
@@ -28,6 +28,6 @@ public abstract class UserMapper implements DataMapper<UserDto, User> {
   @Mapping(target = "notifications", ignore = true)
   @Mapping(target = "employmentRecords", ignore = true)
   @Mapping(target = "languageProficiencies", ignore = true)
-  @Mapping(target = "specialisations", ignore = true)
+  @Mapping(target = "niches", ignore = true)
   public abstract User updateEntity(UserDto dto, @MappingTarget User entity);
 }

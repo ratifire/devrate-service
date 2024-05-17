@@ -1,18 +1,18 @@
 databaseChangeLog:
   - changeSet:
-      id: 01-05-2024_01_create-table-specialisations
+      id: 01-05-2024_01_create-table-niche
       author: Maksim Matveychuk
       preConditions:
         - onFail: MARK_RAN
           comments: |
-            Checks if the "specialisations" table already exists.
+            Checks if the "niche" table already exists.
             Marks the changeSet as executed if the table exists.
           not:
             tableExists:
-              tableName: specialisations
+              tableName: niche
       changes:
         - createTable:
-            tableName: specialisations
+            tableName: niche
             columns:
               - column:
                   name: id
@@ -21,13 +21,13 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: specialisation
+                  name: niche
                   type: text
                   constraints:
                     nullable: false
               - column:
-                  name: skills
-                  type: VARCHAR(2500) ARRAY
+                  name: main
+                  type: BOOLEAN
                   constraints:
                     nullable: false
               - column:
@@ -35,3 +35,8 @@ databaseChangeLog:
                   type: BIGINT
                   constraints:
                     nullable: false
+              - column:
+                  name: niche_level_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true

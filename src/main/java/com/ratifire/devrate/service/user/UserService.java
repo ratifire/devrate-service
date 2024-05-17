@@ -4,14 +4,15 @@ import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
-import com.ratifire.devrate.dto.SpecialisationDto;
+import com.ratifire.devrate.dto.NicheDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
-import com.ratifire.devrate.entity.Specialisation;
+import com.ratifire.devrate.entity.Niche;
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.UserRepository;
@@ -33,7 +34,7 @@ public class UserService {
   private final DataMapper<ContactDto, Contact> contactMapper;
   private final DataMapper<EmploymentRecordDto, EmploymentRecord> employmentRecordMapper;
   private final DataMapper<LanguageProficiencyDto, LanguageProficiency> languageProficiencyMapper;
-  private final DataMapper<SpecialisationDto, Specialisation> specialisationDataMapper;
+  private final DataMapper<NicheDto, Niche> nicheDataMapper;
 
   /**
    * Retrieves a user by ID.
@@ -198,29 +199,37 @@ public class UserService {
   }
 
   /**
-   * Retrieves Specialisation by user ID.
+   * Retrieves  by user ID.
    *
    * @param userId the ID of the user
-   * @return the user's Specialisation as a DTO
+   * @return the user's niche as a DTO
    */
-  public List<SpecialisationDto> getSpecialisationsByUserId(long userId) {
+  public List<NicheDto> getNichesByUserId(long userId) {
     User user = findUserById(userId);
-    return specialisationDataMapper.toDto(user.getSpecialisations());
+    return nicheDataMapper.toDto(user.getNiches());
   }
 
   /**
-   * Creates Specialisation information.
+   * Creates niche information.
    *
-   * @param specialisationDto the user's Specialisation information as a DTO
-   * @return the created user Specialisation information as a DTO
+   * @param nicheDto the user's niche information as a DTO
+   * @return the created user niche information as a DTO
    */
-  public SpecialisationDto createSpecialisation(SpecialisationDto specialisationDto,
+  public NicheDto createNiche(NicheDto nicheDto,
       long userId) {
+    if (nicheDto.isMain()) {
+      List<NicheDto> nicheDtoList = getNichesByUserId(userId);
+      for (NicheDto niche : nicheDtoList) {
+        if (niche.isMain()) {
+          throw new ResourceAlreadyExistException("Main level is already exist.");
+        }
+      }
+    }
     User user = findUserById(userId);
-    Specialisation specialisation = specialisationDataMapper.toEntity(specialisationDto);
-    user.getSpecialisations().add(specialisation);
+    Niche niche = nicheDataMapper.toEntity(nicheDto);
+    user.getNiches().add(niche);
     updateUser(user);
-    return specialisationDataMapper.toDto(specialisation);
+    return nicheDataMapper.toDto(niche);
   }
 
   /**

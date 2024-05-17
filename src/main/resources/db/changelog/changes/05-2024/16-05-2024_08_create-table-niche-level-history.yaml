@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      id: 16-05-2024_08_create-table-niche-level-history
+      author: Maksim Matveychuk
+      preConditions:
+        - onFail: MARK_RAN
+          comments: |
+            Checks if the "niche_level_history" table already exists.
+            Marks the changeSet as executed if the table exists.
+          not:
+            tableExists:
+              tableName: niche_level_history
+      changes:
+        - createTable:
+            tableName: niche_level_history
+            columns:
+              - column:
+                  name: niche_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: niche_level_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: change_date
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            columnNames: niche_id, niche_level_id
+            constraintName: pk_niche_level_history
+            tableName: niche_level_history
