@@ -238,11 +238,10 @@ public class UserController {
    *
    * @param userId      The ID of the user for whom the bookmark is to be created.
    * @param bookmarkDto The BookmarkDto object containing details of the bookmark to be created.
-   * @return The BookmarkDto object representing the created bookmark.
    */
   @PostMapping("/{userId}/bookmarks")
-  public BookmarkDto createBookmark(@PathVariable long userId,
+  public void createBookmark(@PathVariable long userId,
       @RequestBody @Valid BookmarkDto bookmarkDto) {
-    return userService.createBookmark(userId, bookmarkDto);
+    userService.createBookmark(userId, bookmarkDto);
   }
 }

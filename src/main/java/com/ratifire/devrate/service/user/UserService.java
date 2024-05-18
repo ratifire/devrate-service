@@ -318,14 +318,12 @@ public class UserService {
    *
    * @param userId      The ID of the user for whom the bookmark is to be created.
    * @param bookmarkDto The BookmarkDto object containing details of the bookmark to be created.
-   * @return The BookmarkDto object representing the created bookmark.
    */
-  public BookmarkDto createBookmark(long userId, BookmarkDto bookmarkDto) {
+  public void createBookmark(long userId, BookmarkDto bookmarkDto) {
     User user = findUserById(userId);
     Bookmark bookmark = bookmarkMapper.toEntity(bookmarkDto);
     user.getBookmarks().add(bookmark);
     updateUser(user);
-    return bookmarkMapper.toDto(bookmark);
   }
 
 }
