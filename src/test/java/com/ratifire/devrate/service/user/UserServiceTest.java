@@ -147,13 +147,13 @@ class UserServiceTest {
     bookmark = Bookmark.builder()
         .id(1)
         .name("User1")
-        .name("https:/user1")
+        .link("https:/user1")
         .build();
 
     bookmarkDto = BookmarkDto.builder()
         .id(1)
         .name("User1")
-        .name("https:/user1")
+        .link("https:/user1")
         .build();
 
     contactDtos = Arrays.asList(
