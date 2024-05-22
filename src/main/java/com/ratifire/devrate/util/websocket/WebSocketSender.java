@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -53,50 +54,38 @@ public class WebSocketSender {
    * @param email   The user's login.
    * @param session The WebSocket session to send notifications to.
    */
+  @Transactional
   public void sendNotificationsBySession(String email, WebSocketSession session) {
     List<NotificationDto> notifications = notificationService.getAllByEmail(email);
     sendNotifications(session, notifications);
   }
 
   /**
-   * Sends a list of notifications to a WebSocket session.
+   * Sends a notifications to a WebSocket session.
    *
-   * @param session       The WebSocket session to send notifications to.
-   * @param notifications The list of notifications to send.
+   * @param session      The WebSocket session to send the notifications to.
+   * @param notifications The notifications to send.
    */
   private void sendNotifications(WebSocketSession session, List<NotificationDto> notifications) {
-    for (NotificationDto notification : notifications) {
-      send(session, notification);
-    }
-  }
-
-  /**
-   * Sends a notification to a WebSocket session.
-   *
-   * @param session      The WebSocket session to send the notification to.
-   * @param notification The notification to send.
-   */
-  private void send(WebSocketSession session, NotificationDto notification) {
     try {
-      TextMessage message = new TextMessage(notificationToString(notification));
+      TextMessage message = new TextMessage(notificationsToString(notifications));
       session.sendMessage(message);
-      logger.info("Notification sent successfully: {}", notification);
     } catch (IOException e) {
-      logger.error("Failed to send notification: {}", notification, e);
+      logger.error("Failed to send notifications: {}", notifications, e);
     }
   }
 
   /**
-   * Converts a notification object to a JSON string.
+   * Convert the notification objects to a JSON string.
    *
-   * @param notification The notification to convert.
-   * @return The JSON string representation of the notification.
+   * @param notifications The notifications to convert.
+   * @return The JSON string representation of the notifications.
    */
-  private String notificationToString(NotificationDto notification) {
+  private String notificationsToString(List<NotificationDto> notifications) {
     try {
-      return objectMapper.writeValueAsString(notification);
+      return objectMapper.writeValueAsString(notifications);
     } catch (JsonProcessingException e) {
-      logger.error("Failed to convert notification to JSON: {}", notification, e);
+      logger.error("Failed to convert notifications to JSON: {}", notifications, e);
       return StringUtils.EMPTY;
     }
   }

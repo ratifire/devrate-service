@@ -1,6 +1,7 @@
 package com.ratifire.devrate.service.user;
 
 import com.ratifire.devrate.dto.AchievementDto;
+import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
@@ -8,6 +9,7 @@ import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.NicheDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.Achievement;
+import com.ratifire.devrate.entity.Bookmark;
 import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
@@ -39,6 +41,7 @@ public class UserService {
   private final DataMapper<EmploymentRecordDto, EmploymentRecord> employmentRecordMapper;
   private final DataMapper<LanguageProficiencyDto, LanguageProficiency> languageProficiencyMapper;
   private final DataMapper<NicheDto, Niche> nicheDataMapper;
+  private final DataMapper<BookmarkDto, Bookmark> bookmarkMapper;
 
   /**
    * Retrieves a user by ID.
@@ -330,6 +333,30 @@ public class UserService {
     }
     userRepository.save(user);
     return contactMapper.toDto(user.getContacts());
+  }
+
+  /**
+   * Retrieves all bookmarks associated with the user.
+   *
+   * @param userId the ID of the user to associate the bookmarks with
+   * @return A list of BookmarkDto objects.
+   */
+  public List<BookmarkDto> getBookmarksByUserId(long userId) {
+    User user = findUserById(userId);
+    return bookmarkMapper.toDto(user.getBookmarks());
+  }
+
+  /**
+   * Creates a new bookmark for a specific user.
+   *
+   * @param userId      The ID of the user for whom the bookmark is to be created.
+   * @param bookmarkDto The BookmarkDto object containing details of the bookmark to be created.
+   */
+  public void createBookmark(long userId, BookmarkDto bookmarkDto) {
+    User user = findUserById(userId);
+    Bookmark bookmark = bookmarkMapper.toEntity(bookmarkDto);
+    user.getBookmarks().add(bookmark);
+    updateUser(user);
   }
 
 }
