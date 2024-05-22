@@ -19,15 +19,15 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "skill")
+@Table(name = "skills")
 public class Skill {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "skill_name", nullable = false)
-  private String skill;
+  @Column(name = "name", nullable = false)
+  private String name;
 
   @Column(name = "mark")
   private long mark;

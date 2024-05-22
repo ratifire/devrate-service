@@ -23,20 +23,20 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "niche")
+@Table(name = "niches")
 public class Niche {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "niche", nullable = false)
-  private String niche;
+  @Column(name = "name", nullable = false)
+  private String name;
 
-  @Column(name = "main", nullable = false)
+  @Column(name = "is_main", nullable = false)
   private boolean main;
 
   @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "niche_level_id", referencedColumnName = "id")
-  private NicheLevel levels;
+  private NicheLevel level;
 }

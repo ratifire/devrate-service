@@ -15,6 +15,7 @@ import com.ratifire.devrate.repository.NicheLevelHistoryRepository;
 import com.ratifire.devrate.repository.NicheLevelRepository;
 import com.ratifire.devrate.repository.NicheRepository;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
- * The service responsible for managing user`s nice.
+ * The service responsible for managing user`s niche.
  */
 @Service
 @RequiredArgsConstructor
@@ -56,13 +57,11 @@ public class NicheService {
    * @throws NicheNotFoundException if the niche does not exist by id
    */
   public NicheDto update(NicheDto nicheDto, long id) {
-    Optional<Niche> optionalSpecialisation = nicheRepository.findById(id);
+    Niche specialisation = findNicheById(id);
+    nicheDataMapper.updateEntity(nicheDto, specialisation);
 
-    return optionalSpecialisation.map(specialisation -> {
-      nicheDataMapper.updateEntity(nicheDto, specialisation);
-      Niche updatedNiche = nicheRepository.save(specialisation);
-      return nicheDataMapper.toDto(updatedNiche);
-    }).orElseThrow(() -> new NicheNotFoundException("Niche`s id: " + id));
+    Niche updatedNiche = nicheRepository.save(specialisation);
+    return nicheDataMapper.toDto(updatedNiche);
   }
 
   /**
@@ -87,25 +86,28 @@ public class NicheService {
     validationExistLevelName(nicheId, nicheLevelDto.getNicheLevelName());
     Niche niche = findNicheById(nicheId);
     NicheLevel nicheLevel = nicheLevelDataMapper.toEntity(nicheLevelDto);
-    niche.setLevels(nicheLevel);
+    niche.setLevel(nicheLevel);
     update(nicheDataMapper.toDto(niche), nicheId);
     saveNicheLevelHistory(nicheId, nicheLevel.getId());
     return nicheLevel;
   }
 
   /**
-   * Validates if a niche level with the specified name exists for the given nice.
+   * Validates if a niche level with the specified name exists for the given niche.
    *
-   * @param nicheId        The ID of the nice.
+   * @param nicheId        The ID of the niche.
    * @param nicheLevelName The name of the niche level.
    * @throws ResourceAlreadyExistException If the niche level already exists for the niche.
    */
   private void validationExistLevelName(long nicheId, NicheLevelName nicheLevelName) {
     List<NicheLevelHistory> historyList = nicheLevelHistoryRepository.findById_NicheId(nicheId);
     for (NicheLevelHistory nicheLevelHistory : historyList) {
-      if (nicheLevelRepository.findById(
-              nicheLevelHistory.getId().getNicheLevelId()).get().getNicheLevelName()
-          .equals(nicheLevelName)) {
+      Long nicheLevelId = nicheLevelHistory.getId().getNicheLevelId();
+      NicheLevel existLevelName = Optional.of(nicheLevelRepository.findById(nicheLevelId)).get()
+          .orElseThrow(() -> new ResourceNotFoundException(
+              "Niche level not found with id: " + nicheLevelId));
+
+      if (nicheLevelName.equals(existLevelName.getNicheLevelName())) {
         throw new ResourceAlreadyExistException("This level already exists in this niche.");
       }
     }
@@ -145,7 +147,7 @@ public class NicheService {
    * @return The DTO representation of the niche level.
    */
   public NicheLevelDto getNicheLevelByNicheId(long nicheId) {
-    NicheLevel nicheLevel = findNicheById(nicheId).getLevels();
+    NicheLevel nicheLevel = findNicheById(nicheId).getLevel();
     return nicheLevelDataMapper.toDto(nicheLevel);
   }
 
@@ -177,9 +179,68 @@ public class NicheService {
         .orElseThrow(
             () -> new ResourceNotFoundException("Niche level not found with ID: " + levelId));
     Niche niche = findNicheById(nicheId);
-    niche.setLevels(nicheLevel);
+    niche.setLevel(nicheLevel);
     Niche updatedNiche = nicheRepository.save(niche);
-    return nicheLevelDataMapper.toDto(updatedNiche.getLevels());
+    return nicheLevelDataMapper.toDto(updatedNiche.getLevel());
+  }
+
+  /**
+   * Checks if any niche DTO in the list represents a main niche level.
+   *
+   * @param nicheDtoList the list of niche DTOs to check
+   * @return true if any niche DTO in the list represents a main niche level, otherwise false
+   */
+  private boolean isMainNicheExist(List<NicheDto> nicheDtoList) {
+    return nicheDtoList.stream().anyMatch(NicheDto::isMain);
+  }
+
+  /**
+   * Checks if any niche DTO in the list has the specified name.
+   *
+   * @param name         the name to check
+   * @param nicheDtoList the list of niche DTOs to search
+   * @return true if any niche DTO in the list has the specified name, otherwise false
+   */
+  private boolean isNicheNameAlreadyExist(String name, List<NicheDto> nicheDtoList) {
+    return nicheDtoList.stream()
+        .anyMatch(nicheDto -> nicheDto.getName().equals(name));
+  }
+
+  /**
+   * Checks if the provided niche DTO represents a main niche level and if the niche name already
+   * exists in the provided list of niche DTOs.
+   *
+   * @param nicheDto     the niche DTO to check
+   * @param nicheDtoList the list of niche DTOs to search
+   * @throws ResourceAlreadyExistException if a main niche level already exists or if the niche name
+   *                                       is already taken
+   */
+  public void checkIsMainAndNicheNameAlreadyExist(NicheDto nicheDto, List<NicheDto> nicheDtoList) {
+    if (nicheDto.isMain() && isMainNicheExist(nicheDtoList)) {
+      throw new ResourceAlreadyExistException("Main level is already exist.");
+    }
+    if (isNicheNameAlreadyExist(nicheDto.getName(), nicheDtoList)) {
+      throw new ResourceAlreadyExistException("Niche name is already exist.");
+    }
+  }
+
+  /**
+   * Changes the main niche status from an old main niche to a new main niche.
+   *
+   * @param oldMainNicheId the ID of the current main niche
+   * @param newMainNicheId the ID of the niche that will become the new main niche
+   * @return the updated new main niche as a DTO
+   */
+  public NicheDto changeMainNicheStatus(long oldMainNicheId,
+      long newMainNicheId) {
+    Niche oldMainNiche = findNicheById(oldMainNicheId);
+    oldMainNiche.setMain(false);
+
+    Niche newMainNiche = findNicheById(newMainNicheId);
+    newMainNiche.setMain(true);
+
+    nicheRepository.saveAll(Arrays.asList(oldMainNiche, newMainNiche));
+    return nicheDataMapper.toDto(newMainNiche);
   }
 
 }

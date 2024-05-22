@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "niche_level")
+@Table(name = "niche_levels")
 public class NicheLevel {
 
   @Id

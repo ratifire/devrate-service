@@ -3,6 +3,7 @@ package com.ratifire.devrate.controller;
 import com.ratifire.devrate.dto.NicheLevelDto;
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.service.NicheLevelService;
+import com.ratifire.devrate.service.SkillService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class NicheLevelController {
 
   private final NicheLevelService nicheLevelService;
+  private final SkillService skillService;
 
   /**
    * Retrieves niche level by ID.
@@ -53,6 +55,14 @@ public class NicheLevelController {
   public SkillDto createSkill(@Valid @RequestBody SkillDto skillDto,
       @PathVariable long levelId) {
     return nicheLevelService.createSkill(skillDto, levelId);
+  }
+
+  /**
+   * Deleted skill by ID.
+   */
+  @GetMapping("/skill/{id}")
+  public void deletedSkillById(@PathVariable long id) {
+    skillService.deleteById(id);
   }
 
 }

@@ -1,7 +1,7 @@
 package com.ratifire.devrate.controller;
 
-import com.ratifire.devrate.dto.SpecialisationNameDto;
-import com.ratifire.devrate.service.SpecialisationNameService;
+import com.ratifire.devrate.dto.SpecialisationDto;
+import com.ratifire.devrate.service.SpecialisationService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/specialisations-name")
-public class SpecialisationNameController {
+@RequestMapping("/specialisations")
+public class SpecialisationController {
 
-  private final SpecialisationNameService specialisationNameService;
+  private final SpecialisationService specialisationService;
 
   /**
    * Retrieves specialisation by ID.
@@ -25,8 +25,8 @@ public class SpecialisationNameController {
    * @return the specialisation as a DTO
    */
   @GetMapping("/{id}")
-  public SpecialisationNameDto findById(@PathVariable long id) {
-    return specialisationNameService.findById(id);
+  public SpecialisationDto findById(@PathVariable long id) {
+    return specialisationService.findById(id);
   }
 
   /**
@@ -35,8 +35,8 @@ public class SpecialisationNameController {
    * @return the list of specialisations as a DTO
    */
   @GetMapping()
-  public List<SpecialisationNameDto> getAllSpecialisations() {
-    return specialisationNameService.getAllSpecialisations();
+  public List<SpecialisationDto> getAllSpecialisations() {
+    return specialisationService.getAllSpecialisations();
   }
 
 }

@@ -27,9 +27,9 @@ public class SkillService {
    * @throws ResourceNotFoundException if the skill does not exist by id
    */
   public SkillDto update(SkillDto skillDto, long id) {
-    Optional<Skill> optionalSpecialisation = skillRepository.findById(id);
+    Optional<Skill> oldSkill = skillRepository.findById(id);
 
-    return optionalSpecialisation.map(skill -> {
+    return oldSkill.map(skill -> {
       skillDataMapper.updateEntity(skillDto, skill);
       Skill updatedSkill = skillRepository.save(skill);
       return skillDataMapper.toDto(updatedSkill);
@@ -37,7 +37,7 @@ public class SkillService {
   }
 
   /**
-   * Deletes skill by ID.
+   * Deleted skill by ID.
    *
    * @param id the ID of the skill whose is to be deleted
    */

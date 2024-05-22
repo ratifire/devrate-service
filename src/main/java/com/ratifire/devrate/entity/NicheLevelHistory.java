@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "niche_level_history")
+@Table(name = "niche_level_histories")
 public class NicheLevelHistory {
 
   @EmbeddedId

@@ -25,25 +25,6 @@ public class NicheLevelService {
   private final DataMapper<SkillDto, Skill> skillDataMapper;
 
   /**
-   * Retrieves niche level by ID.
-   *
-   * @param id the ID of the Niche
-   * @return the user's Niche as a DTO
-   * @throws NicheNotFoundException if Niche is not found
-   */
-  public NicheLevelDto findById(long id) {
-    return nicheLevelRepository.findById(id).map(nicheLevelDataMapper::toDto)
-        .orElseThrow(
-            () -> new NicheNotFoundException("Niche not found with id: "
-                + id));
-  }
-
-  public List<SkillDto> getSkillsByLevelId(long id) {
-    NicheLevel nicheLevel = findNicheLevelById(id);
-    return skillDataMapper.toDto(nicheLevel.getSkills());
-  }
-
-  /**
    * Updates niche level.
    *
    * @param nicheLevelDto the updated niche level as a DTO
@@ -53,16 +34,6 @@ public class NicheLevelService {
     NicheLevel nicheLevel = findNicheLevelById(nicheLevelDto.getId());
     nicheLevelDataMapper.updateEntity(nicheLevelDto, nicheLevel);
     return nicheLevelDataMapper.toDto(nicheLevelRepository.save(nicheLevel));
-  }
-
-  /**
-   * Updates niche level.
-   *
-   * @param nicheLevel the updated niche level as a DTO
-   * @return the updated niche level as a DTO
-   */
-  public NicheLevel updateNicheLevel(NicheLevel nicheLevel) {
-    return nicheLevelRepository.save(nicheLevel);
   }
 
   /**
@@ -98,11 +69,43 @@ public class NicheLevelService {
    */
   private void checkSkillNameExistsForLevel(SkillDto skillDto, long levelId) {
     List<SkillDto> skills = getSkillsByLevelId(levelId);
-    boolean skillExists = skills.stream().anyMatch(s -> s.getSkill().equals(skillDto.getSkill()));
+    boolean skillExists = skills.stream().anyMatch(s -> s.getName().equals(skillDto.getName()));
     if (skillExists) {
       throw new ResourceAlreadyExistException("Skill with the same name "
           + "already exists in this niche level");
     }
+  }
+
+  /**
+   * Updates niche level.
+   *
+   * @param nicheLevel the updated niche level as a DTO
+   * @return the updated niche level as a DTO
+   */
+  public NicheLevel updateNicheLevel(NicheLevel nicheLevel) {
+    return nicheLevelRepository.save(nicheLevel);
+  }
+
+  /**
+   * Retrieves a list of skills associated with the niche level identified by the given ID.
+   *
+   * @param id the ID of the niche level
+   * @return a list of SkillDto objects representing the skills associated with the niche level
+   */
+  public List<SkillDto> getSkillsByLevelId(long id) {
+    NicheLevel nicheLevel = findNicheLevelById(id);
+    return skillDataMapper.toDto(nicheLevel.getSkills());
+  }
+
+  /**
+   * Retrieves niche level by ID.
+   *
+   * @param id the ID of the Niche
+   * @return the user's Niche as a DTO
+   * @throws NicheNotFoundException if Niche is not found
+   */
+  public NicheLevelDto findById(long id) {
+    return nicheLevelDataMapper.toDto(findNicheLevelById(id));
   }
 
 }

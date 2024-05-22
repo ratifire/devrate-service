@@ -1,7 +1,7 @@
 package com.ratifire.devrate.mapper.impl;
 
-import com.ratifire.devrate.dto.SpecialisationNameDto;
-import com.ratifire.devrate.entity.SpecialisationName;
+import com.ratifire.devrate.dto.SpecialisationDto;
+import com.ratifire.devrate.entity.Specialisation;
 import com.ratifire.devrate.mapper.DataMapper;
 import org.mapstruct.Mapper;
 
@@ -11,6 +11,6 @@ import org.mapstruct.Mapper;
  */
 @Mapper(componentModel = "spring")
 public abstract class SpecialisationNameMapper implements
-    DataMapper<SpecialisationNameDto, SpecialisationName> {
+    DataMapper<SpecialisationDto, Specialisation> {
 
 }

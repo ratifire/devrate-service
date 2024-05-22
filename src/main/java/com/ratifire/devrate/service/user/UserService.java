@@ -14,10 +14,10 @@ import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.Niche;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.UserRepository;
+import com.ratifire.devrate.service.NicheService;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
   private final UserRepository userRepository;
+  private final NicheService nicheService;
   private final DataMapper<UserDto, User> userMapper;
   private final DataMapper<ContactDto, Contact> contactMapper;
   private final DataMapper<EducationDto, Education> educationMapper;
@@ -185,9 +186,10 @@ public class UserService {
   }
 
   /**
-   * Adds or updates a user's picture by user ID. If the user already has a picture, it is replaced.
+   * Adds or updates a user's picture by user ID. If the user already has a picture, it is
+   * replaced.
    *
-   * @param userId the ID of the user whose picture is to be added or updated
+   * @param userId      the ID of the user whose picture is to be added or updated
    * @param userPicture the picture data as a byte array
    */
   public void addUserPicture(long userId, byte[] userPicture) {
@@ -253,16 +255,10 @@ public class UserService {
    */
   public NicheDto createNiche(NicheDto nicheDto,
       long userId) {
-    if (nicheDto.isMain()) {
-      List<NicheDto> nicheDtoList = getNichesByUserId(userId);
-      for (NicheDto niche : nicheDtoList) {
-        if (niche.isMain()) {
-          throw new ResourceAlreadyExistException("Main level is already exist.");
-        }
-      }
-    }
+    nicheService.checkIsMainAndNicheNameAlreadyExist(nicheDto, getNichesByUserId(userId));
     User user = findUserById(userId);
     Niche niche = nicheDataMapper.toEntity(nicheDto);
+
     user.getNiches().add(niche);
     updateUser(user);
     return nicheDataMapper.toDto(niche);

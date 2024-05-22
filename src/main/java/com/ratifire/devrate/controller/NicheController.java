@@ -53,8 +53,15 @@ public class NicheController {
    * @return the updated niche information as a DTO
    */
   @PutMapping("/{nicheId}/history/{levelId}")
-  public NicheLevelDto update(@PathVariable long nicheId, @PathVariable long levelId) {
+  public NicheLevelDto updateMainNicheLevel(@PathVariable long nicheId,
+      @PathVariable long levelId) {
     return nicheService.updateNicheLevelIdAtNiche(nicheId, levelId);
+  }
+
+  @PutMapping("/{oldNicheId}/change-main/{newNicheId}")
+  public NicheDto createNiche(
+      @PathVariable long oldNicheId, @PathVariable long newNicheId) {
+    return nicheService.changeMainNicheStatus(oldNicheId, newNicheId);
   }
 
   /**

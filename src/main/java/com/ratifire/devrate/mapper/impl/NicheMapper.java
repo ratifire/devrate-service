@@ -15,11 +15,11 @@ public abstract class NicheMapper implements
     DataMapper<NicheDto, Niche> {
 
   @Mapping(target = "id", ignore = true)
-  @Mapping(target = "levels", ignore = true)
+  @Mapping(target = "level", ignore = true)
   public abstract Niche toEntity(NicheDto nicheDto);
 
   @Mapping(target = "id", ignore = true)
-  @Mapping(target = "levels", ignore = true)
+  @Mapping(target = "level", ignore = true)
   public abstract Niche updateEntity(NicheDto nicheDto,
       @MappingTarget Niche niche);
 
