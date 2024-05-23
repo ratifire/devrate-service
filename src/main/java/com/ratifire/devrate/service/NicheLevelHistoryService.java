@@ -8,12 +8,21 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * The service responsible for managing NicheLevelHistory.
+ */
 @Service
 @RequiredArgsConstructor
 public class NicheLevelHistoryService {
 
   private final NicheLevelHistoryRepository historyRepository;
 
+  /**
+   * Retrieves NicheLevelHistory by nicheId.
+   *
+   * @param nicheId the ID of the NicheLevelHistory
+   * @return the List NicheLevelHistory as a DTO
+   */
   public List<NicheLevelHistory> findByIdNicheId(long nicheId) {
     return historyRepository.findById_NicheId(nicheId);
   }

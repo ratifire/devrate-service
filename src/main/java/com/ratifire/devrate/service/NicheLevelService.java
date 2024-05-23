@@ -45,7 +45,8 @@ public class NicheLevelService {
    */
   public NicheLevel findNicheLevelById(long id) {
     return nicheLevelRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("The Niche level not found with id " + id));
+        .orElseThrow(() -> new ResourceNotFoundException("The Niche level not found with id "
+            + id));
   }
 
   /**
