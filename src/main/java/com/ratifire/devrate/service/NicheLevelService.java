@@ -6,7 +6,7 @@ import com.ratifire.devrate.entity.NicheLevel;
 import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.exception.NicheNotFoundException;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
-import com.ratifire.devrate.exception.UserNotFoundException;
+import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.NicheLevelRepository;
 import java.util.List;
@@ -41,11 +41,11 @@ public class NicheLevelService {
    *
    * @param id the ID of the niche level to retrieve
    * @return the user entity
-   * @throws UserNotFoundException if the niche level with the specified ID is not found
+   * @throws ResourceNotFoundException if the niche level with the specified ID is not found
    */
-  private NicheLevel findNicheLevelById(long id) {
+  public NicheLevel findNicheLevelById(long id) {
     return nicheLevelRepository.findById(id)
-        .orElseThrow(() -> new NicheNotFoundException("The Niche not found with id " + id));
+        .orElseThrow(() -> new ResourceNotFoundException("The Niche level not found with id " + id));
   }
 
   /**

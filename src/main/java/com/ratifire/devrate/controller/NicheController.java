@@ -59,7 +59,7 @@ public class NicheController {
   }
 
   @PutMapping("/{oldNicheId}/change-main/{newNicheId}")
-  public NicheDto createNiche(
+  public NicheDto changeMainNicheStatus(
       @PathVariable long oldNicheId, @PathVariable long newNicheId) {
     return nicheService.changeMainNicheStatus(oldNicheId, newNicheId);
   }

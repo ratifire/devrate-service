@@ -5,19 +5,14 @@ import com.ratifire.devrate.dto.NicheLevelDto;
 import com.ratifire.devrate.entity.Niche;
 import com.ratifire.devrate.entity.NicheLevel;
 import com.ratifire.devrate.entity.NicheLevelHistory;
-import com.ratifire.devrate.entity.NicheLevelHistoryId;
 import com.ratifire.devrate.enums.NicheLevelName;
 import com.ratifire.devrate.exception.NicheNotFoundException;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
-import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.NicheLevelHistoryRepository;
-import com.ratifire.devrate.repository.NicheLevelRepository;
 import com.ratifire.devrate.repository.NicheRepository;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,8 +27,8 @@ public class NicheService {
   private final NicheRepository nicheRepository;
   private final DataMapper<NicheDto, Niche> nicheDataMapper;
   private final DataMapper<NicheLevelDto, NicheLevel> nicheLevelDataMapper;
-  private final NicheLevelHistoryRepository nicheLevelHistoryRepository;
-  private final NicheLevelRepository nicheLevelRepository;
+  private final NicheLevelHistoryService nicheLevelHistoryService;
+  private final NicheLevelService nicheLevelService;
 
   /**
    * Retrieves Niche by ID.
@@ -88,7 +83,7 @@ public class NicheService {
     NicheLevel nicheLevel = nicheLevelDataMapper.toEntity(nicheLevelDto);
     niche.setLevel(nicheLevel);
     update(nicheDataMapper.toDto(niche), nicheId);
-    saveNicheLevelHistory(nicheId, nicheLevel.getId());
+    nicheLevelHistoryService.saveNicheLevelHistory(nicheId, nicheLevel.getId());
     return nicheLevel;
   }
 
@@ -100,32 +95,16 @@ public class NicheService {
    * @throws ResourceAlreadyExistException If the niche level already exists for the niche.
    */
   private void validationExistLevelName(long nicheId, NicheLevelName nicheLevelName) {
-    List<NicheLevelHistory> historyList = nicheLevelHistoryRepository.findById_NicheId(nicheId);
+    List<NicheLevelHistory> historyList = nicheLevelHistoryService.findByIdNicheId(nicheId);
     for (NicheLevelHistory nicheLevelHistory : historyList) {
       Long nicheLevelId = nicheLevelHistory.getId().getNicheLevelId();
-      NicheLevel existLevelName = Optional.of(nicheLevelRepository.findById(nicheLevelId)).get()
-          .orElseThrow(() -> new ResourceNotFoundException(
-              "Niche level not found with id: " + nicheLevelId));
-
+      NicheLevel existLevelName = nicheLevelService.findNicheLevelById(nicheLevelId);
       if (nicheLevelName.equals(existLevelName.getNicheLevelName())) {
         throw new ResourceAlreadyExistException("This level already exists in this niche.");
       }
     }
   }
 
-  /**
-   * Saves the niche level history for a given niche and level.
-   *
-   * @param nicheId The ID of the niche.
-   * @param levelId The ID of the level.
-   */
-  private void saveNicheLevelHistory(long nicheId, long levelId) {
-    NicheLevelHistory history = NicheLevelHistory.builder()
-        .id(new NicheLevelHistoryId(nicheId, levelId))
-        .changeDate(LocalDateTime.now())
-        .build();
-    nicheLevelHistoryRepository.save(history);
-  }
 
   /**
    * Finds a niche by its ID.
@@ -158,12 +137,11 @@ public class NicheService {
    * @return A list of DTO representations of niche levels.
    */
   public List<NicheLevelDto> getNicheLevelHistoryByNicheId(long nicheId) {
-    List<NicheLevelHistory> historyList = nicheLevelHistoryRepository.findById_NicheId(nicheId);
+    List<NicheLevelHistory> historyList = nicheLevelHistoryService.findByIdNicheId(nicheId);
     return historyList.stream()
         .map(history -> {
           Long nicheLevelId = history.getId().getNicheLevelId();
-          return nicheLevelRepository.findById(nicheLevelId)
-              .orElseThrow(() -> new ResourceNotFoundException("Niche level not found."));
+          return nicheLevelService.findNicheLevelById(nicheLevelId);
         })
         .map(nicheLevelDataMapper::toDto)
         .collect(Collectors.toList());
@@ -175,9 +153,7 @@ public class NicheService {
    * @return the updated niche level as a DTO
    */
   public NicheLevelDto updateNicheLevelIdAtNiche(long nicheId, long levelId) {
-    NicheLevel nicheLevel = nicheLevelRepository.findById(levelId)
-        .orElseThrow(
-            () -> new ResourceNotFoundException("Niche level not found with ID: " + levelId));
+    NicheLevel nicheLevel = nicheLevelService.findNicheLevelById(levelId);
     Niche niche = findNicheById(nicheId);
     niche.setLevel(nicheLevel);
     Niche updatedNiche = nicheRepository.save(niche);
