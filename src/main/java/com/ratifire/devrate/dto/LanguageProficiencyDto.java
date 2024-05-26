@@ -22,6 +22,8 @@ public class LanguageProficiencyDto {
   @NotNull
   private LanguageProficiencyName name;
 
+  private String code;
+
   @NotNull
   private LanguageProficiencyLevel level;
 
