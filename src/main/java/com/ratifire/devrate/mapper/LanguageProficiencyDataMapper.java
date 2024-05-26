@@ -14,8 +14,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface LanguageProficiencyDataMapper {
 
-  @Mapping(source = "name", target = "name")
-  @Mapping(source = "code", target = "code")
   @Mapping(target = "levels", expression = "java(mapLevelsByLanguage(languageProficiencyName))")
   LanguageProficiencyDataDto toDto(LanguageProficiencyName languageProficiencyName);
 
