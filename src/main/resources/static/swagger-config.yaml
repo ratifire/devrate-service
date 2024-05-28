@@ -29,6 +29,8 @@ tags:
     description: Endpoints for user personal info functionality
   - name: employment records
     description: Endpoints for user Employment Records management
+  - name: language proficiencies
+    description: Endpoints for language proficiencies management
   - name: achievement
     description: Endpoints for user achievement management
   - name: bookmark
@@ -1036,6 +1038,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /language-proficiencies-data:
+    get:
+      tags:
+        - language proficiencies
+      summary: Get all language proficiency data
+      description: Returns a list of language proficiency data for dropdowns.
+      operationId: getAllLanguageProficiencyData
+      responses:
+        '200':
+          description: Successful response with language proficiency data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LanguageProficiencyDataDto'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /users/{userId}/achievements:
     get:
       tags:
@@ -1568,5 +1592,23 @@ components:
         - link
         - summary
         - description
+    LanguageProficiencyDataDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the language
+        code:
+          type: string
+          description: The international code of the language
+        levels:
+          type: array
+          items:
+            type: string
+          description: The levels of the language proficiency
+      required:
+        - name
+        - code
+        - levels
 security:
   - basicAuth: []
