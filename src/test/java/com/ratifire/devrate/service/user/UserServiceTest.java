@@ -10,16 +10,19 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.AchievementDto;
+import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.entity.Achievement;
+import com.ratifire.devrate.entity.Bookmark;
 import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
@@ -65,8 +68,11 @@ class UserServiceTest {
   private Achievement achievement;
   private AchievementDto achievementDto;
   private Education education;
+  private Bookmark bookmark;
   private EducationDto educationDto;
+  private BookmarkDto bookmarkDto;
   private List<ContactDto> contactDtos;
+  private List<BookmarkDto> bookmarkDtos;
 
   /**
    * Setup method executed before each test method.
@@ -80,6 +86,7 @@ class UserServiceTest {
         .achievements(new ArrayList<>())
         .educations(new ArrayList<>())
         .contacts(new ArrayList<>())
+        .bookmarks(new ArrayList<>())
         .build();
 
     employmentRecordDto = EmploymentRecordDto.builder()
@@ -137,9 +144,26 @@ class UserServiceTest {
         .endYear(2013)
         .build();
 
+    bookmark = Bookmark.builder()
+        .id(1)
+        .name("User1")
+        .link("https:/user1")
+        .build();
+
+    bookmarkDto = BookmarkDto.builder()
+        .id(1)
+        .name("User1")
+        .link("https:/user1")
+        .build();
+
     contactDtos = Arrays.asList(
         new ContactDto(1L, TELEGRAM_LINK, "https://t.me/test"),
         new ContactDto(2L, GITHUB_LINK, "https://github.com/test")
+    );
+
+    bookmarkDtos = Arrays.asList(
+        new BookmarkDto(1L, "User1", "https:/user1"),
+        new BookmarkDto(2L, "User2", "https:/user2")
     );
   }
 
@@ -183,7 +207,7 @@ class UserServiceTest {
   }
 
   @Test
-  public void testAddUserPictureNewPicture() {
+  void testAddUserPictureNewPicture() {
     User user = new User();
     user.setId(userId);
 
@@ -197,7 +221,7 @@ class UserServiceTest {
   }
 
   @Test
-  public void testDeleteUserPicture() {
+  void testDeleteUserPicture() {
     User user = new User();
     user.setId(userId);
     user.setPicture(picture);
@@ -210,7 +234,7 @@ class UserServiceTest {
   }
 
   @Test
-  public void createAchievementTest() {
+  void createAchievementTest() {
     when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
     when(userRepository.save(any(User.class))).thenReturn(testUser);
     when(dataMapper.toEntity(achievementDto)).thenReturn(achievement);
@@ -221,7 +245,7 @@ class UserServiceTest {
   }
 
   @Test
-  public void createEducationTest() {
+  void createEducationTest() {
     when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
     when(userRepository.save(any(User.class))).thenReturn(testUser);
     when(dataMapper.toEntity(educationDto)).thenReturn(education);
@@ -253,5 +277,30 @@ class UserServiceTest {
     assertThrows(UserNotFoundException.class,
         () -> userService.saveContacts(userId, contactDtos));
   }
-}
 
+  @Test
+  void getBookmarks_Successful_ReturnBookmarkDtos() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(dataMapper.toDto(anyList())).thenReturn(bookmarkDtos);
+
+    List<BookmarkDto> result = userService.getBookmarksByUserId(userId);
+    assertEquals(bookmarkDtos, result);
+  }
+
+  @Test
+  void createBookmark_Successful() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(dataMapper.toEntity(any(BookmarkDto.class))).thenReturn(bookmark);
+
+    userService.createBookmark(userId, bookmarkDto);
+    assertTrue(testUser.getBookmarks().contains(bookmark));
+  }
+
+  @Test
+  void createBookmark_UserNotFound_ThrowsUserNotFoundException() {
+    when(userRepository.findById(any())).thenReturn(Optional.empty());
+
+    assertThrows(UserNotFoundException.class,
+        () -> userService.createBookmark(userId, bookmarkDto));
+  }
+}
