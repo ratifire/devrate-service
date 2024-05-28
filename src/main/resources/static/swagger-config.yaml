@@ -1301,9 +1301,9 @@ components:
         lastName:
           type: string
           description: The last name inputted by the user
-        position:
+        status:
           type: string
-          description: The position inputted by the user
+          description: The status (like Java Back-End or ReactJS etc.) inputted by the user
         country:
           type: string
           description: The country chosen by the user for their account
