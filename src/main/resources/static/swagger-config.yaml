@@ -1404,15 +1404,12 @@ components:
         lastName:
           type: string
           description: The last name inputted by the user
-        position:
+        status:
           type: string
-          description: The position inputted by the user
+          description: The status (like Java Back-End or ReactJS etc.) inputted by the user
         country:
           type: string
           description: The country chosen by the user for their account
-        region:
-          type: string
-          description: The region chosen by the user for their account
         city:
           type: string
           description: The city chosen by the user for their account
@@ -1524,30 +1521,13 @@ components:
           readOnly: true
         name:
           type: string
-          description: "The name of the language. The name can only be one of the following: 
-          UA, EN, FR, IT, DE, ES, PL, CS."
-          enum:
-            - UA
-            - EN
-            - FR
-            - IT
-            - DE
-            - ES
-            - PL
-            - CS
+          description: The name of the language
+        code:
+          type: string
+          description: The international code of the language
         level:
           type: string
-          description: "The level of the language proficiency. The level can only be one of 
-          the following: ELEMENTARY_A1, PRE_INTERMEDIATE_A2, INTERMEDIATE_B1, UPPER_INTERMEDIATE_B2, 
-          ADVANCED_C1, PROFESSIONAL_C2, NATIVE."
-          enum:
-            - ELEMENTARY_A1
-            - PRE_INTERMEDIATE_A2
-            - INTERMEDIATE_B1
-            - UPPER_INTERMEDIATE_B2
-            - ADVANCED_C1
-            - PROFESSIONAL_C2
-            - NATIVE
+          description: The level of the language proficiency
       required:
         - name
         - level

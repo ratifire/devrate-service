@@ -15,6 +15,9 @@ import org.mapstruct.MappingTarget;
 public abstract class LanguageProficiencyMapper implements
     DataMapper<LanguageProficiencyDto, LanguageProficiency> {
 
+  @Mapping(target = "code", expression = "java(languageProficiency.getName().getCode())")
+  public abstract LanguageProficiencyDto toDto(LanguageProficiency languageProficiency);
+
   @Mapping(target = "id", ignore = true)
   public abstract LanguageProficiency toEntity(LanguageProficiencyDto languageProficiencyDto);
 
