@@ -24,13 +24,10 @@ public class UserDto {
   private String lastName;
 
   @Size(max = 50)
-  private String position;
+  private String status;
 
   @Size(max = 100)
   private String country;
-
-  @Size(max = 100)
-  private String region;
 
   @Size(max = 100)
   private String city;
