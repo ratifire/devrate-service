@@ -30,9 +30,6 @@ public class UserDto {
   private String country;
 
   @Size(max = 100)
-  private String region;
-
-  @Size(max = 100)
   private String city;
 
   private boolean subscribed;

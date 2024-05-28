@@ -44,8 +44,6 @@ public class User {
   @Column(nullable = false)
   private String country;
 
-  private String region;
-
   private String city;
 
   @Column(name = "is_subscribed", nullable = false)
