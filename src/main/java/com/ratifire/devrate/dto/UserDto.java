@@ -38,4 +38,8 @@ public class UserDto {
   private boolean subscribed;
 
   private String description;
+
+  private long hardSkill;
+
+  private long softSkill;
 }

@@ -55,6 +55,12 @@ public class User {
 
   private byte[] picture;
 
+  @Column(name = "hard_skill")
+  private long hardSkill;
+
+  @Column(name = "soft_skill")
+  private long softSkill;
+
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "user_id", nullable = false)
   private List<Contact> contacts;
