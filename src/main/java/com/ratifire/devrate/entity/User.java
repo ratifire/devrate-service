@@ -39,7 +39,7 @@ public class User {
   @Column(nullable = false)
   private String lastName;
 
-  private String position;
+  private String status;
 
   @Column(nullable = false)
   private String country;
