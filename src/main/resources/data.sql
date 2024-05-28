@@ -10,14 +10,13 @@ WHERE NOT EXISTS (
 );
 
 --  Create user_security records
-INSERT INTO users (id, first_name, last_name, status, country, city, is_subscribed, description)
-INSERT INTO users (id, first_name, last_name, position, country, region, city, is_subscribed, description, hard_skill, soft_skill)
+INSERT INTO users (id, first_name, last_name, status, country, city, is_subscribed, description, hard_skill, soft_skill)
 SELECT * FROM (
     VALUES
-    (8881, 'Dev1', 'Rate1', 'Java Back-End', 'Ukraine', 'Dnipro', true, 'Java developer'),
-    (8882, 'Dev2', 'Rate2', 'ReactJS', 'Ukraine', 'Bila Tserkva', true, 'ReactJS developer'),
-    (8883, 'Dev3', 'Rate3', 'React+JAVA', 'Ukraine', 'Lviv', true, 'Full Stack developer')
-) AS new_users (id, first_name, last_name, status, country, city, is_subscribed, description)
+    (8881, 'Dev1', 'Rate1', 'Java Back-End', 'Ukraine', 'Dnipro', true, 'Java developer', 0, 0),
+    (8882, 'Dev2', 'Rate2', 'ReactJS', 'Ukraine', 'Bila Tserkva', true, 'ReactJS developer', 0, 0),
+    (8883, 'Dev3', 'Rate3', 'React+JAVA', 'Ukraine', 'Lviv', true, 'Full Stack developer', 0, 0)
+) AS new_users (id, first_name, last_name, status, country, city, is_subscribed, description, hard_skill, soft_skill)
 WHERE NOT EXISTS (
     SELECT 1 FROM users WHERE id = new_users.id
 );
