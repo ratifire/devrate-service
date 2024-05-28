@@ -19,7 +19,7 @@ import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.UserRepository;
-import com.ratifire.devrate.service.NicheService;
+import com.ratifire.devrate.service.niche.NicheService;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;

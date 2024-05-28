@@ -1,7 +1,7 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.SpecialisationDto;
-import com.ratifire.devrate.service.SpecialisationService;
+import com.ratifire.devrate.service.niche.SpecialisationService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

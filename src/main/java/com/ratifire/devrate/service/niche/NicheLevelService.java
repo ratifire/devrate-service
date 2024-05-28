@@ -1,4 +1,4 @@
-package com.ratifire.devrate.service;
+package com.ratifire.devrate.service.niche;
 
 import com.ratifire.devrate.dto.NicheLevelDto;
 import com.ratifire.devrate.dto.SkillDto;

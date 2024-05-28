@@ -1,4 +1,4 @@
-package com.ratifire.devrate.service;
+package com.ratifire.devrate.service.niche;
 
 import com.ratifire.devrate.dto.NicheDto;
 import com.ratifire.devrate.dto.NicheLevelDto;
@@ -9,7 +9,6 @@ import com.ratifire.devrate.enums.NicheLevelName;
 import com.ratifire.devrate.exception.NicheNotFoundException;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.mapper.DataMapper;
-import com.ratifire.devrate.repository.NicheLevelHistoryRepository;
 import com.ratifire.devrate.repository.NicheRepository;
 import java.util.Arrays;
 import java.util.List;

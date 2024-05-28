@@ -1,4 +1,4 @@
-package com.ratifire.devrate.service;
+package com.ratifire.devrate.service.niche;
 
 import com.ratifire.devrate.entity.NicheLevelHistory;
 import com.ratifire.devrate.entity.NicheLevelHistoryId;

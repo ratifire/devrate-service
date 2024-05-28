@@ -2,8 +2,8 @@ package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.NicheLevelDto;
 import com.ratifire.devrate.dto.SkillDto;
-import com.ratifire.devrate.service.NicheLevelService;
-import com.ratifire.devrate.service.SkillService;
+import com.ratifire.devrate.service.niche.NicheLevelService;
+import com.ratifire.devrate.service.niche.SkillService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
