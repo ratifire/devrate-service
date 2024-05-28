@@ -2,8 +2,8 @@ package com.ratifire.devrate.service.user;
 
 import static com.ratifire.devrate.enums.ContactType.GITHUB_LINK;
 import static com.ratifire.devrate.enums.ContactType.TELEGRAM_LINK;
-import static com.ratifire.devrate.enums.LanguageProficiencyLevel.INTERMEDIATE_B1;
-import static com.ratifire.devrate.enums.LanguageProficiencyLevel.NATIVE;
+import static com.ratifire.devrate.enums.LanguageProficiencyLevel.ADVANCED_EN;
+import static com.ratifire.devrate.enums.LanguageProficiencyLevel.ELEMENTARY_UA;
 import static com.ratifire.devrate.enums.LanguageProficiencyName.ENGLISH;
 import static com.ratifire.devrate.enums.LanguageProficiencyName.UKRAINE;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -103,8 +103,8 @@ class UserServiceTest {
         .build();
 
     languageProficiencyDtos = Arrays.asList(
-        new LanguageProficiencyDto(1L, ENGLISH, NATIVE),
-        new LanguageProficiencyDto(2L, UKRAINE, INTERMEDIATE_B1)
+        new LanguageProficiencyDto(1L, ENGLISH, "EN", ADVANCED_EN),
+        new LanguageProficiencyDto(2L, UKRAINE, "UA", ELEMENTARY_UA)
     );
 
     achievement = Achievement.builder()
