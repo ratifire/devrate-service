@@ -36,7 +36,7 @@ public class UserDto {
 
   private String description;
 
-  private long hardSkill;
+  private long hardSkillMark;
 
-  private long softSkill;
+  private long softSkillMark;
 }
