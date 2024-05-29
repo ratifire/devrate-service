@@ -31,6 +31,8 @@ tags:
     description: Endpoints for user Employment Records management
   - name: achievement
     description: Endpoints for user achievement management
+  - name: bookmark
+    description: Endpoints for user bookmark management
 paths:
   /auth/signup:
     post:
@@ -607,7 +609,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'                  
+                $ref: '#/components/schemas/ErrorResponse'
   /users/{userId}/contacts:
     post:
       tags:
@@ -1208,6 +1210,107 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /users/{userId}/bookmarks:
+    get:
+      tags:
+        - bookmark
+      summary: Get bookmarks By UserId
+      description: Retrieves all user`s bookmarks based on the provided UserId.
+      operationId: getBookmarksByUserId
+      parameters:
+        - in: path
+          name: userId
+          description: The ID of the user to associate the bookmarks with.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookmarkDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+        - bookmark
+      summary: Create new bookmark
+      description: Creates a new bookmark for a specified user.
+      operationId: createBookmark
+      parameters:
+        - in: path
+          name: userId
+          description: The ID of the user for whom the bookmarks is being created.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookmarkDto'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /bookmarks/{id}:
+    delete:
+      tags:
+        - bookmark
+      summary: Delete Bookmark By ID
+      description: Deletes a bookmark by the provided ID.
+      operationId: delete
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the bookmark to delete.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   securitySchemes:
     basicAuth:
@@ -1418,33 +1521,32 @@ components:
           readOnly: true
         name:
           type: string
-          description: "The name of the language. The name can only be one of the following: 
-          UA, EN, FR, IT, DE, ES, PL, CS."
-          enum:
-            - UA
-            - EN
-            - FR
-            - IT
-            - DE
-            - ES
-            - PL
-            - CS
+          description: The name of the language
+        code:
+          type: string
+          description: The international code of the language
         level:
           type: string
-          description: "The level of the language proficiency. The level can only be one of 
-          the following: ELEMENTARY_A1, PRE_INTERMEDIATE_A2, INTERMEDIATE_B1, UPPER_INTERMEDIATE_B2, 
-          ADVANCED_C1, PROFESSIONAL_C2, NATIVE."
-          enum:
-            - ELEMENTARY_A1
-            - PRE_INTERMEDIATE_A2
-            - INTERMEDIATE_B1
-            - UPPER_INTERMEDIATE_B2
-            - ADVANCED_C1
-            - PROFESSIONAL_C2
-            - NATIVE
+          description: The level of the language proficiency
       required:
         - name
         - level
+    BookmarkDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The unique identifier for the bookmark
+          readOnly: true
+        name:
+          type: string
+          description: The name of the bookmark
+        link:
+          type: string
+          description: The link of the bookmark
+      required:
+        - name
+        - link
     AchievementDto:
       type: object
       properties:
