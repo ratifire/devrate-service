@@ -11,6 +11,7 @@ import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.email.EmailService;
+import com.ratifire.devrate.service.registration.EmailConfirmationCodeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,7 +29,7 @@ public class PasswordResetServiceTest {
   private UserSecurityService userSecurityService;
 
   @Mock
-  private EmailConfirmationUuidService emailConfirmationUuidService;
+  private EmailConfirmationCodeService emailConfirmationCodeService;
 
   @Mock
   private EmailService emailService;
@@ -44,7 +45,7 @@ public class PasswordResetServiceTest {
     String email = "user@example.com";
     UserSecurity userSecurity = UserSecurity.builder().id(1L).build();
     when(userSecurityService.findByEmail(email)).thenReturn(userSecurity);
-    when(emailConfirmationUuidService.generateAndPersistUuidCode(userSecurity.getId()))
+    when(emailConfirmationCodeService.createConfirmationCode(userSecurity.getId()))
         .thenReturn("code");
     doNothing().when(emailService).sendPasswordResetEmail(any(), any());
 
@@ -61,17 +62,24 @@ public class PasswordResetServiceTest {
     EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode
         .builder().userSecurityId(userSecurity.getId()).build();
 
-    when(emailConfirmationUuidService.findUuidCode(code)).thenReturn(emailConfirmationCode);
+    when(emailConfirmationCodeService.findEmailConfirmationCode(code))
+        .thenReturn(emailConfirmationCode);
     when(userSecurityService.getById(userSecurity.getId())).thenReturn(userSecurity);
+    doNothing().when(emailConfirmationCodeService)
+        .validateAndHandleExpiration(emailConfirmationCode);
     when(passwordEncoder.encode(newPassword)).thenReturn("encodedPassword");
-    doNothing().when(emailConfirmationUuidService).deleteConfirmedCodesByUserSecurityId(anyLong());
+    when(userSecurityService.save(any())).thenReturn(userSecurity);
+    doNothing().when(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
     doNothing().when(emailService).sendPasswordChangeConfirmation(any());
 
     boolean result = passwordResetService.resetPassword(code, newPassword);
 
     assertTrue(result);
     verify(userSecurityService).save(userSecurity);
+    verify(emailConfirmationCodeService).validateAndHandleExpiration(emailConfirmationCode);
     verify(passwordEncoder).encode(newPassword);
-    verify(emailConfirmationUuidService).deleteConfirmedCodesByUserSecurityId(userSecurity.getId());
+    verify(userSecurityService).save(userSecurity);
+    verify(emailConfirmationCodeService).deleteConfirmedCode(emailConfirmationCode.getId());
+    verify(emailService).sendPasswordChangeConfirmation(userSecurity.getEmail());
   }
 }
