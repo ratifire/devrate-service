@@ -2,10 +2,6 @@ package com.ratifire.devrate.service.user;
 
 import static com.ratifire.devrate.enums.ContactType.GITHUB_LINK;
 import static com.ratifire.devrate.enums.ContactType.TELEGRAM_LINK;
-import static com.ratifire.devrate.enums.LanguageProficiencyLevel.ADVANCED_EN;
-import static com.ratifire.devrate.enums.LanguageProficiencyLevel.ELEMENTARY_UA;
-import static com.ratifire.devrate.enums.LanguageProficiencyName.ENGLISH;
-import static com.ratifire.devrate.enums.LanguageProficiencyName.UKRAINE;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -110,8 +106,8 @@ class UserServiceTest {
         .build();
 
     languageProficiencyDtos = Arrays.asList(
-        new LanguageProficiencyDto(1L, ENGLISH, "EN", ADVANCED_EN),
-        new LanguageProficiencyDto(2L, UKRAINE, "UA", ELEMENTARY_UA)
+        new LanguageProficiencyDto(1L, "ENGLISH", "EN", "ADVANCED|C1"),
+        new LanguageProficiencyDto(2L, "FRENCH", "FR", "ADVANCED|C1")
     );
 
     achievement = Achievement.builder()
@@ -187,7 +183,7 @@ class UserServiceTest {
     when(dataMapper.toEntity(any(LanguageProficiencyDto.class))).then(invocation -> {
       LanguageProficiencyDto proficiencyDto = invocation.getArgument(0);
       return new LanguageProficiency(proficiencyDto.getId(), proficiencyDto.getName(),
-          proficiencyDto.getLevel());
+          proficiencyDto.getCode(), proficiencyDto.getLevel());
     });
     when(dataMapper.toDto(anyList())).thenReturn(languageProficiencyDtos);
     when(userRepository.save(any(User.class))).thenReturn(testUser);
