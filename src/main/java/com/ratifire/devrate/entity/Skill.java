@@ -35,6 +35,6 @@ public class Skill {
 
   private long counter;
 
-  @Column(nullable = false)
-  private boolean isGrows;
+  @Column(name = "is_grows", nullable = false)
+  private boolean grows;
 }
