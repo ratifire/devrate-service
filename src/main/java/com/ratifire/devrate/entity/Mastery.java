@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,14 +32,14 @@ public class Mastery {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "name", nullable = false)
+  @Column(nullable = false)
   private String name;
 
-  @Column(name = "soft_skill")
-  private long softSkill;
+  @Column(precision = 4, scale = 2)
+  private BigDecimal softSkill;
 
-  @Column(name = "hard_skill")
-  private long hardSkill;
+  @Column(precision = 4, scale = 2)
+  private BigDecimal hardSkill;
 
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "mastery_id", nullable = false)

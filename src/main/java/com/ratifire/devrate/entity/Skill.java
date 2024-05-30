@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,16 +27,14 @@ public class Skill {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "name", nullable = false)
+  @Column(nullable = false)
   private String name;
 
-  @Column(name = "average_mark")
-  private long averageMark;
+  @Column(precision = 4, scale = 2)
+  private BigDecimal averageMark;
 
-  @Column(name = "counter")
   private long counter;
 
-  @Column(name = "is_up", nullable = false)
-  private boolean up;
-
+  @Column(nullable = false)
+  private boolean isGrows;
 }

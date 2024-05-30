@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -31,16 +32,15 @@ public class Specialization {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "name", nullable = false)
+  @Column(nullable = false)
   private String name;
 
-  @Column(name = "main_mastery_id", nullable = false)
-  private int mainMasteryId;
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "main_mastery_id", referencedColumnName = "id")
+  private Mastery mainMastery;
 
-  @Column(name = "completed_interviews")
   private int completedInterviews;
 
-  @Column(name = "conducted_interviews")
   private int conductedInterviews;
 
   @Column(name = "is_main", nullable = false)
