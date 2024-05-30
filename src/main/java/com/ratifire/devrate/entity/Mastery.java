@@ -36,10 +36,10 @@ public class Mastery {
   private String name;
 
   @Column(precision = 4, scale = 2)
-  private BigDecimal softSkill;
+  private BigDecimal softSkillMark;
 
   @Column(precision = 4, scale = 2)
-  private BigDecimal hardSkill;
+  private BigDecimal hardSkillMark;
 
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "mastery_id", nullable = false)
