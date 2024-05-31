@@ -33,6 +33,8 @@ tags:
     description: Endpoints for user achievement management
   - name: bookmark
     description: Endpoints for user bookmark management
+  - name: static data
+    description: Endpoints for retrieving static data
 paths:
   /auth/signup:
     post:
@@ -1311,6 +1313,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /data/languageproficiency/{filename}:
+    get:
+      tags:
+        - static data
+      summary: Get static file from language proficiency folder
+      description: "Returns the content of the static file by its name from the language
+      proficiency folder."
+      parameters:
+        - in: path
+          name: filename
+          description: Name of the static file to retrieve.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: File not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   securitySchemes:
     basicAuth:
@@ -1530,6 +1565,7 @@ components:
           description: The level of the language proficiency
       required:
         - name
+        - code
         - level
     BookmarkDto:
       type: object
