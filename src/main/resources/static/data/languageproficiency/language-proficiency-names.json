@@ -1,10 +1,10 @@
 {
-  "UKRAINE": "UA",
-  "ENGLISH": "EN",
-  "FRENCH": "FR",
-  "ITALIAN": "IT",
-  "GERMAN": "DE",
-  "SPANISH": "ES",
-  "POLISH": "PL",
-  "CZECH": "CS"
+  "ukraine": "ua",
+  "english": "en",
+  "french": "fr",
+  "italian": "it",
+  "german": "de",
+  "spanish": "es",
+  "polish": "pl",
+  "czech": "cs"
 }
