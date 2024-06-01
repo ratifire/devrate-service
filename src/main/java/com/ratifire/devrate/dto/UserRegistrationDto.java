@@ -1,5 +1,6 @@
 package com.ratifire.devrate.dto;
 
+import jakarta.validation.constraints.Email;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,6 +11,7 @@ import lombok.Getter;
 @Getter
 public class UserRegistrationDto {
 
+  @Email
   private String email;
 
   private String firstName;

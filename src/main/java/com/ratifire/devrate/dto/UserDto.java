@@ -2,6 +2,7 @@ package com.ratifire.devrate.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.math.BigDecimal;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -35,4 +36,12 @@ public class UserDto {
   private boolean subscribed;
 
   private String description;
+
+  private BigDecimal hardSkillMark;
+
+  private BigDecimal softSkillMark;
+
+  private int completedInterviews;
+
+  private int conductedInterviews;
 }
