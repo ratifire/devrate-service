@@ -6,6 +6,7 @@ import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
+import com.ratifire.devrate.dto.UserSkillMarksDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.Bookmark;
@@ -326,4 +327,23 @@ public class UserService {
     updateUser(user);
   }
 
+  /**
+   * Retrieves skill statistics for a user identified by the given user ID.
+   *
+   * @param userId The unique identifier of the user.
+   * @return A {@link UserDto} object containing the user's skill statistics.
+   * @throws UserNotFoundException If the user with the specified ID is not found.
+   */
+  public UserDto getUserSkillStatistics(long userId) {
+    User user = findUserById(userId);
+
+    UserSkillMarksDto userSkillMarks = userRepository.findMainUserSkillMarksByUserId(userId);
+
+    return UserDto.builder()
+        .hardSkillMark(userSkillMarks.getHardSkillMark())
+        .softSkillMark(userSkillMarks.getSoftSkillMark())
+        .completedInterviews(user.getCompletedInterviews())
+        .conductedInterviews(user.getConductedInterviews())
+        .build();
+  }
 }

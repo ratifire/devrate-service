@@ -244,4 +244,15 @@ public class UserController {
       @RequestBody @Valid BookmarkDto bookmarkDto) {
     userService.createBookmark(userId, bookmarkDto);
   }
+
+  /**
+   * Retrieves skill statistics for a user with the specified user ID.
+   *
+   * @param userId The unique identifier of the user.
+   * @return A {@link UserDto} object containing the skill statistics of the user.
+   */
+  @GetMapping("/{userId}/skill-statistics")
+  public UserDto getUserSkillStatistics(@PathVariable long userId) {
+    return userService.getUserSkillStatistics(userId);
+  }
 }
