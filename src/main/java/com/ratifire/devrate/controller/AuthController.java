@@ -1,6 +1,7 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.LoginDto;
+import com.ratifire.devrate.dto.PasswordResetDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.dto.UserRegistrationDto;
 import com.ratifire.devrate.service.AuthenticationService;
@@ -81,20 +82,19 @@ public class AuthController {
    * @param email The email for the user account needing a password reset.
    * @return true if successful, false otherwise.
    */
-  @PostMapping("/password-reset")
+  @PostMapping("/request-password-reset")
   public boolean requestPasswordReset(@RequestParam String email) {
     return passwordResetService.requestPasswordReset(email);
   }
 
   /**
-   * Endpoint for resetting the password using a unique code (UUID).
+   * Endpoint for resetting the password using a unique code.
    *
-   * @param code        The unique code received by the email.
-   * @param newPassword The new password to be set for the user account.
+   * @param passwordResetDto The DTO containing the reset password code and the new password.
    * @return true if the password was successfully reset, false otherwise.
    */
-  @PostMapping("/password-reset/{code}")
-  public boolean resetPassword(@PathVariable String code, @RequestBody String newPassword) {
-    return passwordResetService.resetPassword(code, newPassword);
+  @PostMapping("/password-reset")
+  public boolean resetPassword(@RequestBody PasswordResetDto passwordResetDto) {
+    return passwordResetService.resetPassword(passwordResetDto);
   }
 }

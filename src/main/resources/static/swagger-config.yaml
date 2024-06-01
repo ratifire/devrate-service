@@ -108,7 +108,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /auth/password-reset:
+  /auth/request-password-reset:
     post:
       tags:
         - password-reset
@@ -143,7 +143,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /auth/password-reset/{code}:
+  /auth/password-reset:
     post:
       tags:
         - password-reset
@@ -151,20 +151,12 @@ paths:
       description: Resets the user's password using a unique code received by the email.
       security: []
       operationId: resetPassword
-      parameters:
-        - in: path
-          name: code
-          required: true
-          schema:
-            type: string
-          description: The unique code received by the email.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: string
-              description: The new password to be set for the user account.
+              $ref: '#/components/schemas/PasswordResetDTO'
       responses:
         '200':
           description: Password reset successfully.
@@ -1469,5 +1461,17 @@ components:
         - link
         - summary
         - description
+    PasswordResetDTO:
+      type: object
+      properties:
+        code:
+          type: string
+          description: The unique code received by the email.
+        newPassword:
+          type: string
+          description: The new password to be set for the user account.
+      required:
+        - code
+        - newPassword
 security:
   - basicAuth: []

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.ratifire.devrate.dto.PasswordResetDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.service.UserSecurityService;
@@ -58,28 +59,35 @@ public class PasswordResetServiceTest {
   void resetPassword_WithValidCode_UpdatesPassword() {
     String code = "validCode";
     String newPassword = "newPassword";
+    PasswordResetDto passwordResetDto = PasswordResetDto.builder()
+        .code(code)
+        .newPassword(newPassword)
+        .build();
     UserSecurity userSecurity = UserSecurity.builder().id(1L).build();
     EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode
         .builder().userSecurityId(userSecurity.getId()).build();
 
-    when(emailConfirmationCodeService.findEmailConfirmationCode(code))
+    when(emailConfirmationCodeService.findEmailConfirmationCode(passwordResetDto.getCode()))
         .thenReturn(emailConfirmationCode);
-    when(userSecurityService.getById(userSecurity.getId())).thenReturn(userSecurity);
+    when(userSecurityService.getById(emailConfirmationCode.getUserSecurityId()))
+        .thenReturn(userSecurity);
     doNothing().when(emailConfirmationCodeService)
         .validateAndHandleExpiration(emailConfirmationCode);
-    when(passwordEncoder.encode(newPassword)).thenReturn("encodedPassword");
+    when(passwordEncoder.encode(passwordResetDto.getNewPassword()))
+        .thenReturn("encodedPassword");
     when(userSecurityService.save(any())).thenReturn(userSecurity);
     doNothing().when(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
     doNothing().when(emailService).sendPasswordChangeConfirmation(any());
 
-    boolean result = passwordResetService.resetPassword(code, newPassword);
+    boolean result = passwordResetService.resetPassword(passwordResetDto);
 
     assertTrue(result);
     verify(userSecurityService).save(userSecurity);
     verify(emailConfirmationCodeService).validateAndHandleExpiration(emailConfirmationCode);
-    verify(passwordEncoder).encode(newPassword);
+    verify(passwordEncoder).encode(passwordResetDto.getNewPassword());
     verify(userSecurityService).save(userSecurity);
     verify(emailConfirmationCodeService).deleteConfirmedCode(emailConfirmationCode.getId());
     verify(emailService).sendPasswordChangeConfirmation(userSecurity.getEmail());
   }
+
 }

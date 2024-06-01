@@ -1,5 +1,6 @@
 package com.ratifire.devrate.service.resetpassword;
 
+import com.ratifire.devrate.dto.PasswordResetDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.service.UserSecurityService;
@@ -37,19 +38,19 @@ public class PasswordResetService {
   /**
    * Resets the password of the user associated with the provided confirmation code.
    *
-   * @param code        The reset password code.
-   * @param newPassword The new password to be set for the user account.
+   * @param passwordResetDto The DTO containing the reset password code and the new password.
+   * @return true if the password was successfully reset.
    */
-  public boolean resetPassword(String code, String newPassword) {
+  public boolean resetPassword(PasswordResetDto passwordResetDto) {
     EmailConfirmationCode emailConfirmationCode = emailConfirmationCodeService
-        .findEmailConfirmationCode(code);
+        .findEmailConfirmationCode(passwordResetDto.getCode());
     UserSecurity userSecurity = userSecurityService
         .getById(emailConfirmationCode.getUserSecurityId());
 
     // Check if the confirmation code has expired
     emailConfirmationCodeService.validateAndHandleExpiration(emailConfirmationCode);
 
-    String encodedPassword = passwordEncoder.encode(newPassword);
+    String encodedPassword = passwordEncoder.encode(passwordResetDto.getNewPassword());
 
     userSecurity.setPassword(encodedPassword);
     userSecurityService.save(userSecurity);
