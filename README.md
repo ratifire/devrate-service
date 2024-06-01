@@ -148,6 +148,14 @@ It exposes various endpoints for health checks, metrics, and other operational i
 **Cleaning Up**
 - To remove the data volume as well, you can use the following command:`docker-compose down -v`
 
+### Docker-compose-dev. Нow to start the project in dev mode
+- **Description:** This Docker Compose file is used by developers to simplify debugging and testing 
+processes. It runs the db and mailhog services. The application should be run using the dev profile
+and configured with environment variables such as database, user, and password.
+
+**Getting Started**
+- Start the services using Docker Compose Dev: `docker-compose -f docker-compose-dev.yml up`
+
 ### Profiles
 - **Description:** Spring profiles are a feature in the Spring Framework that allows developers to 
 define and group beans and configuration settings based on different runtime environments or application 
@@ -187,11 +195,11 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 #### Dev profile environment variables
 
 1. PostgreSQL settings: 
-- **PG_HOST** - Host
-- **PG_PORT** - Port number
-- **PG_DATABASE** - Database name
-- **PG_USERNAME** - User name
-- **PG_PASSWORD** - Password
+- **PG_HOST** - localhost
+- **PG_PORT** - 5432
+- **PG_DATABASE** - devrateDB
+- **PG_USERNAME** - admin
+- **PG_PASSWORD** - root
 - **PG_SCHEMA** - Schema name
 
 ### Code style check
