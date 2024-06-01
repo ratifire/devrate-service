@@ -63,7 +63,7 @@ class UserServiceTest {
   private EmploymentRecordDto employmentRecordDto;
   private EmploymentRecord employmentRecord;
   private List<LanguageProficiencyDto> languageProficiencyDtos;
-  private final  byte[] picture = new byte[] {4, 5, 6};
+  private final String picture = "123";
 
   private Achievement achievement;
   private AchievementDto achievementDto;
@@ -217,7 +217,7 @@ class UserServiceTest {
 
     userService.addUserPicture(userId, picture);
 
-    assertArrayEquals(picture, user.getPicture());
+    assertEquals(picture, user.getPicture());
   }
 
   @Test

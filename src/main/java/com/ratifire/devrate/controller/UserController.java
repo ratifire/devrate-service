@@ -141,12 +141,12 @@ public class UserController {
    * Retrieves the picture associated with a user by their user ID.
    *
    * @param userId the ID of the user whose picture is to be retrieved
-   * @return a ResponseEntity containing a map with the user's picture in byte array format if
+   * @return a ResponseEntity containing a map with the user's picture in string format if
    *     present; otherwise, returns no content status
    */
   @GetMapping("/{userId}/pictures")
-  public ResponseEntity<byte[]> getUserPicture(@PathVariable long userId) {
-    byte[] userPicture = userService.getUserPicture(userId);
+  public ResponseEntity<String> getUserPicture(@PathVariable long userId) {
+    String userPicture = userService.getUserPicture(userId);
     return userPicture != null
         ? ResponseEntity.ok(userPicture)
         : ResponseEntity.noContent().build();
@@ -156,10 +156,10 @@ public class UserController {
    * Adds or updates a picture for a user by their user ID.
    *
    * @param userId      the ID of the user for whom the picture is to be added or updated
-   * @param userPicture the picture data as a byte array to upload
+   * @param userPicture the picture data as a string to upload
    */
-  @PostMapping("/{userId}/pictures")
-  public void addUserPicture(@PathVariable long userId, @RequestBody byte[] userPicture) {
+  @PostMapping("/user/{userId}/pictures")
+  public void addUserPicture(@PathVariable long userId, @RequestBody String userPicture) {
     userService.addUserPicture(userId, userPicture);
   }
 

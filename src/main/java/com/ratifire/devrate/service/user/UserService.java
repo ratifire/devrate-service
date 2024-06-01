@@ -177,9 +177,9 @@ public class UserService {
    * Retrieves the picture associated with a user by their user ID.
    *
    * @param userId the ID of the user whose picture is to be retrieved
-   * @return the user's picture as a byte array, or null if no picture is present
+   * @return the user's picture as a string, or null if no picture is present
    */
-  public byte[] getUserPicture(long userId) {
+  public String getUserPicture(long userId) {
     return userRepository.findPictureByUserId(userId);
   }
 
@@ -188,9 +188,9 @@ public class UserService {
    * replaced.
    *
    * @param userId      the ID of the user whose picture is to be added or updated
-   * @param userPicture the picture data as a byte array
+   * @param userPicture the picture data as a String
    */
-  public void addUserPicture(long userId, byte[] userPicture) {
+  public void addUserPicture(long userId, String userPicture) {
     User user = findUserById(userId);
     user.setPicture(userPicture);
     updateUser(user);

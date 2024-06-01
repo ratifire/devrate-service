@@ -512,7 +512,6 @@ paths:
                 properties:
                   picture:
                     type: string
-                    format: byte
         '204':
           description: No content, if the user has no picture
         '400':
