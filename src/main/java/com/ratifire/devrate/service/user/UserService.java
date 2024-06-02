@@ -13,7 +13,6 @@ import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
-import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
