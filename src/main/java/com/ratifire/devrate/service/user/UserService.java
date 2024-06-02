@@ -51,12 +51,11 @@ public class UserService {
   public UserDto findById(long id) {
     UserDto dto = userMapper.toDto(findUserById(id));
 
-    Optional<Specialization> specialization = specializationRepository
-        .findSpecializationByUserIdAndMainTrue(id);
-    if (specialization.isPresent()) {
-      dto.setHardSkillMark(specialization.get().getMainMastery().getHardSkillMark());
-      dto.setSoftSkillMark(specialization.get().getMainMastery().getSoftSkillMark());
-    }
+    specializationRepository.findSpecializationByUserIdAndMainTrue(id)
+        .ifPresent(spec -> {
+          dto.setHardSkillMark(spec.getMainMastery().getHardSkillMark());
+          dto.setSoftSkillMark(spec.getMainMastery().getSoftSkillMark());
+        });
 
     return dto;
   }
