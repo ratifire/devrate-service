@@ -7,16 +7,17 @@ import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.UserDto;
-import com.ratifire.devrate.dto.UserSkillMarksDto;
 import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.Bookmark;
 import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
+import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
+import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
   private final UserRepository userRepository;
+  private final SpecializationRepository specializationRepository;
   private final DataMapper<UserDto, User> userMapper;
   private final DataMapper<ContactDto, Contact> contactMapper;
   private final DataMapper<EducationDto, Education> educationMapper;
@@ -47,7 +49,15 @@ public class UserService {
    * @throws UserNotFoundException if the user with the specified ID is not found
    */
   public UserDto findById(long id) {
-    return userMapper.toDto(findUserById(id));
+    UserDto dto = userMapper.toDto(findUserById(id));
+
+    Mastery mastery = specializationRepository.findSpecializationByUserIdAndMain(id)
+        .getMainMastery();
+
+    dto.setHardSkillMark(mastery.getHardSkillMark());
+    dto.setSoftSkillMark(mastery.getSoftSkillMark());
+
+    return dto;
   }
 
   /**
@@ -325,25 +335,5 @@ public class UserService {
     Bookmark bookmark = bookmarkMapper.toEntity(bookmarkDto);
     user.getBookmarks().add(bookmark);
     updateUser(user);
-  }
-
-  /**
-   * Retrieves skill statistics for a user identified by the given user ID.
-   *
-   * @param userId The unique identifier of the user.
-   * @return A {@link UserDto} object containing the user's skill statistics.
-   * @throws UserNotFoundException If the user with the specified ID is not found.
-   */
-  public UserDto getUserSkillStatistics(long userId) {
-    User user = findUserById(userId);
-
-    UserSkillMarksDto userSkillMarks = userRepository.findMainUserSkillMarksByUserId(userId);
-
-    return UserDto.builder()
-        .hardSkillMark(userSkillMarks.getHardSkillMark())
-        .softSkillMark(userSkillMarks.getSoftSkillMark())
-        .completedInterviews(user.getCompletedInterviews())
-        .conductedInterviews(user.getConductedInterviews())
-        .build();
   }
 }

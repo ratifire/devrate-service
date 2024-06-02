@@ -87,8 +87,8 @@ public class User {
   @JoinColumn(name = "user_id", nullable = false)
   private List<Bookmark> bookmarks;
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "user_id", nullable = false)
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
+      orphanRemoval = true)
   private List<Specialization> specializations;
 
 }

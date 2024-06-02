@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.AchievementDto;
@@ -18,8 +17,6 @@ import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
-import com.ratifire.devrate.dto.UserDto;
-import com.ratifire.devrate.dto.UserSkillMarksDto;
 import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.Bookmark;
 import com.ratifire.devrate.entity.Contact;
@@ -30,7 +27,6 @@ import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.UserRepository;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -302,28 +298,5 @@ class UserServiceTest {
 
     assertThrows(UserNotFoundException.class,
         () -> userService.createBookmark(userId, bookmarkDto));
-  }
-
-  @Test
-  void testGetUserSkillStatistics() {
-    int completedInterviews = 5;
-    int conductedInterviews = 10;
-
-    testUser.setCompletedInterviews(completedInterviews);
-    testUser.setConductedInterviews(conductedInterviews);
-
-    BigDecimal hardSkillMark = new BigDecimal("9.52");
-    BigDecimal softSkillMark = new BigDecimal("5.67");
-    UserSkillMarksDto userSkillMarksDto = new UserSkillMarksDto(hardSkillMark, softSkillMark);
-
-    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
-    when(userRepository.findMainUserSkillMarksByUserId(anyLong())).thenReturn(userSkillMarksDto);
-
-    UserDto result = userService.getUserSkillStatistics(userId);
-
-    assertEquals(hardSkillMark, result.getHardSkillMark());
-    assertEquals(softSkillMark, result.getSoftSkillMark());
-    assertEquals(completedInterviews, result.getCompletedInterviews());
-    assertEquals(conductedInterviews, result.getConductedInterviews());
   }
 }
