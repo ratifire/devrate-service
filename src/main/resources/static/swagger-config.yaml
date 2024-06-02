@@ -1454,6 +1454,18 @@ components:
         description:
           type: string
           description: The description by the user for their account
+        hardSkillMark:
+          type: number
+          description: The user's average hard skill mark by main specialization
+        softSkillMark:
+          type: number
+          description: The user's average soft skill mark by main specialization
+        completedInterviews:
+          type: integer
+          description: The count of completed user interviews
+        conductedInterviews:
+          type: integer
+          description: The count of completed user interviews
       required:
         - id
     ContactDto:
