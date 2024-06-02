@@ -34,4 +34,8 @@ public abstract class UserMapper implements DataMapper<UserDto, User> {
   @Mapping(target = "bookmarks", ignore = true)
   @Mapping(target = "specializations", ignore = true)
   public abstract User updateEntity(UserDto dto, @MappingTarget User entity);
+
+  @Mapping(target = "hardSkillMark", expression = "java(new java.math.BigDecimal(\"0.00\"))")
+  @Mapping(target = "softSkillMark", expression = "java(new java.math.BigDecimal(\"0.00\"))")
+  public abstract UserDto toDto(User user);
 }

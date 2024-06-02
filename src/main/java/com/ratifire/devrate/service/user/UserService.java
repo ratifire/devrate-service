@@ -13,7 +13,7 @@ import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
-import com.ratifire.devrate.entity.Mastery;
+import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
@@ -51,11 +51,12 @@ public class UserService {
   public UserDto findById(long id) {
     UserDto dto = userMapper.toDto(findUserById(id));
 
-    Mastery mastery = specializationRepository.findSpecializationByUserIdAndMain(id)
-        .getMainMastery();
-
-    dto.setHardSkillMark(mastery.getHardSkillMark());
-    dto.setSoftSkillMark(mastery.getSoftSkillMark());
+    Optional<Specialization> specialization = specializationRepository
+        .findSpecializationByUserIdAndMainTrue(id);
+    if (specialization.isPresent()) {
+      dto.setHardSkillMark(specialization.get().getMainMastery().getHardSkillMark());
+      dto.setSoftSkillMark(specialization.get().getMainMastery().getSoftSkillMark());
+    }
 
     return dto;
   }
