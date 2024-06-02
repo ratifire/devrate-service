@@ -15,6 +15,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /**
@@ -104,5 +105,13 @@ public class HandlerException {
   @ExceptionHandler(MailException.class)
   public ResponseEntity<?> handleMailExceptions(MailException exception) {
     return ResponseEntity.status(exception.getStatus()).build();
+  }
+
+  /**
+   * Handles MethodArgumentTypeMismatchException by returning an HTTP status 400.
+   */
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+  public void handleMethodArgumentTypeMismatchException() {
   }
 }
