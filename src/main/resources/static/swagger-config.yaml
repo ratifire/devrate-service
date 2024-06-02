@@ -1346,6 +1346,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /data/user/{filename}:
+    get:
+      tags:
+        - static data
+      summary: Get static files from user folder
+      description: Returns the content of the static file by its name from the user folder.
+      parameters:
+        - in: path
+          name: filename
+          description: Name of the static file to retrieve.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: File not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   securitySchemes:
     basicAuth:
