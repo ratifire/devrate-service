@@ -18,7 +18,9 @@ import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -50,11 +52,14 @@ public class UserService {
   public UserDto findById(long id) {
     UserDto dto = userMapper.toDto(findUserById(id));
 
-    specializationRepository.findSpecializationByUserIdAndMainTrue(id)
-        .ifPresent(spec -> {
-          dto.setHardSkillMark(spec.getMainMastery().getHardSkillMark());
-          dto.setSoftSkillMark(spec.getMainMastery().getSoftSkillMark());
-        });
+    specializationRepository.findSpecializationByUserIdAndMainTrue(id).ifPresent(spec -> {
+      dto.setHardSkillMark(
+          Objects.nonNull(spec.getMainMastery()) ? spec.getMainMastery().getHardSkillMark()
+              : new BigDecimal("0.00"));
+      dto.setSoftSkillMark(
+          Objects.nonNull(spec.getMainMastery()) ? spec.getMainMastery().getSoftSkillMark()
+              : new BigDecimal("0.00"));
+    });
 
     return dto;
   }
