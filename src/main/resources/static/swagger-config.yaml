@@ -749,7 +749,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ContactDto'
+                  $ref: '#/components/schemas/EducationDto'
         '400':
           description: Bad request, e.g., missing or invalid parameters
           content:
