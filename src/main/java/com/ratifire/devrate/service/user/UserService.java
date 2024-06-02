@@ -16,7 +16,9 @@ import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
+import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
   private final UserRepository userRepository;
+  private final SpecializationRepository specializationRepository;
   private final DataMapper<UserDto, User> userMapper;
   private final DataMapper<ContactDto, Contact> contactMapper;
   private final DataMapper<EducationDto, Education> educationMapper;
@@ -46,7 +49,19 @@ public class UserService {
    * @throws UserNotFoundException if the user with the specified ID is not found
    */
   public UserDto findById(long id) {
-    return userMapper.toDto(findUserById(id));
+    UserDto dto = userMapper.toDto(findUserById(id));
+
+    specializationRepository.findSpecializationByUserIdAndMainTrue(id)
+        .ifPresent(spec -> {
+          dto.setHardSkillMark(
+              spec.getMainMastery() != null ? spec.getMainMastery().getHardSkillMark()
+                  : BigDecimal.ZERO);
+          dto.setSoftSkillMark(
+              spec.getMainMastery() != null ? spec.getMainMastery().getSoftSkillMark()
+                  : BigDecimal.ZERO);
+        });
+
+    return dto;
   }
 
   /**
@@ -325,5 +340,4 @@ public class UserService {
     user.getBookmarks().add(bookmark);
     updateUser(user);
   }
-
 }
