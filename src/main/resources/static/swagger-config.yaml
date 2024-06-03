@@ -108,8 +108,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /auth/request-password-reset:
-    post:
+  /auth/password-reset:
+    get:
       tags:
         - password-reset
       summary: Request Password Reset Code
@@ -143,7 +143,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /auth/password-reset:
     post:
       tags:
         - password-reset
@@ -156,7 +155,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PasswordResetDTO'
+              $ref: '#/components/schemas/PasswordResetDto'
       responses:
         '200':
           description: Password reset successfully.
@@ -1461,7 +1460,7 @@ components:
         - link
         - summary
         - description
-    PasswordResetDTO:
+    PasswordResetDto:
       type: object
       properties:
         code:

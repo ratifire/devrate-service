@@ -50,9 +50,8 @@ public class PasswordResetServiceTest {
         .thenReturn("code");
     doNothing().when(emailService).sendPasswordResetEmail(any(), any());
 
-    boolean result = passwordResetService.requestPasswordReset(email);
+    passwordResetService.requestPasswordReset(email);
 
-    assertTrue(result, "Password reset should be requested successfully");
   }
 
   @Test
@@ -79,9 +78,8 @@ public class PasswordResetServiceTest {
     doNothing().when(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
     doNothing().when(emailService).sendPasswordChangeConfirmation(any());
 
-    boolean result = passwordResetService.resetPassword(passwordResetDto);
+    passwordResetService.resetPassword(passwordResetDto);
 
-    assertTrue(result);
     verify(userSecurityService).save(userSecurity);
     verify(emailConfirmationCodeService).validateAndHandleExpiration(emailConfirmationCode);
     verify(passwordEncoder).encode(passwordResetDto.getNewPassword());

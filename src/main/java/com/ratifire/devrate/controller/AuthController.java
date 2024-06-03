@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -80,21 +81,23 @@ public class AuthController {
    * Endpoint for requesting a password reset code.
    *
    * @param email The email for the user account needing a password reset.
-   * @return true if successful, false otherwise.
+   * @return ResponseEntity with status OK if successful.
    */
-  @PostMapping("/request-password-reset")
-  public boolean requestPasswordReset(@RequestParam String email) {
-    return passwordResetService.requestPasswordReset(email);
+  @GetMapping("/password-reset")
+  public ResponseEntity<Void> requestPasswordReset(@RequestParam String email) {
+    passwordResetService.requestPasswordReset(email);
+    return ResponseEntity.ok().build();
   }
 
   /**
    * Endpoint for resetting the password using a unique code.
    *
    * @param passwordResetDto The DTO containing the reset password code and the new password.
-   * @return true if the password was successfully reset, false otherwise.
+   * @return ResponseEntity with status OK if successful.
    */
   @PostMapping("/password-reset")
-  public boolean resetPassword(@RequestBody PasswordResetDto passwordResetDto) {
-    return passwordResetService.resetPassword(passwordResetDto);
+  public ResponseEntity<Void> resetPassword(@RequestBody PasswordResetDto passwordResetDto) {
+    passwordResetService.resetPassword(passwordResetDto);
+    return ResponseEntity.ok().build();
   }
 }

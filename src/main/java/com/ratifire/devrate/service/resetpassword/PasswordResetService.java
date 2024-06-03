@@ -28,20 +28,18 @@ public class PasswordResetService {
    *
    * @param email The email address associated with the user account.
    */
-  public boolean requestPasswordReset(String email) {
+  public void requestPasswordReset(String email) {
     UserSecurity userSecurity = userSecurityService.findByEmail(email);
     String code = emailConfirmationCodeService.createConfirmationCode(userSecurity.getId());
     emailService.sendPasswordResetEmail(email, code);
-    return true;
   }
 
   /**
    * Resets the password of the user associated with the provided confirmation code.
    *
    * @param passwordResetDto The DTO containing the reset password code and the new password.
-   * @return true if the password was successfully reset.
    */
-  public boolean resetPassword(PasswordResetDto passwordResetDto) {
+  public void resetPassword(PasswordResetDto passwordResetDto) {
     EmailConfirmationCode emailConfirmationCode = emailConfirmationCodeService
         .findEmailConfirmationCode(passwordResetDto.getCode());
     UserSecurity userSecurity = userSecurityService
@@ -57,6 +55,5 @@ public class PasswordResetService {
 
     emailConfirmationCodeService.deleteConfirmedCode(emailConfirmationCode.getId());
     emailService.sendPasswordChangeConfirmation(userSecurity.getEmail());
-    return true;
   }
 }
