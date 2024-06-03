@@ -6,6 +6,7 @@ import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
+import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.Bookmark;
@@ -13,11 +14,13 @@ import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
+import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
+import com.ratifire.devrate.service.specialization.SpecializationService;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +36,7 @@ public class UserService {
 
   private final UserRepository userRepository;
   private final SpecializationRepository specializationRepository;
+  private final SpecializationService specializationService;
   private final DataMapper<UserDto, User> userMapper;
   private final DataMapper<ContactDto, Contact> contactMapper;
   private final DataMapper<EducationDto, Education> educationMapper;
@@ -40,6 +44,8 @@ public class UserService {
   private final DataMapper<EmploymentRecordDto, EmploymentRecord> employmentRecordMapper;
   private final DataMapper<LanguageProficiencyDto, LanguageProficiency> languageProficiencyMapper;
   private final DataMapper<BookmarkDto, Bookmark> bookmarkMapper;
+  private final DataMapper<SpecializationDto, Specialization> specializationDataMapper;
+
 
   /**
    * Retrieves a user by ID.
@@ -339,5 +345,33 @@ public class UserService {
     Bookmark bookmark = bookmarkMapper.toEntity(bookmarkDto);
     user.getBookmarks().add(bookmark);
     updateUser(user);
+  }
+
+  /**
+   * Retrieves specialization by user ID.
+   *
+   * @param userId the ID of the user
+   * @return the user's specialization as a DTO
+   */
+  public List<SpecializationDto> getSpecializationsByUserId(long userId) {
+    User user = findUserById(userId);
+    return specializationDataMapper.toDto(user.getSpecializations());
+  }
+
+  /**
+   * Creates specialization information.
+   *
+   * @param specializationDto the user's specialization information as a DTO
+   * @return the created user specialization information as a DTO
+   */
+  public SpecializationDto createSpecialization(SpecializationDto specializationDto,
+      long userId) {
+    specializationService.checkIsMainAndSpecializationNameAlreadyExist(specializationDto, userId);
+    User user = findUserById(userId);
+    Specialization specialization = specializationDataMapper.toEntity(specializationDto);
+    specialization.setUser(user);
+    user.getSpecializations().add(specialization);
+    updateUser(user);
+    return specializationDataMapper.toDto(specialization);
   }
 }

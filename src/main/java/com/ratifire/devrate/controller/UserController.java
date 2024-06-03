@@ -6,6 +6,7 @@ import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
+import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.service.user.UserService;
 import jakarta.validation.Valid;
@@ -142,7 +143,7 @@ public class UserController {
    *
    * @param userId the ID of the user whose picture is to be retrieved
    * @return a ResponseEntity containing a map with the user's picture in byte array format if
-   *     present; otherwise, returns no content status
+   *         present; otherwise, returns no content status
    */
   @GetMapping("/{userId}/pictures")
   public ResponseEntity<byte[]> getUserPicture(@PathVariable long userId) {
@@ -243,5 +244,28 @@ public class UserController {
   public void createBookmark(@PathVariable long userId,
       @RequestBody @Valid BookmarkDto bookmarkDto) {
     userService.createBookmark(userId, bookmarkDto);
+  }
+
+  /**
+   * Retrieves user`s Specialization information by user ID.
+   *
+   * @param userId the ID of the user
+   * @return the list of user's Specialization information as a DTO
+   */
+  @GetMapping("/{userId}/specializations")
+  public List<SpecializationDto> getSpecializationsByUserId(@PathVariable long userId) {
+    return userService.getSpecializationsByUserId(userId);
+  }
+
+  /**
+   * Creates user`s Specialization information by user ID.
+   *
+   * @param specializationDto the user's Specialization information as a DTO
+   * @return the created user Specialization information as a DTO
+   */
+  @PostMapping("/{userId}/specializations")
+  public SpecializationDto createSpecialization(
+      @Valid @RequestBody SpecializationDto specializationDto, @PathVariable long userId) {
+    return userService.createSpecialization(specializationDto, userId);
   }
 }
