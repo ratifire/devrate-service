@@ -22,13 +22,13 @@ public class SpecializationController {
   private final SpecializationService specializationService;
 
   /**
-   * Retrieves specialization by ID.
+   * Retrieves specialization by USER_ID and specialization ID.
    *
    * @return the specialization as a DTO
    */
-  @GetMapping("/{id}")
-  public SpecializationDto findById(@PathVariable long id) {
-    return specializationService.findById(id);
+  @GetMapping("/{userId}/{id}")
+  public SpecializationDto findById(@PathVariable Long userId, @PathVariable Long id) {
+    return specializationService.findByUserIdAndId(userId, id);
   }
 
   /**
@@ -46,13 +46,13 @@ public class SpecializationController {
   /**
    * Sets the main specialization status for the given specialization ID.
    *
-   * @param newMainSpecializationId the ID of the specialization that will become the new main
+   * @param specializationId the ID of the specialization that will become the new main
    *                                specialization
    * @return the updated new main specialization as a DTO
    */
-  @PutMapping("/set-main/{newMainSpecializationId}")
-  public SpecializationDto setMainSpecializationStatus(@PathVariable long newMainSpecializationId) {
-    return specializationService.setMainSpecializationStatus(newMainSpecializationId);
+  @PutMapping("/{specializationId}/set-main")
+  public SpecializationDto setAsMainById(@PathVariable long specializationId) {
+    return specializationService.setAsMainById(specializationId);
   }
 
   /**

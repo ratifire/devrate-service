@@ -6,6 +6,7 @@ import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.SpecializationNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SpecializationRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,10 +27,12 @@ public class SpecializationService {
    * @return the specialization as a DTO
    * @throws SpecializationNotFoundException if specialization is not found
    */
-  public SpecializationDto findById(long id) {
-    return specializationRepository.findById(id).map(specializationMapper::toDto)
-        .orElseThrow(
-            () -> new SpecializationNotFoundException("Specialization not found with id: " + id));
+  public SpecializationDto findByUserIdAndId(Long userId, Long id) {
+    SpecializationDto specializationDto = specializationRepository.findByUserIdAndId(userId, id);
+    if (specializationDto == null) {
+      throw new SpecializationNotFoundException("Specialization not found with id: " + id);
+    }
+    return specializationDto;
   }
 
   /**
@@ -38,11 +41,11 @@ public class SpecializationService {
    * @param specializationDto the updated Specialization as a DTO
    * @return the updated Specialization as a DTO
    */
+  @Transactional
   public SpecializationDto update(SpecializationDto specializationDto, long id) {
     Specialization specialisation = findSpecializationById(id);
-
-    if (isSpecializationNameAlreadyExist(specializationDto.getName(),
-        specialisation.getUser().getId())) {
+    if (specializationRepository.existsSpecializationByUserIdAndName(
+        specialisation.getUser().getId(), specializationDto.getName())) {
       throw new ResourceAlreadyExistException("Specialization name is already exist.");
     }
 
@@ -68,29 +71,6 @@ public class SpecializationService {
   }
 
   /**
-   * Checks if any specialization DTO in the list represents a main specialization level.
-   *
-   * @param userId ID of user
-   * @return true if any specializationDTO in the list represents a main level, otherwise false
-   */
-  private boolean isMainSpecializationExist(long userId) {
-    return specializationRepository.getSpecializationsByUserId(userId).stream()
-        .anyMatch(SpecializationDto::isMain);
-  }
-
-  /**
-   * Checks if any specialization DTO in the list has the specified name.
-   *
-   * @param name   the name to check
-   * @param userId ID of user
-   * @return true if any specialization DTO in the list has the specified name, otherwise false
-   */
-  private boolean isSpecializationNameAlreadyExist(String name, long userId) {
-    return specializationRepository.getSpecializationsByUserId(userId).stream()
-        .anyMatch(specializationDto -> specializationDto.getName().equals(name));
-  }
-
-  /**
    * Checks if the provided specialization DTO represents a main specialization level and if the
    * specialization name already exists in the provided list of specialization DTOs.
    *
@@ -101,10 +81,12 @@ public class SpecializationService {
    */
   public void checkIsMainAndSpecializationNameAlreadyExist(SpecializationDto specializationDto,
       long userId) {
-    if (specializationDto.isMain() && isMainSpecializationExist(userId)) {
+    if (specializationDto.isMain()
+        && specializationRepository.existsSpecializationByUserIdAndMainTrue(userId)) {
       throw new ResourceAlreadyExistException("Main level is already exist.");
     }
-    if (isSpecializationNameAlreadyExist(specializationDto.getName(), userId)) {
+    if (specializationRepository.existsSpecializationByUserIdAndName(userId,
+        specializationDto.getName())) {
       throw new ResourceAlreadyExistException("Specialization name is already exist.");
     }
   }
@@ -113,12 +95,12 @@ public class SpecializationService {
    * Updates the main specialization status to the specified specialization ID. If there is an
    * existing main specialization, its status will be set to false.
    *
-   * @param newMainSpecializationId the ID of the specialization that will become the new main
+   * @param specializationId the ID of the specialization that will become the new main
    *                                specialization
    * @return the updated new main specialization as a DTO
    */
-  public SpecializationDto setMainSpecializationStatus(long newMainSpecializationId) {
-    Specialization newMainSpecialization = findSpecializationById(newMainSpecializationId);
+  public SpecializationDto setAsMainById(long specializationId) {
+    Specialization newMainSpecialization = findSpecializationById(specializationId);
 
     specializationRepository.findSpecializationByUserIdAndMainTrue(
             newMainSpecialization.getUser().getId())

@@ -17,10 +17,11 @@ import org.springframework.stereotype.Repository;
 @RepositoryRestResource(exported = false)
 public interface SpecializationRepository extends JpaRepository<Specialization, Long> {
 
+  SpecializationDto findByUserIdAndId(Long userId, Long id);
+
   Optional<Specialization> findSpecializationByUserIdAndMainTrue(Long userId);
 
-  List<SpecializationDto> getSpecializationsByUserId(Long userId);
+  boolean existsSpecializationByUserIdAndMainTrue(Long userId);
 
-  @Query("SELECT s.user.id FROM Specialization s WHERE s.id = :id")
-  long getUserIdBySpecializationId(@Param("id") long id);
+  boolean existsSpecializationByUserIdAndName(Long userId, String name);
 }
