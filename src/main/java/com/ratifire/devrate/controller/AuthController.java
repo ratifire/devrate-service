@@ -12,7 +12,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -83,7 +82,7 @@ public class AuthController {
    * @param email The email for the user account needing a password reset.
    * @return ResponseEntity with status OK if successful.
    */
-  @GetMapping("/password-reset")
+  @PostMapping ("/request-password-reset")
   public ResponseEntity<Void> requestPasswordReset(@RequestParam String email) {
     passwordResetService.requestPasswordReset(email);
     return ResponseEntity.ok().build();

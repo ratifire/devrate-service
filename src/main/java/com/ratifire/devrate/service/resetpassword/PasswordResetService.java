@@ -9,6 +9,7 @@ import com.ratifire.devrate.service.registration.EmailConfirmationCodeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class responsible for password reset logic. This service handles password reset requests
@@ -28,6 +29,8 @@ public class PasswordResetService {
    *
    * @param email The email address associated with the user account.
    */
+
+  @Transactional
   public void requestPasswordReset(String email) {
     UserSecurity userSecurity = userSecurityService.findByEmail(email);
     String code = emailConfirmationCodeService.createConfirmationCode(userSecurity.getId());
@@ -39,6 +42,8 @@ public class PasswordResetService {
    *
    * @param passwordResetDto The DTO containing the reset password code and the new password.
    */
+
+  @Transactional
   public void resetPassword(PasswordResetDto passwordResetDto) {
     EmailConfirmationCode emailConfirmationCode = emailConfirmationCodeService
         .findEmailConfirmationCode(passwordResetDto.getCode());

@@ -108,8 +108,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /auth/password-reset:
-    get:
+  /auth/request-password-reset:
+    post:
       tags:
         - password-reset
       summary: Request Password Reset Code
@@ -143,6 +143,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /auth/password-reset:
     post:
       tags:
         - password-reset
