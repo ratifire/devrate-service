@@ -194,7 +194,7 @@ public class UserService {
    * Retrieves the picture associated with a user by their user ID.
    *
    * @param userId the ID of the user whose picture is to be retrieved
-   * @return the user's picture as a byte array, or null if no picture is present
+   * @return the user's picture as a base64-encoded string
    */
   public UserPictureDto getUserPicture(long userId) {
     return new UserPictureDto(userRepository.findPictureByUserId(userId));
@@ -204,7 +204,7 @@ public class UserService {
    * Adds or updates a user's picture by user ID. If the user already has a picture, it is replaced.
    *
    * @param userId the ID of the user whose picture is to be added or updated
-   * @param userPicture the picture data as a byte array
+   * @param userPicture the picture data as a base64-encoded string
    */
   public void addUserPicture(long userId, String userPicture) {
     User user = findUserById(userId);
