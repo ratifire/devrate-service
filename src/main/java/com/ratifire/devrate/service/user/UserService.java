@@ -1,5 +1,6 @@
 package com.ratifire.devrate.service.user;
 
+
 import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
@@ -7,6 +8,7 @@ import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.dto.UserPictureDto;
 import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.Bookmark;
 import com.ratifire.devrate.entity.Contact;
@@ -192,20 +194,19 @@ public class UserService {
    * Retrieves the picture associated with a user by their user ID.
    *
    * @param userId the ID of the user whose picture is to be retrieved
-   * @return the user's picture as a byte array, or null if no picture is present
+   * @return the user's picture as a base64-encoded string
    */
-  public byte[] getUserPicture(long userId) {
-    return userRepository.findPictureByUserId(userId);
+  public UserPictureDto getUserPicture(long userId) {
+    return new UserPictureDto(userRepository.findPictureByUserId(userId));
   }
 
   /**
-   * Adds or updates a user's picture by user ID. If the user already has a picture, it is
-   * replaced.
+   * Adds or updates a user's picture by user ID. If the user already has a picture, it is replaced.
    *
-   * @param userId      the ID of the user whose picture is to be added or updated
-   * @param userPicture the picture data as a byte array
+   * @param userId the ID of the user whose picture is to be added or updated
+   * @param userPicture the picture data as a base64-encoded string
    */
-  public void addUserPicture(long userId, byte[] userPicture) {
+  public void addUserPicture(long userId, String userPicture) {
     User user = findUserById(userId);
     user.setPicture(userPicture);
     updateUser(user);
