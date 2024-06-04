@@ -51,7 +51,8 @@ public class User {
 
   private String description;
 
-  private byte[] picture;
+  @Column(columnDefinition = "TEXT")
+  private String picture;
 
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "user_id", nullable = false)

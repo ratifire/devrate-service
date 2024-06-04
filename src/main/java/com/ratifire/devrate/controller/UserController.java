@@ -1,5 +1,6 @@
 package com.ratifire.devrate.controller;
 
+
 import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
@@ -7,6 +8,7 @@ import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.dto.UserPictureDto;
 import com.ratifire.devrate.service.user.UserService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -145,9 +147,9 @@ public class UserController {
    *     present; otherwise, returns no content status
    */
   @GetMapping("/{userId}/pictures")
-  public ResponseEntity<byte[]> getUserPicture(@PathVariable long userId) {
-    byte[] userPicture = userService.getUserPicture(userId);
-    return userPicture != null
+  public ResponseEntity<UserPictureDto> getUserPicture(@PathVariable long userId) {
+    UserPictureDto userPicture = userService.getUserPicture(userId);
+    return userPicture.getUserPicture() != null
         ? ResponseEntity.ok(userPicture)
         : ResponseEntity.noContent().build();
   }
@@ -155,11 +157,11 @@ public class UserController {
   /**
    * Adds or updates a picture for a user by their user ID.
    *
-   * @param userId      the ID of the user for whom the picture is to be added or updated
+   * @param userId the ID of the user for whom the picture is to be added or updated
    * @param userPicture the picture data as a byte array to upload
    */
   @PostMapping("/{userId}/pictures")
-  public void addUserPicture(@PathVariable long userId, @RequestBody byte[] userPicture) {
+  public void addUserPicture(@PathVariable long userId, @RequestBody String userPicture) {
     userService.addUserPicture(userId, userPicture);
   }
 
