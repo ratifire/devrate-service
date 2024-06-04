@@ -143,7 +143,7 @@ public class UserController {
    * Retrieves the picture associated with a user by their user ID.
    *
    * @param userId the ID of the user whose picture is to be retrieved
-   * @return a ResponseEntity containing a map with the user's picture in byte array format if
+   * @return a ResponseEntity containing a UserPictureDto with the user's picture as a base64-encoded string if
    *     present; otherwise, returns no content status
    */
   @GetMapping("/{userId}/pictures")
@@ -158,7 +158,7 @@ public class UserController {
    * Adds or updates a picture for a user by their user ID.
    *
    * @param userId the ID of the user for whom the picture is to be added or updated
-   * @param userPicture the picture data as a byte array to upload
+   * @param userPicture the picture data as a base64 string to upload
    */
   @PostMapping("/{userId}/pictures")
   public void addUserPicture(@PathVariable long userId, @RequestBody String userPicture) {
