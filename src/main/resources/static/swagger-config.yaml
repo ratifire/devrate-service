@@ -504,9 +504,9 @@ paths:
               schema:
                 type: object
                 properties:
-                  picture:
+                  userPicture:
                     type: string
-                    format: byte
+                    format: base64
         '204':
           description: No content, if the user has no picture
         '400':
@@ -527,7 +527,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
     post:
       tags:
         - user info
@@ -544,10 +543,10 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          text/plain:
             schema:
               type: string
-              format: binary
+              description: Base64-encoded string of the user picture
       responses:
         '200':
           description: Picture successfully added or updated.
@@ -569,7 +568,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
     delete:
       tags:
         - user info
