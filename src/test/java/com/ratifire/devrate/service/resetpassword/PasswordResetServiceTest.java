@@ -1,16 +1,17 @@
 package com.ratifire.devrate.service.resetpassword;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.ratifire.devrate.dto.PasswordResetDto;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.email.EmailService;
+import com.ratifire.devrate.service.registration.EmailConfirmationCodeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,7 +29,7 @@ public class PasswordResetServiceTest {
   private UserSecurityService userSecurityService;
 
   @Mock
-  private EmailConfirmationUuidService emailConfirmationUuidService;
+  private EmailConfirmationCodeService emailConfirmationCodeService;
 
   @Mock
   private EmailService emailService;
@@ -44,34 +45,46 @@ public class PasswordResetServiceTest {
     String email = "user@example.com";
     UserSecurity userSecurity = UserSecurity.builder().id(1L).build();
     when(userSecurityService.findByEmail(email)).thenReturn(userSecurity);
-    when(emailConfirmationUuidService.generateAndPersistUuidCode(userSecurity.getId()))
+    when(emailConfirmationCodeService.createConfirmationCode(userSecurity.getId()))
         .thenReturn("code");
     doNothing().when(emailService).sendPasswordResetEmail(any(), any());
 
-    boolean result = passwordResetService.requestPasswordReset(email);
+    passwordResetService.requestPasswordReset(email);
 
-    assertTrue(result, "Password reset should be requested successfully");
   }
 
   @Test
   void resetPassword_WithValidCode_UpdatesPassword() {
     String code = "validCode";
     String newPassword = "newPassword";
+    PasswordResetDto passwordResetDto = PasswordResetDto.builder()
+        .code(code)
+        .newPassword(newPassword)
+        .build();
     UserSecurity userSecurity = UserSecurity.builder().id(1L).build();
     EmailConfirmationCode emailConfirmationCode = EmailConfirmationCode
         .builder().userSecurityId(userSecurity.getId()).build();
 
-    when(emailConfirmationUuidService.findUuidCode(code)).thenReturn(emailConfirmationCode);
-    when(userSecurityService.getById(userSecurity.getId())).thenReturn(userSecurity);
-    when(passwordEncoder.encode(newPassword)).thenReturn("encodedPassword");
-    doNothing().when(emailConfirmationUuidService).deleteConfirmedCodesByUserSecurityId(anyLong());
+    when(emailConfirmationCodeService.findEmailConfirmationCode(passwordResetDto.getCode()))
+        .thenReturn(emailConfirmationCode);
+    when(userSecurityService.getById(emailConfirmationCode.getUserSecurityId()))
+        .thenReturn(userSecurity);
+    doNothing().when(emailConfirmationCodeService)
+        .validateAndHandleExpiration(emailConfirmationCode);
+    when(passwordEncoder.encode(passwordResetDto.getNewPassword()))
+        .thenReturn("encodedPassword");
+    when(userSecurityService.save(any())).thenReturn(userSecurity);
+    doNothing().when(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
     doNothing().when(emailService).sendPasswordChangeConfirmation(any());
 
-    boolean result = passwordResetService.resetPassword(code, newPassword);
+    passwordResetService.resetPassword(passwordResetDto);
 
-    assertTrue(result);
     verify(userSecurityService).save(userSecurity);
-    verify(passwordEncoder).encode(newPassword);
-    verify(emailConfirmationUuidService).deleteConfirmedCodesByUserSecurityId(userSecurity.getId());
+    verify(emailConfirmationCodeService).validateAndHandleExpiration(emailConfirmationCode);
+    verify(passwordEncoder).encode(passwordResetDto.getNewPassword());
+    verify(userSecurityService).save(userSecurity);
+    verify(emailConfirmationCodeService).deleteConfirmedCode(emailConfirmationCode.getId());
+    verify(emailService).sendPasswordChangeConfirmation(userSecurity.getEmail());
   }
+
 }
