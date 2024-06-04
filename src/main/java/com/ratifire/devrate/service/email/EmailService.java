@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -96,11 +97,15 @@ public class EmailService {
       helper.setText(text, true);
       helper.setTo(recipient);
       helper.setSubject(subject);
+
+      mailSender.send(mimeMessage);
     } catch (MessagingException e) {
-      log.info("Failed to send the email to '" + recipient + "'."
-          + " Subject: '" + subject + "'");
+      log.error("Failed to construct the email to '" + recipient + "'."
+          + " Subject: '" + subject + "'", e);
+    } catch (MailException e) {
+      log.error("Failed to send the email to '" + recipient + "'."
+          + " Subject: '" + subject + "'", e);
     }
-    mailSender.send(mimeMessage);
   }
 
   /**

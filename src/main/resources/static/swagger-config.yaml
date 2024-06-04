@@ -33,6 +33,8 @@ tags:
     description: Endpoints for user achievement management
   - name: bookmark
     description: Endpoints for user bookmark management
+  - name: static data
+    description: Endpoints for retrieving static data
 paths:
   /auth/signup:
     post:
@@ -110,7 +112,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /auth/password-reset:
+  /auth/request-password-reset:
     post:
       tags:
         - password-reset
@@ -145,7 +147,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /auth/password-reset/{code}:
+  /auth/password-reset:
     post:
       tags:
         - password-reset
@@ -153,20 +155,12 @@ paths:
       description: Resets the user's password using a unique code received by the email.
       security: []
       operationId: resetPassword
-      parameters:
-        - in: path
-          name: code
-          required: true
-          schema:
-            type: string
-          description: The unique code received by the email.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: string
-              description: The new password to be set for the user account.
+              $ref: '#/components/schemas/PasswordResetDto'
       responses:
         '200':
           description: Password reset successfully.
@@ -1309,6 +1303,71 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /data/languageproficiency/{filename}:
+    get:
+      tags:
+        - static data
+      summary: Get static file from language proficiency folder
+      description: "Returns the content of the static file by its name from the language
+      proficiency folder."
+      parameters:
+        - in: path
+          name: filename
+          description: Name of the static file to retrieve.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: File not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /data/user/{filename}:
+    get:
+      tags:
+        - static data
+      summary: Get static files from user folder
+      description: Returns the content of the static file by its name from the user folder.
+      parameters:
+        - in: path
+          name: filename
+          description: Name of the static file to retrieve.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: File not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   securitySchemes:
     basicAuth:
@@ -1417,6 +1476,18 @@ components:
         description:
           type: string
           description: The description by the user for their account
+        hardSkillMark:
+          type: number
+          description: The user's average hard skill mark by main specialization
+        softSkillMark:
+          type: number
+          description: The user's average soft skill mark by main specialization
+        completedInterviews:
+          type: integer
+          description: The count of completed user interviews
+        conductedInterviews:
+          type: integer
+          description: The count of completed user interviews
       required:
         - id
     ContactDto:
@@ -1528,6 +1599,7 @@ components:
           description: The level of the language proficiency
       required:
         - name
+        - code
         - level
     BookmarkDto:
       type: object
@@ -1566,5 +1638,17 @@ components:
         - link
         - summary
         - description
+    PasswordResetDto:
+      type: object
+      properties:
+        code:
+          type: string
+          description: The unique code received by the email.
+        newPassword:
+          type: string
+          description: The new password to be set for the user account.
+      required:
+        - code
+        - newPassword
 security:
   - basicAuth: []

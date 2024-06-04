@@ -1,7 +1,5 @@
 package com.ratifire.devrate.dto;
 
-import com.ratifire.devrate.enums.LanguageProficiencyLevel;
-import com.ratifire.devrate.enums.LanguageProficiencyName;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,11 +18,12 @@ public class LanguageProficiencyDto {
   private long id;
 
   @NotNull
-  private LanguageProficiencyName name;
+  private String name;
 
+  @NotNull
   private String code;
 
   @NotNull
-  private LanguageProficiencyLevel level;
+  private String level;
 
 }
