@@ -17,5 +17,5 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends JpaRepository<User, Long> {
 
   @Query("SELECT u.picture FROM User u WHERE u.id = :id")
-  byte[] findPictureByUserId(@Param("id") long id);
+  String findPictureByUserId(@Param("id") long id);
 }

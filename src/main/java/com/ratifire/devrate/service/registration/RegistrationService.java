@@ -14,7 +14,6 @@ import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.email.EmailService;
 import com.ratifire.devrate.service.user.UserService;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RegistrationService {
 
-  private static final long CONFIRM_CODE_EXPIRATION_HOURS = 24;
   private final UserSecurityService userSecurityService;
   private final RoleService roleService;
   private final EmailConfirmationCodeService emailConfirmationCodeService;
@@ -85,7 +83,7 @@ public class RegistrationService {
 
     UserSecurity userSecurity = userSecurityService.save(userSecurityEntity);
 
-    String code = emailConfirmationCodeService.getConfirmationCode(userSecurity.getId());
+    String code = emailConfirmationCodeService.createConfirmationCode(userSecurity.getId());
     emailService.sendConfirmationCodeEmail(email, code);
   }
 
@@ -99,6 +97,7 @@ public class RegistrationService {
    *                                              null.
    * @throws MailConfirmationCodeExpiredException If the confirmation code is expired.
    */
+  @Transactional
   public long confirmRegistration(String confirmationCode) {
     if (StringUtils.isEmpty(confirmationCode)) {
       throw new MailConfirmationCodeRequestException("The confirmation code is a required "
@@ -109,13 +108,7 @@ public class RegistrationService {
         .findEmailConfirmationCode(confirmationCode);
 
     // Check if the confirmation code has expired
-    LocalDateTime createdAt = emailConfirmationCode.getCreatedAt();
-    LocalDateTime currentDateTime = LocalDateTime.now();
-    long hoursSinceCreation = ChronoUnit.HOURS.between(createdAt, currentDateTime);
-    if (hoursSinceCreation >= CONFIRM_CODE_EXPIRATION_HOURS) {
-      emailConfirmationCodeService.deleteConfirmedCode(emailConfirmationCode.getId());
-      throw new MailConfirmationCodeExpiredException("The confirmation code has expired");
-    }
+    emailConfirmationCodeService.validateAndHandleExpiration(emailConfirmationCode);
 
     UserSecurity userSecurity = userSecurityService
         .getById(emailConfirmationCode.getUserSecurityId());

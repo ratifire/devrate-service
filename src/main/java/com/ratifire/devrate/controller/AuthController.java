@@ -1,6 +1,7 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.LoginDto;
+import com.ratifire.devrate.dto.PasswordResetDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.dto.UserRegistrationDto;
 import com.ratifire.devrate.service.AuthenticationService;
@@ -79,22 +80,23 @@ public class AuthController {
    * Endpoint for requesting a password reset code.
    *
    * @param email The email for the user account needing a password reset.
-   * @return true if successful, false otherwise.
+   * @return ResponseEntity with status OK if successful.
    */
-  @PostMapping("/password-reset")
-  public boolean requestPasswordReset(@RequestParam String email) {
-    return passwordResetService.requestPasswordReset(email);
+  @PostMapping ("/request-password-reset")
+  public ResponseEntity<Void> requestPasswordReset(@RequestParam String email) {
+    passwordResetService.requestPasswordReset(email);
+    return ResponseEntity.ok().build();
   }
 
   /**
-   * Endpoint for resetting the password using a unique code (UUID).
+   * Endpoint for resetting the password using a unique code.
    *
-   * @param code        The unique code received by the email.
-   * @param newPassword The new password to be set for the user account.
-   * @return true if the password was successfully reset, false otherwise.
+   * @param passwordResetDto The DTO containing the reset password code and the new password.
+   * @return ResponseEntity with status OK if successful.
    */
-  @PostMapping("/password-reset/{code}")
-  public boolean resetPassword(@PathVariable String code, @RequestBody String newPassword) {
-    return passwordResetService.resetPassword(code, newPassword);
+  @PostMapping("/password-reset")
+  public ResponseEntity<Void> resetPassword(@RequestBody PasswordResetDto passwordResetDto) {
+    passwordResetService.resetPassword(passwordResetDto);
+    return ResponseEntity.ok().build();
   }
 }
