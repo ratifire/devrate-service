@@ -1,12 +1,8 @@
 package com.ratifire.devrate.repository;
 
-import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.entity.Specialization;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
@@ -16,8 +12,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RepositoryRestResource(exported = false)
 public interface SpecializationRepository extends JpaRepository<Specialization, Long> {
-
-  SpecializationDto findByUserIdAndId(Long userId, Long id);
 
   Optional<Specialization> findSpecializationByUserIdAndMainTrue(Long userId);
 

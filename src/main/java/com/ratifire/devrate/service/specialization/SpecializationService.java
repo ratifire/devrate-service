@@ -27,12 +27,10 @@ public class SpecializationService {
    * @return the specialization as a DTO
    * @throws SpecializationNotFoundException if specialization is not found
    */
-  public SpecializationDto findByUserIdAndId(Long userId, Long id) {
-    SpecializationDto specializationDto = specializationRepository.findByUserIdAndId(userId, id);
-    if (specializationDto == null) {
-      throw new SpecializationNotFoundException("Specialization not found with id: " + id);
-    }
-    return specializationDto;
+  public SpecializationDto findById(long id) {
+    return specializationRepository.findById(id).map(specializationMapper::toDto)
+        .orElseThrow(
+            () -> new SpecializationNotFoundException("Specialization not found with id: " + id));
   }
 
   /**
@@ -42,8 +40,8 @@ public class SpecializationService {
    * @return the updated Specialization as a DTO
    */
   @Transactional
-  public SpecializationDto update(SpecializationDto specializationDto, long id) {
-    Specialization specialisation = findSpecializationById(id);
+  public SpecializationDto update(SpecializationDto specializationDto) {
+    Specialization specialisation = findSpecializationById(specializationDto.getId());
     if (specializationRepository.existsSpecializationByUserIdAndName(
         specialisation.getUser().getId(), specializationDto.getName())) {
       throw new ResourceAlreadyExistException("Specialization name is already exist.");
@@ -96,7 +94,7 @@ public class SpecializationService {
    * existing main specialization, its status will be set to false.
    *
    * @param specializationId the ID of the specialization that will become the new main
-   *                                specialization
+   *                         specialization
    * @return the updated new main specialization as a DTO
    */
   public SpecializationDto setAsMainById(long specializationId) {
