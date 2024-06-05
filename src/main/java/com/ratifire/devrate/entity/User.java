@@ -91,4 +91,7 @@ public class User {
       orphanRemoval = true)
   private List<Specialization> specializations;
 
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "user_id", nullable = false)
+  private List<InterviewPoolEntry> interviewPoolEntries;
 }
