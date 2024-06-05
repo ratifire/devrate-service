@@ -7,6 +7,7 @@ import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
+import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.dto.UserPictureDto;
 import com.ratifire.devrate.service.user.UserService;
@@ -245,5 +246,28 @@ public class UserController {
   public void createBookmark(@PathVariable long userId,
       @RequestBody @Valid BookmarkDto bookmarkDto) {
     userService.createBookmark(userId, bookmarkDto);
+  }
+
+  /**
+   * Retrieves user`s Specialization information by user ID.
+   *
+   * @param userId the ID of the user
+   * @return the list of user's Specialization information as a DTO
+   */
+  @GetMapping("/{userId}/specializations")
+  public List<SpecializationDto> getSpecializationsByUserId(@PathVariable long userId) {
+    return userService.getSpecializationsByUserId(userId);
+  }
+
+  /**
+   * Creates user`s Specialization information by user ID.
+   *
+   * @param specializationDto the user's Specialization information as a DTO
+   * @return the created user Specialization information as a DTO
+   */
+  @PostMapping("/{userId}/specializations")
+  public SpecializationDto createSpecialization(
+      @Valid @RequestBody SpecializationDto specializationDto, @PathVariable long userId) {
+    return userService.createSpecialization(specializationDto, userId);
   }
 }
