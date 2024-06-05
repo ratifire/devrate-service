@@ -1,6 +1,8 @@
 package com.ratifire.devrate.repository;
 
+import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Specialization;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -18,4 +20,5 @@ public interface SpecializationRepository extends JpaRepository<Specialization, 
   boolean existsSpecializationByUserIdAndMainTrue(Long userId);
 
   boolean existsSpecializationByUserIdAndName(Long userId, String name);
+
 }

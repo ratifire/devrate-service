@@ -1,7 +1,9 @@
 package com.ratifire.devrate.controller;
 
+import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.service.specialization.SpecializationService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +34,27 @@ public class SpecializationController {
   }
 
   /**
-   * Updates specialization by specialization`s ID.
+   * Retrieves main mastery by SpecializationID.
+   *
+   * @return the main mastery as a DTO
+   */
+  @GetMapping("/mastery/{id}")
+  public MasteryDto getMainMasteryById(@PathVariable Long id) {
+    return specializationService.getMainMasteryById(id);
+  }
+
+  /**
+   * Retrieves list of masteries by SpecializationID.
+   *
+   * @return the list of masteries as a DTO
+   */
+  @GetMapping("/masteries/{id}")
+  public List<MasteryDto> getMasteriesBySpecializationId(@PathVariable Long id) {
+    return specializationService.getMasteriesBySpecializationId(id);
+  }
+
+  /**
+   * Updates specialization name by specialization`s ID.
    *
    * @param specializationDto the updated specialization information as a DTO
    * @return the updated specialization information as a DTO
@@ -45,8 +67,7 @@ public class SpecializationController {
   /**
    * Sets the main specialization status for the given specialization ID.
    *
-   * @param id the ID of the specialization that will become the new main
-   *                         specialization
+   * @param id the ID of the specialization that will become the new main specialization
    * @return the updated new main specialization as a DTO
    */
   @PutMapping("/{id}/set-main")
@@ -62,6 +83,17 @@ public class SpecializationController {
   @DeleteMapping("/{id}")
   public void deleteById(@PathVariable long id) {
     specializationService.deleteById(id);
+  }
+
+  /**
+   * Sets new main mastery.
+   *
+   * @return new main mastery as a dto.
+   */
+  @PutMapping("/{specId}/set-main-mastery/{masteryId}")
+  public MasteryDto setMainMasteryById(@PathVariable long specId,
+      @PathVariable long masteryId) {
+    return specializationService.setMainMasteryById(specId, masteryId);
   }
 
 }
