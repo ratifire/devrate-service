@@ -193,6 +193,10 @@ public class SpecializationService {
   public MasteryDto setMainMasteryById(long specId, long masteryId) {
     Mastery newMainMastery = masteryService.getMasteryById(masteryId);
     Specialization specialization = findSpecializationById(specId);
+    if (!specialization.getMasteries().contains(newMainMastery)) {
+      throw new IllegalArgumentException(
+          "The mastery does not belong to the specified specialization.");
+    }
     specialization.setMainMastery(newMainMastery);
     specializationRepository.save(specialization);
     return masteryMapper.toDto(newMainMastery);
