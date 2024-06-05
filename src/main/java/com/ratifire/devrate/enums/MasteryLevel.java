@@ -6,5 +6,5 @@ package com.ratifire.devrate.enums;
 public enum MasteryLevel {
   JUNIOR,
   MIDDLE,
-  SENIOR;
+  SENIOR
 }
