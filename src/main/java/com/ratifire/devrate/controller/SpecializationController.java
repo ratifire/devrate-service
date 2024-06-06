@@ -38,7 +38,7 @@ public class SpecializationController {
    *
    * @return the main mastery as a DTO
    */
-  @GetMapping("/mastery/{id}")
+  @GetMapping("/{id}/main-mastery")
   public MasteryDto getMainMasteryById(@PathVariable Long id) {
     return specializationService.getMainMasteryById(id);
   }
@@ -48,7 +48,7 @@ public class SpecializationController {
    *
    * @return the list of masteries as a DTO
    */
-  @GetMapping("/masteries/{id}")
+  @GetMapping("/{id}/masteries")
   public List<MasteryDto> getMasteriesBySpecializationId(@PathVariable Long id) {
     return specializationService.getMasteriesBySpecializationId(id);
   }

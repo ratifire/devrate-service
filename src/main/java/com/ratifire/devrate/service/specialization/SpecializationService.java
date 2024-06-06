@@ -49,11 +49,12 @@ public class SpecializationService {
    * @throws ResourceNotFoundException if mastery is not found
    */
   public MasteryDto getMainMasteryById(long id) {
-    Specialization specialization =
-        specializationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
-            "Main mastery not found with id: " + id));
-
-    return masteryMapper.toDto(specialization.getMainMastery());
+    Mastery mainMastery = findSpecializationById(id).getMainMastery();
+    if (mainMastery == null) {
+      throw new ResourceNotFoundException(
+          "Main mastery not found for specialization with id: " + id);
+    }
+    return masteryMapper.toDto(findSpecializationById(id).getMainMastery());
   }
 
   /**
@@ -164,9 +165,7 @@ public class SpecializationService {
     Specialization specialization = findSpecializationById(specializationId);
     List<Mastery> masteryList = createMasteryList();
     specialization.setMasteries(masteryList);
-    Specialization updatedSpecialization = specializationRepository.save(specialization);
-
-    masteryMapper.toDto(updatedSpecialization.getMasteries());
+    specializationRepository.save(specialization);
   }
 
   /**
@@ -184,17 +183,20 @@ public class SpecializationService {
   }
 
   /**
-   * Updates the main specialization status to the specified specialization ID. If there is an
-   * existing main specialization, its status will be set to false.
+   * Sets the specified mastery as the main mastery for the given specialization. Verifies that the
+   * mastery belongs to the specialization before updating.
    *
-   * @param masteryId the ID of the specialization that will become the new main specialization
-   * @return the updated new main specialization as a DTO
+   * @param specId    the ID of the specialization to which the mastery should be set as main
+   * @param masteryId the ID of the mastery that will become the new main mastery
+   * @return the updated main mastery as a DTO
+   * @throws ResourceNotFoundException if the mastery does not belong to the specified
+   *                                   specialization
    */
   public MasteryDto setMainMasteryById(long specId, long masteryId) {
     Mastery newMainMastery = masteryService.getMasteryById(masteryId);
     Specialization specialization = findSpecializationById(specId);
     if (!specialization.getMasteries().contains(newMainMastery)) {
-      throw new IllegalArgumentException(
+      throw new ResourceNotFoundException(
           "The mastery does not belong to the specified specialization.");
     }
     specialization.setMainMastery(newMainMastery);

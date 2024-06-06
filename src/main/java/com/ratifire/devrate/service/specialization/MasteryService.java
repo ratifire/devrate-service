@@ -48,7 +48,6 @@ public class MasteryService {
    * @param masteryDto the updated Mastery as a DTO
    * @return the updated Mastery as a DTO
    */
-  @Transactional
   public MasteryDto update(MasteryDto masteryDto) {
     long id = masteryDto.getId();
     Mastery mastery = masteryRepository.findById(id)
