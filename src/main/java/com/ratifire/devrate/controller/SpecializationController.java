@@ -95,5 +95,4 @@ public class SpecializationController {
       @PathVariable long masteryId) {
     return specializationService.setMainMasteryById(specId, masteryId);
   }
-
 }
