@@ -6,10 +6,11 @@ import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * ZoomController.
+ * This controller will be deleted. Only for testing Zoom functionality.
  */
 @RestController
 @AllArgsConstructor
@@ -19,7 +20,8 @@ public class ZoomController {
   private ZoomApiService zoomApiService;
 
   @PostMapping("/create-meeting")
-  public String createMeeting() throws ZoomApiException {
-    return zoomApiService.createMeeting("topic", "desc", LocalDateTime.now());
+  public String createMeeting(@RequestParam String topic, @RequestParam String description)
+      throws ZoomApiException {
+    return zoomApiService.createMeeting(topic, description, LocalDateTime.now());
   }
 }
