@@ -55,11 +55,9 @@ public class MasteryService {
    */
   public MasteryDto update(MasteryDto masteryDto) {
     long id = masteryDto.getId();
-    Mastery mastery = masteryRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Mastery not found with id: " + id));
+    Mastery mastery = getMasteryById(id);
 
-    mastery.setHardSkillMark(masteryDto.getHardSkillMark());
-    mastery.setSoftSkillMark(masteryDto.getSoftSkillMark());
+    masteryMapper.updateEntity(masteryDto, mastery);
     masteryRepository.save(mastery);
 
     return masteryMapper.toDto(mastery);
