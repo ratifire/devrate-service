@@ -44,9 +44,9 @@ public class SkillService {
   }
 
   /**
-   * Updates Skill information: averageMark, counter and grows.
+   * Calculates averageMark and update skill information: averageMark, counter and grows.
    *
-   * @param mark long
+   * @param id - skill ID.
    */
   public SkillDto updateMark(long id, BigDecimal mark) {
     Skill skill = getSkillById(id);

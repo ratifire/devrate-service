@@ -32,12 +32,14 @@ public class SkillController {
   }
 
   /**
-   * Creates skill by MasteryID.
+   * Calculates averageMark and update skill information: averageMark, counter and grows.
    *
+   * @param id   - the ID of the skill.
+   * @param mark - the new mark to be included in the average calculation.
    * @return updated skill as a DTO
    */
   @PutMapping("/{id}/calculate-mark/{mark}")
-  public SkillDto createSpecialization(@PathVariable long id, @PathVariable BigDecimal mark) {
+  public SkillDto updateMark(@PathVariable long id, @PathVariable BigDecimal mark) {
     return skillService.updateMark(id, mark);
   }
 

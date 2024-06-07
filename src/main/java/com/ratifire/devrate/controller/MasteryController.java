@@ -45,13 +45,14 @@ public class MasteryController {
   }
 
   /**
-   * Creates skill by MasteryID.
+   * Creates a skill and associates it with the specified Mastery by its ID.
    *
-   * @param skillDto the user's Specialization information as a DTO
-   * @return the created user Specialization information as a DTO
+   * @param skillDto the skill information as a DTO.
+   * @param id       the ID of the Mastery to which the skill will be associated.
+   * @return the created skill information as a DTO.
    */
   @PostMapping("/{id}/skill")
-  public SkillDto createSpecialization(
+  public SkillDto createSkill(
       @Valid @RequestBody SkillDto skillDto, @PathVariable long id) {
     return masteryService.createSkill(skillDto, id);
   }
