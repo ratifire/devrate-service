@@ -12,4 +12,6 @@ import org.springframework.stereotype.Repository;
 @RepositoryRestResource(exported = false)
 public interface MasteryRepository extends JpaRepository<Mastery, Long> {
 
+  boolean existsByIdAndSkills_Name(Long id, String name);
+
 }

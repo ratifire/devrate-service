@@ -85,7 +85,7 @@ public class MasteryService {
   public SkillDto createSkill(SkillDto skillDto,
       long masteryId) {
     Mastery mastery = getMasteryById(masteryId);
-    existSkillByName(mastery.getSkills(), skillDto.getName());
+    existSkillByName(masteryId, skillDto.getName());
     Skill skill = skillMapper.toEntity(skillDto);
     skill.setAverageMark(BigDecimal.ONE);
     mastery.getSkills().add(skill);
@@ -94,16 +94,14 @@ public class MasteryService {
   }
 
   /**
-   * Ensures that there is no skill with the given name in the provided skill list.
+   * Checks if a skill with the given name already exists in the specified mastery.
    *
-   * @param skillList the list of skills to check
-   * @param name      the name of the skill to check for uniqueness
+   * @param id   the ID of the mastery to check
+   * @param name the name of the skill to check for uniqueness
    * @throws ResourceAlreadyExistException if a skill with the given name already exists
    */
-  private void existSkillByName(List<Skill> skillList, String name) {
-    boolean skillExists = skillList.stream()
-        .anyMatch(skill -> skill.getName().equalsIgnoreCase(name));
-    if (skillExists) {
+  private void existSkillByName(long id, String name) {
+    if (masteryRepository.existsByIdAndSkills_Name(id, name)) {
       throw new ResourceAlreadyExistException("Skill with name " + name + " already exists");
     }
   }

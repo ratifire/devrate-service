@@ -55,9 +55,8 @@ public class SkillService {
     if (counter > 0) {
       BigDecimal newAverageMark = calculateAverageMark(counter, oldAverageMark, mark);
       return setMarkCounterGrowAndSave(skill, newAverageMark, counter + 1);
-    } else {
-      return setMarkCounterGrowAndSave(skill, mark, 1);
     }
+    return setMarkCounterGrowAndSave(skill, mark, 1);
   }
 
   /**
