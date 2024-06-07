@@ -18,6 +18,7 @@ public abstract class MasteryMapper implements DataMapper<MasteryDto, Mastery> {
   public abstract Mastery toEntity(MasteryDto masteryDto);
 
   @Mapping(target = "id", ignore = true)
+  @Mapping(target = "name", ignore = true)
   @Mapping(target = "skills", ignore = true)
   public abstract Mastery updateEntity(MasteryDto masteryDto,
       @MappingTarget Mastery mastery);

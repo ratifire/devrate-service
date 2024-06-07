@@ -23,6 +23,7 @@ import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
 import com.ratifire.devrate.service.specialization.SpecializationService;
+import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -366,6 +367,7 @@ public class UserService {
    * @param specializationDto the user's specialization information as a DTO
    * @return the created user specialization information as a DTO
    */
+  @Transactional
   public SpecializationDto createSpecialization(SpecializationDto specializationDto,
       long userId) {
     specializationService.checkIsMainAndSpecializationNameAlreadyExist(specializationDto, userId);
