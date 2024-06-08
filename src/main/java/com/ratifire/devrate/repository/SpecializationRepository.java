@@ -14,4 +14,8 @@ import org.springframework.stereotype.Repository;
 public interface SpecializationRepository extends JpaRepository<Specialization, Long> {
 
   Optional<Specialization> findSpecializationByUserIdAndMainTrue(Long userId);
+
+  boolean existsSpecializationByUserIdAndMainTrue(Long userId);
+
+  boolean existsSpecializationByUserIdAndName(Long userId, String name);
 }

@@ -59,7 +59,7 @@ class UserServiceTest {
   private EmploymentRecordDto employmentRecordDto;
   private EmploymentRecord employmentRecord;
   private List<LanguageProficiencyDto> languageProficiencyDtos;
-  private final  byte[] picture = new byte[] {4, 5, 6};
+  private final String userPicture = "123";
 
   private Achievement achievement;
   private AchievementDto achievementDto;
@@ -211,16 +211,16 @@ class UserServiceTest {
 
     when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-    userService.addUserPicture(userId, picture);
+    userService.addUserPicture(userId, userPicture);
 
-    assertArrayEquals(picture, user.getPicture());
+    assertEquals(userPicture, user.getPicture());
   }
 
   @Test
   void testDeleteUserPicture() {
     User user = new User();
     user.setId(userId);
-    user.setPicture(picture);
+    user.setPicture(userPicture);
 
     when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 

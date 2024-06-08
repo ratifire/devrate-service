@@ -1,12 +1,15 @@
 package com.ratifire.devrate.controller;
 
+
 import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
+import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.dto.UserPictureDto;
 import com.ratifire.devrate.service.user.UserService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -141,13 +144,13 @@ public class UserController {
    * Retrieves the picture associated with a user by their user ID.
    *
    * @param userId the ID of the user whose picture is to be retrieved
-   * @return a ResponseEntity containing a map with the user's picture in byte array format if
-   *     present; otherwise, returns no content status
+   * @return a ResponseEntity containing a UserPictureDto with the user's picture
+   *     as a base64-encoded string if present; otherwise, returns no content status
    */
   @GetMapping("/{userId}/pictures")
-  public ResponseEntity<byte[]> getUserPicture(@PathVariable long userId) {
-    byte[] userPicture = userService.getUserPicture(userId);
-    return userPicture != null
+  public ResponseEntity<UserPictureDto> getUserPicture(@PathVariable long userId) {
+    UserPictureDto userPicture = userService.getUserPicture(userId);
+    return userPicture.getUserPicture() != null
         ? ResponseEntity.ok(userPicture)
         : ResponseEntity.noContent().build();
   }
@@ -155,11 +158,11 @@ public class UserController {
   /**
    * Adds or updates a picture for a user by their user ID.
    *
-   * @param userId      the ID of the user for whom the picture is to be added or updated
-   * @param userPicture the picture data as a byte array to upload
+   * @param userId the ID of the user for whom the picture is to be added or updated
+   * @param userPicture the picture data as a base64 string to upload
    */
   @PostMapping("/{userId}/pictures")
-  public void addUserPicture(@PathVariable long userId, @RequestBody byte[] userPicture) {
+  public void addUserPicture(@PathVariable long userId, @RequestBody String userPicture) {
     userService.addUserPicture(userId, userPicture);
   }
 
@@ -243,5 +246,28 @@ public class UserController {
   public void createBookmark(@PathVariable long userId,
       @RequestBody @Valid BookmarkDto bookmarkDto) {
     userService.createBookmark(userId, bookmarkDto);
+  }
+
+  /**
+   * Retrieves user`s Specialization information by user ID.
+   *
+   * @param userId the ID of the user
+   * @return the list of user's Specialization information as a DTO
+   */
+  @GetMapping("/{userId}/specializations")
+  public List<SpecializationDto> getSpecializationsByUserId(@PathVariable long userId) {
+    return userService.getSpecializationsByUserId(userId);
+  }
+
+  /**
+   * Creates user`s Specialization information by user ID.
+   *
+   * @param specializationDto the user's Specialization information as a DTO
+   * @return the created user Specialization information as a DTO
+   */
+  @PostMapping("/{userId}/specializations")
+  public SpecializationDto createSpecialization(
+      @Valid @RequestBody SpecializationDto specializationDto, @PathVariable long userId) {
+    return userService.createSpecialization(specializationDto, userId);
   }
 }

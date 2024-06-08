@@ -22,11 +22,4 @@ public interface EmailConfirmationCodeRepository
    * @return The optional of the {@link EmailConfirmationCode} entity with the specified code.
    */
   Optional<EmailConfirmationCode> findByCode(String code);
-
-  /**
-   * Deletes {@link EmailConfirmationCode} entities by user ID.
-   *
-   * @param userSecurityId The ID of the user associated with the email confirmation code.
-   */
-  void deleteByUserSecurityId(Long userSecurityId);
 }
