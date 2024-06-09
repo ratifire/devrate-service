@@ -8,17 +8,21 @@ import com.ratifire.devrate.util.zoom.payloads.ZoomCreateMeetingRequest;
 import com.ratifire.devrate.util.zoom.payloads.ZoomCreateMeetingRequest.Settings;
 import com.ratifire.devrate.util.zoom.payloads.ZoomCreateMeetingResponse;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
  * Service class for interacting with the Zoom API.
  */
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ZoomApiService {
 
-  private static final String ZOOM_USER_BASE_URL = "https://api.zoom.us/v2/users";
+  @Value("${zoom.oauth2.api.url}")
+  private String zoomApiUrl;
+
+  private static final String ZOOM_USER_BASE_URL = "/users";
 
   private final ZoomApiClient zoomApiClient;
   private final ObjectMapper objectMapper;
@@ -35,7 +39,7 @@ public class ZoomApiService {
   public String createMeeting(String topic, String meetDescription, LocalDateTime startTime)
       throws ZoomApiException {
     String jsonRequest = buildJsonCreateMeetingRequest(topic, meetDescription, startTime);
-    String url = ZOOM_USER_BASE_URL + "/me/meetings";
+    String url = zoomApiUrl + ZOOM_USER_BASE_URL + "/me/meetings";
 
     ZoomCreateMeetingResponse response =
         zoomApiClient.post(url, jsonRequest, ZoomCreateMeetingResponse.class);
