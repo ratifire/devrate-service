@@ -1,5 +1,6 @@
 package com.ratifire.devrate.util.zoom;
 
+import com.ratifire.devrate.dto.ZoomCreateMeetingDto;
 import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
 import com.ratifire.devrate.util.zoom.service.ZoomApiService;
 import java.time.LocalDateTime;
@@ -20,7 +21,7 @@ public class ZoomController {
   private ZoomApiService zoomApiService;
 
   @PostMapping("/create-meeting")
-  public String createMeeting(@RequestParam String topic, @RequestParam String description)
+  public ZoomCreateMeetingDto createMeeting(@RequestParam String topic, @RequestParam String description)
       throws ZoomApiException {
     return zoomApiService.createMeeting(topic, description, LocalDateTime.now());
   }
