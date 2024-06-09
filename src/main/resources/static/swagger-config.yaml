@@ -504,9 +504,9 @@ paths:
               schema:
                 type: object
                 properties:
-                  picture:
+                  userPicture:
                     type: string
-                    format: byte
+                    format: base64
         '204':
           description: No content, if the user has no picture
         '400':
@@ -527,7 +527,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
     post:
       tags:
         - user info
@@ -544,10 +543,10 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          text/plain:
             schema:
               type: string
-              format: binary
+              description: Base64-encoded string of the user picture
       responses:
         '200':
           description: Picture successfully added or updated.
@@ -569,7 +568,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
     delete:
       tags:
         - user info
@@ -741,7 +739,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ContactDto'
+                  $ref: '#/components/schemas/EducationDto'
         '400':
           description: Bad request, e.g., missing or invalid parameters
           content:
@@ -1344,6 +1342,7 @@ paths:
         - static data
       summary: Get static files from user folder
       description: Returns the content of the static file by its name from the user folder.
+      security: []
       parameters:
         - in: path
           name: filename

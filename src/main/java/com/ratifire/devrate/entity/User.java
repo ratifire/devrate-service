@@ -51,7 +51,8 @@ public class User {
 
   private String description;
 
-  private byte[] picture;
+  @Column(columnDefinition = "TEXT")
+  private String picture;
 
   @Column(name = "completed_interviews")
   private int completedInterviews;
