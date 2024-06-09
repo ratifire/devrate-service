@@ -2,28 +2,23 @@ package com.ratifire.devrate.util.zoom.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ratifire.devrate.dto.ZoomCreateMeetingDto;
 import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
 import com.ratifire.devrate.util.zoom.network.ZoomApiClient;
 import com.ratifire.devrate.util.zoom.payloads.ZoomCreateMeetingRequest;
 import com.ratifire.devrate.util.zoom.payloads.ZoomCreateMeetingRequest.Settings;
 import com.ratifire.devrate.util.zoom.payloads.ZoomCreateMeetingResponse;
 import java.time.LocalDateTime;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
  * Service class for interacting with the Zoom API.
  */
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ZoomApiService {
 
-  @Value("${zoom.oauth2.api.url}")
-  private String zoomApiUrl;
-
-  private static final String ZOOM_USER_BASE_URL = "/users";
+  private static final String ZOOM_USER_BASE_URL = "https://api.zoom.us/v2/users";
 
   private final ZoomApiClient zoomApiClient;
   private final ObjectMapper objectMapper;
@@ -31,25 +26,21 @@ public class ZoomApiService {
   /**
    * Creates a Zoom meeting.
    *
-   * @param topic           the topic or title of the meeting.
+   * @param topic the topic or title of the meeting.
    * @param meetDescription the description or agenda of the meeting.
-   * @param startTime       the start time of the meeting.
-   * @return {@link ZoomCreateMeetingDto} dto with two types of URL - joinUrl for candidate,
-   * startUrl - for interviewer.
+   * @param startTime the start time of the meeting.
+   * @return the join URL for the created meeting.
    * @throws ZoomApiException if an error occurs while creating the meeting.
    */
-  public ZoomCreateMeetingDto createMeeting(String topic, String meetDescription,
-      LocalDateTime startTime) throws ZoomApiException {
+  public String createMeeting(String topic, String meetDescription, LocalDateTime startTime)
+      throws ZoomApiException {
     String jsonRequest = buildJsonCreateMeetingRequest(topic, meetDescription, startTime);
-    String url = zoomApiUrl + ZOOM_USER_BASE_URL + "/me/meetings";
+    String url = ZOOM_USER_BASE_URL + "/me/meetings";
 
     ZoomCreateMeetingResponse response =
         zoomApiClient.post(url, jsonRequest, ZoomCreateMeetingResponse.class);
 
-    return ZoomCreateMeetingDto.builder()
-        .joinUrl(response.getJoinUrl())
-        .startUrl(response.getStartUrl())
-        .build();
+    return response.getJoinUrl();
   }
 
   private String buildJsonCreateMeetingRequest(String topic, String meetDescription,

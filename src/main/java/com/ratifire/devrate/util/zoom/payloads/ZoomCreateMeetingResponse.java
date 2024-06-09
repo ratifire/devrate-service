@@ -29,7 +29,6 @@ public class ZoomCreateMeetingResponse {
   public Recurrence recurrence;
   public Settings settings;
   public String startTime;
-  @JsonProperty("start_url")
   public String startUrl;
   public String timezone;
   public String topic;
