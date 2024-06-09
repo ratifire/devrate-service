@@ -1,9 +1,11 @@
 package com.ratifire.devrate.entity;
 
 
+import com.ratifire.devrate.configuration.InterviewTimeRangeConverter;
 import com.ratifire.devrate.enums.InterviewPoolEntryType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -37,7 +39,7 @@ public class InterviewPoolEntry {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @Enumerated(EnumType.STRING)
+  @Enumerated(EnumType.ORDINAL)
   private InterviewPoolEntryType type;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -49,8 +51,7 @@ public class InterviewPoolEntry {
 
   private ZonedDateTime expiredAt;
 
-  @ElementCollection
-  @CollectionTable(name = "interview_time_ranges",
-      joinColumns = @JoinColumn(name = "interview_pool_entry_id"))
+  @Convert(converter = InterviewTimeRangeConverter.class)
+  @Column(columnDefinition = "tstzmultirange")
   private List<InterviewTimeRange> dates;
 }

@@ -1,6 +1,7 @@
 package com.ratifire.devrate.entity;
 
 import jakarta.persistence.Embeddable;
+import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +20,6 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 public class InterviewTimeRange {
 
-  private ZonedDateTime startTime;
-  private ZonedDateTime endTime;
+  private OffsetDateTime startTime;
+  private OffsetDateTime endTime;
 }
