@@ -18,4 +18,5 @@ public interface SpecializationRepository extends JpaRepository<Specialization, 
   boolean existsSpecializationByUserIdAndMainTrue(Long userId);
 
   boolean existsSpecializationByUserIdAndName(Long userId, String name);
+
 }

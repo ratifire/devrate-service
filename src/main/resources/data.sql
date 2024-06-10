@@ -47,9 +47,9 @@ WHERE NOT EXISTS (SELECT 1
 --  Create masteries records
 INSERT INTO masteries (id, name, soft_skill_mark, hard_skill_mark, specialization_id)
 SELECT *
-FROM (VALUES (10001, 'Junior', 5.31, 6.73, 6661),
-             (10002, 'Middle', 8.12, 5.25, 6661),
-             (10003, 'Senior', 8.83, 9.46, 6661))
+FROM (VALUES (10001, 'JUNIOR', 5.31, 6.73, 6661),
+             (10002, 'MIDDLE', 8.12, 5.25, 6661),
+             (10003, 'SENIOR', 8.83, 9.46, 6661))
          AS masteries (id, name, soft_skill_mark, hard_skill_mark, specialization_id)
 WHERE NOT EXISTS (SELECT 1
                   FROM masteries

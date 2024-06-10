@@ -23,6 +23,7 @@ import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
 import com.ratifire.devrate.service.specialization.SpecializationService;
+import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -207,9 +208,10 @@ public class UserService {
   }
 
   /**
-   * Adds or updates a user's picture by user ID. If the user already has a picture, it is replaced.
+   * Adds or updates a user's picture by user ID. If the user already has a picture, it is
+   * replaced.
    *
-   * @param userId the ID of the user whose picture is to be added or updated
+   * @param userId      the ID of the user whose picture is to be added or updated
    * @param userPicture the picture data as a base64-encoded string
    */
   public void addUserPicture(long userId, String userPicture) {
@@ -360,11 +362,12 @@ public class UserService {
   }
 
   /**
-   * Creates specialization information.
+   * Creates specialization information. Сreate masteries for specialization.
    *
    * @param specializationDto the user's specialization information as a DTO
    * @return the created user specialization information as a DTO
    */
+  @Transactional
   public SpecializationDto createSpecialization(SpecializationDto specializationDto,
       long userId) {
     specializationService.checkIsMainAndSpecializationNameAlreadyExist(specializationDto, userId);
@@ -373,6 +376,7 @@ public class UserService {
     specialization.setUser(user);
     user.getSpecializations().add(specialization);
     updateUser(user);
+    specializationService.createMasteriesForSpecialization(specialization.getId());
     return specializationDataMapper.toDto(specialization);
   }
 }
