@@ -39,6 +39,4 @@ public class Interview {
   private InterviewPoolEntry interviewerPoolEntry;
 
   private ZonedDateTime startTime;
-
-  private ZonedDateTime endTime;
 }
