@@ -1,12 +1,8 @@
 package com.ratifire.devrate.entity;
 
 
-import com.ratifire.devrate.configuration.InterviewTimeRangeConverter;
 import com.ratifire.devrate.enums.InterviewPoolEntryType;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -46,12 +42,14 @@ public class InterviewPoolEntry {
   @JoinColumn(name = "specialization_id", nullable = false)
   private Specialization specialization;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "mastery_id", nullable = false)
+  private Mastery mastery;
+
   @Column(name = "is_active", nullable = false)
   private boolean active;
 
   private ZonedDateTime expiredAt;
 
-  @Convert(converter = InterviewTimeRangeConverter.class)
-  @Column(columnDefinition = "tstzmultirange")
-  private List<InterviewTimeRange> dates;
+  private List<ZonedDateTime> dates;
 }
