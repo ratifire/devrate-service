@@ -95,4 +95,8 @@ public class User {
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "user_id", nullable = false)
   private List<InterviewPoolEntry> interviewPoolEntries;
+
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "user_id", nullable = false)
+  private List<UserInterview> interviews;
 }
