@@ -1,4 +1,4 @@
-package com.ratifire.devrate.entity;
+package com.ratifire.devrate.entity.interview;
 
 
 import jakarta.persistence.Entity;
@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.time.ZonedDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,14 +23,20 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "user_interviews")
-public class UserInterview {
+@Table(name = "interviews")
+public class Interview {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
   @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "interview_id", nullable = false)
-  private Interview interview;
+  @JoinColumn(name = "candidate_entry_id", nullable = false)
+  private InterviewPoolEntry candidatePoolEntry;
+
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "interviewer_entry_id", nullable = false)
+  private InterviewPoolEntry interviewerPoolEntry;
+
+  private ZonedDateTime startTime;
 }

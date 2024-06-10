@@ -1,6 +1,8 @@
-package com.ratifire.devrate.entity;
+package com.ratifire.devrate.entity.interview;
 
 
+import com.ratifire.devrate.entity.Mastery;
+import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.enums.InterviewPoolEntryType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

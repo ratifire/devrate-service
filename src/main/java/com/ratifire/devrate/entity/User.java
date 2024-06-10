@@ -1,5 +1,7 @@
 package com.ratifire.devrate.entity;
 
+import com.ratifire.devrate.entity.interview.InterviewPoolEntry;
+import com.ratifire.devrate.entity.interview.UserInterview;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
