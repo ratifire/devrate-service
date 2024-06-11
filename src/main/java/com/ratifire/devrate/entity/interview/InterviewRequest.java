@@ -2,8 +2,7 @@ package com.ratifire.devrate.entity.interview;
 
 
 import com.ratifire.devrate.entity.Mastery;
-import com.ratifire.devrate.entity.Specialization;
-import com.ratifire.devrate.enums.InterviewPoolEntryType;
+import com.ratifire.devrate.enums.InterviewRequestRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -30,19 +29,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "interview_pool_entries")
-public class InterviewPoolEntry {
+@Table(name = "interview_requests")
+public class InterviewRequest {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
   @Enumerated(EnumType.STRING)
-  private InterviewPoolEntryType type;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "specialization_id", nullable = false)
-  private Specialization specialization;
+  private InterviewRequestRole role;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "mastery_id", nullable = false)

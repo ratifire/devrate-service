@@ -31,12 +31,12 @@ public class Interview {
   private long id;
 
   @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "candidate_entry_id", nullable = false)
-  private InterviewPoolEntry candidatePoolEntry;
+  @JoinColumn(name = "candidate_request_id", nullable = false)
+  private InterviewRequest candidateRequest;
 
   @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "interviewer_entry_id", nullable = false)
-  private InterviewPoolEntry interviewerPoolEntry;
+  @JoinColumn(name = "interviewer_request_id", nullable = false)
+  private InterviewRequest interviewerRequest;
 
   private ZonedDateTime startTime;
 }
