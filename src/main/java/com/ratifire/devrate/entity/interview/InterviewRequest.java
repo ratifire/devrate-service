@@ -22,7 +22,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Entity class representing an entry in the interview pool.
+ * Entity class representing an interview request entry.
  */
 @Data
 @Builder
