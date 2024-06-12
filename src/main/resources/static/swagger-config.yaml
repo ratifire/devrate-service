@@ -35,13 +35,20 @@ tags:
     description: Endpoints for user bookmark management
   - name: static data
     description: Endpoints for retrieving static data
+  - name: Specialization
+    description: Endpoints for user Specialization management
+  - name: Mastery
+    description: Endpoints for user Mastery management
+  - name: Skill
+    description: Endpoints for user Skill management
+
 paths:
   /auth/signup:
     post:
       tags:
         - registration
       description: Register a new user
-      security: []
+      security: [ ]
       operationId: registerUser
       requestBody:
         required: true
@@ -71,7 +78,7 @@ paths:
       tags:
         - registration
       description: Confirming the user's email by matching the code
-      security: []
+      security: [ ]
       operationId: confirmEmail
       parameters:
         - in: path
@@ -118,7 +125,7 @@ paths:
         - password-reset
       summary: Request Password Reset Code
       description: Requests a password reset code to be sent to the given email.
-      security: []
+      security: [ ]
       operationId: requestPasswordReset
       parameters:
         - in: query
@@ -153,7 +160,7 @@ paths:
         - password-reset
       summary: Reset Password
       description: Resets the user's password using a unique code received by the email.
-      security: []
+      security: [ ]
       operationId: resetPassword
       requestBody:
         required: true
@@ -186,7 +193,7 @@ paths:
         - authentication
       summary: Authenticate user
       description: Authenticates a user based on the provided login credentials.
-      security: []
+      security: [ ]
       operationId: authenticateUser
       requestBody:
         required: true
@@ -231,7 +238,7 @@ paths:
         - authentication
       summary: Logs out the user
       description: Logs out the currently authenticated user.
-      security: []
+      security: [ ]
       parameters:
         - in: cookie
           name: JSESSIONID
@@ -1342,7 +1349,7 @@ paths:
         - static data
       summary: Get static files from user folder
       description: Returns the content of the static file by its name from the user folder.
-      security: []
+      security: [ ]
       parameters:
         - in: path
           name: filename
@@ -1369,6 +1376,411 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /data/specialization/{filename}:
+    get:
+      tags:
+        - static data
+      summary: Get static file from specialization folder
+      description: "Returns the content of the static file by its name from the specialization 
+      folder."
+      parameters:
+        - in: path
+          name: filename
+          description: Name of the static file to retrieve.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: File not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /user/{userId}/specializations:
+    get:
+      tags:
+        - Specialization
+      summary: Get specializations by user ID
+      description: Returns a list of specializations for the specified user.
+      parameters:
+        - in: path
+          name: userId
+          description: ID of the user
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SpecializationDto'
+        '400':
+          description: Bad Request. The request cannot be fulfilled due to bad syntax
+    post:
+      tags:
+        - Specialization
+      summary: Create specialization for user
+      description: Creates a new specialization and associates it with the specified user.
+      parameters:
+        - in: path
+          name: userId
+          description: ID of the user
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Specialization information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpecializationDto'
+      responses:
+        '200':
+          description: Specialization created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpecializationDto'
+        '400':
+          description: Bad Request. The request cannot be fulfilled due to bad syntax
+  /specializations/{id}:
+    get:
+      summary: Retrieve specialization by ID
+      tags:
+        - Specialization
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the specialization
+      responses:
+        '200':
+          description: Specialization found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpecializationDto'
+        '400':
+          description: Bad Request. The request cannot be fulfilled due to bad syntax.
+    delete:
+      summary: Delete specialization by ID
+      tags:
+        - Specialization
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the specialization
+      responses:
+        '200':
+          description: Specialization deleted
+  /specializations/{id}/main-mastery:
+    get:
+      summary: Retrieve main mastery by Specialization ID
+      tags:
+        - Specialization
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the specialization
+      responses:
+        '200':
+          description: Main mastery found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MasteryDto'
+        '400':
+          description: Bad Request. The request cannot be fulfilled due to bad syntax.
+  /specializations/{id}/masteries:
+    get:
+      summary: Retrieve list of masteries by Specialization ID
+      tags:
+        - Specialization
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the specialization
+      responses:
+        '200':
+          description: List of masteries found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MasteryDto'
+        '400':
+          description: Bad Request. The request cannot be fulfilled due to bad syntax.
+  /specializations:
+    put:
+      summary: Update specialization name by specialization ID
+      tags:
+        - Specialization
+      requestBody:
+        description: Updated specialization information
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int64
+                  description: The unique identifier for the specialization
+                name:
+                  type: string
+                  description: The name of the specialization
+              required:
+                - id
+                - name
+      responses:
+        '200':
+          description: Specialization updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpecializationDto'
+        '400':
+          description: Bad Request. The request cannot be fulfilled due to bad syntax.
+  /specializations/{id}/set-main:
+    put:
+      summary: Set main specialization status by Specialization ID
+      tags:
+        - Specialization
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the specialization
+      responses:
+        '200':
+          description: Main specialization set
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpecializationDto'
+        '400':
+          description: Bad Request. The request cannot be fulfilled due to bad syntax.
+  /specializations/{specId}/set-main-mastery/{masteryId}:
+    put:
+      summary: Set new main mastery by Specialization ID and Mastery ID
+      tags:
+        - Specialization
+      parameters:
+        - name: specId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the specialization
+        - name: masteryId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the mastery
+      responses:
+        '200':
+          description: Main mastery set
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MasteryDto'
+        '400':
+          description: Bad Request. The request cannot be fulfilled due to bad syntax.
+  /masteries/{id}:
+    get:
+      summary: Retrieve Mastery by ID
+      tags:
+        - Mastery
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the mastery
+      responses:
+        '200':
+          description: Mastery found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MasteryDto'
+        '400':
+          description: Bad Request. The request cannot be fulfilled due to bad syntax.
+  /masteries/{id}/skills:
+    get:
+      summary: Retrieve list of skills by Mastery ID
+      tags:
+        - Mastery
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the mastery
+      responses:
+        '200':
+          description: List of skills found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SkillDto'
+        '400':
+          description: Bad Request. The request cannot be fulfilled due to bad syntax.
+  /masteries/{id}/skill:
+    post:
+      summary: Create a skill and associate it with the specified Mastery by ID
+      tags:
+        - Mastery
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the mastery
+      requestBody:
+        description: Skill information
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the skill
+              required:
+                - name
+      responses:
+        '200':
+          description: Skill created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillDto'
+        '400':
+          description: Bad Request. The request cannot be fulfilled due to bad syntax.
+  /masteries:
+    put:
+      summary: Update Mastery by ID
+      tags:
+        - Mastery
+      requestBody:
+        description: Updated mastery information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MasteryDto'
+      responses:
+        '200':
+          description: Mastery updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MasteryDto'
+        '400':
+          description: Bad Request. The request cannot be fulfilled due to bad syntax.
+  /skills/{id}:
+    get:
+      summary: Retrieve Skill by ID
+      tags:
+        - Skill
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the skill
+      responses:
+        '200':
+          description: Skill found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillDto'
+        '400':
+          description: Bad Request. The request cannot be fulfilled due to bad syntax.
+    delete:
+      summary: Delete Skill by ID
+      tags:
+        - Skill
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the skill
+      responses:
+        '204':
+          description: Skill deleted
+  /skills/{id}/calculate-mark/{mark}:
+    put:
+      summary: Calculate average mark and update skill information
+      tags:
+        - Skill
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the skill
+        - name: mark
+          in: path
+          required: true
+          schema:
+            type: number
+          description: New mark to be included in the average calculation
+      responses:
+        '200':
+          description: Skill updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillDto'
+        '404':
+          description: Skill not found
 components:
   securitySchemes:
     basicAuth:
@@ -1651,5 +2063,60 @@ components:
       required:
         - code
         - newPassword
+    SpecializationDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The unique identifier for the specialization
+          readOnly: true
+        name:
+          type: string
+          description: The name of the specialization
+        main:
+          type: boolean
+          description: Whether the specialization is the main specialization
+      required:
+        - name
+        - main
+    MasteryDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The unique identifier for the mastery
+          readOnly: true
+        name:
+          type: string
+          description: The name of the mastery level (JUNIOR (1), MIDDLE (2), SENIOR (3))
+        softSkillMark:
+          type: number
+          format: double
+          description: The soft skill mark for the mastery
+        hardSkillMark:
+          type: number
+          format: double
+          description: The hard skill mark for the mastery
+      required:
+        - name
+    SkillDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The unique identifier for the skill
+          readOnly: true
+        name:
+          type: string
+          description: The name of the skill
+        averageMark:
+          type: number
+          format: double
+          description: The average mark for the skill
+      required:
+        - name
 security:
-  - basicAuth: []
+  - basicAuth: [ ]
