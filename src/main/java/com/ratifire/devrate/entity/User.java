@@ -1,5 +1,6 @@
 package com.ratifire.devrate.entity;
 
+import com.ratifire.devrate.entity.interview.InterviewRequest;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -92,4 +93,7 @@ public class User {
       orphanRemoval = true)
   private List<Specialization> specializations;
 
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "user_id", nullable = false)
+  private List<InterviewRequest> interviewRequests;
 }
