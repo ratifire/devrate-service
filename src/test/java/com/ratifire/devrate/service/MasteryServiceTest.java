@@ -107,7 +107,7 @@ public class MasteryServiceTest {
   }
 
   @Test
-  public void getSkillsByMasteryId() {
+  public void getSkillsByMasteryIdTest() {
     when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
     when(dataMapper.toDto(masteryMid.getSkills())).thenReturn(new ArrayList<>());
 
