@@ -1,15 +1,21 @@
 package com.ratifire.devrate.service.specialization;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Skill;
+import com.ratifire.devrate.enums.SkillType;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.MasteryRepository;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -64,13 +70,39 @@ public class MasteryService {
   }
 
   /**
+   * Retrieves list of softSkills by MasteryID.
+   *
+   * @param id the ID of the Mastery
+   * @return list of softSkills as dto.
+   * @throws ResourceNotFoundException if Mastery is not found
+   */
+  public List<SkillDto> getSoftSkillsByMasteryId(Long id) {
+    return getSkillsByMasteryId(id).stream()
+        .filter(skillDto -> skillDto.getType() == SkillType.SOFT_SKILL)
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * Retrieves list of hardSkills by MasteryID.
+   *
+   * @param id the ID of the Mastery
+   * @return list of hardSkills as dto.
+   * @throws ResourceNotFoundException if Mastery is not found
+   */
+  public List<SkillDto> getHardSkillsByMasteryId(Long id) {
+    return getSkillsByMasteryId(id).stream()
+        .filter(skillDto -> skillDto.getType() == SkillType.HARD_SKILL)
+        .collect(Collectors.toList());
+  }
+
+  /**
    * Retrieves list of skills by MasteryID.
    *
    * @param id the ID of the Mastery
    * @return list of skills as dto.
    * @throws ResourceNotFoundException if Mastery is not found
    */
-  public List<SkillDto> getSkillsByMasteryId(long id) {
+  private List<SkillDto> getSkillsByMasteryId(long id) {
     Mastery mastery = getMasteryById(id);
     return skillMapper.toDto(mastery.getSkills());
   }
@@ -87,7 +119,7 @@ public class MasteryService {
     Mastery mastery = getMasteryById(masteryId);
     existSkillByName(masteryId, skillDto.getName());
     Skill skill = skillMapper.toEntity(skillDto);
-    skill.setAverageMark(BigDecimal.ONE);
+    skill.setAverageMark(BigDecimal.ZERO);
     mastery.getSkills().add(skill);
     masteryRepository.save(mastery);
     return skillMapper.toDto(skill);
@@ -103,6 +135,50 @@ public class MasteryService {
   private void existSkillByName(long id, String name) {
     if (masteryRepository.existsByIdAndSkills_Name(id, name)) {
       throw new ResourceAlreadyExistException("Skill with name " + name + " already exists");
+    }
+  }
+
+  /**
+   * Creates skills for mastery.
+   */
+  public void createSkillsForMastery(Mastery mastery) {
+    List<Skill> skillList = createSkillList();
+    mastery.setSkills(skillList);
+    masteryRepository.save(mastery);
+  }
+
+  /**
+   * Generates a list of softSkills entities with default values of name and other.
+   */
+  private List<Skill> createSkillList() {
+    List<String> skillNames = loadDefaultSkills();
+    return skillNames.stream()
+        .map(skillName -> Skill.builder()
+            .name(skillName)
+            .counter(0)
+            .averageMark(BigDecimal.ZERO)
+            .grows(true)
+            .type(SkillType.SOFT_SKILL)
+            .build())
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * Loads the default skills from a JSON file.
+   *
+   * @return List of skill names as Strings.
+   */
+  private List<String> loadDefaultSkills() {
+    String path = "/static/data/specialization/deafult-soft-skill-names.json";
+    ObjectMapper objectMapper = new ObjectMapper();
+    try (InputStream inputStream = getClass().getResourceAsStream(path)) {
+      if (inputStream == null) {
+        throw new ResourceNotFoundException("Json resource not found.");
+      }
+      return objectMapper.readValue(inputStream, new TypeReference<List<String>>() {
+      });
+    } catch (IOException e) {
+      throw new ResourceNotFoundException("Failed to load default skills");
     }
   }
 }

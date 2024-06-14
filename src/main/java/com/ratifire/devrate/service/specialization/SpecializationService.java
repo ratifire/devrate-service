@@ -159,13 +159,15 @@ public class SpecializationService {
   }
 
   /**
-   * Creates Masteries for specialization.
+   * Creates Masteries for specialization and softSkills for Masteries.
    */
+  @Transactional
   public void createMasteriesForSpecialization(long specializationId) {
     Specialization specialization = findSpecializationById(specializationId);
     List<Mastery> masteryList = createMasteryList();
     specialization.setMasteries(masteryList);
     specializationRepository.save(specialization);
+    createSkillsForMasteries(specializationId);
   }
 
   /**
@@ -180,6 +182,18 @@ public class SpecializationService {
             .hardSkillMark(BigDecimal.ZERO)
             .build())
         .collect(Collectors.toList());
+  }
+
+  /**
+   * Creates default skills for all masteries within a given specialization.
+   *
+   * @param specId the ID of the specialization for which to create skills
+   */
+  public void createSkillsForMasteries(long specId) {
+    List<Mastery> masteryDtoList = findSpecializationById(specId).getMasteries();
+    for (Mastery mastery : masteryDtoList) {
+      masteryService.createSkillsForMastery(mastery);
+    }
   }
 
   /**
