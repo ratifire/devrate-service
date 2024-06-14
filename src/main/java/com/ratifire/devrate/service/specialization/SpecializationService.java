@@ -194,7 +194,7 @@ public class SpecializationService {
     List<Mastery> masteryDtoList = findSpecializationById(specId).getMasteries();
     List<Skill> skillNames = masteryService.createSkillList();
     for (Mastery mastery : masteryDtoList) {
-      masteryService.createSkillsForMastery(mastery, skillNames);
+      masteryService.setSkillsForMastery(mastery, skillNames);
     }
   }
 

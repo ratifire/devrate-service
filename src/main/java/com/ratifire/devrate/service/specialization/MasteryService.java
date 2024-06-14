@@ -139,9 +139,9 @@ public class MasteryService {
   }
 
   /**
-   * Creates skills for mastery.
+   * Set skills for mastery.
    */
-  public void createSkillsForMastery(Mastery mastery, List<Skill> skillList) {
+  public void setSkillsForMastery(Mastery mastery, List<Skill> skillList) {
     mastery.setSkills(skillList);
     masteryRepository.save(mastery);
   }
