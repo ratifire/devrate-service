@@ -26,12 +26,7 @@ public class MasteryService {
   private final MasteryRepository masteryRepository;
   private final DataMapper<MasteryDto, Mastery> masteryMapper;
   private final DataMapper<SkillDto, Skill> skillMapper;
-  private List<String> deafultskillNameList;
-
-  @Autowired
-  public void setDefaultSoftSkills(List<String> skillNames) {
-    this.deafultskillNameList = skillNames;
-  }
+  private final List<String> defaultSoftSkills;
 
   /**
    * Retrieves Mastery by ID.
@@ -144,16 +139,17 @@ public class MasteryService {
   /**
    * Set skills for mastery.
    */
-  public void setSkillsForMastery(Mastery mastery, List<Skill> skillList) {
-    mastery.setSkills(skillList);
+  public void setSkillsForMastery(Mastery mastery) {
+    mastery.setSkills(defaultSoftSkills(defaultSoftSkills));
     masteryRepository.save(mastery);
   }
 
   /**
-   * Generates a list of softSkills entities with default values of name and other.
+   * Bean for generates a list of softSkills entities with default values of name and other.
    */
-  public List<Skill> createSkillList() {
-    return deafultskillNameList.stream()
+  @Autowired
+  private List<Skill> defaultSoftSkills(List<String> defaultSoftSkills) {
+    return defaultSoftSkills.stream()
         .map(skillName -> Skill.builder()
             .name(skillName)
             .counter(0)

@@ -21,8 +21,8 @@ public class SkillListConfiguration {
    * @return List of skill names as Strings.
    */
   @Bean
-  public List<String> loadDefaultSkills() {
-    String path = "/static/data/specialization/deafult-soft-skill-names.json";
+  public List<String> defaultSoftSkills() {
+    String path = "/static/data/specialization/default-soft-skill-names.json";
     ObjectMapper objectMapper = new ObjectMapper();
     try (InputStream inputStream = getClass().getResourceAsStream(path)) {
       if (inputStream == null) {

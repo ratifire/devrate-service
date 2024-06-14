@@ -3,7 +3,6 @@ package com.ratifire.devrate.service.specialization;
 import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.entity.Mastery;
-import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
@@ -193,8 +192,7 @@ public class SpecializationService {
   private void createSkillsForMasteries(long specId) {
     List<Mastery> masteryDtoList = findSpecializationById(specId).getMasteries();
     for (Mastery mastery : masteryDtoList) {
-      List<Skill> deafultskillNameList = masteryService.createSkillList();
-      masteryService.setSkillsForMastery(mastery, deafultskillNameList);
+      masteryService.setSkillsForMastery(mastery);
     }
   }
 
