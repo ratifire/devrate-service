@@ -99,6 +99,7 @@ public class MasteryServiceTest {
     when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
 
     MasteryDto result = masteryService.update(masteryDtoJun);
+
     assertNotNull(result);
     assertEquals(masteryDtoJun, result);
     verify(dataMapper).updateEntity(masteryDtoJun, masteryMid);
@@ -109,6 +110,7 @@ public class MasteryServiceTest {
   public void getSkillsByMasteryId() {
     when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
     when(dataMapper.toDto(masteryMid.getSkills())).thenReturn(new ArrayList<>());
+
     List<SkillDto> result = masteryService.getSkillsByMasteryId(masteryMid.getId());
 
     assertNotNull(result);
