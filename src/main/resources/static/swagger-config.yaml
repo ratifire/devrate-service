@@ -33,6 +33,8 @@ tags:
     description: Endpoints for user achievement management
   - name: bookmark
     description: Endpoints for user bookmark management
+  - name: interview summary
+    description: Endpoints for interview summary management
   - name: static data
     description: Endpoints for retrieving static data
   - name: Specialization
@@ -1310,6 +1312,79 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /users/{userId}/interview-summaries:
+    get:
+      tags:
+        - interview summary
+      summary: Get interview summaries By UserId
+      description: Retrieves all user`s interview summaries based on the provided UserId.
+      operationId: getInterviewSummariesByUserId
+      parameters:
+        - in: path
+          name: userId
+          description: The ID of the user to associate the interview summaries with.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InterviewSummaryDto'
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /users/{userId}/interview-summaries/{id}:
+    delete:
+      tags:
+        - interview summary
+      summary: Delete interview summary By ID
+      description: Deletes the association between a user and an interview summary.
+      operationId: deleteInterviewSummary
+      parameters:
+        - in: path
+          name: userId
+          description: The ID of the user whose association with the interview summary is to be deleted.
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - in: path
+          name: id
+          description: The ID of the interview summary to delete.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad request, e.g., missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /data/languageproficiency/{filename}:
     get:
       tags:
@@ -2051,6 +2126,29 @@ components:
         - link
         - summary
         - description
+    InterviewSummaryDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The unique identifier for the interview summary
+        date:
+          type: string
+          format: date
+          description: The date of the interview
+        duration:
+          type: integer
+          format: int64
+          description: The duration of the interview in minutes
+        candidateId:
+          type: integer
+          format: int64
+          description: The ID of the candidate
+        interviewerId:
+          type: integer
+          format: int64
+          description: The ID of the interviewer
     PasswordResetDto:
       type: object
       properties:
