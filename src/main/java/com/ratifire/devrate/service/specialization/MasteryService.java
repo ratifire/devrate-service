@@ -1,7 +1,5 @@
 package com.ratifire.devrate.service.specialization;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.entity.Mastery;
@@ -11,12 +9,11 @@ import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.MasteryRepository;
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,6 +26,12 @@ public class MasteryService {
   private final MasteryRepository masteryRepository;
   private final DataMapper<MasteryDto, Mastery> masteryMapper;
   private final DataMapper<SkillDto, Skill> skillMapper;
+  private List<String> deafultskillNameList;
+
+  @Autowired
+  public void setDefaultSoftSkills(List<String> skillNames) {
+    this.deafultskillNameList = skillNames;
+  }
 
   /**
    * Retrieves Mastery by ID.
@@ -150,8 +153,7 @@ public class MasteryService {
    * Generates a list of softSkills entities with default values of name and other.
    */
   public List<Skill> createSkillList() {
-    List<String> skillNames = loadDefaultSkills();
-    return skillNames.stream()
+    return deafultskillNameList.stream()
         .map(skillName -> Skill.builder()
             .name(skillName)
             .counter(0)
@@ -160,24 +162,5 @@ public class MasteryService {
             .type(SkillType.SOFT_SKILL)
             .build())
         .collect(Collectors.toList());
-  }
-
-  /**
-   * Loads the default skills from a JSON file.
-   *
-   * @return List of skill names as Strings.
-   */
-  private List<String> loadDefaultSkills() {
-    String path = "/static/data/specialization/deafult-soft-skill-names.json";
-    ObjectMapper objectMapper = new ObjectMapper();
-    try (InputStream inputStream = getClass().getResourceAsStream(path)) {
-      if (inputStream == null) {
-        throw new ResourceNotFoundException("Json resource not found.");
-      }
-      return objectMapper.readValue(inputStream, new TypeReference<List<String>>() {
-      });
-    } catch (IOException e) {
-      throw new ResourceNotFoundException("Failed to load default skills");
-    }
   }
 }

@@ -192,9 +192,9 @@ public class SpecializationService {
    */
   private void createSkillsForMasteries(long specId) {
     List<Mastery> masteryDtoList = findSpecializationById(specId).getMasteries();
-    List<Skill> skillNames = masteryService.createSkillList();
     for (Mastery mastery : masteryDtoList) {
-      masteryService.setSkillsForMastery(mastery, skillNames);
+      List<Skill> deafultskillNameList = masteryService.createSkillList();
+      masteryService.setSkillsForMastery(mastery, deafultskillNameList);
     }
   }
 
