@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,9 +23,9 @@ import org.springframework.stereotype.Service;
 public class MasteryService {
 
   private final MasteryRepository masteryRepository;
+  private final SkillService skillService;
   private final DataMapper<MasteryDto, Mastery> masteryMapper;
   private final DataMapper<SkillDto, Skill> skillMapper;
-  private final List<String> defaultSoftSkills;
 
   /**
    * Retrieves Mastery by ID.
@@ -140,23 +139,7 @@ public class MasteryService {
    * Set skills for mastery.
    */
   public void setSkillsForMastery(Mastery mastery) {
-    mastery.setSkills(defaultSoftSkills(defaultSoftSkills));
+    mastery.setSkills(skillService.loadSoftSkills());
     masteryRepository.save(mastery);
-  }
-
-  /**
-   * Bean for generates a list of softSkills entities with default values of name and other.
-   */
-  @Autowired
-  private List<Skill> defaultSoftSkills(List<String> defaultSoftSkills) {
-    return defaultSoftSkills.stream()
-        .map(skillName -> Skill.builder()
-            .name(skillName)
-            .counter(0)
-            .averageMark(BigDecimal.ZERO)
-            .grows(true)
-            .type(SkillType.SOFT_SKILL)
-            .build())
-        .collect(Collectors.toList());
   }
 }
