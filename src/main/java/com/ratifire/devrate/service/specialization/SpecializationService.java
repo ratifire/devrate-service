@@ -167,7 +167,7 @@ public class SpecializationService {
     List<Mastery> masteryList = createMasteryList();
     specialization.setMasteries(masteryList);
     specializationRepository.save(specialization);
-    createSkillsForMasteries(specializationId);
+    createSkillsForMasteries(masteryList);
   }
 
   /**
@@ -186,12 +186,9 @@ public class SpecializationService {
 
   /**
    * Creates default skills for all masteries within a given specialization.
-   *
-   * @param specId the ID of the specialization for which to create skills
    */
-  private void createSkillsForMasteries(long specId) {
-    List<Mastery> masteryDtoList = findSpecializationById(specId).getMasteries();
-    for (Mastery mastery : masteryDtoList) {
+  private void createSkillsForMasteries(List<Mastery> masteryList) {
+    for (Mastery mastery : masteryList) {
       masteryService.setSkillsForMastery(mastery);
     }
   }
