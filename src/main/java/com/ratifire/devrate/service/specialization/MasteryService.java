@@ -141,8 +141,7 @@ public class MasteryService {
   /**
    * Creates skills for mastery.
    */
-  public void createSkillsForMastery(Mastery mastery) {
-    List<Skill> skillList = createSkillList();
+  public void createSkillsForMastery(Mastery mastery, List<Skill> skillList) {
     mastery.setSkills(skillList);
     masteryRepository.save(mastery);
   }
@@ -150,7 +149,7 @@ public class MasteryService {
   /**
    * Generates a list of softSkills entities with default values of name and other.
    */
-  private List<Skill> createSkillList() {
+  public List<Skill> createSkillList() {
     List<String> skillNames = loadDefaultSkills();
     return skillNames.stream()
         .map(skillName -> Skill.builder()
