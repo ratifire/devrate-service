@@ -55,6 +55,38 @@ WHERE NOT EXISTS (SELECT 1
                   FROM masteries
                   WHERE id = masteries.id);
 
+--  Create skills records
+INSERT INTO skills (id, name, type, average_mark, counter, is_grows, mastery_id)
+SELECT *
+FROM (VALUES  (101, 'Communication', 'SOFT_SKILL', 5.31, 3, true, 10001),
+              (102, 'Problem-Solving', 'SOFT_SKILL', 8.12, 5, false, 10001),
+              (103, 'Adaptability', 'SOFT_SKILL', 9.83, 8, true, 10001),
+              (104, 'Critical Thinking', 'SOFT_SKILL', 8.83, 4, true, 10001),
+              (105, 'Time Management', 'SOFT_SKILL', 8.83, 9, true, 10001),
+              (106, 'Java Core', 'HARD_SKILL', 8.88, 9, true, 10001),
+              (107, 'Git Hub', 'HARD_SKILL', 8.38, 9, false, 10001),
+              (108, 'Hibernate', 'HARD_SKILL', 0, 0, true, 10001),
+              (109, 'Communication', 'SOFT_SKILL', 5.31, 3, true, 10002),
+              (110, 'Problem-Solving', 'SOFT_SKILL', 8.12, 5, false, 10002),
+              (111, 'Adaptability', 'SOFT_SKILL', 9.83, 8, true, 10002),
+              (112, 'Critical Thinking', 'SOFT_SKILL', 8.83, 4, true, 10002),
+              (113, 'Time Management', 'SOFT_SKILL', 8.83, 9, true, 10002),
+              (114, 'Java Core', 'HARD_SKILL', 8.88, 9, true, 10002),
+              (115, 'Git Hub', 'HARD_SKILL', 8.38, 9, false, 10002),
+              (116, 'Hibernate', 'HARD_SKILL', 0, 0, true, 10002),
+              (117, 'Communication', 'SOFT_SKILL', 5.31, 3, true, 10003),
+              (118, 'Problem-Solving', 'SOFT_SKILL', 8.12, 5, false, 10003),
+              (119, 'Adaptability', 'SOFT_SKILL', 9.83, 8, true, 10003),
+              (120, 'Critical Thinking', 'SOFT_SKILL', 8.83, 4, true, 10003),
+              (121, 'Time Management', 'SOFT_SKILL', 8.83, 9, true, 10003),
+              (122, 'Java Core', 'HARD_SKILL', 8.88, 9, true, 10003),
+              (123, 'Git Hub', 'HARD_SKILL', 8.38, 9, false, 10003),
+              (124, 'Hibernate', 'HARD_SKILL', 0, 0, true, 10003))
+         AS skills (id, name, type, average_mark, counter, is_grows, mastery_id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM skills
+                  WHERE id = skills.id);
+
 -- Update specializations records
 UPDATE specializations
 SET main_mastery_id = 10001
