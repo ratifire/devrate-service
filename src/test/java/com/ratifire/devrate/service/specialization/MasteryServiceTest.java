@@ -1,4 +1,4 @@
-package com.ratifire.devrate.service;
+package com.ratifire.devrate.service.specialization;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -15,7 +15,6 @@ import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.MasteryRepository;
-import com.ratifire.devrate.service.specialization.MasteryService;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
