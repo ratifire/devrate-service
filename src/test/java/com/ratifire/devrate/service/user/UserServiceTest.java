@@ -2,7 +2,6 @@ package com.ratifire.devrate.service.user;
 
 import static com.ratifire.devrate.enums.ContactType.GITHUB_LINK;
 import static com.ratifire.devrate.enums.ContactType.TELEGRAM_LINK;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -17,16 +16,19 @@ import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
+import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.Bookmark;
 import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.LanguageProficiency;
+import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.UserRepository;
+import com.ratifire.devrate.service.specialization.SpecializationService;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,6 +56,9 @@ class UserServiceTest {
   @Mock
   private UserRepository userRepository;
 
+  @Mock
+  private SpecializationService specializationService;
+
   private final long userId = 1L;
   private User testUser;
   private EmploymentRecordDto employmentRecordDto;
@@ -69,6 +74,9 @@ class UserServiceTest {
   private BookmarkDto bookmarkDto;
   private List<ContactDto> contactDtos;
   private List<BookmarkDto> bookmarkDtos;
+  private SpecializationDto specializationDto;
+  private Specialization specialization;
+  private List<SpecializationDto> specializationDtos;
 
   /**
    * Setup method executed before each test method.
@@ -83,6 +91,7 @@ class UserServiceTest {
         .educations(new ArrayList<>())
         .contacts(new ArrayList<>())
         .bookmarks(new ArrayList<>())
+        .specializations(new ArrayList<>())
         .build();
 
     employmentRecordDto = EmploymentRecordDto.builder()
@@ -160,6 +169,26 @@ class UserServiceTest {
     bookmarkDtos = Arrays.asList(
         new BookmarkDto(1L, "User1", "https:/user1"),
         new BookmarkDto(2L, "User2", "https:/user2")
+    );
+
+    specializationDto = SpecializationDto.builder()
+        .id(6661L)
+        .name("Frontend Developer")
+        .main(true)
+        .build();
+
+    specialization = Specialization.builder()
+        .id(6661L)
+        .main(true)
+        .name("Frontend Developer")
+        .completedInterviews(11)
+        .conductedInterviews(4)
+        .user(User.builder().build())
+        .build();
+
+    specializationDtos = Arrays.asList(
+        specializationDto,
+        SpecializationDto.builder().build()
     );
   }
 
@@ -298,5 +327,23 @@ class UserServiceTest {
 
     assertThrows(UserNotFoundException.class,
         () -> userService.createBookmark(userId, bookmarkDto));
+  }
+
+  @Test
+  public void testGetSpecializationsByUserId() {
+    when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
+    when(dataMapper.toDto(anyList())).thenReturn(specializationDtos);
+
+    List<SpecializationDto> result = userService.getSpecializationsByUserId(userId);
+    assertEquals(specializationDtos, result);
+  }
+
+  @Test
+  public void testCreateSpecialization() {
+    when(userRepository.findById(userId)).thenReturn(Optional.ofNullable(testUser));
+    when(dataMapper.toEntity(specializationDto)).thenReturn(specialization);
+
+    userService.createSpecialization(specializationDto, userId);
+    assertTrue(testUser.getSpecializations().contains(specialization));
   }
 }
