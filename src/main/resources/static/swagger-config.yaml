@@ -1409,7 +1409,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /user/{userId}/specializations:
+  /users/{userId}/specializations:
     get:
       tags:
         - Specialization
