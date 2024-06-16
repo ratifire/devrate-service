@@ -1,0 +1,29 @@
+post:
+  tags:
+    - registration
+  description: Register a new user
+  security: [ ]
+  operationId: registerUser
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/UserRegistrationDto.yaml'
+  responses:
+    '200':
+      description: User registered successfully
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '409':
+      description: User already exists
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

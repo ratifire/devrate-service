@@ -1,0 +1,62 @@
+get:
+  tags:
+    - user info
+  summary: Get user by user ID
+  description: Retrieve a specific user personal info based on the user ID
+  operationId: findById
+  parameters:
+    - in: path
+      name: id
+      description: The user ID of the user personal info to retrieve
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/UserDto.yaml'
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+delete:
+  tags:
+    - user info
+  summary: Delete user by user ID
+  description: Delete a specific user personal info based on the user ID
+  operationId: delete
+  parameters:
+    - in: path
+      name: id
+      description: The user ID of the user personal info to delete
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: Successful operation
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

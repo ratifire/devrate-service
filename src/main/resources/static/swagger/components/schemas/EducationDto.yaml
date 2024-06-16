@@ -1,0 +1,28 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+    description: The unique identifier for the education
+    readOnly: true
+  type:
+    type: string
+    description: The type of education
+  name:
+    type: string
+    description: The name of the education
+  description:
+    type: string
+    description: Description of the education
+  startYear:
+    type: integer
+    description: The starting year of the education
+  endYear:
+    type: integer
+    description: The ending year of the education
+required:
+  - type
+  - name
+  - description
+  - startYear
+  - endYear

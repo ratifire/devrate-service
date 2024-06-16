@@ -1,0 +1,26 @@
+put:
+  summary: Set new main mastery by Specialization ID and Mastery ID
+  tags:
+    - Specialization
+  parameters:
+    - name: specId
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: ID of the specialization
+    - name: masteryId
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: ID of the mastery
+  responses:
+    '200':
+      description: Main mastery set
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/MasteryDto.yaml'
+    '400':
+      description: Bad Request. The request cannot be fulfilled due to bad syntax.

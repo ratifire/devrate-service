@@ -1,0 +1,45 @@
+put:
+  tags:
+    - registration
+  description: Confirming the user's email by matching the code
+  security: [ ]
+  operationId: confirmEmail
+  parameters:
+    - in: path
+      name: code
+      required: true
+      schema:
+        type: string
+      description: The confirmation code to be checked against the stored code.
+  responses:
+    '201':
+      description: Email confirmation code successfully confirmed
+      content:
+        application/json:
+          schema:
+            type: integer
+            description: The registered user ID.
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '404':
+      description: Code not found
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '410':
+      description: The confirmation code has expired
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

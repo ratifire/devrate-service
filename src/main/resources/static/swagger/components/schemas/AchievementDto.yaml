@@ -1,0 +1,20 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+    description: The unique identifier for the achievement
+    readOnly: true
+  link:
+    type: string
+    description: The link of achievement
+  summary:
+    type: string
+    description: The summary of the achievement
+  description:
+    type: string
+    description: Description of the achievement
+required:
+  - link
+  - summary
+  - description
