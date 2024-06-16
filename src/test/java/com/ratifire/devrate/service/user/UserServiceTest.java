@@ -3,6 +3,7 @@ package com.ratifire.devrate.service.user;
 import static com.ratifire.devrate.enums.ContactType.GITHUB_LINK;
 import static com.ratifire.devrate.enums.ContactType.TELEGRAM_LINK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -15,6 +16,7 @@ import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
+import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.entity.Achievement;
@@ -22,11 +24,14 @@ import com.ratifire.devrate.entity.Bookmark;
 import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
+import com.ratifire.devrate.entity.InterviewSummary;
 import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.exception.InterviewSummaryNotFoundException;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
+import com.ratifire.devrate.repository.InterviewSummaryRepository;
 import com.ratifire.devrate.repository.UserRepository;
 import com.ratifire.devrate.service.specialization.SpecializationService;
 import java.time.LocalDate;
@@ -59,8 +64,13 @@ class UserServiceTest {
   @Mock
   private SpecializationService specializationService;
 
+  @Mock
+  private InterviewSummaryRepository interviewSummaryRepository;
+
   private final long userId = 1L;
+  private final long interviewSummaryId = 1L;
   private User testUser;
+  private InterviewSummary testInterviewSummary;
   private EmploymentRecordDto employmentRecordDto;
   private EmploymentRecord employmentRecord;
   private List<LanguageProficiencyDto> languageProficiencyDtos;
@@ -77,6 +87,7 @@ class UserServiceTest {
   private SpecializationDto specializationDto;
   private Specialization specialization;
   private List<SpecializationDto> specializationDtos;
+  private List<InterviewSummaryDto> interviewSummaryDtos;
 
   /**
    * Setup method executed before each test method.
@@ -92,7 +103,13 @@ class UserServiceTest {
         .contacts(new ArrayList<>())
         .bookmarks(new ArrayList<>())
         .specializations(new ArrayList<>())
+        .interviewSummaries(new ArrayList<>())
         .build();
+
+    testInterviewSummary = InterviewSummary.builder()
+        .id(interviewSummaryId)
+        .build();
+    testUser.getInterviewSummaries().add(testInterviewSummary);
 
     employmentRecordDto = EmploymentRecordDto.builder()
         .id(1L)
@@ -189,6 +206,13 @@ class UserServiceTest {
     specializationDtos = Arrays.asList(
         specializationDto,
         SpecializationDto.builder().build()
+    );
+
+    interviewSummaryDtos = Arrays.asList(
+        new InterviewSummaryDto(1L, LocalDate.of(
+            2023, 6, 14), 60L, 1L, 2L),
+        new InterviewSummaryDto(2L, LocalDate.of(
+            2023, 6, 15), 45L, 1L, 3L)
     );
   }
 
@@ -345,5 +369,34 @@ class UserServiceTest {
 
     userService.createSpecialization(specializationDto, userId);
     assertTrue(testUser.getSpecializations().contains(specialization));
+  }
+
+  @Test
+  void getInterviewSummaries_Successful_ReturnInterviewSummaryDtos() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(dataMapper.toDto(anyList())).thenReturn(interviewSummaryDtos);
+
+    List<InterviewSummaryDto> result = userService.getInterviewSummariesByUserId(userId);
+
+    assertEquals(interviewSummaryDtos, result);
+  }
+
+  @Test
+  void deleteInterviewSummary_Successful() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(interviewSummaryRepository.findById(any())).thenReturn(Optional.of(testInterviewSummary));
+
+    userService.deleteInterviewSummary(userId, interviewSummaryId);
+
+    assertFalse(testUser.getInterviewSummaries().contains(testInterviewSummary));
+  }
+
+  @Test
+  void deleteInterviewSummary_InterviewSummaryNotFound_ThrowsInterviewSummaryNotFoundException() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(interviewSummaryRepository.findById(any())).thenReturn(Optional.empty());
+
+    assertThrows(InterviewSummaryNotFoundException.class,
+        () -> userService.deleteInterviewSummary(userId, interviewSummaryId));
   }
 }
