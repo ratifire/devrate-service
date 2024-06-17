@@ -1,0 +1,24 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+    description: The unique identifier for the contact
+    readOnly: true
+  type:
+    type: string
+    description: "The type of the contact. The type can only be one of the following: 
+          EMAIL, PHONE_NUMBER, TELEGRAM_LINK, LINKEDIN_LINK, GITHUB_LINK, BEHANCE_LINK."
+    enum:
+      - EMAIL
+      - PHONE_NUMBER
+      - TELEGRAM_LINK
+      - LINKEDIN_LINK
+      - GITHUB_LINK
+      - BEHANCE_LINK
+  value:
+    type: string
+    description: The value of the contact
+required:
+  - type
+  - value

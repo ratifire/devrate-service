@@ -106,11 +106,22 @@ public class MasteryServiceTest {
   }
 
   @Test
-  public void getSkillsByMasteryIdTest() {
+  public void getSoftSkillsByMasteryIdTest() {
     when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
     when(dataMapper.toDto(masteryMid.getSkills())).thenReturn(new ArrayList<>());
 
-    List<SkillDto> result = masteryService.getSkillsByMasteryId(masteryMid.getId());
+    List<SkillDto> result = masteryService.getSoftSkillsByMasteryId(masteryMid.getId());
+
+    assertNotNull(result);
+    assertEquals(masteryMid.getSkills().size(), result.size());
+  }
+
+  @Test
+  public void getHardSkillsByMasteryIdTest() {
+    when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
+    when(dataMapper.toDto(masteryMid.getSkills())).thenReturn(new ArrayList<>());
+
+    List<SkillDto> result = masteryService.getHardSkillsByMasteryId(masteryMid.getId());
 
     assertNotNull(result);
     assertEquals(masteryMid.getSkills().size(), result.size());

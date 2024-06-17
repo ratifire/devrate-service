@@ -1,0 +1,18 @@
+get:
+  tags:
+    - Notification
+  summary: Connect to WebSocket notifications
+  description: Establish a WebSocket connection to receive real-time notifications.
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/NotificationDto.yaml'
+    '401':
+      description: Unauthorized, e.g., invalid email or password
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

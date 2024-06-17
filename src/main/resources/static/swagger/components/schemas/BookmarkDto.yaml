@@ -1,0 +1,15 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: The unique identifier for the bookmark
+    readOnly: true
+  name:
+    type: string
+    description: The name of the bookmark
+  link:
+    type: string
+    description: The link of the bookmark
+required:
+  - name
+  - link

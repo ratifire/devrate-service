@@ -1,0 +1,70 @@
+get:
+  tags:
+    - bookmark
+  summary: Get bookmarks By UserId
+  description: Retrieves all user`s bookmarks based on the provided UserId.
+  operationId: getBookmarksByUserId
+  parameters:
+    - in: path
+      name: userId
+      description: The ID of the user to associate the bookmarks with.
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../components/schemas/BookmarkDto.yaml'
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+post:
+  tags:
+    - bookmark
+  summary: Create new bookmark
+  description: Creates a new bookmark for a specified user.
+  operationId: createBookmark
+  parameters:
+    - in: path
+      name: userId
+      description: The ID of the user for whom the bookmarks is being created.
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/BookmarkDto.yaml'
+  responses:
+    '200':
+      description: Successful operation
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

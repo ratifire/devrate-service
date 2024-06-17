@@ -1,7 +1,10 @@
 package com.ratifire.devrate.entity;
 
+import com.ratifire.devrate.enums.SkillType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,6 +37,9 @@ public class Skill {
   private BigDecimal averageMark;
 
   private long counter;
+
+  @Enumerated(EnumType.STRING)
+  private SkillType type;
 
   @Column(name = "is_grows", nullable = false)
   private boolean grows;
