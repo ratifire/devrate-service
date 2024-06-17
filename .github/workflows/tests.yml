@@ -6,7 +6,7 @@
 # separ  ate terms of  service,privacy policy, and support
 # documentation.
 
-name: test
+name: tests
 
 on:
   workflow_run:
