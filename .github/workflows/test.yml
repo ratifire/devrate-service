@@ -10,14 +10,15 @@ name: test
 
 on:
   workflow_run:
-    workflows:
-      - build
+    workflows: [ "build" ]
     types:
       - completed
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    needs: build
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - uses: actions/checkout@v3
