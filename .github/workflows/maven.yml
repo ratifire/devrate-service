@@ -28,21 +28,21 @@ jobs:
           cache: maven
       - name: Build with Maven
         run: mvn clean install -DskipTests
-#
-#  test:
-#    runs-on: ubuntu-latest
-#    needs: build
-#
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Set up JDK 21
-#        uses: actions/setup-java@v3
-#        with:
-#          java-version: '21'
-#          distribution: 'temurin'
-#          cache: maven
-#      - name: Test with Maven
-#        run: mvn test
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+      - name: Test with Maven
+        run: mvn test
 
       #- name: Authenticate to Google Cloud
       #  uses: google-github-actions/auth@v2

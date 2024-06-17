@@ -1,16 +1,14 @@
-name: test
+name: tests
 
 on:
   workflow_run:
-    workflows:
-      - devrate-service build
+    workflows: ["devrate-service build"]
     types:
       - completed
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    needs: build
 
     steps:
       - uses: actions/checkout@v3
