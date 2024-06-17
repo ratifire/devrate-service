@@ -1,5 +1,5 @@
 get:
-  summary: Retrieve list of skills by Mastery ID
+  summary: Retrieve list of hardSkills by Mastery ID
   tags:
     - Mastery
   parameters:
@@ -11,7 +11,7 @@ get:
       description: ID of the mastery
   responses:
     '200':
-      description: List of skills found
+      description: List of hardSkills found
       content:
         application/json:
           schema:
