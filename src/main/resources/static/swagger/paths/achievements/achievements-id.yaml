@@ -1,0 +1,101 @@
+get:
+  tags:
+    - achievement
+  summary: Get Achievement By ID
+  description: Retrieves achievement based on the provided ID.
+  operationId: getById
+  parameters:
+    - in: path
+      name: id
+      description: The ID of the achievement to retrieve.
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: The achievement corresponding to the provided ID
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/AchievementDto.yaml'
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+put:
+  tags:
+    - achievement
+  summary: Update Achievement By ID
+  description: Updates an existing achievement identified by the provided ID.
+  operationId: update
+  parameters:
+    - in: path
+      name: id
+      description: The ID of the achievement to update.
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/AchievementDto.yaml'
+  responses:
+    '200':
+      description: The updated achievement
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/AchievementDto.yaml'
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+delete:
+  tags:
+    - achievement
+  summary: Delete Achievement By ID
+  description: Deletes achievement identified by the provided ID.
+  operationId: delete
+  parameters:
+    - in: path
+      name: id
+      description: The ID of the employment record to delete.
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: Achievement deleted successfully
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

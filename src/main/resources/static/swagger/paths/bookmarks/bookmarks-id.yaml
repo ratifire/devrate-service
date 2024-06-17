@@ -1,0 +1,29 @@
+delete:
+  tags:
+    - bookmark
+  summary: Delete Bookmark By ID
+  description: Deletes a bookmark by the provided ID.
+  operationId: delete
+  parameters:
+    - in: path
+      name: id
+      description: The ID of the bookmark to delete.
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: Successful operation
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

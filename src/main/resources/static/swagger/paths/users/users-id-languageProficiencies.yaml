@@ -1,0 +1,76 @@
+post:
+  tags:
+    - user info
+  summary: Save language proficiencies
+  description: Save language proficiencies of the specified user
+  operationId: saveLanguageProficiencies
+  parameters:
+    - in: path
+      name: userId
+      description: The ID of the user to associate the new language proficiencies with
+      required: true
+      schema:
+        type: integer
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '../../components/schemas/LanguageProficiencyDto.yaml'
+  responses:
+    '200':
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../components/schemas/LanguageProficiencyDto.yaml'
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+get:
+  tags:
+    - user info
+  summary: Get all language proficiencies by user ID
+  description: Retrieve all language proficiencies of the specified user
+  operationId: findAllLanguageProficienciesByUserId
+  parameters:
+    - in: path
+      name: userId
+      description: The ID of the user to associate the language proficiencies with
+      required: true
+      schema:
+        type: integer
+  responses:
+    '200':
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../components/schemas/LanguageProficiencyDto.yaml'
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

@@ -1,0 +1,51 @@
+get:
+  tags:
+    - Specialization
+  summary: Get specializations by user ID
+  description: Returns a list of specializations for the specified user.
+  parameters:
+    - in: path
+      name: userId
+      description: ID of the user
+      required: true
+      schema:
+        type: integer
+  responses:
+    '200':
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../components/schemas/SpecializationDto.yaml'
+    '400':
+      description: Bad Request. The request cannot be fulfilled due to bad syntax
+post:
+  tags:
+    - Specialization
+  summary: Create specialization for user
+  description: Creates a new specialization and associates it with the specified user.
+  parameters:
+    - in: path
+      name: userId
+      description: ID of the user
+      required: true
+      schema:
+        type: integer
+  requestBody:
+    description: Specialization information
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/SpecializationDto.yaml'
+  responses:
+    '200':
+      description: Specialization created
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/SpecializationDto.yaml'
+    '400':
+      description: Bad Request. The request cannot be fulfilled due to bad syntax

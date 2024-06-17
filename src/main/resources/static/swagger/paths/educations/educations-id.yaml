@@ -1,0 +1,101 @@
+get:
+  tags:
+    - education
+  summary: Get Education By ID
+  description: Retrieves an education record based on the provided ID.
+  operationId: getEducationById
+  parameters:
+    - in: path
+      name: id
+      description: The ID of the education to retrieve.
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: The education corresponding to the provided ID
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/EducationDto.yaml'
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+put:
+  tags:
+    - education
+  summary: Update Education By ID
+  description: Updates an existing education record identified by the provided ID.
+  operationId: updateEducation
+  parameters:
+    - in: path
+      name: id
+      description: The ID of the education to update.
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/EducationDto.yaml'
+  responses:
+    '200':
+      description: The updated education
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/EducationDto.yaml'
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+delete:
+  tags:
+    - education
+  summary: Delete Education By ID
+  description: Deletes an education record identified by the provided ID.
+  operationId: deleteEducation
+  parameters:
+    - in: path
+      name: id
+      description: The ID of the education to delete.
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: Education deleted successfully
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

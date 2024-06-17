@@ -1,0 +1,31 @@
+put:
+  summary: Update specialization name by specialization ID
+  tags:
+    - Specialization
+  requestBody:
+    description: Updated specialization information
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+              description: The unique identifier for the specialization
+            name:
+              type: string
+              description: The name of the specialization
+          required:
+            - id
+            - name
+  responses:
+    '200':
+      description: Specialization updated
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/SpecializationDto.yaml'
+    '400':
+      description: Bad Request. The request cannot be fulfilled due to bad syntax.

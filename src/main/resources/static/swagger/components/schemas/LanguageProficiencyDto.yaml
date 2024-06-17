@@ -1,0 +1,19 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: The unique identifier for the language proficiency
+    readOnly: true
+  name:
+    type: string
+    description: The name of the language
+  code:
+    type: string
+    description: The international code of the language
+  level:
+    type: string
+    description: The level of the language proficiency
+required:
+  - name
+  - code
+  - level

@@ -1,0 +1,71 @@
+get:
+  tags:
+    - employment records
+  summary: Get Employment record By UserId
+  description: Retrieves all user`s employment records based on the provided UserId.
+  operationId: findByUserId
+  parameters:
+    - in: path
+      name: userId
+      description: The userId of the employment record to retrieve.
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: The employment record corresponding to the provided userId
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/EmploymentRecordDto.yaml'
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+post:
+  tags:
+    - employment records
+  summary: Create New Employment Records
+  description: Creates a new employment record for a specified user.
+  operationId: createEmploymentRecord
+  parameters:
+    - in: path
+      name: userId
+      description: The ID of the user for whom the employment record is being created.
+      required: true
+      schema:
+        type: integer
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/EmploymentRecordDto.yaml'
+  responses:
+    '200':
+      description: The created employment records
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/EmploymentRecordDto.yaml'
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
