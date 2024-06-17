@@ -1,0 +1,41 @@
+type: object
+description: Required information for registering a new user
+properties:
+  id:
+    type: integer
+    description: The user ID that the user received upon registration
+  firstName:
+    type: string
+    description: The first name inputted by the user
+  lastName:
+    type: string
+    description: The last name inputted by the user
+  status:
+    type: string
+    description: The status (like Java Back-End or ReactJS etc.) inputted by the user
+  country:
+    type: string
+    description: The country chosen by the user for their account
+  city:
+    type: string
+    description: The city chosen by the user for their account
+  subscribed:
+    type: boolean
+    description: Flag indicating whether the user is subscribed to the newsletter
+  description:
+    type: string
+    description: The description by the user for their account
+  hardSkillMark:
+    type: number
+    description: The user's average hard skill mark by main specialization
+  softSkillMark:
+    type: number
+    description: The user's average soft skill mark by main specialization
+  completedInterviews:
+    type: integer
+    description: The count of completed user interviews
+  conductedInterviews:
+    type: integer
+    description: The count of completed user interviews
+required:
+  - id

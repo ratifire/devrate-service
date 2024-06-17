@@ -1,0 +1,15 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: ID of the notification
+  text:
+    type: string
+    maxLength: 100
+    description: Text content of the notification
+  read:
+    type: boolean
+    description: Indicates whether the notification has been read
+  userId:
+    type: integer
+    description: ID of the user to whom the notification belongs

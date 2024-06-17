@@ -1,0 +1,26 @@
+put:
+  summary: Calculate average mark and update skill information
+  tags:
+    - Skill
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: ID of the skill
+    - name: mark
+      in: path
+      required: true
+      schema:
+        type: number
+      description: New mark to be included in the average calculation
+  responses:
+    '200':
+      description: Skill updated
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/SkillDto.yaml'
+    '404':
+      description: Skill not found

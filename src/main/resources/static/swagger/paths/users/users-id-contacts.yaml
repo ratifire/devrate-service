@@ -1,0 +1,76 @@
+post:
+  tags:
+    - user info
+  summary: Save contacts
+  description: Save contacts of the specified users
+  operationId: saveContacts
+  parameters:
+    - in: path
+      name: userId
+      description: The ID of the user to associate the contacts with
+      required: true
+      schema:
+        type: integer
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '../../components/schemas/ContactDto.yaml'
+  responses:
+    '200':
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../components/schemas/ContactDto.yaml'
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+get:
+  tags:
+    - user info
+  summary: Get all contacts by user ID
+  description: Retrieve all contacts of the specified user
+  operationId: findAllContactsByUserId
+  parameters:
+    - in: path
+      name: userId
+      description: The ID of the user to associate the contacts with
+      required: true
+      schema:
+        type: integer
+  responses:
+    '200':
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../components/schemas/ContactDto.yaml'
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

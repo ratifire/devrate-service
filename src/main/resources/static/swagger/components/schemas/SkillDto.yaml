@@ -1,0 +1,16 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+    description: The unique identifier for the skill
+    readOnly: true
+  name:
+    type: string
+    description: The name of the skill
+  averageMark:
+    type: number
+    format: double
+    description: The average mark for the skill
+required:
+  - name

@@ -37,6 +37,7 @@ public class SecurityConfiguration {
       // -- authentication
       "/auth/**",
       // -- swagger ui
+      "/swagger/**",
       "/swagger-ui/**",
       "/swagger-config.yaml",
       "/v3/api-docs/**",
