@@ -15,7 +15,7 @@ on:
       - completed
 
 jobs:
-  test:
+  tests:
     runs-on: ubuntu-latest
     needs: build
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
