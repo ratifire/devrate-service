@@ -9,16 +9,14 @@
 name: test_wf
 
 on:
-  workflow_run:
-    workflows: [ "build" ]
-    types:
-      - completed
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
-  test_wf:
+  build:
     runs-on: ubuntu-latest
-    needs: build
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - uses: actions/checkout@v3
