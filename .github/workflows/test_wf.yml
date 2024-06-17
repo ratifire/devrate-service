@@ -6,7 +6,7 @@
 # separ  ate terms of  service,privacy policy, and support
 # documentation.
 
-name: tests
+name: test_wf
 
 on:
   workflow_run:
@@ -15,7 +15,7 @@ on:
       - completed
 
 jobs:
-  tests:
+  test_wf:
     runs-on: ubuntu-latest
     needs: build
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
