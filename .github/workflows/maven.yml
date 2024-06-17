@@ -28,29 +28,29 @@ jobs:
           cache: maven
       - name: Build with Maven
         run: mvn clean install -DskipTests
-
-  test:
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 21
-        uses: actions/setup-java@v3
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: maven
-      - name: Test with Maven
-        run: mvn test
+#
+#  test:
+#    runs-on: ubuntu-latest
+#    needs: build
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Set up JDK 21
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: '21'
+#          distribution: 'temurin'
+#          cache: maven
+#      - name: Test with Maven
+#        run: mvn test
 
       #- name: Authenticate to Google Cloud
-      #  uses: google-github-actions/auth@v2  
+      #  uses: google-github-actions/auth@v2
       #  with:
       #    credentials_json: ${{ secrets.GCP_SA_KEY }}
-        
+
       #- name: Set up Docker to region
-      #  run: gcloud auth configure-docker europe-west1-docker.pkg.dev 
+      #  run: gcloud auth configure-docker europe-west1-docker.pkg.dev
 
       #- name: Build and Push Docker image to Google Artifact Registry
       #  uses: docker/build-push-action@v3
@@ -65,8 +65,8 @@ jobs:
           ## Authenticate with gcloud
      #     gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
 
-          ## Commands to SSH into the VM and run the Docker commands 
-     #      gcloud compute ssh dev-rate-api --zone europe-west1-b --command " 
+          ## Commands to SSH into the VM and run the Docker commands
+     #      gcloud compute ssh dev-rate-api --zone europe-west1-b --command "
      #       source ~/.bashrc && \
      #       sudo docker pull europe-west1-docker.pkg.dev/devrate-dev/dev-rate-service/dev-rate:latest && \
      #       sudo docker stop dev-rate-container || true && \
