@@ -3,7 +3,9 @@ package com.ratifire.devrate.entity.interview;
 
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.enums.InterviewRequestRole;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -48,5 +50,9 @@ public class InterviewRequest {
 
   private ZonedDateTime expiredAt;
 
+  @ElementCollection(targetClass = ZonedDateTime.class, fetch = FetchType.LAZY)
+  @CollectionTable(name = "interview_request_dates",
+      joinColumns = @JoinColumn(name = "interview_request_id"))
+  @Column(name = "interview_request_dates", nullable = false)
   private List<ZonedDateTime> dates;
 }
