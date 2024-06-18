@@ -11,6 +11,7 @@ import com.ratifire.devrate.repository.MasteryRepository;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.Named;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
+@Named("MasteryService")
 public class MasteryService {
 
   private final MasteryRepository masteryRepository;
@@ -42,6 +44,7 @@ public class MasteryService {
    * @return the Mastery as entity
    * @throws ResourceNotFoundException if Mastery is not found
    */
+  @Named("getMasteryById")
   public Mastery getMasteryById(long id) {
     return masteryRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Mastery not found with id: " + id));
