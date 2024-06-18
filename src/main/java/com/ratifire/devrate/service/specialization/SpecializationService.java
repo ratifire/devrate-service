@@ -174,8 +174,8 @@ public class SpecializationService {
    */
   private List<Mastery> createMasteryList() {
     return Stream.of(MasteryLevel.values())
-        .map(level -> Mastery.builder()
-            .name(level)
+        .map(masteryLevel -> Mastery.builder()
+            .level(masteryLevel.getLevel())
             .softSkillMark(BigDecimal.ZERO)
             .hardSkillMark(BigDecimal.ZERO)
             .build())
