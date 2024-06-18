@@ -6,6 +6,7 @@ import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
+import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.SpecializationDto;
@@ -292,5 +293,17 @@ public class UserController {
   public SpecializationDto createSpecialization(
       @Valid @RequestBody SpecializationDto specializationDto, @PathVariable long userId) {
     return userService.createSpecialization(specializationDto, userId);
+  }
+
+  /**
+   * Adds an interview request for the specified user.
+   *
+   * @param userId           the ID of the user
+   * @param interviewRequest the interview request data
+   */
+  @PostMapping("/{userId}/interview-request")
+  public void createInterviewRequest(@PathVariable long userId,
+      @Valid @RequestBody InterviewRequestDto interviewRequest) {
+    userService.createInterviewRequest(userId, interviewRequest);
   }
 }
