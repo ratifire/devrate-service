@@ -18,7 +18,7 @@ public class MasteryDto {
   private Long id;
 
   @NotBlank(message = "Mastery name must not be null or empty")
-  private MasteryLevel name;
+  private MasteryLevel level;
 
   private BigDecimal softSkillMark;
 
