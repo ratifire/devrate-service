@@ -1,0 +1,130 @@
+openapi: 3.0.3
+info:
+  title: DevRate Platform API
+  description: API endpoints for managing user registration, interview processes, and candidate evaluations on the Devrate platform.
+  termsOfService: DevRate
+  contact:
+    name: DevRate
+    url: https://devrate.com
+    email: devrate@gmail.com
+  license:
+    name: DevRate
+    url: https://devrate.com
+  version: 0.0.1-SNAPSHOT
+servers:
+  - url: http://localhost:8080
+    description: Local environment
+  - url: https://devrate.com
+    description: Production environment
+tags:
+  - name: registration
+    description: endpoint for user registration
+  - name: Notification
+    description: Operations related to sending notifications
+  - name: authentication
+    description: Endpoints for user authentication
+  - name: password-reset
+    description: Endpoints for password reset functionality
+  - name: user info
+    description: Endpoints for user personal info functionality
+  - name: employment records
+    description: Endpoints for user Employment Records management
+  - name: achievement
+    description: Endpoints for user achievement management
+  - name: bookmark
+    description: Endpoints for user bookmark management
+  - name: interview summary
+    description: Endpoints for interview summary management
+  - name: static data
+    description: Endpoints for retrieving static data
+  - name: Specialization
+    description: Endpoints for user Specialization management
+  - name: Mastery
+    description: Endpoints for user Mastery management
+  - name: Skill
+    description: Endpoints for user Skill management
+
+paths:
+  /auth/signup:
+    $ref: './paths/auth/signup.yaml'
+  /auth/signup/{code}:
+    $ref: './paths/auth/signup-code.yaml'
+  /auth/request-password-reset:
+    $ref: './paths/auth/request-password-reset.yaml'
+  /auth/password-reset:
+    $ref: './paths/auth/password-reset.yaml'
+  /auth/signin:
+    $ref: './paths/auth/signin.yaml'
+  /auth/logout:
+    $ref: './paths/auth/logout.yaml'
+  /notifications:
+    $ref: './paths/notifications/notifications.yaml'
+  /ws/notifications:
+    $ref: './paths/notifications/ws-notifications.yaml'
+  /users/{id}:
+    $ref: './paths/users/users-id.yaml'
+  /users:
+    $ref: './paths/users/users.yaml'
+  /users/{userId}/language-proficiencies:
+    $ref: './paths/users/users-id-languageProficiencies.yaml'
+  /users/{userId}/pictures:
+    $ref: './paths/users/users-id-pictures.yaml'
+  /users/{userId}/contacts:
+    $ref: './paths/users/users-id-contacts.yaml'
+  /users/{userId}/educations:
+    $ref: './paths/users/users-id-educations.yaml'
+  /educations/{id}:
+    $ref: './paths/educations/educations-id.yaml'
+  /users/{userId}/employment-records:
+    $ref: './paths/users/users-id-employmentRecords.yaml'
+  /employment-records/{id}:
+    $ref: './paths/employmentRecords/employmentRecords-id.yaml'
+  /users/{userId}/achievements:
+    $ref: './paths/users/users-id-achievements.yaml'
+  /achievements/{id}:
+    $ref: './paths/achievements/achievements-id.yaml'
+  /users/{userId}/bookmarks:
+    $ref: './paths/users/users-id-bookmarks.yaml'
+  /bookmarks/{id}:
+    $ref: './paths/bookmarks/bookmarks-id.yaml'
+  /users/{userId}/interview-summaries:
+    $ref: './paths/users/users-id-interviewSummaries.yaml'
+  /users/{userId}/interview-summaries/{id}:
+    $ref: './paths/users/users-id-interviewSummaries-id.yaml'
+  /data/languageproficiency/{filename}:
+    $ref: './paths/data/data-languageproficiency-filename.yaml'
+  /data/user/{filename}:
+    $ref: './paths/data/data-user-filename.yaml'
+  /data/specialization/{filename}:
+    $ref: './paths/data/data-specialization-filename.yaml'
+  /users/{userId}/specializations:
+    $ref: './paths/users/users-id-specializations.yaml'
+  /specializations/{id}:
+    $ref: './paths/specializations/specializations-id.yaml'
+  /specializations/{id}/main-mastery:
+    $ref: './paths/specializations/specializations-id-mainMastery.yaml'
+  /specializations/{id}/masteries:
+    $ref: './paths/specializations/specializations-id-masteries.yaml'
+  /specializations:
+    $ref: './paths/specializations/specializations.yaml'
+  /specializations/{id}/set-main:
+    $ref: './paths/specializations/specializations-id-setMain.yaml'
+  /specializations/{specId}/set-main-mastery/{masteryId}:
+    $ref: './paths/specializations/specializations-id-setMainMastery-masteryId.yaml'
+  /masteries/{id}:
+    $ref: './paths/masteries/masteries-id.yaml'
+  /masteries/{id}/soft-skills:
+    $ref: './paths/masteries/masteries-id-soft-skills.yaml'
+  /masteries/{id}/hard-skills:
+    $ref: './paths/masteries/masteries-id-hard-skills.yaml'
+  /masteries/{id}/skill:
+    $ref: './paths/masteries/masteries-id-skill.yaml'
+  /masteries:
+    $ref: './paths/masteries/masteries.yaml'
+  /skills/{id}:
+    $ref: './paths/skills/skills-id.yaml'
+  /skills/{id}/calculate-mark/{mark}:
+    $ref: './paths/skills/skills-id-calculateMark-mark.yaml'
+
+security:
+  - basicAuth: [ ]

@@ -1,0 +1,71 @@
+get:
+  tags:
+    - achievement
+  summary: Get Achievements By UserId
+  description: Retrieves all user`s achievements based on the provided UserId.
+  operationId: getAchievementsByUserId
+  parameters:
+    - in: path
+      name: userId
+      description: The userId of the achievements to retrieve.
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: The achievements corresponding to the provided userId
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/AchievementDto.yaml'
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+post:
+  tags:
+    - achievement
+  summary: Create New Achievement
+  description: Creates a new achievement for a specified user.
+  operationId: createAchievement
+  parameters:
+    - in: path
+      name: userId
+      description: The ID of the user for whom the achievement is being created.
+      required: true
+      schema:
+        type: integer
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/AchievementDto.yaml'
+  responses:
+    '200':
+      description: The created achievement
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/AchievementDto.yaml'
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

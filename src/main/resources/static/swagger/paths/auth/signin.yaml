@@ -1,0 +1,40 @@
+post:
+  tags:
+    - authentication
+  summary: Authenticate user
+  description: Authenticates a user based on the provided login credentials.
+  security: [ ]
+  operationId: authenticateUser
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/LoginDto.yaml'
+  responses:
+    '200':
+      description: Successful authentication
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/UserDto.yaml'
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '401':
+      description: Unauthorized, e.g., invalid email or password
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '403':
+      description: User was not verified
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server

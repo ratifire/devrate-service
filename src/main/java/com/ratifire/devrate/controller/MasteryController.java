@@ -35,13 +35,23 @@ public class MasteryController {
   }
 
   /**
-   * Retrieves list of skills by MasteryID.
+   * Retrieves list of hard skills by MasteryID.
    *
    * @return the list of skills as a DTO
    */
-  @GetMapping("/{id}/skills")
-  public List<SkillDto> getSkillsByMasteryId(@PathVariable Long id) {
-    return masteryService.getSkillsByMasteryId(id);
+  @GetMapping("/{id}/hard-skills")
+  public List<SkillDto> getHardSkillsByMasteryId(@PathVariable Long id) {
+    return masteryService.getHardSkillsByMasteryId(id);
+  }
+
+  /**
+   * Retrieves list of soft skills by MasteryID.
+   *
+   * @return the list of skills as a DTO
+   */
+  @GetMapping("/{id}/soft-skills")
+  public List<SkillDto> getSoftSkillsByMasteryId(@PathVariable Long id) {
+    return masteryService.getSoftSkillsByMasteryId(id);
   }
 
   /**

@@ -1,0 +1,36 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+    description: The unique identifier for the employment record
+    readOnly: true
+  startDate:
+    type: string
+    format: date
+    description: The starting date of the employment record
+  endDate:
+    type: string
+    format: date
+    description: The ending date of the employment record
+  position:
+    type: string
+    description: The position held during employment
+  companyName:
+    type: string
+    description: The name of the company
+  description:
+    type: string
+    description: Description of the employment record
+  responsibilities:
+    type: array
+    items:
+      type: string
+    description: Responsibilities during employment
+required:
+  - startDate
+  - endDate
+  - position
+  - companyName
+  - description
+  - responsibilities
