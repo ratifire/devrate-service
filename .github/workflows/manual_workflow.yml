@@ -1,4 +1,4 @@
-name: tests
+name: manual workflow
 
 on:
   workflow_dispatch:
@@ -16,4 +16,4 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Test with Maven
-        run: mvn test
+        run: mvn clean install
