@@ -1,10 +1,7 @@
 name: tests
 
 on:
-  workflow_run:
-    workflows: ["devrate-service build"]
-    types:
-      - completed
+  workflow_dispatch:
 
 jobs:
   test:
