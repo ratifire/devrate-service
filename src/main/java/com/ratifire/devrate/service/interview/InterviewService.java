@@ -27,20 +27,21 @@ public class InterviewService {
     Interview interview = Interview.builder()
         .candidateRequest(candidate)
         .interviewerRequest(interviewer)
-        .startTime(getCommonStartTime(candidate.getDates(), interviewer.getDates()))
+        .startTime(
+            getMatchedStartTime(candidate.getAvailableDates(), interviewer.getAvailableDates()))
         .build();
 
     interviewRepository.save(interview);
   }
 
   /**
-   * Finds the common start time from the provided candidate and interviewer dates.
+   * Finds the matched start time from the provided candidate and interviewer dates.
    *
    * @param candidateDates   List of dates available for the candidate.
    * @param interviewerDates List of dates available for the interviewer.
-   * @return The common start time agreed upon by both parties.
+   * @return The matched start time agreed upon by both parties.
    */
-  private ZonedDateTime getCommonStartTime(List<ZonedDateTime> candidateDates,
+  private ZonedDateTime getMatchedStartTime(List<ZonedDateTime> candidateDates,
       List<ZonedDateTime> interviewerDates) {
     return candidateDates.stream()
         .filter(interviewerDates::contains)

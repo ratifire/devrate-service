@@ -19,5 +19,5 @@ public class InterviewRequestDto {
   @NotNull
   private Long masteryId;
   @NotNull
-  private List<ZonedDateTime> dates;
+  private List<ZonedDateTime> availableDates;
 }

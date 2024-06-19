@@ -54,5 +54,5 @@ public class InterviewRequest {
   @CollectionTable(name = "interview_request_dates",
       joinColumns = @JoinColumn(name = "interview_request_id"))
   @Column(name = "interview_request_dates", nullable = false)
-  private List<ZonedDateTime> dates;
+  private List<ZonedDateTime> availableDates;
 }

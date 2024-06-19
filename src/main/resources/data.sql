@@ -50,7 +50,7 @@ SELECT *
 FROM (VALUES (10001, 1, 5.31, 6.73, 6661),
              (10002, 2, 8.12, 5.25, 6661),
              (10003, 3, 8.83, 9.46, 6661))
-         AS masteries (id, name, soft_skill_mark, hard_skill_mark, specialization_id)
+         AS masteries (id, level, soft_skill_mark, hard_skill_mark, specialization_id)
 WHERE NOT EXISTS (SELECT 1
                   FROM masteries
                   WHERE id = masteries.id);

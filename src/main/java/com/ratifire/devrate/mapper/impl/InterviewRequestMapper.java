@@ -22,14 +22,16 @@ public abstract class InterviewRequestMapper implements
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "mastery", source = "dto.masteryId",
       qualifiedByName = {"MasteryService", "getMasteryById"})
-  @Mapping(target = "expiredAt", source = "dto.dates", qualifiedByName = "expiredAtFromDates")
+  @Mapping(target = "expiredAt", source = "dto.availableDates",
+      qualifiedByName = "expiredAtFromAvailableDates")
   @Mapping(target = "active", constant = "true")
   public abstract InterviewRequest toEntity(InterviewRequestDto dto);
 
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "mastery", source = "dto.masteryId",
       qualifiedByName = {"MasteryService", "getMasteryById"})
-  @Mapping(target = "expiredAt", source = "dto.dates", qualifiedByName = "expiredAtFromDates")
+  @Mapping(target = "expiredAt", source = "dto.availableDates",
+      qualifiedByName = "expiredAtFromAvailableDates")
   @Mapping(target = "active", constant = "true")
   public abstract InterviewRequest updateEntity(InterviewRequestDto dto,
       @MappingTarget InterviewRequest entity);
@@ -40,11 +42,11 @@ public abstract class InterviewRequestMapper implements
   /**
    * Returns the latest date from the given list of dates.
    *
-   * @param dates a list of ZonedDateTime objects
+   * @param availableDates a list of ZonedDateTime objects
    * @return the latest ZonedDateTime from the list
    */
-  @Named("expiredAtFromDates")
-  public static ZonedDateTime expiredAtFromDates(List<ZonedDateTime> dates) {
-    return Collections.max(dates);
+  @Named("expiredAtFromAvailableDates")
+  public static ZonedDateTime expiredAtFromAvailableDates(List<ZonedDateTime> availableDates) {
+    return Collections.max(availableDates);
   }
 }

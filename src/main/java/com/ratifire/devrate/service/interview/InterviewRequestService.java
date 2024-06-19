@@ -6,6 +6,8 @@ import com.ratifire.devrate.repository.interview.InterviewRequestRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +20,7 @@ public class InterviewRequestService {
 
   private final InterviewRequestRepository interviewRequestRepository;
   private final InterviewService interviewService;
+  private static final Logger logger = LoggerFactory.getLogger(InterviewRequestService.class);
 
   /**
    * Forces matching for the given interview request.
@@ -40,10 +43,11 @@ public class InterviewRequestService {
    */
   private void forceCandidateSearching(InterviewRequest interviewerRequest) {
     getMatchedCandidate(interviewerRequest)
-        .ifPresent(candidateRequest -> {
+        .ifPresentOrElse(candidateRequest -> {
           interviewService.createInterview(candidateRequest, interviewerRequest);
           markAsNonActive(candidateRequest, interviewerRequest);
-        });
+        }, () -> logger.debug("No matching candidate found for interviewer request: {}",
+            interviewerRequest));
   }
 
   /**
@@ -53,10 +57,11 @@ public class InterviewRequestService {
    */
   private void forceInterviewerSearching(InterviewRequest candidateRequest) {
     getMatchedInterviewer(candidateRequest)
-        .ifPresent(interviewerRequest -> {
+        .ifPresentOrElse(interviewerRequest -> {
           interviewService.createInterview(candidateRequest, interviewerRequest);
           markAsNonActive(candidateRequest, interviewerRequest);
-        });
+        }, () -> logger.debug("No matching interviewer found for candidate request: {}",
+            candidateRequest));
   }
 
   /**
@@ -82,9 +87,11 @@ public class InterviewRequestService {
    * @return An Optional containing the first matched InterviewRequest.
    */
   private Optional<InterviewRequest> getMatchedCandidate(InterviewRequest request) {
-    List<InterviewRequest> matched = interviewRequestRepository.findMatchedCandidates(
+    List<InterviewRequest> matchedCandidates = interviewRequestRepository.findMatchedCandidates(
         request);
-    return matched.isEmpty() ? Optional.empty() : Optional.of(matched.getFirst());
+    return matchedCandidates.isEmpty()
+        ? Optional.empty()
+        : Optional.of(matchedCandidates.getFirst());
   }
 
   /**
@@ -94,8 +101,10 @@ public class InterviewRequestService {
    * @return An Optional containing the first matched InterviewRequest.
    */
   private Optional<InterviewRequest> getMatchedInterviewer(InterviewRequest request) {
-    List<InterviewRequest> matched = interviewRequestRepository.findMatchedInterviewers(
+    List<InterviewRequest> matchedInterviewers = interviewRequestRepository.findMatchedInterviewers(
         request);
-    return matched.isEmpty() ? Optional.empty() : Optional.of(matched.getFirst());
+    return matchedInterviewers.isEmpty()
+        ? Optional.empty()
+        : Optional.of(matchedInterviewers.getFirst());
   }
 }
