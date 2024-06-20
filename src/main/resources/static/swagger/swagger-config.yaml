@@ -33,6 +33,8 @@ tags:
     description: Endpoints for user achievement management
   - name: bookmark
     description: Endpoints for user bookmark management
+  - name: Interview Request
+    description: Endpoints for interview request management
   - name: interview summary
     description: Endpoints for interview summary management
   - name: static data
@@ -87,6 +89,8 @@ paths:
     $ref: './paths/users/users-id-bookmarks.yaml'
   /bookmarks/{id}:
     $ref: './paths/bookmarks/bookmarks-id.yaml'
+  /users/{userId}/interview-requests:
+    $ref: './paths/users/users-id-interview-requests.yaml'
   /users/{userId}/interview-summaries:
     $ref: './paths/users/users-id-interviewSummaries.yaml'
   /users/{userId}/interview-summaries/{id}:
