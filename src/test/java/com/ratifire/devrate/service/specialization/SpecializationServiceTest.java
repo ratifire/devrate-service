@@ -64,19 +64,19 @@ public class SpecializationServiceTest {
   public void setUp() {
     midMastery = Mastery.builder()
         .id(1L)
-        .name(MasteryLevel.MIDDLE)
+        .level(MasteryLevel.MIDDLE.getLevel())
         .hardSkillMark(BigDecimal.valueOf(1))
         .softSkillMark(BigDecimal.valueOf(2)).build();
 
     junMastery = Mastery.builder()
         .id(2L)
-        .name(MasteryLevel.JUNIOR)
+        .level(MasteryLevel.JUNIOR.getLevel())
         .hardSkillMark(BigDecimal.valueOf(2))
         .softSkillMark(BigDecimal.valueOf(3)).build();
 
     masteryDto = MasteryDto.builder()
         .id(1L)
-        .name(MasteryLevel.MIDDLE)
+        .level(MasteryLevel.MIDDLE)
         .hardSkillMark(BigDecimal.valueOf(1))
         .softSkillMark(BigDecimal.valueOf(2))
         .build();

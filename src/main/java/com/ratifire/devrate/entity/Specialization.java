@@ -47,8 +47,8 @@ public class Specialization {
   @Column(name = "is_main", nullable = false)
   private boolean main;
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "specialization_id", nullable = false)
+  @OneToMany(mappedBy = "specialization", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
+      orphanRemoval = true)
   private List<Mastery> masteries;
 
   @ManyToOne(fetch = FetchType.LAZY)
