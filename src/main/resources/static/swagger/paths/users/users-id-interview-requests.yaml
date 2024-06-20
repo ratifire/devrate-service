@@ -1,0 +1,25 @@
+post:
+  tags:
+    - Interview Request
+  summary: Add an interview request for the specified user
+  description: Adds an interview request for the specified user.
+  parameters:
+    - in: path
+      name: userId
+      description: ID of the user
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    description: Interview request data
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/InterviewRequestDto.yaml'
+  responses:
+    '200':
+      description: Interview request created successfully
+    '400':
+      description: Bad Request. The request cannot be fulfilled due to bad syntax
