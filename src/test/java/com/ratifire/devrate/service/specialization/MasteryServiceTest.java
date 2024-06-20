@@ -55,14 +55,14 @@ public class MasteryServiceTest {
   public void setUp() {
     masteryJun = Mastery.builder()
         .id(1L)
-        .name(MasteryLevel.JUNIOR)
+        .level(MasteryLevel.JUNIOR.getLevel())
         .softSkillMark(BigDecimal.valueOf(5))
         .hardSkillMark(BigDecimal.valueOf(5))
         .skills(new ArrayList<>())
         .build();
     masteryMid = Mastery.builder()
         .id(2L)
-        .name(MasteryLevel.MIDDLE)
+        .level(MasteryLevel.MIDDLE.getLevel())
         .softSkillMark(BigDecimal.valueOf(6))
         .hardSkillMark(BigDecimal.valueOf(6))
         .skills(new ArrayList<>())
@@ -70,7 +70,7 @@ public class MasteryServiceTest {
 
     masteryDtoJun = MasteryDto.builder()
         .id(1L)
-        .name(MasteryLevel.JUNIOR)
+        .level(MasteryLevel.JUNIOR)
         .hardSkillMark(BigDecimal.valueOf(5))
         .softSkillMark(BigDecimal.valueOf(5))
         .build();
