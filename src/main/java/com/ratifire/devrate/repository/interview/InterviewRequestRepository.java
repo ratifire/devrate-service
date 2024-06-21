@@ -1,6 +1,7 @@
 package com.ratifire.devrate.repository.interview;
 
 import com.ratifire.devrate.entity.interview.InterviewRequest;
+import java.time.ZonedDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -40,4 +41,6 @@ public interface InterviewRequestRepository extends JpaRepository<InterviewReque
           AND EXISTS (SELECT 1 FROM req.dates d WHERE d IN :#{#request.dates})
       """)
   List<InterviewRequest> findMatchedInterviewers(@Param("request") InterviewRequest request);
+
+  List<InterviewRequest> findByExpiredAtBefore(ZonedDateTime currentDateTime);
 }
