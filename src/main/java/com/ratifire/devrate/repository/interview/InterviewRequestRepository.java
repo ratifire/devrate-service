@@ -25,7 +25,7 @@ public interface InterviewRequestRepository extends JpaRepository<InterviewReque
           AND req.id != :#{#request.id}
           AND req.role != :#{#request.role}
           AND mast.level <= :#{#request.mastery.level}
-          AND EXISTS (SELECT 1 FROM req.dates d WHERE d IN :#{#request.dates})
+          AND EXISTS (SELECT 1 FROM req.availableDates d WHERE d IN :#{#request.availableDates})
       """)
   List<InterviewRequest> findMatchedCandidates(@Param("request") InterviewRequest request);
 
@@ -38,7 +38,7 @@ public interface InterviewRequestRepository extends JpaRepository<InterviewReque
           AND req.id != :#{#request.id}
           AND req.role != :#{#request.role}
           AND mast.level >= :#{#request.mastery.level}
-          AND EXISTS (SELECT 1 FROM req.dates d WHERE d IN :#{#request.dates})
+          AND EXISTS (SELECT 1 FROM req.availableDates d WHERE d IN :#{#request.availableDates})
       """)
   List<InterviewRequest> findMatchedInterviewers(@Param("request") InterviewRequest request);
 
