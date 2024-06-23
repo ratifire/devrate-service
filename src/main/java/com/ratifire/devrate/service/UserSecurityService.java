@@ -75,4 +75,14 @@ public class UserSecurityService {
     return userSecurityRepository.findByEmail(email)
         .orElseThrow(UserSecurityNotFoundException::new);
   }
+
+  /**
+   * Finds the email address associated with a given user ID.
+   *
+   * @param userId the ID of the user whose email address is to be retrieved
+   * @return the email address of the user with the specified ID
+   */
+  public String findEmailByUserId(long userId) {
+    return userSecurityRepository.findEmailByUserId(userId);
+  }
 }
