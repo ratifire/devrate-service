@@ -83,6 +83,19 @@ public class EmailService {
   }
 
   /**
+   * Sends an email to notify the user that their interview request has expired.
+   *
+   * @param user  The user whose interview request has expired.
+   * @param email The email address of the user.
+   */
+  public void sendInterviewRequestExpiryEmail(User user, String email) {
+    String subject = "Interview Request Expired";
+    String text = buildTemplateEmailText("interview-request-expired-email",
+        Map.of("user", user));
+    sendEmail(email, subject, text);
+  }
+
+  /**
    * Sends a simple email message.
    *
    * @param recipient The recipient's email address.
