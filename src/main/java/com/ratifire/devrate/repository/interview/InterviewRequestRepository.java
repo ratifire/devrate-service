@@ -42,5 +42,5 @@ public interface InterviewRequestRepository extends JpaRepository<InterviewReque
       """)
   List<InterviewRequest> findMatchedInterviewers(@Param("request") InterviewRequest request);
 
-  List<InterviewRequest> findByExpiredAtBefore(ZonedDateTime currentDateTime);
+  List<InterviewRequest> findByActiveTrueAndExpiredAtBefore(ZonedDateTime currentDateTime);
 }
