@@ -88,7 +88,7 @@ public class SkillService {
    */
   private SkillDto setMarkCounterGrowAndSave(Skill skill, BigDecimal mark, long counter) {
     int comparisonResult = skill.getAverageMark().compareTo(mark);
-    skill.setGrows(comparisonResult >= 0);
+    skill.setGrows(comparisonResult <= 0);
     skill.setAverageMark(mark);
     skill.setCounter(counter);
     return skillMapper.toDto(skillRepository.save(skill));
