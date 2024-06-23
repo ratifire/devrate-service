@@ -65,7 +65,7 @@ public class WebSocketSessionRegistry {
    * @return a set of WebSocket sessions associated with the specified user login.
    */
   public Set<WebSocketSession> getUserSessions(String login) {
-    return sessions.get(login);
+    return sessions.computeIfAbsent(login, k -> ConcurrentHashMap.newKeySet());
   }
 
   /**

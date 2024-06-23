@@ -2,7 +2,7 @@ package com.ratifire.devrate.util.websocket;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doThrow;
@@ -92,7 +92,8 @@ public class WebSocketSessionRegistryTest {
   void getUserSessions_NoSessionsForLogin_ReturnsNull() {
     Set<WebSocketSession> actualSessions = sessionRegistry.getUserSessions(testLogin);
 
-    assertNull(actualSessions);
+    assertNotNull(actualSessions);
+    assertTrue(actualSessions.isEmpty());
   }
 
   @Test
