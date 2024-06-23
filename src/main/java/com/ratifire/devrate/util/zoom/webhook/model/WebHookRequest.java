@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 
-
 /**
  * Represents the payload for a Zoom event webhook.
  */
@@ -24,7 +23,8 @@ public class WebHookRequest {
   public static class Payload {
     @JsonProperty("account_id")
     private String accountId;
-    private MeetingObject object;
+    @JsonProperty("object")
+    private Meeting meeting;
     @JsonProperty("plain_token")
     private String plainToken;
 
@@ -33,14 +33,10 @@ public class WebHookRequest {
      */
     @Data
     @Builder
-    public static class MeetingObject {
+    public static class Meeting {
       private String id; // Meeting ID
       @JsonProperty("end_time")
       private String endTime; // End time of the meeting
     }
   }
 }
-
-
-
-

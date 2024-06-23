@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-
 /**
  * Service class for handling Zoom webhook events.
  * This service processes various webhook events sent by Zoom.
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class ZoomWebhookService {
-
 
   private final ZoomWebhookAuthService zoomWebhookAuthService;
 
@@ -49,7 +47,7 @@ public class ZoomWebhookService {
    * @return ResponseEntity with the status of the meeting.
    */
   private ResponseEntity<String> handleMeetingEndedEvent(WebHookRequest payload) {
-    WebHookRequest.Payload.MeetingObject payloadObject = payload.getPayload().getObject();
+    WebHookRequest.Payload.Meeting payloadObject = payload.getPayload().getMeeting();
     if (payloadObject == null) {
       return new ResponseEntity<>("Error: The payload or meeting details are missing.",
           HttpStatus.BAD_REQUEST);
@@ -62,8 +60,3 @@ public class ZoomWebhookService {
         + " ended at: " + endTime, HttpStatus.OK);
   }
 }
-
-
-
-
-

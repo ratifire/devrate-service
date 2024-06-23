@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-
 /**
  * Service class for handling Zoom webhook authentication and URL validation events.
  */
@@ -30,6 +29,8 @@ public class ZoomWebhookAuthService {
   private String zoomSecret;
 
   private final ObjectMapper objectMapper;
+
+  private final Formatter formatter;
 
   /**
    * Validates the received token.
@@ -67,7 +68,7 @@ public class ZoomWebhookAuthService {
    * @param plainToken The plain token.
    * @return The encrypted token.
    */
-  public String generateHmacSha256(String secret, String plainToken) {
+  private String generateHmacSha256(String secret, String plainToken) {
     try {
       Mac sha256Hmac = Mac.getInstance("HmacSHA256");
       SecretKeySpec secretKeySpec = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
@@ -87,14 +88,10 @@ public class ZoomWebhookAuthService {
    * @return The hexadecimal string.
    */
   private String bytesToHex(byte[] bytes) {
-    Formatter formatter = new Formatter();
+    formatter.flush();
     for (byte b : bytes) {
       formatter.format("%02x", b);
     }
-    String hexString = formatter.toString();
-    formatter.close();
-    return hexString;
+    return formatter.toString();
   }
-
 }
-

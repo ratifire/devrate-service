@@ -13,18 +13,15 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
-
 /**
  * Controller for handling Zoom webhook events.
  */
 @RestController
 @AllArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("/zoom")
 public class ZoomWebhookController {
 
   private final ZoomWebhookService zoomWebhookService;
-
 
   /**
    * Endpoint for receiving Zoom webhook events.
