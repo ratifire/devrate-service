@@ -25,6 +25,7 @@ public abstract class InterviewRequestMapper implements
   @Mapping(target = "expiredAt", source = "dto.availableDates",
       qualifiedByName = "expiredAtFromAvailableDates")
   @Mapping(target = "active", constant = "true")
+  @Mapping(target = "user", ignore = true)
   public abstract InterviewRequest toEntity(InterviewRequestDto dto);
 
   @Mapping(target = "id", ignore = true)
@@ -33,6 +34,7 @@ public abstract class InterviewRequestMapper implements
   @Mapping(target = "expiredAt", source = "dto.availableDates",
       qualifiedByName = "expiredAtFromAvailableDates")
   @Mapping(target = "active", constant = "true")
+  @Mapping(target = "user", ignore = true)
   public abstract InterviewRequest updateEntity(InterviewRequestDto dto,
       @MappingTarget InterviewRequest entity);
 
