@@ -164,7 +164,7 @@ public class SpecializationService {
   @Transactional
   public void createMasteriesForSpecialization(long specializationId) {
     Specialization specialization = findSpecializationById(specializationId);
-    List<Mastery> masteryList = createMasteryList();
+    List<Mastery> masteryList = createMasteryList(specialization);
     specialization.setMasteries(masteryList);
     specializationRepository.save(specialization);
     createSkillsForMasteries(masteryList);
@@ -173,13 +173,16 @@ public class SpecializationService {
   /**
    * Generates a list of mastery entities with default values for soft skill mark and hard skill
    * mark, covering all mastery levels available.
+   *
+   * @param specialization the specialization to associate with each mastery entity
    */
-  private List<Mastery> createMasteryList() {
+  private List<Mastery> createMasteryList(Specialization specialization) {
     return Stream.of(MasteryLevel.values())
         .map(masteryLevel -> Mastery.builder()
             .level(masteryLevel.getLevel())
             .softSkillMark(BigDecimal.ZERO)
             .hardSkillMark(BigDecimal.ZERO)
+            .specialization(specialization)
             .build())
         .collect(Collectors.toList());
   }
