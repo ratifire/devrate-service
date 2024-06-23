@@ -19,7 +19,7 @@ public class ZoomApiConfig {
   private final ZoomAuthHelper zoomAuthHelper;
 
   /**
-   * Provides {@link HttpHeaders} with the Zoom API authorization token.
+   * Provides HttpHeaders with the Zoom API authorization token.
    *
    * @return HttpHeaders containing the authorization token.
    * @throws ZoomAuthException if token retrieval fails.
@@ -34,7 +34,7 @@ public class ZoomApiConfig {
   }
 
   /**
-   * Creates {@link HttpHeaders} with content type set to JSON.
+   * Creates HttpHeaders with content type set to JSON.
    *
    * @return HttpHeaders with JSON content type.
    */
