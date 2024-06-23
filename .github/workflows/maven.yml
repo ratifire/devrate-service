@@ -28,11 +28,13 @@ jobs:
           cache: maven
 
       - name: Build with Maven
-        run: mvn clean install -DskipTests
+        run: mvn compile
 
       - name: Test with Maven
-        if: success()
-        run: mvn surefire:test
+        run: mvn test
+
+      - name: Test slow
+        run: mvn test -Pslow-tests
 
       #- name: Authenticate to Google Cloud
       #  uses: google-github-actions/auth@v2
