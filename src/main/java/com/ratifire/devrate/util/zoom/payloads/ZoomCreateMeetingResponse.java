@@ -8,7 +8,8 @@ import lombok.Data;
  */
 @Data
 public class ZoomCreateMeetingResponse {
-    public long id;
-    @JsonProperty("join_url")
-    public String joinUrl;
+
+  public long id;
+  @JsonProperty("join_url")
+  public String joinUrl;
 }
