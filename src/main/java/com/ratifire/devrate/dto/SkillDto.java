@@ -23,4 +23,6 @@ public class SkillDto {
   private SkillType type;
 
   private BigDecimal averageMark;
+
+  private boolean grows;
 }
