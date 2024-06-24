@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -36,7 +35,7 @@ public class ZoomApiClient {
       HttpEntity<?> httpEntity = new HttpEntity<>(jsonRequest, zoomAuthHeader);
       T body = restTemplate.postForEntity(url, httpEntity, response).getBody();
       return Optional.ofNullable(body);
-    } catch (RestClientException ex) {
+    } catch (Throwable ex) {
       logger.error("Error occurred while sending POST request to URL: {}: {}", url,
           ex.getMessage());
       return Optional.empty();

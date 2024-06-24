@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Configures the Zoom API authorization header using a token from ZoomAuthHelper.
@@ -17,6 +18,11 @@ public class ZoomApiConfig {
 
   private static final String BEARER_AUTHORIZATION = "Bearer %s";
   private final ZoomAuthHelper zoomAuthHelper;
+
+  @Bean
+  public RestTemplate restTemplate() {
+    return new RestTemplate();
+  }
 
   /**
    * Provides HttpHeaders with the Zoom API authorization token.
