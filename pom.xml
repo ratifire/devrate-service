@@ -127,8 +127,7 @@
         <version>3.1.2</version>
         <configuration>
           <includes>
-            <include>**/*Service*</include>
-            <include>**/websocket/**</include>
+            <include>**/devrate/**</include>
           </includes>
         </configuration>
       </plugin>
