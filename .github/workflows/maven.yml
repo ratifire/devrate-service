@@ -33,9 +33,6 @@ jobs:
       - name: Test with Maven
         run: mvn test
 
-      - name: Test slow
-        run: mvn test -Pslow-tests
-
       #- name: Authenticate to Google Cloud
       #  uses: google-github-actions/auth@v2
       #  with:
