@@ -42,7 +42,9 @@ public class SecurityConfiguration {
       "/swagger-config.yaml",
       "/v3/api-docs/**",
       // -- static resources
-      "/data/user/countries.json"
+      "/data/user/countries.json",
+      // -- zoom webhook
+      "/zoom/webhook/events"
   };
 
   @Bean
