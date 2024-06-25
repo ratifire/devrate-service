@@ -6,7 +6,6 @@ import com.ratifire.devrate.util.zoom.webhook.exception.ZoomWebhookException;
 import com.ratifire.devrate.util.zoom.webhook.model.TokenResponse;
 import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest;
 import java.nio.charset.StandardCharsets;
-import java.util.Formatter;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +28,6 @@ public class ZoomWebhookAuthService {
   private String zoomSecret;
 
   private final ObjectMapper objectMapper;
-
-  private final Formatter formatter;
 
   /**
    * Validates the received token.
@@ -88,10 +85,10 @@ public class ZoomWebhookAuthService {
    * @return The hexadecimal string.
    */
   private String bytesToHex(byte[] bytes) {
-    formatter.flush();
+    StringBuilder result = new StringBuilder();
     for (byte b : bytes) {
-      formatter.format("%02x", b);
+      result.append(String.format("%02x", b));
     }
-    return formatter.toString();
+    return result.toString();
   }
 }
