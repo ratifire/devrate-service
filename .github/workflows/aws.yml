@@ -34,7 +34,7 @@ env:
   ECR_REPOSITORY: devrate                     # set this to your Amazon ECR repository name
   ECS_SERVICE: MY_ECS_SERVICE                 # set this to your Amazon ECS service name
   ECS_CLUSTER: MY_ECS_CLUSTER                 # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION: arn:aws:ecs:us-east-1:905418137817:task-definition/devrateTD:1  # set this to the path to your Amazon ECS task definition
+  ECS_TASK_DEFINITION: devrateTD  # set this to the path to your Amazon ECS task definition
                                                # file, e.g. .aws/task-definition.json
   CONTAINER_NAME: MY_CONTAINER_NAME           # set this to the name of the container in the
                                                # containerDefinitions section of your task definition
