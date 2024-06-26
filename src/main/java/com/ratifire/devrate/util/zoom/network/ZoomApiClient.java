@@ -1,11 +1,14 @@
 package com.ratifire.devrate.util.zoom.network;
 
+import com.ratifire.devrate.util.zoom.authentication.ZoomAuthHelper;
+import com.ratifire.devrate.util.zoom.exception.ZoomAuthException;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -16,9 +19,11 @@ import org.springframework.web.client.RestTemplate;
 @AllArgsConstructor
 public class ZoomApiClient {
 
-  private final RestTemplate restTemplate;
-  private final HttpHeaders zoomAuthHeader;
   private static final Logger logger = LoggerFactory.getLogger(ZoomApiClient.class);
+  private static final String BEARER_AUTHORIZATION = "Bearer %s";
+
+  private final RestTemplate restTemplate;
+  private ZoomAuthHelper zoomAuthHelper;
 
   /**
    * Performs a POST request to the specified URL with the provided JSON request payload and returns
@@ -32,7 +37,7 @@ public class ZoomApiClient {
    */
   public <T> Optional<T> post(String url, String jsonRequest, Class<T> response) {
     try {
-      HttpEntity<?> httpEntity = new HttpEntity<>(jsonRequest, zoomAuthHeader);
+      HttpEntity<?> httpEntity = createHttpEntity(jsonRequest);
       T body = restTemplate.postForEntity(url, httpEntity, response).getBody();
       return Optional.ofNullable(body);
     } catch (Throwable ex) {
@@ -40,5 +45,24 @@ public class ZoomApiClient {
           ex.getMessage());
       return Optional.empty();
     }
+  }
+
+  private HttpEntity<?> createHttpEntity(String jsonRequest) throws ZoomAuthException {
+    HttpHeaders authHeader = createBearerAuthHeader(zoomAuthHelper
+        .getAuthenticationToken());
+    return new HttpEntity<>(jsonRequest, authHeader);
+  }
+
+  private HttpHeaders createBearerAuthHeader(String token) {
+    HttpHeaders headers = createHttpHeader();
+    String authToken = String.format(BEARER_AUTHORIZATION, token);
+    headers.set(HttpHeaders.AUTHORIZATION, authToken);
+    return headers;
+  }
+
+  private HttpHeaders createHttpHeader() {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    return headers;
   }
 }
