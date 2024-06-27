@@ -23,7 +23,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * Unit tests for the EducationService class.
+ * Unit tests for the EmploymentRecordService class.
  */
 @ExtendWith(MockitoExtension.class)
 class EmploymentRecordServiceTest {

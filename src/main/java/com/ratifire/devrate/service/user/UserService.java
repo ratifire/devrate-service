@@ -6,6 +6,8 @@ import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
+import com.ratifire.devrate.dto.InterviewRequestDto;
+import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.dto.UserDto;
@@ -15,13 +17,18 @@ import com.ratifire.devrate.entity.Bookmark;
 import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
+import com.ratifire.devrate.entity.InterviewSummary;
 import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.entity.interview.InterviewRequest;
+import com.ratifire.devrate.exception.InterviewSummaryNotFoundException;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
+import com.ratifire.devrate.repository.InterviewSummaryRepository;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
+import com.ratifire.devrate.service.interview.InterviewRequestService;
 import com.ratifire.devrate.service.specialization.SpecializationService;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
@@ -39,7 +46,9 @@ public class UserService {
 
   private final UserRepository userRepository;
   private final SpecializationRepository specializationRepository;
+  private final InterviewSummaryRepository interviewSummaryRepository;
   private final SpecializationService specializationService;
+  private final InterviewRequestService interviewRequestService;
   private final DataMapper<UserDto, User> userMapper;
   private final DataMapper<ContactDto, Contact> contactMapper;
   private final DataMapper<EducationDto, Education> educationMapper;
@@ -47,8 +56,9 @@ public class UserService {
   private final DataMapper<EmploymentRecordDto, EmploymentRecord> employmentRecordMapper;
   private final DataMapper<LanguageProficiencyDto, LanguageProficiency> languageProficiencyMapper;
   private final DataMapper<BookmarkDto, Bookmark> bookmarkMapper;
+  private final DataMapper<InterviewSummaryDto, InterviewSummary> interviewSummaryMapper;
   private final DataMapper<SpecializationDto, Specialization> specializationDataMapper;
-
+  private final DataMapper<InterviewRequestDto, InterviewRequest> interviewRequestMapper;
 
   /**
    * Retrieves a user by ID.
@@ -351,6 +361,31 @@ public class UserService {
   }
 
   /**
+   * Retrieves all interview summaries associated with the user.
+   *
+   * @param userId the ID of the user to associate the interview summaries with
+   * @return A list of InterviewSummaryDto objects.
+   */
+  public List<InterviewSummaryDto> getInterviewSummariesByUserId(long userId) {
+    User user = findUserById(userId);
+    return interviewSummaryMapper.toDto(user.getInterviewSummaries());
+  }
+
+  /**
+   * Deletes the association between a user and an interview summary.
+   *
+   * @param userId the ID of the user whose association with the interview summary is to be deleted
+   * @param id     the ID of the interview summary to be removed from the user's associations
+   */
+  public void deleteInterviewSummary(long userId, long id) {
+    User user = findUserById(userId);
+    InterviewSummary interviewSummary = interviewSummaryRepository.findById(id)
+        .orElseThrow(() -> new InterviewSummaryNotFoundException(id));
+    user.getInterviewSummaries().remove(interviewSummary);
+    userRepository.save(user);
+  }
+
+  /**
    * Retrieves specialization by user ID.
    *
    * @param userId the ID of the user
@@ -378,5 +413,20 @@ public class UserService {
     updateUser(user);
     specializationService.createMasteriesForSpecialization(specialization.getId());
     return specializationDataMapper.toDto(specialization);
+  }
+
+  /**
+   * Adds an interview request for a user and initiates the matching process.
+   *
+   * @param userId              the ID of the user
+   * @param interviewRequestDto the interview request data
+   */
+  public void createInterviewRequest(long userId, InterviewRequestDto interviewRequestDto) {
+    User user = findUserById(userId);
+    InterviewRequest interviewRequest = interviewRequestMapper.toEntity(interviewRequestDto);
+    user.getInterviewRequests().add(interviewRequest);
+    updateUser(user);
+
+    interviewRequestService.forceMatching(interviewRequest);
   }
 }

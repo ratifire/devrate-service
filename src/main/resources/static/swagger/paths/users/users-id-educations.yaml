@@ -1,0 +1,72 @@
+post:
+  tags:
+    - education
+  summary: Create New Education
+  description: Creates a new education record for a specified user.
+  operationId: createEducation
+  parameters:
+    - in: path
+      name: userId
+      description: The ID of the user for whom the education is being created.
+      required: true
+      schema:
+        type: integer
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/EducationDto.yaml'
+  responses:
+    '200':
+      description: The created education
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/EducationDto.yaml'
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+get:
+  tags:
+    - education
+  summary: Get all educations by user ID
+  description: Retrieve all educations of the specified user
+  operationId: getEducationsByUserId
+  parameters:
+    - in: path
+      name: userId
+      description: The ID of the user to associate the educations with
+      required: true
+      schema:
+        type: integer
+  responses:
+    '200':
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../components/schemas/EducationDto.yaml'
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

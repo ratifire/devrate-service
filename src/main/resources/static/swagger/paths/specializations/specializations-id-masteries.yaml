@@ -1,0 +1,22 @@
+get:
+  summary: Retrieve list of masteries by Specialization ID
+  tags:
+    - Specialization
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: ID of the specialization
+  responses:
+    '200':
+      description: List of masteries found
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../components/schemas/MasteryDto.yaml'
+    '400':
+      description: Bad Request. The request cannot be fulfilled due to bad syntax.

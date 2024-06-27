@@ -1,0 +1,101 @@
+get:
+  tags:
+    - employment records
+  summary: Get Employment record By ID
+  description: Retrieves all user`s employment records based on the provided ID.
+  operationId: findById
+  parameters:
+    - in: path
+      name: id
+      description: The ID of the employment record to retrieve.
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: The employment record corresponding to the provided ID
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/EmploymentRecordDto.yaml'
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+put:
+  tags:
+    - employment records
+  summary: Update employment-record By ID
+  description: Updates an existing employment-record identified by the provided ID.
+  operationId: update
+  parameters:
+    - in: path
+      name: id
+      description: The ID of the employment-record to update.
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/EmploymentRecordDto.yaml'
+  responses:
+    '200':
+      description: The updated education
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/EmploymentRecordDto.yaml'
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+delete:
+  tags:
+    - employment records
+  summary: Delete Employment Record By ID
+  description: Deletes an employment record identified by the provided ID.
+  operationId: delete
+  parameters:
+    - in: path
+      name: id
+      description: The ID of the employment record to delete.
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: Employment record deleted successfully
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

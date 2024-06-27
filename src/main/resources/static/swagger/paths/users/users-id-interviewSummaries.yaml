@@ -1,0 +1,35 @@
+get:
+  tags:
+    - interview summary
+  summary: Get interview summaries By UserId
+  description: Retrieves all user`s interview summaries based on the provided UserId.
+  operationId: getInterviewSummariesByUserId
+  parameters:
+    - in: path
+      name: userId
+      description: The ID of the user to associate the interview summaries with.
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../components/schemas/InterviewSummaryDto.yaml'
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

@@ -2,11 +2,14 @@ package com.ratifire.devrate.service.specialization;
 
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.entity.Skill;
+import com.ratifire.devrate.enums.SkillType;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SkillRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +22,7 @@ public class SkillService {
 
   private final SkillRepository skillRepository;
   private final DataMapper<SkillDto, Skill> skillMapper;
+  private final List<String> defaultSoftSkills;
 
   /**
    * Retrieves Skill by ID.
@@ -84,7 +88,7 @@ public class SkillService {
    */
   private SkillDto setMarkCounterGrowAndSave(Skill skill, BigDecimal mark, long counter) {
     int comparisonResult = skill.getAverageMark().compareTo(mark);
-    skill.setGrows(comparisonResult >= 0);
+    skill.setGrows(comparisonResult <= 0);
     skill.setAverageMark(mark);
     skill.setCounter(counter);
     return skillMapper.toDto(skillRepository.save(skill));
@@ -97,5 +101,20 @@ public class SkillService {
    */
   public void delete(long id) {
     skillRepository.deleteById(id);
+  }
+
+  /**
+   * Generates a list of softSkills entities with default values of name and other using bean.
+   */
+  public List<Skill> loadSoftSkills() {
+    return defaultSoftSkills.stream()
+        .map(skillName -> Skill.builder()
+            .name(skillName)
+            .counter(0)
+            .averageMark(BigDecimal.ZERO)
+            .grows(true)
+            .type(SkillType.SOFT_SKILL)
+            .build())
+        .collect(Collectors.toList());
   }
 }

@@ -1,0 +1,20 @@
+post:
+  tags:
+    - authentication
+  summary: Logs out the user
+  description: Logs out the currently authenticated user.
+  security: [ ]
+  parameters:
+    - in: cookie
+      name: JSESSIONID
+      description: Session ID cookie
+      required: true
+  responses:
+    '200':
+      description: Successful logout
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

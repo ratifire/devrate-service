@@ -64,6 +64,24 @@ public class NotificationService {
   }
 
   /**
+   * Adds a notification to inform the user that their interview request has expired.
+   *
+   * @param user The user to whom the expiration notification will be sent.
+   */
+  public void addInterviewRequestExpiryNotification(User user) {
+    String text = """
+        Dear {userFirstName},
+
+        Your interview request has expired.\s
+        Please submit a new request if you still wish to proceed.
+
+        Best regards,
+        DevRate""";
+
+    addNotification(text.replace("{userFirstName}", user.getFirstName()), user);
+  }
+
+  /**
    * Retrieves all notifications associated with a user's email.
    *
    * @param email The user's email.
