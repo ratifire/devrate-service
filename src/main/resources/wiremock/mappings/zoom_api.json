@@ -1,0 +1,16 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/users/me/meetings"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "id": 89635331342,
+      "join_url": "https://us05web.zoom.us/j/89635331342?pwd=DxasGmh9O66WFarcVCA0YtKQ2MBFm3.1"
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
