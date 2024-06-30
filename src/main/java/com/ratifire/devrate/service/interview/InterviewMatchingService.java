@@ -26,11 +26,9 @@ public class InterviewMatchingService {
    */
   @Transactional
   public Optional<InterviewRequest> match(InterviewRequest request) {
-    if (request.getRole() == INTERVIEWER) {
-      return getMatchedCandidate(request);
-    } else {
-      return getMatchedInterviewer(request);
-    }
+    return request.getRole() == INTERVIEWER
+        ? getMatchedCandidate(request)
+        : getMatchedInterviewer(request);
   }
 
   /**
