@@ -304,6 +304,6 @@ public class UserController {
   @PostMapping("/{userId}/interview-requests")
   public void createInterviewRequest(@PathVariable long userId,
       @Valid @RequestBody InterviewRequestDto interviewRequest) {
-    userService.createInterviewRequest(userId, interviewRequest);
+    userService.createAndMatchInterviewRequest(userId, interviewRequest);
   }
 }

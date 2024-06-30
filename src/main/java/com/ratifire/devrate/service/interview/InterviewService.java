@@ -1,5 +1,6 @@
 package com.ratifire.devrate.service.interview;
 
+import com.ratifire.devrate.dto.MatchedInterviewPairDto;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
@@ -18,12 +19,14 @@ public class InterviewService {
   private final InterviewRepository interviewRepository;
 
   /**
-   * Creates a new interview based on the provided candidate and interviewer requests.
+   * Creates an interview based on the matched pair of candidate and interviewer.
    *
-   * @param candidate   The request details for the candidate.
-   * @param interviewer The request details for the interviewer.
+   * @param matchedPair the matched pair of candidate and interviewer
    */
-  public void createInterview(InterviewRequest candidate, InterviewRequest interviewer) {
+  public void createInterview(MatchedInterviewPairDto matchedPair) {
+    InterviewRequest candidate = matchedPair.getCandidate();
+    InterviewRequest interviewer = matchedPair.getInterviewer();
+
     Interview interview = Interview.builder()
         .candidateRequest(candidate)
         .interviewerRequest(interviewer)

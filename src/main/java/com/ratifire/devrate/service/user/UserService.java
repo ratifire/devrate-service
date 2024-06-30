@@ -9,6 +9,7 @@ import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
+import com.ratifire.devrate.dto.MatchedInterviewPairDto;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.dto.UserPictureDto;
@@ -28,13 +29,16 @@ import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.InterviewSummaryRepository;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
-import com.ratifire.devrate.service.interview.InterviewRequestService;
+import com.ratifire.devrate.service.interview.InterviewMatchingService;
+import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.service.specialization.SpecializationService;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -48,7 +52,8 @@ public class UserService {
   private final SpecializationRepository specializationRepository;
   private final InterviewSummaryRepository interviewSummaryRepository;
   private final SpecializationService specializationService;
-  private final InterviewRequestService interviewRequestService;
+  private final InterviewMatchingService interviewMatchingService;
+  private final InterviewService interviewService;
   private final DataMapper<UserDto, User> userMapper;
   private final DataMapper<ContactDto, Contact> contactMapper;
   private final DataMapper<EducationDto, Education> educationMapper;
@@ -59,6 +64,7 @@ public class UserService {
   private final DataMapper<InterviewSummaryDto, InterviewSummary> interviewSummaryMapper;
   private final DataMapper<SpecializationDto, Specialization> specializationDataMapper;
   private final DataMapper<InterviewRequestDto, InterviewRequest> interviewRequestMapper;
+  private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
   /**
    * Retrieves a user by ID.
@@ -416,17 +422,44 @@ public class UserService {
   }
 
   /**
-   * Adds an interview request for a user and initiates the matching process.
+   * Creates an interview request for the specified user and attempts to match it with an existing
+   * request.
    *
-   * @param userId              the ID of the user
-   * @param interviewRequestDto the interview request data
+   * @param userId     the ID of the user creating the interview request
+   * @param requestDto the DTO containing the interview request details
    */
-  public void createInterviewRequest(long userId, InterviewRequestDto interviewRequestDto) {
+  public void createAndMatchInterviewRequest(long userId, InterviewRequestDto requestDto) {
+    InterviewRequest interviewRequest = createInterviewRequest(userId, requestDto);
+    matchRequest(interviewRequest);
+  }
+
+  /**
+   * Creates an interview request for the specified user.
+   *
+   * @param userId     the ID of the user creating the interview request
+   * @param requestDto the DTO containing the interview request details
+   * @return the created InterviewRequest entity
+   */
+  private InterviewRequest createInterviewRequest(long userId, InterviewRequestDto requestDto) {
     User user = findUserById(userId);
-    InterviewRequest interviewRequest = interviewRequestMapper.toEntity(interviewRequestDto);
+    InterviewRequest interviewRequest = interviewRequestMapper.toEntity(requestDto);
     user.getInterviewRequests().add(interviewRequest);
     updateUser(user);
+    return interviewRequest;
+  }
 
-    interviewRequestService.forceMatching(interviewRequest);
+  /**
+   * Attempts to match the given interview request with an existing request.
+   *
+   * @param incomingRequest the interview request to be matched
+   */
+  private void matchRequest(InterviewRequest incomingRequest) {
+    interviewMatchingService.match(incomingRequest)
+        .ifPresentOrElse(matchedRequest -> {
+          List<InterviewRequest> matchedRequests = List.of(incomingRequest, matchedRequest);
+          MatchedInterviewPairDto pair = MatchedInterviewPairDto.createPair(matchedRequests);
+          interviewService.createInterview(pair);
+          interviewMatchingService.markPairAsNonActive(pair);
+        }, () -> logger.debug("No matching request found for: {}", incomingRequest));
   }
 }
