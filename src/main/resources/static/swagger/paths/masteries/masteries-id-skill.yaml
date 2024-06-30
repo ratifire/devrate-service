@@ -20,8 +20,12 @@ post:
             name:
               type: string
               description: The name of the skill
+            type:
+              type: string
+              description: The type of the skill "HARD_SKILL" or "SOFT_SKILL"
           required:
             - name
+            - type
   responses:
     '200':
       description: Skill created

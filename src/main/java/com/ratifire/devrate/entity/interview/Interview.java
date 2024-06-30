@@ -38,5 +38,7 @@ public class Interview {
   @JoinColumn(name = "interviewer_request_id", nullable = false)
   private InterviewRequest interviewerRequest;
 
+  private long zoomMeetingId;
+
   private ZonedDateTime startTime;
 }
