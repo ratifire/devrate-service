@@ -1,0 +1,46 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:us-east-1:905418137817:task-definition/devrateTD:2",
+    "containerDefinitions": [
+        {
+            "name": "devrate",
+            "image": "905418137817.dkr.ecr.us-east-1.amazonaws.com/devrate",
+            "cpu": 0,
+            "portMappings": [],
+            "essential": true,
+            "environment": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "systemControls": []
+        }
+    ],
+    "family": "devrateTD",
+    "networkMode": "host",
+    "revision": 2,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EXTERNAL",
+        "EC2"
+    ],
+    "requiresCompatibilities": [
+        "EC2"
+    ],
+    "cpu": "1024",
+    "memory": "3072",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "registeredAt": "2024-06-25T13:41:14.201Z",
+    "registeredBy": "arn:aws:iam::905418137817:root",
+    "tags": []
+}

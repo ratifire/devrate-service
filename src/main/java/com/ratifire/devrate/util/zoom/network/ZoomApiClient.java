@@ -1,9 +1,11 @@
 package com.ratifire.devrate.util.zoom.network;
 
 import com.ratifire.devrate.util.zoom.authentication.ZoomAuthHelper;
-import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
 import com.ratifire.devrate.util.zoom.exception.ZoomAuthException;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -17,28 +19,31 @@ import org.springframework.web.client.RestTemplate;
 @AllArgsConstructor
 public class ZoomApiClient {
 
+  private static final Logger logger = LoggerFactory.getLogger(ZoomApiClient.class);
   private static final String BEARER_AUTHORIZATION = "Bearer %s";
 
-  private ZoomAuthHelper zoomAuthHelper;
   private final RestTemplate restTemplate;
+  private ZoomAuthHelper zoomAuthHelper;
 
   /**
-   * Performs a POST request to the specified URL with the provided JSON request payload
-   * and returns the response of the specified type.
+   * Performs a POST request to the specified URL with the provided JSON request payload and returns
+   * the response of the specified type.
    *
-   * @param url the URL to which the POST request is sent.
+   * @param url         the URL to which the POST request is sent.
    * @param jsonRequest the JSON request payload to be sent in the request body.
-   * @param response the class of the response type.
-   * @param <T> the type of the response.
+   * @param response    the class of the response type.
+   * @param <T>         the type of the response.
    * @return the response object of the specified type.
-   * @throws ZoomApiException if an error occurs while performing the POST request.
    */
-  public <T> T post(String url, String jsonRequest, Class<T> response) throws ZoomApiException {
+  public <T> Optional<T> post(String url, String jsonRequest, Class<T> response) {
     try {
       HttpEntity<?> httpEntity = createHttpEntity(jsonRequest);
-      return restTemplate.postForEntity(url, httpEntity, response).getBody();
+      T body = restTemplate.postForEntity(url, httpEntity, response).getBody();
+      return Optional.ofNullable(body);
     } catch (Throwable ex) {
-      throw new ZoomApiException(ex.getMessage(), ex);
+      logger.error("Error occurred while sending POST request to URL: {}: {}", url,
+          ex.getMessage());
+      return Optional.empty();
     }
   }
 
@@ -48,14 +53,14 @@ public class ZoomApiClient {
     return new HttpEntity<>(jsonRequest, authHeader);
   }
 
-  private static HttpHeaders createBearerAuthHeader(String token) {
+  private HttpHeaders createBearerAuthHeader(String token) {
     HttpHeaders headers = createHttpHeader();
     String authToken = String.format(BEARER_AUTHORIZATION, token);
     headers.set(HttpHeaders.AUTHORIZATION, authToken);
     return headers;
   }
 
-  private static HttpHeaders createHttpHeader() {
+  private HttpHeaders createHttpHeader() {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     return headers;
