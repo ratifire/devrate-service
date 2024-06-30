@@ -30,6 +30,7 @@ import com.ratifire.devrate.repository.InterviewSummaryRepository;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
 import com.ratifire.devrate.service.interview.InterviewMatchingService;
+import com.ratifire.devrate.service.interview.InterviewRequestService;
 import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.service.specialization.SpecializationService;
 import jakarta.transaction.Transactional;
@@ -54,6 +55,7 @@ public class UserService {
   private final SpecializationService specializationService;
   private final InterviewMatchingService interviewMatchingService;
   private final InterviewService interviewService;
+  private final InterviewRequestService interviewRequestService;
   private final DataMapper<UserDto, User> userMapper;
   private final DataMapper<ContactDto, Contact> contactMapper;
   private final DataMapper<EducationDto, Education> educationMapper;
@@ -443,9 +445,8 @@ public class UserService {
   private InterviewRequest createInterviewRequest(long userId, InterviewRequestDto requestDto) {
     User user = findUserById(userId);
     InterviewRequest interviewRequest = interviewRequestMapper.toEntity(requestDto);
-    user.getInterviewRequests().add(interviewRequest);
-    updateUser(user);
-    return interviewRequest;
+    interviewRequest.setUser(user);
+    return interviewRequestService.save(interviewRequest);
   }
 
   /**

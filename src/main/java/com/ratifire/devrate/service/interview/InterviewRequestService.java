@@ -16,6 +16,16 @@ public class InterviewRequestService {
   private final InterviewRequestRepository interviewRequestRepository;
 
   /**
+   * Saves the given interview request.
+   *
+   * @param interviewRequest the interview request to be saved
+   * @return the saved interview request
+   */
+  public InterviewRequest save(InterviewRequest interviewRequest) {
+    return interviewRequestRepository.save(interviewRequest);
+  }
+
+  /**
    * Finds matched candidates for the given interview request.
    *
    * @param request the interview request specifying criteria for matching
