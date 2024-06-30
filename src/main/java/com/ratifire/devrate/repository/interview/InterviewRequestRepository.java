@@ -24,6 +24,7 @@ public interface InterviewRequestRepository extends JpaRepository<InterviewReque
           AND req.active = true
           AND req.id != :#{#request.id}
           AND req.role != :#{#request.role}
+          AND req.user != :#{#request.user}
           AND mast.level <= :#{#request.mastery.level}
           AND EXISTS (SELECT 1 FROM req.availableDates d WHERE d IN :#{#request.availableDates})
       """)
@@ -37,6 +38,7 @@ public interface InterviewRequestRepository extends JpaRepository<InterviewReque
           AND req.active = true
           AND req.id != :#{#request.id}
           AND req.role != :#{#request.role}
+          AND req.user != :#{#request.user}
           AND mast.level >= :#{#request.mastery.level}
           AND EXISTS (SELECT 1 FROM req.availableDates d WHERE d IN :#{#request.availableDates})
       """)
