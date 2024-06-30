@@ -1,15 +1,10 @@
 package com.ratifire.devrate.service.interview;
 
 import com.ratifire.devrate.entity.interview.InterviewRequest;
-import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.repository.interview.InterviewRequestRepository;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for handling Interview Requests.
@@ -19,92 +14,34 @@ import org.springframework.transaction.annotation.Transactional;
 public class InterviewRequestService {
 
   private final InterviewRequestRepository interviewRequestRepository;
-  private final InterviewService interviewService;
-  private static final Logger logger = LoggerFactory.getLogger(InterviewRequestService.class);
 
   /**
-   * Forces matching for the given interview request.
+   * Finds matched candidates for the given interview request.
    *
-   * @param request the interview request to match
+   * @param request the interview request specifying criteria for matching
+   * @return a list of matched InterviewRequest entities
    */
-  @Transactional
-  public void forceMatching(InterviewRequest request) {
-    if (request.getRole() == InterviewRequestRole.INTERVIEWER) {
-      forceCandidateSearching(request);
-    } else {
-      forceInterviewerSearching(request);
-    }
+  public List<InterviewRequest> findMatchedCandidates(InterviewRequest request) {
+    return interviewRequestRepository.findMatchedCandidates(request);
   }
 
   /**
-   * Forces searching for a candidate when the request is from an interviewer.
+   * Finds matched interviewers for the given interview request.
    *
-   * @param interviewerRequest the interview request from an interviewer
+   * @param request the interview request specifying criteria for matching
+   * @return a list of matched InterviewRequest entities
    */
-  private void forceCandidateSearching(InterviewRequest interviewerRequest) {
-    getMatchedCandidate(interviewerRequest)
-        .ifPresentOrElse(candidateRequest -> {
-          interviewService.createInterview(candidateRequest, interviewerRequest);
-          markAsNonActive(candidateRequest, interviewerRequest);
-        }, () -> logger.debug("No matching candidate found for interviewer request: {}",
-            interviewerRequest));
+  public List<InterviewRequest> findMatchedInterviewers(InterviewRequest request) {
+    return interviewRequestRepository.findMatchedInterviewers(request);
   }
 
   /**
-   * Forces searching for an interviewer when the request is from a candidate.
+   * Marks the given interview request as non-active.
    *
-   * @param candidateRequest the interview request from a candidate
+   * @param request the interview request to mark as non-active
    */
-  private void forceInterviewerSearching(InterviewRequest candidateRequest) {
-    getMatchedInterviewer(candidateRequest)
-        .ifPresentOrElse(interviewerRequest -> {
-          interviewService.createInterview(candidateRequest, interviewerRequest);
-          markAsNonActive(candidateRequest, interviewerRequest);
-        }, () -> logger.debug("No matching interviewer found for candidate request: {}",
-            candidateRequest));
-  }
-
-  /**
-   * Marks a candidate and an interviewer request as non-active.
-   *
-   * @param candidateRequest   the candidate request to mark as non-active
-   * @param interviewerRequest the interviewer request to mark as non-active
-   */
-  private void markAsNonActive(InterviewRequest candidateRequest,
-      InterviewRequest interviewerRequest) {
-
-    candidateRequest.setActive(false);
-    interviewRequestRepository.save(candidateRequest);
-
-    interviewerRequest.setActive(false);
-    interviewRequestRepository.save(interviewerRequest);
-  }
-
-  /**
-   * Retrieves the first matched candidate based on the given interview request.
-   *
-   * @param request The interview request specifying criteria for matching.
-   * @return An Optional containing the first matched InterviewRequest.
-   */
-  private Optional<InterviewRequest> getMatchedCandidate(InterviewRequest request) {
-    List<InterviewRequest> matchedCandidates = interviewRequestRepository.findMatchedCandidates(
-        request);
-    return matchedCandidates.isEmpty()
-        ? Optional.empty()
-        : Optional.of(matchedCandidates.getFirst());
-  }
-
-  /**
-   * Retrieves the first matched interviewer based on the given interview request.
-   *
-   * @param request The interview request specifying criteria for matching.
-   * @return An Optional containing the first matched InterviewRequest.
-   */
-  private Optional<InterviewRequest> getMatchedInterviewer(InterviewRequest request) {
-    List<InterviewRequest> matchedInterviewers = interviewRequestRepository.findMatchedInterviewers(
-        request);
-    return matchedInterviewers.isEmpty()
-        ? Optional.empty()
-        : Optional.of(matchedInterviewers.getFirst());
+  public void markAsNonActive(InterviewRequest request) {
+    request.setActive(false);
+    interviewRequestRepository.save(request);
   }
 }
