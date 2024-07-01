@@ -306,4 +306,15 @@ public class UserController {
       @Valid @RequestBody InterviewRequestDto interviewRequest) {
     userService.createInterviewRequest(userId, interviewRequest);
   }
+
+  /**
+   * Delete an interview for the specified user.
+   *
+   * @param userId the ID of the user who rejected the interview
+   * @param id     the rejected interview ID
+   */
+  @DeleteMapping("/{userId}/interviews/{id}")
+  public void deleteRejectedInterview(@PathVariable long userId, @Valid @PathVariable long id) {
+    userService.deleteRejectedInterview(userId, id);
+  }
 }

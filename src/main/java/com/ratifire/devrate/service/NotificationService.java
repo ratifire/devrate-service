@@ -6,8 +6,8 @@ import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.NotificationNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.NotificationRepository;
-import com.ratifire.devrate.service.user.UserService;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 public class NotificationService {
 
   private final NotificationRepository notificationRepository;
-  private final UserService userService;
   private final UserSecurityService userSecurityService;
   private final DataMapper<NotificationDto, Notification> mapper;
 
@@ -36,10 +35,10 @@ public class NotificationService {
         .text(text)
         .read(false)
         .createdAt(LocalDateTime.now())
+        .user(user)
         .build();
 
-    user.getNotifications().add(notification);
-    userService.updateUser(user);
+    notificationRepository.save(notification);
   }
 
   /**
@@ -112,5 +111,22 @@ public class NotificationService {
    */
   public void deleteById(long id) {
     notificationRepository.deleteById(id);
+  }
+
+  /**
+   * Add the notification for interview cancellation.
+   *
+   * @param recipientUser The user for whom the interview was rejected.
+   * @param rejectionUserFirstName The first name of the user who rejected the interview.
+   * @param scheduleTime The scheduled time of the interview.
+   */
+  public void addInterviewRejectNotification(User recipientUser,
+      String rejectionUserFirstName, ZonedDateTime scheduleTime) {
+    String text = String.format("""
+        The interview with %s that was scheduled at %s has been canceled, but fret not!\s
+        We will arrange another one soon and keep you informed promptly.""",
+        rejectionUserFirstName, scheduleTime);
+
+    addNotification(text, recipientUser);
   }
 }
