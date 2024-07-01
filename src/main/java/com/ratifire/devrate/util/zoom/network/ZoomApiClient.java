@@ -72,7 +72,6 @@ public class ZoomApiClient {
    * Performs a DELETE request to the specified URL.
    *
    * @param url the URL to which the DELETE request is sent.
-   * @throws ZoomApiException if an error occurs while performing the DELETE request.
    */
   public void delete(String url) throws ZoomApiException {
     try {
@@ -80,7 +79,7 @@ public class ZoomApiClient {
       HttpEntity<?> httpEntity = new HttpEntity<>(authHeader);
       restTemplate.exchange(url, HttpMethod.DELETE, httpEntity, Void.class);
     } catch (Throwable ex) {
-      throw new ZoomApiException(ex.getMessage(), ex);
+      logger.error("Error occurred while sending DELETE request to URL: {}: {}", url, ex.getMessage());
     }
   }
 }
