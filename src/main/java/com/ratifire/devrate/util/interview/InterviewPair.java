@@ -17,7 +17,7 @@ public class InterviewPair {
   private InterviewRequest interviewer;
 
   /**
-   * Creates an InterviewPair
+   * Creates an InterviewPair.
    *
    * @param incomingRequest The request to be assigned as the candidate or interviewer.
    * @param matchedRequest  The request to be assigned as the other role.
