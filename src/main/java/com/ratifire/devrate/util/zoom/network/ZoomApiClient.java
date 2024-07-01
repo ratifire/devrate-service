@@ -79,7 +79,8 @@ public class ZoomApiClient {
       HttpEntity<?> httpEntity = new HttpEntity<>(authHeader);
       restTemplate.exchange(url, HttpMethod.DELETE, httpEntity, Void.class);
     } catch (Throwable ex) {
-      logger.error("Error occurred while sending DELETE request to URL: {}: {}", url, ex.getMessage());
+      logger.error("Error occurred while sending DELETE request to URL: {}: {}",
+          url, ex.getMessage());
     }
   }
 }
