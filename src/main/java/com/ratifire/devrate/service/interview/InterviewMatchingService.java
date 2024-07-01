@@ -35,7 +35,7 @@ public class InterviewMatchingService {
    *
    * @param interviewPair the matched interview pair to mark as non-active
    */
-  public void markPairAsNonActive(InterviewPair interviewPair) {
+  public void markPairAsNonActive(InterviewPair<InterviewRequest, InterviewRequest> interviewPair) {
     interviewRequestService.markAsNonActive(interviewPair.getCandidate());
     interviewRequestService.markAsNonActive(interviewPair.getInterviewer());
   }

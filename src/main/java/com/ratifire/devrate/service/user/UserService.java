@@ -457,7 +457,8 @@ public class UserService {
   private void matchRequest(InterviewRequest incomingRequest) {
     interviewMatchingService.match(incomingRequest)
         .ifPresentOrElse(matchedRequest -> {
-          InterviewPair interviewPair = InterviewPair.getPair(incomingRequest, matchedRequest);
+          InterviewPair<InterviewRequest, InterviewRequest> interviewPair
+              = InterviewPair.getPair(incomingRequest, matchedRequest);
           interviewService.createInterview(interviewPair);
           interviewMatchingService.markPairAsNonActive(interviewPair);
         }, () -> logger.debug("No matching request found for: {}", incomingRequest));

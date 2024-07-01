@@ -11,26 +11,26 @@ import lombok.Getter;
  */
 @Getter
 @Builder
-public class InterviewPair {
+public class InterviewPair<C, I> {
 
-  private InterviewRequest candidate;
-  private InterviewRequest interviewer;
+  private C candidate;
+  private I interviewer;
 
   /**
-   * Creates an InterviewPair.
+   * Creates an InterviewPair based on the roles of the requests.
    *
-   * @param incomingRequest The request to be assigned as the candidate or interviewer.
-   * @param matchedRequest  The request to be assigned as the other role.
-   * @return An InterviewPair with the appropriate candidate and interviewer.
+   * @param incomingRequest the incoming interview request
+   * @param matchedRequest the matched interview request
+   * @return an InterviewPair with roles assigned based on the requests
    */
-  public static InterviewPair getPair(InterviewRequest incomingRequest,
-      InterviewRequest matchedRequest) {
+  public static InterviewPair<InterviewRequest, InterviewRequest> getPair(
+      InterviewRequest incomingRequest, InterviewRequest matchedRequest) {
     return (incomingRequest.getRole() == CANDIDATE)
-        ? InterviewPair.builder()
-        .candidate(incomingRequest)
-        .interviewer(matchedRequest)
-        .build()
-        : InterviewPair.builder()
+        ? InterviewPair.<InterviewRequest, InterviewRequest>builder()
+            .candidate(incomingRequest)
+            .interviewer(matchedRequest)
+            .build()
+        : InterviewPair.<InterviewRequest, InterviewRequest>builder()
             .candidate(matchedRequest)
             .interviewer(incomingRequest)
             .build();

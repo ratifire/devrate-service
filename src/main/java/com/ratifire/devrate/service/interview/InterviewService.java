@@ -29,7 +29,7 @@ public class InterviewService {
    *
    * @param interviewPair the matched pair of candidate and interviewer
    */
-  public void createInterview(InterviewPair interviewPair) {
+  public void createInterview(InterviewPair<InterviewRequest, InterviewRequest> interviewPair) {
     InterviewRequest candidate = interviewPair.getCandidate();
     InterviewRequest interviewer = interviewPair.getInterviewer();
 
