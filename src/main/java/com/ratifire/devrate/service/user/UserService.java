@@ -9,7 +9,6 @@ import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
-import com.ratifire.devrate.dto.MatchedInterviewPairDto;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.dto.UserPictureDto;
@@ -33,6 +32,7 @@ import com.ratifire.devrate.service.interview.InterviewMatchingService;
 import com.ratifire.devrate.service.interview.InterviewRequestService;
 import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.service.specialization.SpecializationService;
+import com.ratifire.devrate.util.interview.InterviewPair;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
@@ -457,10 +457,9 @@ public class UserService {
   private void matchRequest(InterviewRequest incomingRequest) {
     interviewMatchingService.match(incomingRequest)
         .ifPresentOrElse(matchedRequest -> {
-          List<InterviewRequest> matchedRequests = List.of(incomingRequest, matchedRequest);
-          MatchedInterviewPairDto pair = MatchedInterviewPairDto.createPair(matchedRequests);
-          interviewService.createInterview(pair);
-          interviewMatchingService.markPairAsNonActive(pair);
+          InterviewPair interviewPair = InterviewPair.getPair(incomingRequest, matchedRequest);
+          interviewService.createInterview(interviewPair);
+          interviewMatchingService.markPairAsNonActive(interviewPair);
         }, () -> logger.debug("No matching request found for: {}", incomingRequest));
   }
 }

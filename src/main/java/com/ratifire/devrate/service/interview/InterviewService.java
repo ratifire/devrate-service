@@ -1,9 +1,9 @@
 package com.ratifire.devrate.service.interview;
 
-import com.ratifire.devrate.dto.MatchedInterviewPairDto;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
+import com.ratifire.devrate.util.interview.InterviewPair;
 import com.ratifire.devrate.util.zoom.service.ZoomApiService;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -27,11 +27,11 @@ public class InterviewService {
   /**
    * Creates an interview based on the matched pair of candidate and interviewer.
    *
-   * @param matchedPair the matched pair of candidate and interviewer
+   * @param interviewPair the matched pair of candidate and interviewer
    */
-  public void createInterview(MatchedInterviewPairDto matchedPair) {
-    InterviewRequest candidate = matchedPair.getCandidate();
-    InterviewRequest interviewer = matchedPair.getInterviewer();
+  public void createInterview(InterviewPair interviewPair) {
+    InterviewRequest candidate = interviewPair.getCandidate();
+    InterviewRequest interviewer = interviewPair.getInterviewer();
 
     zoomApiService.createMeeting("Topic", "Agenda", LocalDateTime.now())
         .ifPresentOrElse(zoomMeeting -> {
