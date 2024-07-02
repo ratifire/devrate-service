@@ -26,19 +26,15 @@ public class InterviewMatchingService {
   @Transactional
   public Optional<InterviewPair<InterviewRequest, InterviewRequest>> match(
       InterviewRequest request) {
-    if (request.getRole() == INTERVIEWER) {
-      return getMatchedCandidate(request)
-          .map(candidate -> InterviewPair.<InterviewRequest, InterviewRequest>builder()
-              .candidate(candidate)
-              .interviewer(request)
-              .build());
-    } else {
-      return getMatchedInterviewer(request)
-          .map(interviewer -> InterviewPair.<InterviewRequest, InterviewRequest>builder()
-              .candidate(request)
-              .interviewer(interviewer)
-              .build());
-    }
+    return request.getRole() == INTERVIEWER ? getMatchedCandidate(request)
+        .map(candidate -> InterviewPair.<InterviewRequest, InterviewRequest>builder()
+            .candidate(candidate)
+            .interviewer(request)
+            .build()) : getMatchedInterviewer(request)
+        .map(interviewer -> InterviewPair.<InterviewRequest, InterviewRequest>builder()
+            .candidate(request)
+            .interviewer(interviewer)
+            .build());
   }
 
   /**
