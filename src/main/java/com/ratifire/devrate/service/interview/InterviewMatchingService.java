@@ -5,6 +5,7 @@ import static com.ratifire.devrate.enums.InterviewRequestRole.INTERVIEWER;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.util.interview.InterviewPair;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class InterviewMatchingService {
    */
   public Optional<InterviewPair<InterviewRequest, InterviewRequest>> match(
       InterviewRequest request) {
-    return match(request, List.of());
+    return match(request, Collections.emptyList());
   }
 
   /**
