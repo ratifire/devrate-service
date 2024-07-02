@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for matching interview requests between candidates and interviewers.
@@ -26,7 +25,6 @@ public class InterviewMatchingService {
    * @param request the interview request to match
    * @return an Optional containing the matched interview pair
    */
-  @Transactional
   public Optional<InterviewPair<InterviewRequest, InterviewRequest>> match(
       InterviewRequest request) {
     return match(request, List.of());
@@ -39,7 +37,6 @@ public class InterviewMatchingService {
    * @param ignoreList the list of users to be ignored in the matching process
    * @return an Optional containing the matched interview pair
    */
-  @Transactional
   public Optional<InterviewPair<InterviewRequest, InterviewRequest>> match(
       InterviewRequest request, List<User> ignoreList) {
     return request.getRole() == INTERVIEWER ? getMatchedCandidate(request, ignoreList)

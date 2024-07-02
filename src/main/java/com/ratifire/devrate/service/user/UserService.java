@@ -32,7 +32,6 @@ import com.ratifire.devrate.service.interview.InterviewMatchingService;
 import com.ratifire.devrate.service.interview.InterviewRequestService;
 import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.service.specialization.SpecializationService;
-import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +39,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class for performing operations related to {@link User} entities.
@@ -429,6 +429,7 @@ public class UserService {
    * @param userId     the ID of the user creating the interview request
    * @param requestDto the DTO containing the interview request details
    */
+  @Transactional
   public void createAndMatchInterviewRequest(long userId, InterviewRequestDto requestDto) {
     InterviewRequest interviewRequest = createInterviewRequest(userId, requestDto);
     matchRequest(interviewRequest);
