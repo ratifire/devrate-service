@@ -32,7 +32,6 @@ import com.ratifire.devrate.service.interview.InterviewMatchingService;
 import com.ratifire.devrate.service.interview.InterviewRequestService;
 import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.service.specialization.SpecializationService;
-import com.ratifire.devrate.util.interview.InterviewPair;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
@@ -456,9 +455,7 @@ public class UserService {
    */
   private void matchRequest(InterviewRequest incomingRequest) {
     interviewMatchingService.match(incomingRequest)
-        .ifPresentOrElse(matchedRequest -> {
-          InterviewPair<InterviewRequest, InterviewRequest> interviewPair
-              = InterviewPair.getPair(incomingRequest, matchedRequest);
+        .ifPresentOrElse(interviewPair -> {
           interviewService.createInterview(interviewPair);
           interviewMatchingService.markPairAsNonActive(interviewPair);
         }, () -> logger.debug("No matching request found for: {}", incomingRequest));

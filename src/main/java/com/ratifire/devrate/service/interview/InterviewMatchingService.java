@@ -24,10 +24,21 @@ public class InterviewMatchingService {
    * @param request the interview request to match
    */
   @Transactional
-  public Optional<InterviewRequest> match(InterviewRequest request) {
-    return request.getRole() == INTERVIEWER
-        ? getMatchedCandidate(request)
-        : getMatchedInterviewer(request);
+  public Optional<InterviewPair<InterviewRequest, InterviewRequest>> match(
+      InterviewRequest request) {
+    if (request.getRole() == INTERVIEWER) {
+      return getMatchedCandidate(request)
+          .map(candidate -> InterviewPair.<InterviewRequest, InterviewRequest>builder()
+              .candidate(candidate)
+              .interviewer(request)
+              .build());
+    } else {
+      return getMatchedInterviewer(request)
+          .map(interviewer -> InterviewPair.<InterviewRequest, InterviewRequest>builder()
+              .candidate(request)
+              .interviewer(interviewer)
+              .build());
+    }
   }
 
   /**
