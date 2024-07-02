@@ -2,6 +2,7 @@ package com.ratifire.devrate.util.zoom.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
 import com.ratifire.devrate.util.zoom.network.ZoomApiClient;
 import com.ratifire.devrate.util.zoom.payloads.ZoomCreateMeetingRequest;
 import com.ratifire.devrate.util.zoom.payloads.ZoomCreateMeetingRequest.Settings;
@@ -69,5 +70,16 @@ public class ZoomApiService {
       logger.error("Error processing JSON request", e);
       return StringUtils.EMPTY;
     }
+  }
+
+  /**
+   * Deletes a Zoom meeting.
+   *
+   * @param zoomMeetingId the ID of the meeting to be deleted.
+   * @throws ZoomApiException if an error occurs while deleting the meeting.
+   */
+  public void deleteMeeting(Long zoomMeetingId) throws ZoomApiException {
+    String url = String.format("%s/meetings/%s", zoomApiUrl, zoomMeetingId);
+    zoomApiClient.delete(url);
   }
 }
