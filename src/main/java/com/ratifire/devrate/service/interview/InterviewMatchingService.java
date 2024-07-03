@@ -5,10 +5,11 @@ import static com.ratifire.devrate.enums.InterviewRequestRole.INTERVIEWER;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.util.interview.InterviewPair;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,36 +20,30 @@ import org.springframework.stereotype.Service;
 public class InterviewMatchingService {
 
   private final InterviewRequestService interviewRequestService;
+  private final InterviewService interviewService;
+  private static final Logger logger = LoggerFactory.getLogger(InterviewMatchingService.class);
 
   /**
-   * Forces matching for the given interview request.
+   * Matches the given interview request with an existing request.
    *
-   * @param request the interview request to match
-   * @return an Optional containing the matched interview pair
+   * @param incomingRequest the interview request to be matched
    */
-  public Optional<InterviewPair<InterviewRequest, InterviewRequest>> match(
-      InterviewRequest request) {
-    return match(request, Collections.emptyList());
+  public void match(InterviewRequest incomingRequest) {
+    match(incomingRequest, List.of());
   }
 
   /**
-   * Forces matching for the given interview request with an ignore list.
+   * Matches the given interview request with an existing request, considering an ignore list.
    *
-   * @param request    the interview request to match
-   * @param ignoreList the list of users to be ignored in the matching process
-   * @return an Optional containing the matched interview pair
+   * @param incomingRequest the interview request to be matched
+   * @param ignoreList a list of users to ignore during matching
    */
-  public Optional<InterviewPair<InterviewRequest, InterviewRequest>> match(
-      InterviewRequest request, List<User> ignoreList) {
-    return request.getRole() == INTERVIEWER ? getMatchedCandidate(request, ignoreList)
-        .map(candidate -> InterviewPair.<InterviewRequest, InterviewRequest>builder()
-            .candidate(candidate)
-            .interviewer(request)
-            .build()) : getMatchedInterviewer(request, ignoreList)
-        .map(interviewer -> InterviewPair.<InterviewRequest, InterviewRequest>builder()
-            .candidate(request)
-            .interviewer(interviewer)
-            .build());
+  public void match(InterviewRequest incomingRequest, List<User> ignoreList) {
+    getPair(incomingRequest, ignoreList)
+        .ifPresentOrElse(interviewPair -> {
+          interviewService.createInterview(interviewPair);
+          markPairAsNonActive(interviewPair);
+        }, () -> logger.debug("No matching request found for: {}", incomingRequest));
   }
 
   /**
@@ -62,11 +57,32 @@ public class InterviewMatchingService {
   }
 
   /**
-   * Retrieves the first matched candidate based on the given interview request with an ignore
-   * list.
+   * Retrieves a matched pair of interview requests.
    *
-   * @param request the interview request specifying criteria for matching
-   * @return an Optional containing the first matched InterviewRequest, if found
+   * @param incomingRequest the interview request to be matched
+   * @param ignoreList a list of users to ignore during matching
+   * @return an optional InterviewPair containing the matched candidate and interviewer
+   */
+  private Optional<InterviewPair<InterviewRequest, InterviewRequest>> getPair(
+      InterviewRequest incomingRequest, List<User> ignoreList) {
+    return incomingRequest.getRole() == INTERVIEWER ? getMatchedCandidate(incomingRequest,
+        ignoreList)
+        .map(candidate -> InterviewPair.<InterviewRequest, InterviewRequest>builder()
+            .candidate(candidate)
+            .interviewer(incomingRequest)
+            .build()) : getMatchedInterviewer(incomingRequest, ignoreList)
+        .map(interviewer -> InterviewPair.<InterviewRequest, InterviewRequest>builder()
+            .candidate(incomingRequest)
+            .interviewer(interviewer)
+            .build());
+  }
+
+  /**
+   * Finds a matched candidate for the given interview request.
+   *
+   * @param request the interview request specifying matching criteria
+   * @param ignoreList a list of users to ignore during matching
+   * @return an Optional containing the matched InterviewRequest, if found
    */
   private Optional<InterviewRequest> getMatchedCandidate(InterviewRequest request,
       List<User> ignoreList) {
@@ -74,11 +90,11 @@ public class InterviewMatchingService {
   }
 
   /**
-   * Retrieves the first matched interviewer based on the given interview request with an ignore
-   * list.
+   * Finds a matched interviewer for the given interview request.
    *
-   * @param request The interview request specifying criteria for matching.
-   * @return An Optional containing the first matched InterviewRequest.
+   * @param request the interview request specifying matching criteria
+   * @param ignoreList a list of users to ignore during matching
+   * @return an Optional containing the matched InterviewRequest, if found
    */
   private Optional<InterviewRequest> getMatchedInterviewer(InterviewRequest request,
       List<User> ignoreList) {
