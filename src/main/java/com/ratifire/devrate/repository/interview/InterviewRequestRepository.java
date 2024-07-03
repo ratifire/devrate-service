@@ -1,5 +1,6 @@
 package com.ratifire.devrate.repository.interview;
 
+import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -27,8 +28,10 @@ public interface InterviewRequestRepository extends JpaRepository<InterviewReque
           AND req.user != :#{#request.user}
           AND mast.level <= :#{#request.mastery.level}
           AND EXISTS (SELECT 1 FROM req.availableDates d WHERE d IN :#{#request.availableDates})
+          AND (:#{#ignoreList.size()} = 0 OR req.user NOT IN :ignoreList)
       """)
-  List<InterviewRequest> findMatchedCandidates(@Param("request") InterviewRequest request);
+  List<InterviewRequest> findMatchedCandidates(@Param("request") InterviewRequest request,
+      List<User> ignoreList);
 
   @Query("""
           SELECT req FROM InterviewRequest req
@@ -41,8 +44,10 @@ public interface InterviewRequestRepository extends JpaRepository<InterviewReque
           AND req.user != :#{#request.user}
           AND mast.level >= :#{#request.mastery.level}
           AND EXISTS (SELECT 1 FROM req.availableDates d WHERE d IN :#{#request.availableDates})
+          AND (:#{#ignoreList.size()} = 0 OR req.user NOT IN :ignoreList)
       """)
-  List<InterviewRequest> findMatchedInterviewers(@Param("request") InterviewRequest request);
+  List<InterviewRequest> findMatchedInterviewers(@Param("request") InterviewRequest request,
+      List<User> ignoreList);
 
   List<InterviewRequest> findByActiveTrueAndExpiredAtBefore(ZonedDateTime currentDateTime);
 }
