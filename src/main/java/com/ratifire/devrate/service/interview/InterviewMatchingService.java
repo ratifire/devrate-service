@@ -36,10 +36,10 @@ public class InterviewMatchingService {
    * Matches the given interview request with an existing request, considering an ignore list.
    *
    * @param incomingRequest the interview request to be matched
-   * @param ignoreList a list of users to ignore during matching
+   * @param ignoreList      a list of users to ignore during matching
    */
   public void match(InterviewRequest incomingRequest, List<User> ignoreList) {
-    getPair(incomingRequest, ignoreList)
+    getInterviewPair(incomingRequest, ignoreList)
         .ifPresentOrElse(interviewPair -> {
           interviewService.createInterview(interviewPair);
           markPairAsNonActive(interviewPair);
@@ -60,10 +60,10 @@ public class InterviewMatchingService {
    * Retrieves a matched pair of interview requests.
    *
    * @param incomingRequest the interview request to be matched
-   * @param ignoreList a list of users to ignore during matching
+   * @param ignoreList      a list of users to ignore during matching
    * @return an optional InterviewPair containing the matched candidate and interviewer
    */
-  private Optional<InterviewPair<InterviewRequest, InterviewRequest>> getPair(
+  private Optional<InterviewPair<InterviewRequest, InterviewRequest>> getInterviewPair(
       InterviewRequest incomingRequest, List<User> ignoreList) {
     return incomingRequest.getRole() == INTERVIEWER ? getMatchedCandidate(incomingRequest,
         ignoreList)
@@ -80,7 +80,7 @@ public class InterviewMatchingService {
   /**
    * Finds a matched candidate for the given interview request.
    *
-   * @param request the interview request specifying matching criteria
+   * @param request    the interview request specifying matching criteria
    * @param ignoreList a list of users to ignore during matching
    * @return an Optional containing the matched InterviewRequest, if found
    */
@@ -92,7 +92,7 @@ public class InterviewMatchingService {
   /**
    * Finds a matched interviewer for the given interview request.
    *
-   * @param request the interview request specifying matching criteria
+   * @param request    the interview request specifying matching criteria
    * @param ignoreList a list of users to ignore during matching
    * @return an Optional containing the matched InterviewRequest, if found
    */
