@@ -1,6 +1,7 @@
 package com.ratifire.devrate.util.zoom.network;
 
 import com.ratifire.devrate.util.zoom.authentication.ZoomAuthHelper;
+import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
 import com.ratifire.devrate.util.zoom.exception.ZoomAuthException;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -64,5 +66,21 @@ public class ZoomApiClient {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     return headers;
+  }
+
+  /**
+   * Performs a DELETE request to the specified URL.
+   *
+   * @param url the URL to which the DELETE request is sent.
+   */
+  public void delete(String url) throws ZoomApiException {
+    try {
+      HttpHeaders authHeader = createBearerAuthHeader(zoomAuthHelper.getAuthenticationToken());
+      HttpEntity<?> httpEntity = new HttpEntity<>(authHeader);
+      restTemplate.exchange(url, HttpMethod.DELETE, httpEntity, Void.class);
+    } catch (Throwable ex) {
+      logger.error("Error occurred while sending DELETE request to URL: {}: {}",
+          url, ex.getMessage());
+    }
   }
 }

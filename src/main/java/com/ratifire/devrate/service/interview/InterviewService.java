@@ -4,6 +4,7 @@ import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.exception.InterviewNotFoundException;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
+import com.ratifire.devrate.util.interview.InterviewPair;
 import com.ratifire.devrate.util.zoom.service.ZoomApiService;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -25,12 +26,14 @@ public class InterviewService {
   private static final Logger logger = LoggerFactory.getLogger(InterviewService.class);
 
   /**
-   * Creates a new interview based on the provided candidate and interviewer requests.
+   * Creates an interview based on the matched pair of candidate and interviewer.
    *
-   * @param candidate   The request details for the candidate.
-   * @param interviewer The request details for the interviewer.
+   * @param interviewPair the matched pair of candidate and interviewer
    */
-  public void createInterview(InterviewRequest candidate, InterviewRequest interviewer) {
+  public void createInterview(InterviewPair<InterviewRequest, InterviewRequest> interviewPair) {
+    InterviewRequest candidate = interviewPair.getCandidate();
+    InterviewRequest interviewer = interviewPair.getInterviewer();
+
     zoomApiService.createMeeting("Topic", "Agenda", LocalDateTime.now())
         .ifPresentOrElse(zoomMeeting -> {
           Interview interview = Interview.builder()
