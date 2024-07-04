@@ -3,6 +3,7 @@ package com.ratifire.devrate.service.specialization;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -47,6 +48,7 @@ public class MasteryServiceTest {
   private MasteryDto masteryDtoJun;
   private Skill skill;
   private SkillDto skillDto;
+  private List<SkillDto> skillDtos;
 
   /**
    * Setup method executed before each test method.
@@ -90,6 +92,9 @@ public class MasteryServiceTest {
         .name("Test name")
         .averageMark(BigDecimal.valueOf(5))
         .build();
+
+    skillDtos = new ArrayList<>();
+    skillDtos.add(skillDto);
   }
 
   @Test
@@ -138,6 +143,21 @@ public class MasteryServiceTest {
 
     assertNotNull(result);
     assertEquals(skillDto, result);
+    assertEquals(BigDecimal.valueOf(5), skillDto.getAverageMark());
+    verify(masteryRepository).save(masteryMid);
+  }
+
+  @Test
+  public void createSkillsTest() {
+    when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
+    when(dataMapper.toEntity(anyList())).thenReturn(skillDtos);
+    when(masteryRepository.existsByIdAndSkills_Name(anyLong(), anyString())).thenReturn(false);
+    when(dataMapper.toDto(anyList())).thenReturn(skillDtos);
+
+    List<SkillDto> result = masteryService.createSkills(skillDtos, 1L);
+
+    assertNotNull(result);
+    assertEquals(skillDtos, result);
     assertEquals(BigDecimal.valueOf(5), skillDto.getAverageMark());
     verify(masteryRepository).save(masteryMid);
   }

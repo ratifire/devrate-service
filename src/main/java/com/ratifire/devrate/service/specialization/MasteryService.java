@@ -126,6 +126,22 @@ public class MasteryService {
   }
 
   /**
+   * Creates a skills and associates it with a mastery.
+   *
+   * @param skillDtos the list of skills information as a DTO
+   * @param masteryId the ID of the mastery to associate with the skill
+   * @return the created skill information as a DTO
+   */
+  public List<SkillDto> createSkills(List<SkillDto> skillDtos, long masteryId) {
+    Mastery mastery = getMasteryById(masteryId);
+    skillDtos.forEach(dto -> existSkillByName(masteryId, dto.getName()));
+    List<Skill> skills = skillMapper.toEntity(skillDtos);
+    mastery.getSkills().addAll(skills);
+    masteryRepository.save(mastery);
+    return skillMapper.toDto(skills);
+  }
+
+  /**
    * Checks if a skill with the given name already exists in the specified mastery.
    *
    * @param id   the ID of the mastery to check
