@@ -1,0 +1,39 @@
+post:
+  summary: Create a skills and associate it with the specified Mastery by ID
+  tags:
+    - Mastery
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: ID of the mastery
+  requestBody:
+    description: Skills information
+    required: true
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The name of the skill
+              type:
+                type: string
+                description: The type of the skill "HARD_SKILL" or "SOFT_SKILL"
+            required:
+              - name
+              - type
+  responses:
+    '200':
+      description: Skill created
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/SkillDto.yaml'
+    '400':
+      description: Bad Request. The request cannot be fulfilled due to bad syntax.
