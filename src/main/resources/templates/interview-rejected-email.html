@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Interview Rejected</title>
+</head>
+<body>
+<div class="container">
+  <p>Dear <span th:text="${recipientUser.firstName}"></span>,</p>
+
+  <p>The interview with <span th:text="${rejectionUser.firstName}"></span> that was scheduled at <span th:text="${scheduledTime}"></span>
+    <span>has been canceled, but fret not! We will arrange another one soon and keep you informed promptly.</span></p>
+
+  <p>If you have any questions or need further assistance, feel free to reach out to our support team at <a href="mailto:support@devrate.com">support@devrate.com</a>.</p>
+
+  <p>Thank you for using DevRate!</p>
+  <p>Best regards,<br/>The DevRate Team</p>
+</div>
+</body>
+</html>

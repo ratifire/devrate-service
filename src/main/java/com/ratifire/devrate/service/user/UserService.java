@@ -1,6 +1,5 @@
 package com.ratifire.devrate.service.user;
 
-
 import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
@@ -29,10 +28,16 @@ import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.InterviewSummaryRepository;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
+import com.ratifire.devrate.service.NotificationService;
+import com.ratifire.devrate.service.UserSecurityService;
+import com.ratifire.devrate.service.email.EmailService;
 import com.ratifire.devrate.service.interview.InterviewMatchingService;
 import com.ratifire.devrate.service.interview.InterviewRequestService;
+import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.service.specialization.SpecializationService;
+import com.ratifire.devrate.util.interview.InterviewPair;
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +57,10 @@ public class UserService {
   private final SpecializationService specializationService;
   private final InterviewMatchingService interviewMatchingService;
   private final InterviewRequestService interviewRequestService;
+  private final InterviewService interviewService;
+  private final UserSecurityService userSecurityService;
+  private final EmailService emailService;
+  private final NotificationService notificationService;
   private final DataMapper<UserDto, User> userMapper;
   private final DataMapper<ContactDto, Contact> contactMapper;
   private final DataMapper<EducationDto, Education> educationMapper;
@@ -443,5 +452,79 @@ public class UserService {
     InterviewRequest interviewRequest = interviewRequestMapper.toEntity(requestDto);
     interviewRequest.setUser(user);
     return interviewRequestService.save(interviewRequest);
+  }
+
+  /**
+   * Delete the interview that was rejected by the user.
+   *
+   * @param userId      the ID of the user who rejected the interview
+   * @param interviewId the rejected interview ID
+   */
+  @Transactional
+  public void deleteRejectedInterview(long userId, long interviewId) {
+    Interview interview = interviewService.deleteRejectedInterview(interviewId);
+
+    User user = findUserById(userId);
+
+    InterviewPair<InterviewRequest, InterviewRequest> activeAndRejectedRequest =
+        determineActiveAndRejectedRequest(user, interview);
+
+    InterviewRequest activeRequest = activeAndRejectedRequest.getCandidate();
+    InterviewRequest rejectedRequest = activeAndRejectedRequest.getInterviewer();
+
+    notifyUsers(activeRequest.getUser(), user, interview.getStartTime());
+    interviewRequestService.handleRejectedInterview(activeRequest, rejectedRequest);
+
+    interviewMatchingService.match(activeRequest, List.of(rejectedRequest.getUser()));
+    interviewMatchingService.match(rejectedRequest, List.of(activeRequest.getUser()));
+  }
+
+  /**
+   * Determines the active and rejected interview requests based on the user who rejected.
+   *
+   * @param user      The user who rejected the interview.
+   * @param interview The interview to be processed.
+   * @return An InterviewPair containing the active and rejected InterviewRequests.
+   */
+  private InterviewPair<InterviewRequest, InterviewRequest> determineActiveAndRejectedRequest(
+      User user, Interview interview) {
+    return isCandidateRejected(user, interview.getCandidateRequest())
+        ? InterviewPair.<InterviewRequest, InterviewRequest>builder()
+        .candidate(interview.getInterviewerRequest())    // interviewer has active request
+        .interviewer(interview.getCandidateRequest())    // candidate has rejected request
+        .build()
+        : InterviewPair.<InterviewRequest, InterviewRequest>builder()
+            .candidate(interview.getCandidateRequest())    // candidate has active request
+            .interviewer(interview.getInterviewerRequest())    // interviewer has rejected request
+            .build();
+  }
+
+  /**
+   * Checks if the rejector is the candidate in the interview.
+   *
+   * @param rejector The user who rejected the interview.
+   * @param candidateRequest The interview request from the candidate.
+   * @return true if the rejector is the candidate, false otherwise.
+   */
+  private boolean isCandidateRejected(User rejector, InterviewRequest candidateRequest) {
+    return rejector.getId() == candidateRequest.getUser().getId();
+  }
+
+  /**
+   * Notifies users involved in the interview rejection.
+   *
+   * @param recipient The user for whom rejected the interview.
+   * @param rejector The user who rejected the interview.
+   * @param scheduledTime The scheduled time of the interview.
+   */
+  private void notifyUsers(User recipient, User rejector,
+      ZonedDateTime scheduledTime) {
+    notificationService.rejectInterview(recipient, rejector.getFirstName(),
+        scheduledTime);
+    notificationService.rejectInterview(rejector, recipient.getFirstName(),
+        scheduledTime);
+
+    String recipientEmail = userSecurityService.findEmailByUserId(recipient.getId());
+    emailService.sendInterviewRejectionMessage(recipient, rejector, scheduledTime, recipientEmail);
   }
 }

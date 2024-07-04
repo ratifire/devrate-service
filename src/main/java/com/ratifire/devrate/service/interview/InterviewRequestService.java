@@ -57,4 +57,18 @@ public class InterviewRequestService {
     request.setActive(false);
     interviewRequestRepository.save(request);
   }
+
+  /**
+   * Handles the actions required after an interview is rejected.
+   *
+   * @param activeRequest The active interview request.
+   * @param rejectedRequest The rejected interview request.
+   */
+  public void handleRejectedInterview(InterviewRequest activeRequest,
+      InterviewRequest rejectedRequest) {
+    activeRequest.setActive(true);
+    rejectedRequest.setActive(true);
+    interviewRequestRepository.save(activeRequest);
+    interviewRequestRepository.save(rejectedRequest);
+  }
 }
