@@ -123,8 +123,8 @@ paths:
     $ref: './paths/masteries/masteries-id-hard-skills.yaml'
   /masteries/{id}/skills:
     $ref: './paths/masteries/masteries-id-skills.yaml'
-  /masteries/{id}/skills-list:
-    $ref: './paths/masteries/masteries-id-skills-list.yaml'
+  /masteries/{id}/skills/bulk:
+    $ref: './paths/masteries/masteries-id-skills-bulk.yaml'
   /masteries:
     $ref: './paths/masteries/masteries.yaml'
   /skills/{id}:

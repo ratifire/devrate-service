@@ -149,10 +149,12 @@ public class MasteryServiceTest {
 
   @Test
   public void createSkillsTest() {
+    List<Skill> skills = List.of(skill);
+
     when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
-    when(dataMapper.toEntity(anyList())).thenReturn(skillDtos);
+    when(dataMapper.toEntity(anyList())).thenReturn(skills);
     when(masteryRepository.existsByIdAndSkills_Name(anyLong(), anyString())).thenReturn(false);
-    when(dataMapper.toDto(anyList())).thenReturn(skillDtos);
+    when(dataMapper.toDto(skills)).thenReturn(skillDtos);
 
     List<SkillDto> result = masteryService.createSkills(skillDtos, 1L);
 

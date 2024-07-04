@@ -136,6 +136,7 @@ public class MasteryService {
     Mastery mastery = getMasteryById(masteryId);
     skillDtos.forEach(dto -> existSkillByName(masteryId, dto.getName()));
     List<Skill> skills = skillMapper.toEntity(skillDtos);
+    skills.forEach(skill -> skill.setAverageMark(BigDecimal.ZERO));
     mastery.getSkills().addAll(skills);
     masteryRepository.save(mastery);
     return skillMapper.toDto(skills);
