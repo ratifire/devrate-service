@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Interview Details</title>
+</head>
+<body>
+<div class="container">
+  <p>Dear <span th:text="${candidate.firstName}"></span>,</p>
+
+  <p>We are excited to let you know that we have found an interviewer for you. Below are the details:</p>
+
+  <p><strong>Interview Details:</strong></p>
+  <p><strong>Time:</strong> <span th:text="${interview.time}"></span></p>
+  <p><strong>Interviewer Name:</strong> <span th:text="${interviewer.firstName} + ' ' + ${interviewer.lastName}"></span></p>
+  <p><strong>Interviewer Specialization:</strong> <span th:text="${interviewer.specialization}"></span></p>
+  <p><strong>Interviewer Rating:</strong> <span th:text="${interviewer.rating}"></span></p>
+
+  <p>We are committed to ensuring you have a great interview experience. Please be prepared and ready at the scheduled time.</p>
+
+  <p>Thank you for using DevRate!</p>
+  <p>Best regards,<br/>The DevRate Team</p>
+</div>
+</body>
+</html>
