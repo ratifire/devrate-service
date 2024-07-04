@@ -314,7 +314,7 @@ public class UserController {
    * @param id     the rejected interview ID
    */
   @DeleteMapping("/{userId}/interviews/{id}")
-  public void deleteRejectedInterview(@PathVariable long userId, @Valid @PathVariable long id) {
+  public void deleteRejectedInterview(@PathVariable long userId, @PathVariable long id) {
     userService.deleteRejectedInterview(userId, id);
   }
 }
