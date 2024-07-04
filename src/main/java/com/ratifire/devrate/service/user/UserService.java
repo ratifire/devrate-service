@@ -21,6 +21,7 @@ import com.ratifire.devrate.entity.InterviewSummary;
 import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.exception.InterviewSummaryNotFoundException;
 import com.ratifire.devrate.exception.UserNotFoundException;
@@ -427,7 +428,7 @@ public class UserService {
   @Transactional
   public void createAndMatchInterviewRequest(long userId, InterviewRequestDto requestDto) {
     InterviewRequest interviewRequest = createInterviewRequest(userId, requestDto);
-    interviewMatchingService.match(interviewRequest);
+    Optional<Interview> interview = interviewMatchingService.match(interviewRequest);
   }
 
   /**
