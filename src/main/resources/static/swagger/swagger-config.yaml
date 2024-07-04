@@ -121,8 +121,10 @@ paths:
     $ref: './paths/masteries/masteries-id-soft-skills.yaml'
   /masteries/{id}/hard-skills:
     $ref: './paths/masteries/masteries-id-hard-skills.yaml'
-  /masteries/{id}/skill:
-    $ref: './paths/masteries/masteries-id-skill.yaml'
+  /masteries/{id}/skills:
+    $ref: './paths/masteries/masteries-id-skills.yaml'
+  /masteries/{id}/skills/bulk:
+    $ref: './paths/masteries/masteries-id-skills-bulk.yaml'
   /masteries:
     $ref: './paths/masteries/masteries.yaml'
   /skills/{id}:
