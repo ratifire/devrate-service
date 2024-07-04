@@ -70,7 +70,5 @@ public class InterviewRequestService {
     rejectedRequest.setActive(true);
     interviewRequestRepository.save(activeRequest);
     interviewRequestRepository.save(rejectedRequest);
-
-    List<Long> userIdBlackList = List.of(rejectedRequest.getUser().getId());
   }
 }

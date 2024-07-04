@@ -28,13 +28,14 @@ import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.InterviewSummaryRepository;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
-import com.ratifire.devrate.service.interview.InterviewMatchingService;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.email.EmailService;
+import com.ratifire.devrate.service.interview.InterviewMatchingService;
 import com.ratifire.devrate.service.interview.InterviewRequestService;
 import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.service.specialization.SpecializationService;
+import com.ratifire.devrate.util.interview.InterviewPair;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -465,15 +466,37 @@ public class UserService {
 
     User user = findUserById(userId);
 
-    if (isCandidateRejected(user, interview.getCandidateRequest())) {
-      notifyUsers(interview.getInterviewerRequest(), user, interview.getStartTime());
-      interviewRequestService.handleRejectedInterview(interview.getInterviewerRequest(),
-          interview.getCandidateRequest());
-    } else {
-      notifyUsers(interview.getCandidateRequest(), user, interview.getStartTime());
-      interviewRequestService.handleRejectedInterview(interview.getCandidateRequest(),
-          interview.getInterviewerRequest());
-    }
+    InterviewPair<InterviewRequest, InterviewRequest> activeAndRejectedRequest =
+        determineActiveAndRejectedRequest(user, interview);
+
+    InterviewRequest activeRequest = activeAndRejectedRequest.getCandidate();
+    InterviewRequest rejectedRequest = activeAndRejectedRequest.getInterviewer();
+
+    notifyUsers(activeRequest.getUser(), user, interview.getStartTime());
+    interviewRequestService.handleRejectedInterview(activeRequest, rejectedRequest);
+
+    interviewMatchingService.match(activeRequest, List.of(rejectedRequest.getUser()));
+    interviewMatchingService.match(rejectedRequest, List.of(activeRequest.getUser()));
+  }
+
+  /**
+   * Determines the active and rejected interview requests based on the user who rejected.
+   *
+   * @param user      The user who rejected the interview.
+   * @param interview The interview to be processed.
+   * @return An InterviewPair containing the active and rejected InterviewRequests.
+   */
+  private InterviewPair<InterviewRequest, InterviewRequest> determineActiveAndRejectedRequest(
+      User user, Interview interview) {
+    return isCandidateRejected(user, interview.getCandidateRequest())
+        ? InterviewPair.<InterviewRequest, InterviewRequest>builder()
+        .candidate(interview.getInterviewerRequest())    // interviewer has active request
+        .interviewer(interview.getCandidateRequest())    // candidate has rejected request
+        .build()
+        : InterviewPair.<InterviewRequest, InterviewRequest>builder()
+            .candidate(interview.getCandidateRequest())    // candidate has active request
+            .interviewer(interview.getInterviewerRequest())    // interviewer has rejected request
+            .build();
   }
 
   /**
@@ -490,14 +513,12 @@ public class UserService {
   /**
    * Notifies users involved in the interview rejection.
    *
-   * @param activeRequest The active interview request.
+   * @param recipient The user for whom rejected the interview.
    * @param rejector The user who rejected the interview.
    * @param scheduledTime The scheduled time of the interview.
    */
-  private void notifyUsers(InterviewRequest activeRequest, User rejector,
+  private void notifyUsers(User recipient, User rejector,
       ZonedDateTime scheduledTime) {
-    User recipient = activeRequest.getUser();
-
     notificationService.addInterviewRejectNotification(recipient, rejector.getFirstName(),
         scheduledTime);
     notificationService.addInterviewRejectNotification(rejector, recipient.getFirstName(),

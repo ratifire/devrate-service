@@ -5,6 +5,7 @@ import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.exception.InterviewNotFoundException;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
 import com.ratifire.devrate.util.interview.InterviewPair;
+import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
 import com.ratifire.devrate.util.zoom.service.ZoomApiService;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -77,6 +78,13 @@ public class InterviewService {
         .orElseThrow(() -> new InterviewNotFoundException(interviewId));
 
     interviewRepository.deleteById(interviewId);
+
+    try {
+      zoomApiService.deleteMeeting(rejectedInterview.getZoomMeetingId());
+    } catch (ZoomApiException e) {
+      logger.debug("Zoom API exception occurred while trying to delete the meeting with meetingId: "
+              + "{}. {}", rejectedInterview.getZoomMeetingId(), e.getMessage());
+    }
 
     return rejectedInterview;
   }
