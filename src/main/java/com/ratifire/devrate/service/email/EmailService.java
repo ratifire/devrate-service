@@ -4,6 +4,7 @@ import com.ratifire.devrate.entity.User;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -134,5 +135,24 @@ public class EmailService {
       context.setVariable(entry.getKey(), entry.getValue());
     }
     return templateEngine.process(template, context);
+  }
+
+  /**
+   * Sends an email to notify recipient about interview rejection.
+   *
+   * @param recipientUser The user for whom the interview was rejected.
+   * @param rejectionUser The user who rejected the interview.
+   * @param scheduledTime The scheduled time of the interview.
+   */
+  public void sendInterviewRejectionMessage(User recipientUser, User rejectionUser,
+      ZonedDateTime scheduledTime, String email) {
+    Map<String, Object> model = new HashMap<>();
+    model.put("recipientUser", recipientUser);
+    model.put("rejectionUser", rejectionUser);
+    model.put("scheduledTime", scheduledTime);
+
+    String subject = "Interview Rejected";
+    String text = buildTemplateEmailText("interview-rejected-email", model);
+    sendEmail(email, subject, text);
   }
 }

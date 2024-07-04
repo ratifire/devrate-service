@@ -2,8 +2,10 @@ package com.ratifire.devrate.service.interview;
 
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
+import com.ratifire.devrate.exception.InterviewNotFoundException;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
 import com.ratifire.devrate.util.interview.InterviewPair;
+import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
 import com.ratifire.devrate.util.zoom.service.ZoomApiService;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -71,5 +73,28 @@ public class InterviewService {
         .filter(interviewerDates::contains)
         .toList()
         .getFirst();
+  }
+
+  /**
+   * Deletes a rejected interview by its ID and returns the deleted interview.
+   *
+   * @param interviewId the ID of the interview to be deleted
+   * @return the deleted Interview object
+   * @throws InterviewNotFoundException if no interview with the specified ID is found
+   */
+  public Interview deleteRejectedInterview(long interviewId) {
+    Interview rejected = interviewRepository.findById(interviewId)
+        .orElseThrow(() -> new InterviewNotFoundException(interviewId));
+
+    interviewRepository.deleteById(interviewId);
+
+    try {
+      zoomApiService.deleteMeeting(rejected.getZoomMeetingId());
+    } catch (ZoomApiException e) {
+      logger.info("Zoom API exception occurred while trying to delete the meeting with meetingId: "
+              + "{}. {}", rejected.getZoomMeetingId(), e.getMessage());
+    }
+
+    return rejected;
   }
 }
