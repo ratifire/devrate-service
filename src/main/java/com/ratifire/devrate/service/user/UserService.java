@@ -30,14 +30,11 @@ import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
 import com.ratifire.devrate.service.interview.InterviewMatchingService;
 import com.ratifire.devrate.service.interview.InterviewRequestService;
-import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.service.specialization.SpecializationService;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,7 +50,6 @@ public class UserService {
   private final InterviewSummaryRepository interviewSummaryRepository;
   private final SpecializationService specializationService;
   private final InterviewMatchingService interviewMatchingService;
-  private final InterviewService interviewService;
   private final InterviewRequestService interviewRequestService;
   private final DataMapper<UserDto, User> userMapper;
   private final DataMapper<ContactDto, Contact> contactMapper;
@@ -65,7 +61,6 @@ public class UserService {
   private final DataMapper<InterviewSummaryDto, InterviewSummary> interviewSummaryMapper;
   private final DataMapper<SpecializationDto, Specialization> specializationDataMapper;
   private final DataMapper<InterviewRequestDto, InterviewRequest> interviewRequestMapper;
-  private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
   /**
    * Retrieves a user by ID.
@@ -432,7 +427,7 @@ public class UserService {
   @Transactional
   public void createAndMatchInterviewRequest(long userId, InterviewRequestDto requestDto) {
     InterviewRequest interviewRequest = createInterviewRequest(userId, requestDto);
-    matchRequest(interviewRequest);
+    interviewMatchingService.match(interviewRequest);
   }
 
   /**
@@ -447,18 +442,5 @@ public class UserService {
     InterviewRequest interviewRequest = interviewRequestMapper.toEntity(requestDto);
     interviewRequest.setUser(user);
     return interviewRequestService.save(interviewRequest);
-  }
-
-  /**
-   * Attempts to match the given interview request with an existing request.
-   *
-   * @param incomingRequest the interview request to be matched
-   */
-  private void matchRequest(InterviewRequest incomingRequest) {
-    interviewMatchingService.match(incomingRequest)
-        .ifPresentOrElse(interviewPair -> {
-          interviewService.createInterview(interviewPair);
-          interviewMatchingService.markPairAsNonActive(interviewPair);
-        }, () -> logger.debug("No matching request found for: {}", incomingRequest));
   }
 }
