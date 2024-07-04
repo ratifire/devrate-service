@@ -3,6 +3,7 @@ package com.ratifire.devrate.service.interview;
 import static com.ratifire.devrate.enums.InterviewRequestRole.INTERVIEWER;
 
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.util.interview.InterviewPair;
 import java.util.List;
@@ -28,8 +29,8 @@ public class InterviewMatchingService {
    *
    * @param incomingRequest the interview request to be matched
    */
-  public void match(InterviewRequest incomingRequest) {
-    match(incomingRequest, List.of());
+  public Optional<Interview> match(InterviewRequest incomingRequest) {
+    return match(incomingRequest, List.of());
   }
 
   /**
@@ -37,13 +38,20 @@ public class InterviewMatchingService {
    *
    * @param incomingRequest the interview request to be matched
    * @param ignoreList      a list of users to ignore during matching
+   * @return an Optional containing the created Interview if a match is found and the interview is
+   *     created, otherwise an empty Optional
    */
-  public void match(InterviewRequest incomingRequest, List<User> ignoreList) {
-    getInterviewPair(incomingRequest, ignoreList)
-        .ifPresentOrElse(interviewPair -> {
-          interviewService.createInterview(interviewPair);
-          markPairAsNonActive(interviewPair);
-        }, () -> logger.debug("No matching request found for: {}", incomingRequest));
+  public Optional<Interview> match(InterviewRequest incomingRequest, List<User> ignoreList) {
+    return getInterviewPair(incomingRequest, ignoreList)
+        .flatMap(interviewPair -> {
+          Optional<Interview> interviewOptional = interviewService.createInterview(interviewPair);
+          interviewOptional.ifPresent(interview -> markPairAsNonActive(interviewPair));
+          return interviewOptional;
+        })
+        .or(() -> {
+          logger.debug("No matching request found for: {}", incomingRequest);
+          return Optional.empty();
+        });
   }
 
   /**

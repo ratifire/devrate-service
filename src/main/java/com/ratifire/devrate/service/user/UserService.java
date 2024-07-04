@@ -437,7 +437,7 @@ public class UserService {
   @Transactional
   public void createAndMatchInterviewRequest(long userId, InterviewRequestDto requestDto) {
     InterviewRequest interviewRequest = createInterviewRequest(userId, requestDto);
-    interviewMatchingService.match(interviewRequest);
+    Optional<Interview> interview = interviewMatchingService.match(interviewRequest);
   }
 
   /**

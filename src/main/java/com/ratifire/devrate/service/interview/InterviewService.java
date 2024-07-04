@@ -10,6 +10,7 @@ import com.ratifire.devrate.util.zoom.service.ZoomApiService;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,13 +31,16 @@ public class InterviewService {
    * Creates an interview based on the matched pair of candidate and interviewer.
    *
    * @param interviewPair the matched pair of candidate and interviewer
+   * @return an Optional containing the created Interview if the Zoom meeting was successfully
+   *     created, otherwise an empty Optional
    */
-  public void createInterview(InterviewPair<InterviewRequest, InterviewRequest> interviewPair) {
+  public Optional<Interview> createInterview(
+      InterviewPair<InterviewRequest, InterviewRequest> interviewPair) {
     InterviewRequest candidate = interviewPair.getCandidate();
     InterviewRequest interviewer = interviewPair.getInterviewer();
 
-    zoomApiService.createMeeting("Topic", "Agenda", LocalDateTime.now())
-        .ifPresentOrElse(zoomMeeting -> {
+    return zoomApiService.createMeeting("Topic", "Agenda", LocalDateTime.now())
+        .map(zoomMeeting -> {
           Interview interview = Interview.builder()
               .candidateRequest(candidate)
               .interviewerRequest(interviewer)
@@ -47,8 +51,13 @@ public class InterviewService {
               .build();
 
           interviewRepository.save(interview);
-        }, () -> logger.debug("Interview for candidate {} and interviewer {} was not created",
-            candidate, interviewer));
+          return interview;
+        })
+        .or(() -> {
+          logger.debug("Interview for candidate {} and interviewer {} was not created",
+              candidate, interviewer);
+          return Optional.empty();
+        });
   }
 
   /**
