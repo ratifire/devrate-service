@@ -144,7 +144,7 @@ public class EmailService {
    * @param rejectionUser The user who rejected the interview.
    * @param scheduledTime The scheduled time of the interview.
    */
-  public void sendInterviewRejectionEmail(User recipientUser, User rejectionUser,
+  public void sendInterviewRejectionMessage(User recipientUser, User rejectionUser,
       ZonedDateTime scheduledTime, String email) {
     Map<String, Object> model = new HashMap<>();
     model.put("recipientUser", recipientUser);

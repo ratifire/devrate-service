@@ -519,12 +519,12 @@ public class UserService {
    */
   private void notifyUsers(User recipient, User rejector,
       ZonedDateTime scheduledTime) {
-    notificationService.addInterviewRejectNotification(recipient, rejector.getFirstName(),
+    notificationService.rejectInterview(recipient, rejector.getFirstName(),
         scheduledTime);
-    notificationService.addInterviewRejectNotification(rejector, recipient.getFirstName(),
+    notificationService.rejectInterview(rejector, recipient.getFirstName(),
         scheduledTime);
 
     String recipientEmail = userSecurityService.findEmailByUserId(recipient.getId());
-    emailService.sendInterviewRejectionEmail(recipient, rejector, scheduledTime, recipientEmail);
+    emailService.sendInterviewRejectionMessage(recipient, rejector, scheduledTime, recipientEmail);
   }
 }

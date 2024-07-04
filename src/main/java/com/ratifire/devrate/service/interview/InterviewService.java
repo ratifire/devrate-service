@@ -83,18 +83,18 @@ public class InterviewService {
    * @throws InterviewNotFoundException if no interview with the specified ID is found
    */
   public Interview deleteRejectedInterview(long interviewId) {
-    Interview rejectedInterview = interviewRepository.findById(interviewId)
+    Interview rejected = interviewRepository.findById(interviewId)
         .orElseThrow(() -> new InterviewNotFoundException(interviewId));
 
     interviewRepository.deleteById(interviewId);
 
     try {
-      zoomApiService.deleteMeeting(rejectedInterview.getZoomMeetingId());
+      zoomApiService.deleteMeeting(rejected.getZoomMeetingId());
     } catch (ZoomApiException e) {
-      logger.debug("Zoom API exception occurred while trying to delete the meeting with meetingId: "
-              + "{}. {}", rejectedInterview.getZoomMeetingId(), e.getMessage());
+      logger.info("Zoom API exception occurred while trying to delete the meeting with meetingId: "
+              + "{}. {}", rejected.getZoomMeetingId(), e.getMessage());
     }
 
-    return rejectedInterview;
+    return rejected;
   }
 }

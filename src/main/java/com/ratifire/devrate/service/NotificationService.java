@@ -114,19 +114,19 @@ public class NotificationService {
   }
 
   /**
-   * Add the notification for interview cancellation.
+   * Add the notification for the rejected interview.
    *
-   * @param recipientUser The user for whom the interview was rejected.
+   * @param recipient The user for whom the interview was rejected.
    * @param rejectionUserFirstName The first name of the user who rejected the interview.
    * @param scheduleTime The scheduled time of the interview.
    */
-  public void addInterviewRejectNotification(User recipientUser,
+  public void rejectInterview(User recipient,
       String rejectionUserFirstName, ZonedDateTime scheduleTime) {
     String text = String.format("""
         The interview with %s that was scheduled at %s has been canceled, but fret not!\s
         We will arrange another one soon and keep you informed promptly.""",
         rejectionUserFirstName, scheduleTime);
 
-    addNotification(text, recipientUser);
+    addNotification(text, recipient);
   }
 }
