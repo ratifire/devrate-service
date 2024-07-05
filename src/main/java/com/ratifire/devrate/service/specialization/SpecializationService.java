@@ -4,7 +4,6 @@ import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Specialization;
-import com.ratifire.devrate.entity.MasteryLevel;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.exception.SpecializationNotFoundException;
@@ -28,7 +27,7 @@ public class SpecializationService {
   private final DataMapper<SpecializationDto, Specialization> specializationMapper;
   private final DataMapper<MasteryDto, Mastery> masteryMapper;
   private final MasteryService masteryService;
-  private final List<MasteryLevel> masteryLevels;
+  private final List<String> masteryLevels;
 
   /**
    * Retrieves specialization by ID.
@@ -179,7 +178,7 @@ public class SpecializationService {
   private List<Mastery> createMasteryList(Specialization specialization) {
     return masteryLevels.stream()
         .map(masteryLevel -> Mastery.builder()
-            .level(masteryLevel.getLevel())
+            .level(masteryLevels.indexOf(masteryLevel) + 1)
             .softSkillMark(BigDecimal.ZERO)
             .hardSkillMark(BigDecimal.ZERO)
             .specialization(specialization)

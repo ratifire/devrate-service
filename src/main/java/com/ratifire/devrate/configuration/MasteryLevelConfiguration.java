@@ -2,7 +2,6 @@ package com.ratifire.devrate.configuration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ratifire.devrate.entity.MasteryLevel;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +16,7 @@ import org.springframework.core.io.ClassPathResource;
 @Configuration
 public class MasteryLevelConfiguration {
 
-  private static final Map<Integer, MasteryLevel> BY_LEVEL = new HashMap<>();
+  private static final Map<Integer, String> BY_LEVEL = new HashMap<>();
 
   /**
    * Loads the mastery levels from a JSON file.
@@ -25,23 +24,35 @@ public class MasteryLevelConfiguration {
    * @return List of mastery levels as MasteryLevel.
    */
   @Bean
-  public List<MasteryLevel> masteryLevels() throws IOException {
+  public List<String> masteryLevels() throws IOException {
     ObjectMapper objectMapper = new ObjectMapper();
-    List<MasteryLevel> masteryLevels = objectMapper.readValue(
+    List<String> masteryLevels = objectMapper.readValue(
         new ClassPathResource(
             "static/data/specialization/mastery-level-json.json").getInputStream(),
-        new TypeReference<List<MasteryLevel>>() {
+        new TypeReference<List<String>>() {
         }
     );
-
-    for (MasteryLevel e : masteryLevels) {
-      BY_LEVEL.put(e.getLevel(), e);
+    for (int i = 0; i < masteryLevels.size(); i++) {
+      BY_LEVEL.put(i + 1, masteryLevels.get(i));
     }
+//    for (MasteryLevel e : masteryLevels) {
+//      BY_LEVEL.put(e.getLevel(), e);
+//    }
 
     return masteryLevels;
   }
 
-  public static MasteryLevel getByLevel(int level) {
+  public static int getLevel(String level) {
+    int result = 0;
+    for (int i = 0; i < BY_LEVEL.size(); i++) {
+      if (BY_LEVEL.get(i).equals(level)) {
+        result = i + 1;
+      }
+    }
+    return result;
+  }
+
+  public static String getByLevel(int level) {
     return BY_LEVEL.get(level);
   }
 }

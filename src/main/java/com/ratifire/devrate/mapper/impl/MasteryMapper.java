@@ -33,12 +33,12 @@ public abstract class MasteryMapper implements DataMapper<MasteryDto, Mastery> {
   public abstract MasteryDto toDto(Mastery entity);
 
   @Named("getLevel")
-  public static int getLevel(MasteryLevel masteryLevel) {
-    return masteryLevel.getLevel();
+  public static int getLevel(String masteryLevel) {
+    return MasteryLevelConfiguration.getLevel(masteryLevel);
   }
 
   @Named("getMasteryLevel")
-  public static MasteryLevel getMasteryLevel(int level) {
+  public static String getMasteryLevel(int level) {
     return MasteryLevelConfiguration.getByLevel(level);
   }
 }
