@@ -1,5 +1,7 @@
 package com.ratifire.devrate.service.user;
 
+import static com.ratifire.devrate.util.interview.DateTimeUtils.convertToUtcTimeZone;
+
 import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
@@ -438,6 +440,44 @@ public class UserService {
   public void createAndMatchInterviewRequest(long userId, InterviewRequestDto requestDto) {
     InterviewRequest interviewRequest = createInterviewRequest(userId, requestDto);
     Optional<Interview> interview = interviewMatchingService.match(interviewRequest);
+    interview.ifPresent(this::sendInterviewScheduledAlerts);
+  }
+
+  /**
+   * Sends alerts to both the interviewer and the candidate about the scheduled interview.
+   *
+   * @param interview the interview whose participants are sent alerts
+   */
+  private void sendInterviewScheduledAlerts(Interview interview) {
+    ZonedDateTime interviewStartTimeInUtc = convertToUtcTimeZone(interview.getStartTime());
+    InterviewRequest interviewer = interview.getInterviewerRequest();
+    InterviewRequest candidate = interview.getCandidateRequest();
+
+    notifyParticipant(candidate, interviewer, interviewStartTimeInUtc);
+    notifyParticipant(interviewer, candidate, interviewStartTimeInUtc);
+  }
+
+  /**
+   * Sends a notification and an email to a participant of an interview about the scheduled
+   * interview.
+   *
+   * @param recipientRequest         the interview request of the recipient of the notification
+   * @param secondParticipantRequest the interview request of the other participant in the
+   *                                 interview
+   * @param interviewStartTimeInUtc  the start time of the interview in UTC
+   */
+  private void notifyParticipant(InterviewRequest recipientRequest,
+      InterviewRequest secondParticipantRequest, ZonedDateTime interviewStartTimeInUtc) {
+
+    User recipient = recipientRequest.getUser();
+    String recipientEmail = userSecurityService.findEmailByUserId(recipient.getId());
+    String role = String.valueOf(recipientRequest.getRole());
+
+    notificationService.addInterviewScheduled(recipient, role,
+        interviewStartTimeInUtc);
+
+    emailService.sendInterviewScheduledEmail(recipient, recipientEmail,
+        interviewStartTimeInUtc, secondParticipantRequest);
   }
 
   /**
@@ -475,8 +515,12 @@ public class UserService {
     notifyUsers(activeRequest.getUser(), user, interview.getStartTime());
     interviewRequestService.handleRejectedInterview(activeRequest, rejectedRequest);
 
-    interviewMatchingService.match(activeRequest, List.of(rejectedRequest.getUser()));
-    interviewMatchingService.match(rejectedRequest, List.of(activeRequest.getUser()));
+    Optional<Interview> matchedInterviewForActiveRequest = interviewMatchingService.match(
+        activeRequest, List.of(rejectedRequest.getUser()));
+    matchedInterviewForActiveRequest.ifPresent(this::sendInterviewScheduledAlerts);
+    Optional<Interview> matchedInterviewForRejectedRequest = interviewMatchingService.match(
+        rejectedRequest, List.of(activeRequest.getUser()));
+    matchedInterviewForRejectedRequest.ifPresent(this::sendInterviewScheduledAlerts);
   }
 
   /**
