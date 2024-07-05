@@ -21,10 +21,10 @@ public class MasteryLevelConfiguration {
   /**
    * Loads the mastery levels from a JSON file.
    *
-   * @return List of mastery levels as MasteryLevel.
+   * @return Map of mastery levels as MasteryLevel.
    */
   @Bean
-  public List<String> masteryLevels() throws IOException {
+  public Map<Integer, String> masteryLevels() throws IOException {
     ObjectMapper objectMapper = new ObjectMapper();
     List<String> masteryLevels = objectMapper.readValue(
         new ClassPathResource(
@@ -35,11 +35,7 @@ public class MasteryLevelConfiguration {
     for (int i = 0; i < masteryLevels.size(); i++) {
       BY_LEVEL.put(i + 1, masteryLevels.get(i));
     }
-//    for (MasteryLevel e : masteryLevels) {
-//      BY_LEVEL.put(e.getLevel(), e);
-//    }
-
-    return masteryLevels;
+    return BY_LEVEL;
   }
 
   public static int getLevel(String level) {

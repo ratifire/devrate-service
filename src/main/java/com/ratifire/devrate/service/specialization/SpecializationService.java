@@ -12,6 +12,7 @@ import com.ratifire.devrate.repository.SpecializationRepository;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class SpecializationService {
   private final DataMapper<SpecializationDto, Specialization> specializationMapper;
   private final DataMapper<MasteryDto, Mastery> masteryMapper;
   private final MasteryService masteryService;
-  private final List<String> masteryLevels;
+  private final Map<Integer, String> masteryLevels;
 
   /**
    * Retrieves specialization by ID.
@@ -176,9 +177,9 @@ public class SpecializationService {
    * @param specialization the specialization to associate with each mastery entity
    */
   private List<Mastery> createMasteryList(Specialization specialization) {
-    return masteryLevels.stream()
-        .map(masteryLevel -> Mastery.builder()
-            .level(masteryLevels.indexOf(masteryLevel) + 1)
+    return masteryLevels.keySet().stream()
+        .map(s -> Mastery.builder()
+            .level(s)
             .softSkillMark(BigDecimal.ZERO)
             .hardSkillMark(BigDecimal.ZERO)
             .specialization(specialization)
