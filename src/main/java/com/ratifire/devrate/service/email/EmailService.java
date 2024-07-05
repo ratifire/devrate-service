@@ -1,6 +1,8 @@
 package com.ratifire.devrate.service.email;
 
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.entity.interview.InterviewRequest;
+import com.ratifire.devrate.enums.InterviewRequestRole;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.time.LocalDateTime;
@@ -155,4 +157,30 @@ public class EmailService {
     String text = buildTemplateEmailText("interview-rejected-email", model);
     sendEmail(email, subject, text);
   }
+
+  /**
+   * Sends an email to notify the recipient about the scheduled interview.
+   *
+   * @param recipient         the user who will receive the email
+   * @param email             the email address of the recipient
+   * @param interviewDateTime the date and time of the interview
+   * @param interviewRequest  the interview request containing details about the interview
+   */
+  public void sendInterviewScheduledEmail(User recipient, String email,
+      ZonedDateTime interviewDateTime, InterviewRequest interviewRequest) {
+
+    Map<String, Object> model = new HashMap<>();
+    model.put("recipient", recipient);
+    model.put("interviewDateTime", interviewDateTime);
+    model.put("interviewRequest", interviewRequest);
+
+    String template =
+        interviewRequest.getRole().equals(InterviewRequestRole.CANDIDATE)
+            ? "interviewer-interview-scheduled-email"
+            : "candidate-interview-scheduled-email";
+    String text = buildTemplateEmailText(template, model);
+    String subject = "Interview Scheduled Successfully";
+    sendEmail(email, subject, text);
+  }
+
 }
