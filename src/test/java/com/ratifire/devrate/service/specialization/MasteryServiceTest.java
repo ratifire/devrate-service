@@ -13,7 +13,7 @@ import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Skill;
-import com.ratifire.devrate.enums.MasteryLevel;
+import com.ratifire.devrate.entity.MasteryLevel;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.MasteryRepository;
 import java.math.BigDecimal;

@@ -1,0 +1,14 @@
+[
+  {
+    "name": "JUNIOR",
+    "level": 1
+  },
+  {
+    "name": "MIDDLE",
+    "level": 2
+  },
+  {
+    "name": "SENIOR",
+    "level": 3
+  }
+]

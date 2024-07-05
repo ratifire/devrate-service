@@ -4,7 +4,7 @@ import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Specialization;
-import com.ratifire.devrate.enums.MasteryLevel;
+import com.ratifire.devrate.entity.MasteryLevel;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.exception.SpecializationNotFoundException;
@@ -14,7 +14,6 @@ import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +28,7 @@ public class SpecializationService {
   private final DataMapper<SpecializationDto, Specialization> specializationMapper;
   private final DataMapper<MasteryDto, Mastery> masteryMapper;
   private final MasteryService masteryService;
+  private final List<MasteryLevel> masteryLevels;
 
   /**
    * Retrieves specialization by ID.
@@ -177,7 +177,7 @@ public class SpecializationService {
    * @param specialization the specialization to associate with each mastery entity
    */
   private List<Mastery> createMasteryList(Specialization specialization) {
-    return Stream.of(MasteryLevel.values())
+    return masteryLevels.stream()
         .map(masteryLevel -> Mastery.builder()
             .level(masteryLevel.getLevel())
             .softSkillMark(BigDecimal.ZERO)

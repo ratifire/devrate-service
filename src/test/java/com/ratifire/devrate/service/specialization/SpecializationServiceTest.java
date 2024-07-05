@@ -18,7 +18,7 @@ import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.enums.MasteryLevel;
+import com.ratifire.devrate.entity.MasteryLevel;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
