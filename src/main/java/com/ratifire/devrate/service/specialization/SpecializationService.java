@@ -28,7 +28,7 @@ public class SpecializationService {
   private final DataMapper<SpecializationDto, Specialization> specializationMapper;
   private final DataMapper<MasteryDto, Mastery> masteryMapper;
   private final MasteryService masteryService;
-  private final Map<Integer, String> masteryLevels;
+  private final Map<Integer, String> defaultMasteryLevels;
 
   /**
    * Retrieves specialization by ID.
@@ -177,7 +177,7 @@ public class SpecializationService {
    * @param specialization the specialization to associate with each mastery entity
    */
   private List<Mastery> createMasteryList(Specialization specialization) {
-    return masteryLevels.keySet().stream()
+    return defaultMasteryLevels.keySet().stream()
         .map(s -> Mastery.builder()
             .level(s)
             .softSkillMark(BigDecimal.ZERO)

@@ -1,6 +1,5 @@
 package com.ratifire.devrate.dto;
 
-import com.ratifire.devrate.entity.MasteryLevel;
 import jakarta.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import lombok.Builder;

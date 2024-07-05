@@ -58,7 +58,7 @@ public class SpecializationServiceTest {
   private Mastery junMastery;
   private Mastery midMastery;
   private MasteryDto masteryDto;
-  private List<Mastery> listMasteries;
+  private List<Mastery> defaultMasteryLevels;
   private final long specId = 6661L;
 
   /**
@@ -78,10 +78,10 @@ public class SpecializationServiceTest {
         .hardSkillMark(BigDecimal.valueOf(2))
         .softSkillMark(BigDecimal.valueOf(3)).build();
 
-    listMasteries = new ArrayList<>();
-    listMasteries.add(junMastery);
-    listMasteries.add(midMastery);
-    listMasteries.add(junMastery);
+    defaultMasteryLevels = new ArrayList<>();
+    defaultMasteryLevels.add(junMastery);
+    defaultMasteryLevels.add(midMastery);
+    defaultMasteryLevels.add(junMastery);
 
     masteryDto = MasteryDto.builder()
         .id(1L)
@@ -211,14 +211,14 @@ public class SpecializationServiceTest {
     when(specializationRepository.findById(specId)).thenReturn(Optional.of(specialization));
     when(specializationRepository.save(specialization)).thenReturn(specialization);
     specializationService.createMasteriesForSpecialization(specId);
-    specialization.setMasteries(listMasteries);
+    specialization.setMasteries(defaultMasteryLevels);
     assertNotNull(specialization.getMasteries());
     assertEquals(3, specialization.getMasteries().size());
   }
 
   @Test
   void setMainMasteryById_shouldUpdateMainMastery() {
-    specialization.setMasteries(listMasteries);
+    specialization.setMasteries(defaultMasteryLevels);
     when(masteryService.getMasteryById(anyLong())).thenReturn(midMastery);
     when(specializationRepository.findById(specId)).thenReturn(Optional.of(specialization));
     when(dataMapper.toDto(midMastery)).thenReturn(masteryDto);

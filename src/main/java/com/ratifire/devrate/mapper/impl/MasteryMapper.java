@@ -1,9 +1,8 @@
 package com.ratifire.devrate.mapper.impl;
 
-import com.ratifire.devrate.configuration.MasteryLevelConfiguration;
+import com.ratifire.devrate.configuration.SpecializationConfig;
 import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.entity.Mastery;
-import com.ratifire.devrate.entity.MasteryLevel;
 import com.ratifire.devrate.mapper.DataMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -34,11 +33,11 @@ public abstract class MasteryMapper implements DataMapper<MasteryDto, Mastery> {
 
   @Named("getLevel")
   public static int getLevel(String masteryLevel) {
-    return MasteryLevelConfiguration.getLevel(masteryLevel);
+    return SpecializationConfig.getLevel(masteryLevel);
   }
 
   @Named("getMasteryLevel")
   public static String getMasteryLevel(int level) {
-    return MasteryLevelConfiguration.getByLevel(level);
+    return SpecializationConfig.getByLevel(level);
   }
 }
