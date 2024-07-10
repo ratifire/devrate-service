@@ -80,13 +80,14 @@ public class SpecializationConfig {
    * @return the level number corresponding to the given level name, or 0 if not found.
    */
   public static int getLevel(String level) {
-    int result = 0;
-    for (int i = 0; i < BY_LEVEL.size(); i++) {
-      if (BY_LEVEL.get(i).equals(level)) {
-        result = i + 1;
-      }
+    if (level == null) {
+      throw new IllegalArgumentException("Mastery level cannot be null.");
     }
-    return result;
+    return BY_LEVEL.entrySet().stream()
+        .filter(entry -> entry.getValue().equals(level))
+        .map(Map.Entry::getKey)
+        .findFirst()
+        .orElse(0);
   }
 
   /**

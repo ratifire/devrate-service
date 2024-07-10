@@ -112,7 +112,7 @@ public class SkillService {
             .name(skillName)
             .counter(0)
             .averageMark(BigDecimal.ZERO)
-            .grows(true)
+            .grows(false)
             .type(SkillType.SOFT_SKILL)
             .build())
         .collect(Collectors.toList());
