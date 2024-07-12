@@ -1,5 +1,5 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:us-east-1:905418137817:task-definition/devrateTD:17",
+    "taskDefinitionArn": "arn:aws:ecs:us-east-1:905418137817:task-definition/devrateTD:18",
     "containerDefinitions": [
         {
             "name": "devrate",
