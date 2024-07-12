@@ -1,5 +1,5 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:us-east-1:905418137817:task-definition/devrateTD:14",
+    "taskDefinitionArn": "arn:aws:ecs:us-east-1:905418137817:task-definition/devrateTD:17",
     "containerDefinitions": [
         {
             "name": "devrate",
@@ -36,7 +36,7 @@
                 },
                 {
                     "name": "PG_HOST",
-                    "value": "devrate1.czgc08mgy72j.us-east-1.rds.amazonaws.com"
+                    "value": "database-1.czgc08mgy72j.us-east-1.rds.amazonaws.com"
                 }
             ],
             "environmentFiles": [],
