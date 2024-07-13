@@ -1,46 +1,107 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:us-east-1:905418137817:task-definition/devrateTD:2",
+    "taskDefinitionArn": "arn:aws:ecs:us-east-1:905418137817:task-definition/devrateTD:14",
     "containerDefinitions": [
         {
             "name": "devrate",
-            "image": "905418137817.dkr.ecr.us-east-1.amazonaws.com/devrate",
+            "image": "905418137817.dkr.ecr.us-east-1.amazonaws.com/devrate:936b27136160e149a8f4cc18b7689572be37572b",
             "cpu": 0,
-            "portMappings": [],
+            "memory": 819,
+            "memoryReservation": 819,
+            "portMappings": [
+                {
+                    "name": "devrate-8080-tcp",
+                    "containerPort": 8080,
+                    "hostPort": 8080,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
             "essential": true,
-            "environment": [],
+            "environment": [
+                {
+                    "name": "PG_PASSWORD",
+                    "value": "postgres"
+                },
+                {
+                    "name": "PG_DATABASE",
+                    "value": "postgres"
+                },
+                {
+                    "name": "PG_PORT",
+                    "value": "5432"
+                },
+                {
+                    "name": "PG_USERNAME",
+                    "value": "postgres"
+                },
+                {
+                    "name": "PG_HOST",
+                    "value": "devrate1.czgc08mgy72j.us-east-1.rds.amazonaws.com"
+                }
+            ],
+            "environmentFiles": [],
             "mountPoints": [],
             "volumesFrom": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/devrateTD",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
             "systemControls": []
         }
     ],
     "family": "devrateTD",
-    "networkMode": "host",
-    "revision": 2,
+    "taskRoleArn": "arn:aws:iam::905418137817:role/ecsTaskExecutionRole",
+    "executionRoleArn": "arn:aws:iam::905418137817:role/ecsTaskExecutionRole",
+    "networkMode": "bridge",
+    "revision": 12,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
         {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
             "name": "com.amazonaws.ecs.capability.ecr-auth"
         },
         {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.21"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.task-iam-role"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
         }
     ],
     "placementConstraints": [],
     "compatibilities": [
-        "EXTERNAL",
         "EC2"
     ],
     "requiresCompatibilities": [
         "EC2"
     ],
     "cpu": "1024",
-    "memory": "3072",
+    "memory": "922",
     "runtimePlatform": {
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2024-06-25T13:41:14.201Z",
+    "registeredAt": "2024-07-08T16:16:20.422Z",
     "registeredBy": "arn:aws:iam::905418137817:root",
     "tags": []
 }
