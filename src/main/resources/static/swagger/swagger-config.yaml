@@ -12,7 +12,7 @@ info:
     url: https://devrate.com
   version: 0.0.1-SNAPSHOT
 servers:
-  - url: http://34.205.26.224/:8080
+  - url: http://34.205.26.224:8080
     description: Local environment
   - url: https://devrate.com
     description: Production environment
