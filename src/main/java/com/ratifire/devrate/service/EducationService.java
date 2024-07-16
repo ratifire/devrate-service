@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-public class EducationService {
+public class EducationService implements OwnershipResourceVerifiable {
 
   private final EducationRepository educationRepository;
 
@@ -56,5 +56,10 @@ public class EducationService {
    */
   public void delete(long id) {
     educationRepository.deleteById(id);
+  }
+
+  @Override
+  public boolean checkOwnership(long resourceId, long ownerId) {
+    return ownerId == educationRepository.findUserIdByEducationId(resourceId);
   }
 }
