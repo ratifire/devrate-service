@@ -8,6 +8,7 @@ import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.NotificationRepository;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -126,6 +127,28 @@ public class NotificationService {
         The interview with %s that was scheduled at %s has been canceled, but fret not!\s
         We will arrange another one soon and keep you informed promptly.""",
         rejectionUserFirstName, scheduleTime);
+
+    addNotification(text, recipient);
+  }
+
+  /**
+   * Adds a notification to inform the user that their interview has been successfully scheduled.
+   *
+   * @param recipient         The user to whom the notification will be sent.
+   * @param interviewDateTime The date and time of the scheduled interview.
+   * @param role              The role of the recipient in the interview (e.g., 'Interviewer' or
+   *                          'Candidate').
+   */
+  public void addInterviewScheduled(User recipient, String role,
+      ZonedDateTime interviewDateTime) {
+    String formattedDateTime = interviewDateTime.format(
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+
+    String text = String.format("""
+            We are pleased to inform you that your interview in the role of %s has been \s
+            successfully scheduled for %s (UTC).
+            Please make sure to be prepared and available at the specified date and time.""",
+        role.toLowerCase(), formattedDateTime);
 
     addNotification(text, recipient);
   }

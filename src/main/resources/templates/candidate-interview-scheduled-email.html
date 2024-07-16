@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Upcoming Interview Details</title>
+</head>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+  }
+  .container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  .details-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  .details-table th,
+  .details-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  .details-table th {
+    background-color: #f2f2f2;
+  }
+</style>
+<body>
+<div class="container">
+
+  <p>Dear <span th:text="${recipient?.firstName}"></span>,</p>
+
+  <p>We are pleased to inform you that we have found a suitable interviewer for you and your
+    interview has been successfully scheduled. Below are the details:</p>
+
+  <table class="details-table">
+    <tr>
+      <th>Interview Details</th>
+    </tr>
+    <tr>
+      <td><strong>Date and Time:</strong> <span
+          th:text="${#temporals.format(interviewDateTime, 'yyyy-MM-dd HH:mm')}"></span> (UTC)
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Interviewer Name:</strong> <span
+          th:text="${interviewRequest?.user?.firstName} + ' ' + ${interviewRequest?.user?.lastName}"></span>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Interviewer Specialization:</strong> <span
+          th:text="${interviewRequest?.mastery?.specialization?.name}"></span></td>
+    </tr>
+    <tr>
+      <td><strong>Interviewer Soft Skills Rating:</strong> <span
+          th:text="${interviewRequest?.mastery?.softSkillMark}"></span></td>
+    </tr>
+    <tr>
+      <td><strong>Interviewer Hard Skills Rating:</strong> <span
+          th:text="${interviewRequest?.mastery?.hardSkillMark}"></span></td>
+    </tr>
+  </table>
+
+  <p>We are committed to providing you with a great interview experience. Please be prepared and
+    ready at the scheduled time, as your participation is crucial in helping us identify the best
+    interviewer.</p>
+
+  <p>If you have any questions or need further assistance, feel free to reach out to our support
+    team at <a href="mailto:support@devrate.com">support@devrate.com</a>.</p>
+
+  <p>Thank you for using DevRate!</p>
+  <p>Best regards,<br/>The DevRate Team</p>
+</div>
+</body>
+</html>
