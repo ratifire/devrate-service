@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-public class AchievementService {
+public class AchievementService implements OwnershipResourceVerifiable {
 
   private final AchievementRepository achievementRepository;
   private final DataMapper<AchievementDto, Achievement> mapper;
@@ -57,5 +57,10 @@ public class AchievementService {
    */
   public void delete(long id) {
     achievementRepository.deleteById(id);
+  }
+
+  @Override
+  public boolean checkOwnership(long resourceId, long ownerId) {
+    return ownerId == achievementRepository.findUserIdByAchievementId(resourceId);
   }
 }
