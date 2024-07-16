@@ -1,11 +1,13 @@
 package com.ratifire.devrate.configuration;
 
+import com.ratifire.devrate.util.authorization.ResourceAuthorizationManager;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -30,6 +32,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfiguration {
 
   private final UserDetailsService userDetailsService;
+  private final ResourceAuthorizationManager resourceAuthorizationManager;
 
   private static final String[] WHITELIST = {
       // -- health-check
@@ -45,6 +48,20 @@ public class SecurityConfiguration {
       "/data/user/countries.json",
       // -- zoom webhook
       "/zoom/webhook/events"
+  };
+
+  private static final String[] PERMIT_GET_REQUESTS = {
+      "/users/{userId}/**",
+      "/{resourceType}/{id}/**"
+  };
+
+  private static final String[] AUTHORIZE_POST_REQUESTS = {
+      "/users/{userId}/**",
+      "/{resourceType}/{id}/**"
+  };
+
+  private static final String[] AUTHORIZE_PUT_AND_DELETE_REQUESTS = {
+      "/{resourceType}/{id}/**"
   };
 
   @Bean
@@ -66,6 +83,13 @@ public class SecurityConfiguration {
         .cors(Customizer.withDefaults())
         .authorizeHttpRequests((authorize) -> authorize
             .requestMatchers(WHITELIST).permitAll()
+            .requestMatchers(HttpMethod.GET, PERMIT_GET_REQUESTS).permitAll()
+            .requestMatchers(HttpMethod.POST, AUTHORIZE_POST_REQUESTS)
+            .access(resourceAuthorizationManager)
+            .requestMatchers(HttpMethod.PUT, AUTHORIZE_PUT_AND_DELETE_REQUESTS)
+            .access(resourceAuthorizationManager)
+            .requestMatchers(HttpMethod.DELETE, AUTHORIZE_PUT_AND_DELETE_REQUESTS)
+            .access(resourceAuthorizationManager)
             .anyRequest().authenticated()
         )
         .httpBasic(Customizer.withDefaults())
