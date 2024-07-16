@@ -18,14 +18,15 @@ import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SpecializationRepository;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Unit tests for the SpecializationService class.
@@ -49,34 +51,41 @@ public class SpecializationServiceTest {
   private DataMapper dataMapper;
   @Mock
   private MasteryService masteryService;
-
+  @Mock
+  private Map<Integer, String> masteryLevels;
   private SpecializationDto specializationDto;
   private Specialization specialization;
   private Mastery junMastery;
   private Mastery midMastery;
   private MasteryDto masteryDto;
+  private List<Mastery> defaultMasteryLevels;
   private final long specId = 6661L;
 
   /**
    * Setup method executed before each test method.
    */
   @BeforeEach
-  public void setUp() {
+  public void setUp() throws IOException {
     midMastery = Mastery.builder()
         .id(1L)
-        .level(MasteryLevel.MIDDLE.getLevel())
+        .level(2)
         .hardSkillMark(BigDecimal.valueOf(1))
         .softSkillMark(BigDecimal.valueOf(2)).build();
 
     junMastery = Mastery.builder()
         .id(2L)
-        .level(MasteryLevel.JUNIOR.getLevel())
+        .level(1)
         .hardSkillMark(BigDecimal.valueOf(2))
         .softSkillMark(BigDecimal.valueOf(3)).build();
 
+    defaultMasteryLevels = new ArrayList<>();
+    defaultMasteryLevels.add(junMastery);
+    defaultMasteryLevels.add(midMastery);
+    defaultMasteryLevels.add(junMastery);
+
     masteryDto = MasteryDto.builder()
         .id(1L)
-        .level(MasteryLevel.MIDDLE)
+        .level("MIDDLE")
         .hardSkillMark(BigDecimal.valueOf(1))
         .softSkillMark(BigDecimal.valueOf(2))
         .build();
@@ -96,6 +105,10 @@ public class SpecializationServiceTest {
         .mainMastery(junMastery)
         .user(User.builder().build())
         .build();
+
+    masteryLevels.put(1, "JUNIOR");
+    masteryLevels.put(2, "MIDDLE");
+    masteryLevels.put(3, "SENIOR");
   }
 
   @Test
@@ -193,23 +206,19 @@ public class SpecializationServiceTest {
   }
 
   @Test
+  @Transactional
   void createMasteriesForSpecialization_shouldCreateMasteries() {
     when(specializationRepository.findById(specId)).thenReturn(Optional.of(specialization));
     when(specializationRepository.save(specialization)).thenReturn(specialization);
-
     specializationService.createMasteriesForSpecialization(specId);
-
+    specialization.setMasteries(defaultMasteryLevels);
     assertNotNull(specialization.getMasteries());
     assertEquals(3, specialization.getMasteries().size());
   }
 
   @Test
   void setMainMasteryById_shouldUpdateMainMastery() {
-    List<Mastery> listMasteries = new ArrayList<>();
-    listMasteries.add(junMastery);
-    listMasteries.add(midMastery);
-    specialization.setMasteries(listMasteries);
-
+    specialization.setMasteries(defaultMasteryLevels);
     when(masteryService.getMasteryById(anyLong())).thenReturn(midMastery);
     when(specializationRepository.findById(specId)).thenReturn(Optional.of(specialization));
     when(dataMapper.toDto(midMastery)).thenReturn(masteryDto);

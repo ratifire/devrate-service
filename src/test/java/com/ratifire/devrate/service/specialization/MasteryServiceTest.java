@@ -13,7 +13,6 @@ import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Skill;
-import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.MasteryRepository;
 import java.math.BigDecimal;
@@ -57,14 +56,14 @@ public class MasteryServiceTest {
   public void setUp() {
     masteryJun = Mastery.builder()
         .id(1L)
-        .level(MasteryLevel.JUNIOR.getLevel())
+        .level(1)
         .softSkillMark(BigDecimal.valueOf(5))
         .hardSkillMark(BigDecimal.valueOf(5))
         .skills(new ArrayList<>())
         .build();
     masteryMid = Mastery.builder()
         .id(2L)
-        .level(MasteryLevel.MIDDLE.getLevel())
+        .level(2)
         .softSkillMark(BigDecimal.valueOf(6))
         .hardSkillMark(BigDecimal.valueOf(6))
         .skills(new ArrayList<>())
@@ -72,7 +71,7 @@ public class MasteryServiceTest {
 
     masteryDtoJun = MasteryDto.builder()
         .id(1L)
-        .level(MasteryLevel.JUNIOR)
+        .level("JUNIOR")
         .hardSkillMark(BigDecimal.valueOf(5))
         .softSkillMark(BigDecimal.valueOf(5))
         .build();

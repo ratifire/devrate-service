@@ -1,8 +1,8 @@
 package com.ratifire.devrate.mapper.impl;
 
+import com.ratifire.devrate.configuration.SpecializationConfig;
 import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.entity.Mastery;
-import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.mapper.DataMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -32,12 +32,12 @@ public abstract class MasteryMapper implements DataMapper<MasteryDto, Mastery> {
   public abstract MasteryDto toDto(Mastery entity);
 
   @Named("getLevel")
-  public static int getLevel(MasteryLevel masteryLevel) {
-    return masteryLevel.getLevel();
+  public static int getLevel(String masteryLevel) {
+    return SpecializationConfig.getLevel(masteryLevel);
   }
 
   @Named("getMasteryLevel")
-  public static MasteryLevel getMasteryLevel(int level) {
-    return MasteryLevel.getByLevel(level);
+  public static String getMasteryLevel(int level) {
+    return SpecializationConfig.getByLevel(level);
   }
 }
