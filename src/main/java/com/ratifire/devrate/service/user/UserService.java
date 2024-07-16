@@ -275,6 +275,7 @@ public class UserService {
   public AchievementDto createAchievement(long userId, AchievementDto achievementDto) {
     User user = findUserById(userId);
     Achievement achievement = achievementMapper.toEntity(achievementDto);
+    achievement.setUser(user);
     user.getAchievements().add(achievement);
     updateUser(user);
     return achievementMapper.toDto(achievement);
@@ -303,6 +304,7 @@ public class UserService {
   public EducationDto createEducation(long userId, EducationDto educationDto) {
     User user = findUserById(userId);
     Education education = educationMapper.toEntity(educationDto);
+    education.setUser(user);
     user.getEducations().add(education);
     updateUser(user);
     return educationMapper.toDto(education);
