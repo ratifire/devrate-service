@@ -37,7 +37,7 @@ public class SpecializationConfig {
   @Bean
   public Map<Integer, String> defaultMasteryLevels() {
     List<String> masteryLevels = loadStringFromJson(
-        "/static/data/specialization/mastery-level-json.json");
+        "/static/data/specialization/mastery-levels.json");
     createMasteryLevels(masteryLevels);
     return BY_LEVEL;
   }
