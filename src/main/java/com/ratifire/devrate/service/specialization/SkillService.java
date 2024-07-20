@@ -117,4 +117,17 @@ public class SkillService {
             .build())
         .collect(Collectors.toList());
   }
+
+  /**
+   * Updates the hide status of a skill identified by its ID.
+   *
+   * @param id   the ID of the skill to be hidden or unhidden
+   * @param hide the flag indicating whether to hide (true) or unhide (false) the skill
+   * @return a {@link SkillDto} object representing the updated skill
+   */
+  public SkillDto hideSkill(long id, boolean hide) {
+    Skill skill = getSkillById(id);
+    skill.setHide(hide);
+    return skillMapper.toDto(skillRepository.save(skill));
+  }
 }

@@ -38,6 +38,8 @@ public class Skill {
 
   private long counter;
 
+  private boolean hide;
+
   @Enumerated(EnumType.STRING)
   private SkillType type;
 
