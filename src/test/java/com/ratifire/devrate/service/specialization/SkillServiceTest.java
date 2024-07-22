@@ -82,7 +82,7 @@ public class SkillServiceTest {
     when(dataMapper.toDto(any(Skill.class))).thenReturn(skillDto);
     when(skillRepository.save(any(Skill.class))).thenReturn(skill);
 
-    SkillDto result = skillService.hideSkill(1L,true);
+    SkillDto result = skillService.hideSkill(1L, true);
     assertEquals(skillDto, result);
   }
 }
