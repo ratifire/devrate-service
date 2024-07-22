@@ -48,12 +48,14 @@ public class SkillServiceTest {
         .name("Test name")
         .averageMark(BigDecimal.valueOf(5))
         .counter(1)
+        .hide(true)
         .build();
 
     skillDto = SkillDto.builder()
         .id(10L)
         .name("Test name")
         .averageMark(BigDecimal.valueOf(5))
+        .hide(true)
         .build();
   }
 
@@ -74,4 +76,13 @@ public class SkillServiceTest {
     verify(skillRepository).save(skill);
   }
 
+  @Test
+  public void updateHideSkillTest() {
+    when(skillRepository.findById(anyLong())).thenReturn(Optional.of(skill));
+    when(dataMapper.toDto(any(Skill.class))).thenReturn(skillDto);
+    when(skillRepository.save(any(Skill.class))).thenReturn(skill);
+
+    SkillDto result = skillService.hideSkill(1L,true);
+    assertEquals(skillDto, result);
+  }
 }
