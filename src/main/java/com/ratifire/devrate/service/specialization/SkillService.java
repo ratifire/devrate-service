@@ -127,7 +127,7 @@ public class SkillService {
    */
   public SkillDto hideSkill(long id, boolean hide) {
     Skill skill = getSkillById(id);
-    skill.setHide(hide);
+    skill.setHidden(hide);
     return skillMapper.toDto(skillRepository.save(skill));
   }
 }

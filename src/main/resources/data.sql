@@ -56,7 +56,7 @@ WHERE NOT EXISTS (SELECT 1
                   WHERE id = masteries.id);
 
 --  Create skills records
-INSERT INTO skills (id, name, type, average_mark,counter, hide, is_grows, mastery_id)
+INSERT INTO skills (id, name, type, average_mark,counter, is_hidden, is_grows, mastery_id)
 SELECT *
 FROM (VALUES  (100001, 'Communication', 'SOFT_SKILL', 5.31, 3, true, true, 10001),
               (100002, 'Problem-Solving', 'SOFT_SKILL', 8.12, 5, true, false, 10001),
@@ -82,7 +82,7 @@ FROM (VALUES  (100001, 'Communication', 'SOFT_SKILL', 5.31, 3, true, true, 10001
               (100022, 'Java Core', 'HARD_SKILL', 8.88, 9, false, true, 10003),
               (100023, 'Git Hub', 'HARD_SKILL', 9.18, 9, false, false, 10003),
               (100024, 'Hibernate', 'HARD_SKILL', 0, 0, false, true, 10003))
-         AS skills (id, name, type, average_mark, counter, hide, is_grows, mastery_id)
+         AS skills (id, name, type, average_mark, counter, is_hidden, is_grows, mastery_id)
 WHERE NOT EXISTS (SELECT 1
                   FROM skills
                   WHERE id = skills.id);
