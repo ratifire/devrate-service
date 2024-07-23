@@ -6,6 +6,7 @@ import com.ratifire.devrate.service.specialization.MasteryService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -61,6 +62,7 @@ public class MasteryController {
    * @param id       the ID of the Mastery to which the skill will be associated.
    * @return the created skill information as a DTO.
    */
+  @PreAuthorize("@resourceAuthorizationService.isResourceOwnedByLoggedUser('masteries', #id)")
   @PostMapping("/{id}/skills")
   public SkillDto createSkill(
       @Valid @RequestBody SkillDto skillDto, @PathVariable long id) {
@@ -74,6 +76,7 @@ public class MasteryController {
    * @param id        the ID of the Mastery to which the skill will be associated.
    * @return the created skills information as a DTO.
    */
+  @PreAuthorize("@resourceAuthorizationService.isResourceOwnedByLoggedUser('masteries', #id)")
   @PostMapping("/{id}/skills/bulk")
   public List<SkillDto> createSkills(
       @Valid @RequestBody List<SkillDto> skillDtos, @PathVariable long id) {
@@ -86,6 +89,8 @@ public class MasteryController {
    * @param masteryDto the updated Mastery information as a DTO
    * @return the updated Mastery information as a DTO
    */
+  @PreAuthorize("@resourceAuthorizationService.isResourceOwnedByLoggedUser('masteries', "
+      + "#masteryDto.id)")
   @PutMapping()
   public MasteryDto update(@RequestBody MasteryDto masteryDto) {
     return masteryService.update(masteryDto);

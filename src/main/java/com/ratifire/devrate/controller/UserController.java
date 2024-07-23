@@ -17,6 +17,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,6 +54,7 @@ public class UserController {
    * @param userDto the updated user's personal information as a DTO
    * @return the updated user personal information as a DTO
    */
+  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userDto.id)")
   @PutMapping
   public UserDto update(@RequestBody UserDto userDto) {
     return userService.update(userDto);
@@ -63,6 +65,7 @@ public class UserController {
    *
    * @param id the ID of the user
    */
+  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#id)")
   @DeleteMapping("/{id}")
   public void delete(@PathVariable long id) {
     userService.delete(id);
@@ -86,6 +89,7 @@ public class UserController {
    * @param contactDtos the contact information to save
    * @return the list of saved ContactDto objects
    */
+  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userId)")
   @PostMapping("/{userId}/contacts")
   public List<ContactDto> saveContacts(@PathVariable long userId,
       @Valid @RequestBody List<ContactDto> contactDtos) {
@@ -109,6 +113,7 @@ public class UserController {
    * @param employmentRecordDto the user's employment-record information as a DTO
    * @return the created user employment-record information as a DTO
    */
+  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userId)")
   @PostMapping("/{userId}/employment-records")
   public EmploymentRecordDto createEmploymentRecord(
       @Valid @RequestBody EmploymentRecordDto employmentRecordDto,
@@ -136,6 +141,7 @@ public class UserController {
    * @param languageProficiencyDtos the language proficiency information to save
    * @return the list of saved LanguageProficiencyDto objects
    */
+  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userId)")
   @PostMapping("/{userId}/language-proficiencies")
   public List<LanguageProficiencyDto> saveLanguageProficiencies(@PathVariable long userId,
       @Valid @RequestBody List<LanguageProficiencyDto> languageProficiencyDtos) {
@@ -163,6 +169,7 @@ public class UserController {
    * @param userId the ID of the user for whom the picture is to be added or updated
    * @param userPicture the picture data as a base64 string to upload
    */
+  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userId)")
   @PostMapping("/{userId}/pictures")
   public void addUserPicture(@PathVariable long userId, @RequestBody String userPicture) {
     userService.addUserPicture(userId, userPicture);
@@ -171,6 +178,7 @@ public class UserController {
   /**
    * Removes a user's picture.
    */
+  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userId)")
   @DeleteMapping("/{userId}/pictures")
   public void removeUserPicture(@PathVariable long userId) {
     userService.deleteUserPicture(userId);
@@ -195,6 +203,7 @@ public class UserController {
    *                       created.
    * @return The AchievementDto object representing the created achievement.
    */
+  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userId)")
   @PostMapping("/{userId}/achievements")
   public AchievementDto createAchievement(@PathVariable long userId,
       @RequestBody @Valid AchievementDto achievementDto) {
@@ -221,6 +230,7 @@ public class UserController {
    *                     be created.
    * @return The {@link EducationDto} object representing the newly created education record.
    */
+  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userId)")
   @PostMapping("/{userId}/educations")
   public EducationDto createEducation(@PathVariable long userId,
       @RequestBody @Valid EducationDto educationDto) {
@@ -244,6 +254,7 @@ public class UserController {
    * @param userId      The ID of the user for whom the bookmark is to be created.
    * @param bookmarkDto The BookmarkDto object containing details of the bookmark to be created.
    */
+  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userId)")
   @PostMapping("/{userId}/bookmarks")
   public void createBookmark(@PathVariable long userId,
       @RequestBody @Valid BookmarkDto bookmarkDto) {
@@ -267,6 +278,8 @@ public class UserController {
    * @param userId the ID of the user whose association with the interview summary is to be deleted
    * @param id the ID of the interview summary to be removed from the user's associations
    */
+  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userId) && "
+      + "@resourceAuthorizationService.isResourceOwnedByLoggedUser('interview-summaries' , #id)")
   @DeleteMapping("/{userId}/interview-summaries/{id}")
   public void deleteInterviewSummary(@PathVariable long userId, @PathVariable long id) {
     userService.deleteInterviewSummary(userId, id);
@@ -289,6 +302,7 @@ public class UserController {
    * @param specializationDto the user's Specialization information as a DTO
    * @return the created user Specialization information as a DTO
    */
+  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userId)")
   @PostMapping("/{userId}/specializations")
   public SpecializationDto createSpecialization(
       @Valid @RequestBody SpecializationDto specializationDto, @PathVariable long userId) {
@@ -301,6 +315,7 @@ public class UserController {
    * @param userId           the ID of the user
    * @param interviewRequest the interview request data
    */
+  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userId)")
   @PostMapping("/{userId}/interview-requests")
   public void createInterviewRequest(@PathVariable long userId,
       @Valid @RequestBody InterviewRequestDto interviewRequest) {
@@ -313,6 +328,8 @@ public class UserController {
    * @param userId the ID of the user who rejected the interview
    * @param id     the rejected interview ID
    */
+  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userId) && "
+      + "@resourceAuthorizationService.isResourceOwnedByLoggedUser('interviews' , #id)")
   @DeleteMapping("/{userId}/interviews/{id}")
   public void deleteRejectedInterview(@PathVariable long userId, @PathVariable long id) {
     userService.deleteRejectedInterview(userId, id);

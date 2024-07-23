@@ -4,6 +4,7 @@ import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.service.EducationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,6 +42,7 @@ public class EducationController {
    * @param educationDto The updated data for the education entity.
    * @return EducationDto representing the updated education entity.
    */
+  @PreAuthorize("@resourceAuthorizationService.isResourceOwnedByLoggedUser('educations', #id)")
   @PutMapping("/{id}")
   public EducationDto update(@PathVariable long id, @RequestBody @Valid EducationDto educationDto) {
     return educationService.update(id, educationDto);
@@ -51,6 +53,7 @@ public class EducationController {
    *
    * @param id The ID of the education entity to be deleted.
    */
+  @PreAuthorize("@resourceAuthorizationService.isResourceOwnedByLoggedUser('educations', #id)")
   @DeleteMapping("/{id}")
   public void delete(@PathVariable long id) {
     educationService.delete(id);
