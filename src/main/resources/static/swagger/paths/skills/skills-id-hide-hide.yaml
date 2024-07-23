@@ -1,0 +1,27 @@
+patch:
+  summary: Update hide skill information
+  tags:
+    - Skill
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: ID of the skill
+    - name: hide
+      in: path
+      required: true
+      schema:
+        type: boolean
+      description: Hide the skill (true) or unhide (false)
+  responses:
+    '200':
+      description: Skill updated
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/SkillDto.yaml'
+    '404':
+      description: Skill not found
+  
