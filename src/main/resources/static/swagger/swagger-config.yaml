@@ -131,6 +131,8 @@ paths:
     $ref: './paths/skills/skills-id.yaml'
   /skills/{id}/calculate-mark/{mark}:
     $ref: './paths/skills/skills-id-calculateMark-mark.yaml'
+  /skills/{id}/hide/{hide}:
+    $ref: './paths/skills/skills-id-hide-hide.yaml'
 
 security:
   - basicAuth: [ ]
