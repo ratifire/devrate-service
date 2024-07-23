@@ -64,6 +64,7 @@ public class SkillController {
    * @param hide the flag indicating whether to hide (true) or unhide (false) the skill
    * @return a {@link SkillDto} object representing the updated skill
    */
+  @PreAuthorize("@resourceAuthorizationService.isResourceOwnedByLoggedUser('skills', #id)")
   @PatchMapping("/{id}/hide/{hide}")
   public SkillDto hideSkill(@PathVariable long id, @PathVariable boolean hide) {
     return skillService.hideSkill(id, hide);
