@@ -24,7 +24,7 @@ public class SkillDto {
 
   private BigDecimal averageMark;
 
-  private boolean isHidden;
+  private boolean hidden;
 
   private boolean grows;
 }

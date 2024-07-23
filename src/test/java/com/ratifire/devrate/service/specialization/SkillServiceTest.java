@@ -48,14 +48,14 @@ public class SkillServiceTest {
         .name("Test name")
         .averageMark(BigDecimal.valueOf(5))
         .counter(1)
-        .isHidden(true)
+        .hidden(true)
         .build();
 
     skillDto = SkillDto.builder()
         .id(10L)
         .name("Test name")
         .averageMark(BigDecimal.valueOf(5))
-        .isHidden(true)
+        .hidden(true)
         .build();
   }
 

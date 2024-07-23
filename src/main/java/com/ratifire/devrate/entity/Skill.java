@@ -38,7 +38,8 @@ public class Skill {
 
   private long counter;
 
-  private boolean isHidden;
+  @Column(name = "is_hidden", nullable = false)
+  private boolean hidden;
 
   @Enumerated(EnumType.STRING)
   private SkillType type;
