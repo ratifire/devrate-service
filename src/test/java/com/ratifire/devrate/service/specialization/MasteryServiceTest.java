@@ -1,29 +1,32 @@
 package com.ratifire.devrate.service.specialization;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.entity.Mastery;
+import com.ratifire.devrate.entity.MasteryHistory;
 import com.ratifire.devrate.entity.Skill;
+import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
+import com.ratifire.devrate.repository.MasteryHistoryRepository;
 import com.ratifire.devrate.repository.MasteryRepository;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
@@ -37,6 +40,9 @@ public class MasteryServiceTest {
 
   @Mock
   private MasteryRepository masteryRepository;
+
+  @Mock
+  private MasteryHistoryRepository masteryHistoryRepository;
 
   @Mock
   private DataMapper dataMapper;
@@ -98,68 +104,114 @@ public class MasteryServiceTest {
 
   @Test
   public void updateTest() {
-    when(dataMapper.toDto(masteryMid)).thenReturn(masteryDtoJun);
-    when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
+    Mockito.when(dataMapper.toDto(masteryMid)).thenReturn(masteryDtoJun);
+    Mockito.when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
 
     MasteryDto result = masteryService.update(masteryDtoJun);
 
-    assertNotNull(result);
-    assertEquals(masteryDtoJun, result);
-    verify(dataMapper).updateEntity(masteryDtoJun, masteryMid);
-    verify(masteryRepository).save(masteryMid);
+    Assertions.assertNotNull(result);
+    Assertions.assertEquals(masteryDtoJun, result);
+    Mockito.verify(dataMapper).updateEntity(masteryDtoJun, masteryMid);
+    Mockito.verify(masteryRepository).save(masteryMid);
   }
 
   @Test
   public void getSoftSkillsByMasteryIdTest() {
-    when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
-    when(dataMapper.toDto(masteryMid.getSkills())).thenReturn(new ArrayList<>());
+    Mockito.when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
+    Mockito.when(dataMapper.toDto(masteryMid.getSkills())).thenReturn(new ArrayList<>());
 
     List<SkillDto> result = masteryService.getSoftSkillsByMasteryId(masteryMid.getId());
 
-    assertNotNull(result);
-    assertEquals(masteryMid.getSkills().size(), result.size());
+    Assertions.assertNotNull(result);
+    Assertions.assertEquals(masteryMid.getSkills().size(), result.size());
   }
 
   @Test
   public void getHardSkillsByMasteryIdTest() {
-    when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
-    when(dataMapper.toDto(masteryMid.getSkills())).thenReturn(new ArrayList<>());
+    Mockito.when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
+    Mockito.when(dataMapper.toDto(masteryMid.getSkills())).thenReturn(new ArrayList<>());
 
     List<SkillDto> result = masteryService.getHardSkillsByMasteryId(masteryMid.getId());
 
-    assertNotNull(result);
-    assertEquals(masteryMid.getSkills().size(), result.size());
+    Assertions.assertNotNull(result);
+    Assertions.assertEquals(masteryMid.getSkills().size(), result.size());
   }
 
   @Test
   public void createSkillTest() {
-    when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
-    when(dataMapper.toEntity(any(SkillDto.class))).thenReturn(skill);
-    when(masteryRepository.existsByIdAndSkills_Name(anyLong(), anyString())).thenReturn(false);
-    when(dataMapper.toDto(any(Skill.class))).thenReturn(skillDto);
+    Mockito.when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
+    Mockito.when(dataMapper.toEntity(any(SkillDto.class))).thenReturn(skill);
+    Mockito.when(masteryRepository.existsByIdAndSkills_Name(anyLong(), anyString()))
+        .thenReturn(false);
+    Mockito.when(dataMapper.toDto(any(Skill.class))).thenReturn(skillDto);
 
     SkillDto result = masteryService.createSkill(skillDto, 1L);
 
-    assertNotNull(result);
-    assertEquals(skillDto, result);
-    assertEquals(BigDecimal.valueOf(5), skillDto.getAverageMark());
-    verify(masteryRepository).save(masteryMid);
+    Assertions.assertNotNull(result);
+    Assertions.assertEquals(skillDto, result);
+    Assertions.assertEquals(BigDecimal.valueOf(5), skillDto.getAverageMark());
+    Mockito.verify(masteryRepository).save(masteryMid);
   }
 
   @Test
   public void createSkillsTest() {
     List<Skill> skills = List.of(skill);
 
-    when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
-    when(dataMapper.toEntity(anyList())).thenReturn(skills);
-    when(masteryRepository.existsByIdAndSkills_Name(anyLong(), anyString())).thenReturn(false);
-    when(dataMapper.toDto(skills)).thenReturn(skillDtos);
+    Mockito.when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
+    Mockito.when(dataMapper.toEntity(anyList())).thenReturn(skills);
+    Mockito.when(masteryRepository.existsByIdAndSkills_Name(anyLong(), anyString()))
+        .thenReturn(false);
+    Mockito.when(dataMapper.toDto(skills)).thenReturn(skillDtos);
 
     List<SkillDto> result = masteryService.createSkills(skillDtos, 1L);
 
-    assertNotNull(result);
-    assertEquals(skillDtos, result);
-    assertEquals(BigDecimal.valueOf(5), skillDto.getAverageMark());
-    verify(masteryRepository).save(masteryMid);
+    Assertions.assertNotNull(result);
+    Assertions.assertEquals(skillDtos, result);
+    Assertions.assertEquals(BigDecimal.valueOf(5), skillDto.getAverageMark());
+    Mockito.verify(masteryRepository).save(masteryMid);
   }
+
+  @Test
+  public void testSaveHistory() {
+    masteryService.saveHistory(masteryMid);
+
+    ArgumentCaptor<MasteryHistory> historyCaptor = ArgumentCaptor.forClass(MasteryHistory.class);
+    Mockito.verify(masteryHistoryRepository, Mockito.times(1)).save(historyCaptor.capture());
+
+    MasteryHistory capturedHistory = historyCaptor.getValue();
+    Assertions.assertEquals(masteryMid, capturedHistory.getMastery());
+    Assertions.assertEquals(masteryMid.getSoftSkillMark(), capturedHistory.getSoftSkillMark());
+    Assertions.assertEquals(masteryMid.getHardSkillMark(), capturedHistory.getHardSkillMark());
+  }
+
+  @Test
+  public void testGetMasteryHistory() {
+    List<MasteryHistory> historyList = new ArrayList<>();
+    MasteryHistory history = MasteryHistory.builder()
+        .id(1L)
+        .mastery(masteryMid)
+        .timestamp(new Date())
+        .softSkillMark(BigDecimal.valueOf(6))
+        .hardSkillMark(BigDecimal.valueOf(6))
+        .build();
+    historyList.add(history);
+
+    Mockito.when(masteryHistoryRepository.findHistoriesByMasteryId(2L)).thenReturn(historyList);
+
+    List<MasteryHistory> result = masteryService.getMasteryHistory(2L);
+
+    Assertions.assertNotNull(result);
+    Assertions.assertEquals(1, result.size());
+    Assertions.assertEquals(history, result.get(0));
+  }
+
+  @Test
+  public void testGetMasteryHistoryNotFound() {
+    Mockito.when(masteryHistoryRepository.findHistoriesByMasteryId(2L))
+        .thenReturn(new ArrayList<>());
+
+    Assertions.assertThrows(ResourceNotFoundException.class, () -> masteryService
+        .getMasteryHistory(2L));
+  }
+
 }

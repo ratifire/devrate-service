@@ -1,0 +1,27 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+    description: Unique identifier for the history record
+  masteryId:
+    type: integer
+    format: int64
+    description: ID of the mastery
+  timestamp:
+    type: string
+    format: date-time
+    description: Timestamp of when the mark was updated
+  hardSkillMark:
+    type: number
+    format: double
+    description: Hard skill mark
+  softSkillMark:
+    type: number
+    format: double
+    description: Soft skill mark
+required:
+  - masteryId
+  - timestamp
+  - hardSkillMark
+  - softSkillMark

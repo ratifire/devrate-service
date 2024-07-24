@@ -3,13 +3,16 @@ package com.ratifire.devrate.service.specialization;
 import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.entity.Mastery;
+import com.ratifire.devrate.entity.MasteryHistory;
 import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.enums.SkillType;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
+import com.ratifire.devrate.repository.MasteryHistoryRepository;
 import com.ratifire.devrate.repository.MasteryRepository;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +31,7 @@ public class MasteryService {
   private final SkillService skillService;
   private final DataMapper<MasteryDto, Mastery> masteryMapper;
   private final DataMapper<SkillDto, Skill> skillMapper;
+  private final MasteryHistoryRepository masteryHistoryRepository;
 
   /**
    * Retrieves Mastery by ID.
@@ -65,6 +69,7 @@ public class MasteryService {
 
     masteryMapper.updateEntity(masteryDto, mastery);
     masteryRepository.save(mastery);
+    saveHistory(mastery);
 
     return masteryMapper.toDto(mastery);
   }
@@ -161,5 +166,35 @@ public class MasteryService {
   public void setSkillsForMastery(Mastery mastery) {
     mastery.setSkills(skillService.loadSoftSkills());
     masteryRepository.save(mastery);
+  }
+
+  /**
+   * Saves the current state of the Mastery entity into the history.
+   *
+   * @param mastery the Mastery entity whose current state is to be saved in the history.
+   */
+  void saveHistory(Mastery mastery) {
+    MasteryHistory history = new MasteryHistory();
+    history.setMastery(mastery);
+    history.setTimestamp(new Date());
+    history.setHardSkillMark(mastery.getHardSkillMark());
+    history.setSoftSkillMark(mastery.getSoftSkillMark());
+    masteryHistoryRepository.save(history);
+  }
+
+  /**
+   * Retrieves a list of MasteryHistory entries for a given Mastery ID,
+   * sorted by timestamp in descending order.
+   *
+   * @param masteryId the ID of the Mastery for which history is requested
+   * @return a list of MasteryHistory, can be empty if no history found
+   * @throws ResourceNotFoundException if no MasteryHistory is found for the given ID
+   */
+  public List<MasteryHistory> getMasteryHistory(Long masteryId) {
+    List<MasteryHistory> histories = masteryHistoryRepository.findHistoriesByMasteryId(masteryId);
+    if (histories.isEmpty()) {
+      throw new ResourceNotFoundException("No history found for Mastery ID: " + masteryId);
+    }
+    return histories;
   }
 }

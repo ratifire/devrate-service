@@ -1,7 +1,9 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.MasteryDto;
+import com.ratifire.devrate.dto.MasteryHistoryDto;
 import com.ratifire.devrate.dto.SkillDto;
+import com.ratifire.devrate.entity.MasteryHistory;
 import com.ratifire.devrate.service.specialization.MasteryService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -89,5 +91,16 @@ public class MasteryController {
   @PutMapping()
   public MasteryDto update(@RequestBody MasteryDto masteryDto) {
     return masteryService.update(masteryDto);
+  }
+
+  /**
+   * Endpoint to retrieve the history of a Mastery by its ID.
+   *
+   * @param masteryId the ID of the Mastery to retrieve history for
+   * @return List of MasteryHistory
+   */
+  @GetMapping("/{masteryId}/history")
+  public List<MasteryHistory> getMasteryHistory(@PathVariable Long masteryId) {
+    return masteryService.getMasteryHistory(masteryId);
   }
 }
