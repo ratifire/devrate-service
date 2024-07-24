@@ -1,7 +1,6 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.MasteryDto;
-import com.ratifire.devrate.dto.MasteryHistoryDto;
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.entity.MasteryHistory;
 import com.ratifire.devrate.service.specialization.MasteryService;
