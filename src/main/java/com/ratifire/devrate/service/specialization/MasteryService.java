@@ -1,6 +1,7 @@
 package com.ratifire.devrate.service.specialization;
 
 import com.ratifire.devrate.dto.MasteryDto;
+import com.ratifire.devrate.dto.MasteryHistoryDto;
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.MasteryHistory;
@@ -173,28 +174,24 @@ public class MasteryService {
    *
    * @param mastery the Mastery entity whose current state is to be saved in the history.
    */
-  void saveHistory(Mastery mastery) {
-    MasteryHistory history = new MasteryHistory();
-    history.setMastery(mastery);
-    history.setTimestamp(new Date());
-    history.setHardSkillMark(mastery.getHardSkillMark());
-    history.setSoftSkillMark(mastery.getSoftSkillMark());
+  private void saveHistory(Mastery mastery) {
+    MasteryHistory history = MasteryHistory.builder()
+        .mastery(mastery)
+        .timestamp(new Date())
+        .hardSkillMark(mastery.getHardSkillMark())
+        .softSkillMark(mastery.getSoftSkillMark())
+        .build();
     masteryHistoryRepository.save(history);
   }
 
   /**
-   * Retrieves a list of MasteryHistory entries for a given Mastery ID,
+   * Retrieves a list of MasteryHistoryDto entries for a given Mastery ID,
    * sorted by timestamp in descending order.
    *
    * @param masteryId the ID of the Mastery for which history is requested
-   * @return a list of MasteryHistory, can be empty if no history found
-   * @throws ResourceNotFoundException if no MasteryHistory is found for the given ID
+   * @return a list of MasteryHistoryDto, can be empty if no history found
    */
-  public List<MasteryHistory> getMasteryHistory(Long masteryId) {
-    List<MasteryHistory> histories = masteryHistoryRepository.findHistoriesByMasteryId(masteryId);
-    if (histories.isEmpty()) {
-      throw new ResourceNotFoundException("No history found for Mastery ID: " + masteryId);
-    }
-    return histories;
+  public List<MasteryHistoryDto> getMasteryHistory(Long masteryId) {
+    return masteryHistoryRepository.findHistoriesByMasteryId(masteryId);
   }
 }

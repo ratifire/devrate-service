@@ -2,6 +2,7 @@ package com.ratifire.devrate.service.specialization;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -10,11 +11,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.MasteryDto;
+import com.ratifire.devrate.dto.MasteryHistoryDto;
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.entity.Mastery;
-import com.ratifire.devrate.entity.MasteryHistory;
 import com.ratifire.devrate.entity.Skill;
-import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.MasteryHistoryRepository;
 import com.ratifire.devrate.repository.MasteryRepository;
@@ -23,15 +23,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 
 /**
  * Unit tests for the MasteryService class.
@@ -58,6 +56,7 @@ public class MasteryServiceTest {
   private Skill skill;
   private SkillDto skillDto;
   private List<SkillDto> skillDtos;
+  private MasteryHistoryDto historyDto;
 
   /**
    * Setup method executed before each test method.
@@ -104,6 +103,14 @@ public class MasteryServiceTest {
 
     skillDtos = new ArrayList<>();
     skillDtos.add(skillDto);
+
+    historyDto = MasteryHistoryDto.builder()
+        .id(1L)
+        .masteryId(2L)
+        .timestamp(new Date())
+        .softSkillMark(BigDecimal.valueOf(6))
+        .hardSkillMark(BigDecimal.valueOf(6))
+        .build();
   }
 
   @Test
@@ -176,46 +183,29 @@ public class MasteryServiceTest {
   }
 
   @Test
-  public void testSaveHistory() {
-    masteryService.saveHistory(masteryMid);
-
-    ArgumentCaptor<MasteryHistory> historyCaptor = ArgumentCaptor.forClass(MasteryHistory.class);
-    verify(masteryHistoryRepository, Mockito.times(1)).save(historyCaptor.capture());
-
-    MasteryHistory capturedHistory = historyCaptor.getValue();
-    assertEquals(masteryMid, capturedHistory.getMastery());
-    assertEquals(masteryMid.getSoftSkillMark(), capturedHistory.getSoftSkillMark());
-    assertEquals(masteryMid.getHardSkillMark(), capturedHistory.getHardSkillMark());
-  }
-
-  @Test
   public void testGetMasteryHistory() {
-    List<MasteryHistory> historyList = new ArrayList<>();
-    MasteryHistory history = MasteryHistory.builder()
-        .id(1L)
-        .mastery(masteryMid)
-        .timestamp(new Date())
-        .softSkillMark(BigDecimal.valueOf(6))
-        .hardSkillMark(BigDecimal.valueOf(6))
-        .build();
-    historyList.add(history);
+    when(masteryHistoryRepository.findHistoriesByMasteryId(2L)).thenReturn(List.of(historyDto));
 
-    when(masteryHistoryRepository.findHistoriesByMasteryId(2L)).thenReturn(historyList);
-
-    List<MasteryHistory> result = masteryService.getMasteryHistory(2L);
+    List<MasteryHistoryDto> result = masteryService.getMasteryHistory(2L);
 
     assertNotNull(result);
     assertEquals(1, result.size());
-    assertEquals(history, result.get(0));
+
+    MasteryHistoryDto dto = result.get(0);
+    assertEquals(historyDto.getId(), dto.getId());
+    assertEquals(historyDto.getMasteryId(), dto.getMasteryId());
+    assertEquals(historyDto.getTimestamp(), dto.getTimestamp());
+    assertEquals(historyDto.getSoftSkillMark(), dto.getSoftSkillMark());
+    assertEquals(historyDto.getHardSkillMark(), dto.getHardSkillMark());
   }
 
   @Test
   public void testGetMasteryHistoryNotFound() {
-    when(masteryHistoryRepository.findHistoriesByMasteryId(2L))
-        .thenReturn(new ArrayList<>());
+    when(masteryHistoryRepository.findHistoriesByMasteryId(2L)).thenReturn(new ArrayList<>());
 
-    Assertions.assertThrows(ResourceNotFoundException.class, () -> masteryService
-        .getMasteryHistory(2L));
+    List<MasteryHistoryDto> result = masteryService.getMasteryHistory(2L);
+
+    assertNotNull(result);
+    assertTrue(result.isEmpty());
   }
-
 }

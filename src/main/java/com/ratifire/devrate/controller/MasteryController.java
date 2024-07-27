@@ -1,8 +1,8 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.MasteryDto;
+import com.ratifire.devrate.dto.MasteryHistoryDto;
 import com.ratifire.devrate.dto.SkillDto;
-import com.ratifire.devrate.entity.MasteryHistory;
 import com.ratifire.devrate.service.specialization.MasteryService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -99,7 +99,7 @@ public class MasteryController {
    * @return List of MasteryHistory
    */
   @GetMapping("/{masteryId}/history")
-  public List<MasteryHistory> getMasteryHistory(@PathVariable Long masteryId) {
+  public List<MasteryHistoryDto> getMasteryHistory(@PathVariable Long masteryId) {
     return masteryService.getMasteryHistory(masteryId);
   }
 }

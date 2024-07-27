@@ -44,7 +44,8 @@ public class SecurityConfiguration {
       // -- static resources
       "/data/user/countries.json",
       // -- zoom webhook
-      "/zoom/webhook/events"
+      "/zoom/webhook/events",
+      "masteries/**"
   };
 
   @Bean

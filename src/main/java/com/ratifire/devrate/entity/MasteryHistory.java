@@ -18,8 +18,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
-
 /**
  * Entity class representing the history of mastery assessments in the system.
  */
@@ -28,7 +26,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "mastery_history")
+@Table(name = "mastery_histories")
 public class MasteryHistory {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
