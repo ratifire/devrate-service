@@ -41,7 +41,6 @@ import com.ratifire.devrate.service.specialization.SpecializationService;
 import com.ratifire.devrate.util.interview.InterviewPair;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;

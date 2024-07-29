@@ -10,8 +10,7 @@ properties:
     $ref: '../../components/schemas/MasteryDto.yaml'
     description: "Information about the user's mastery."
   skillDto:
-    type: array
-    items:
+    type: object
     $ref: '../../components/schemas/SkillDto.yaml'
     description: "List of skills associated with the user's mastery."
   
