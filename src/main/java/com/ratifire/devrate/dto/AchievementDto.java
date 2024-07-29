@@ -20,11 +20,11 @@ public class AchievementDto {
   @URL
   private String link;
 
-  @Size(max = 65)
+  @Size(max = 75)
   @NotBlank(message = "must not be null or empty")
   private String summary;
 
-  @Size(max = 150)
+  @Size(max = 170)
   @NotBlank(message = "must not be null or empty")
   private String description;
 
