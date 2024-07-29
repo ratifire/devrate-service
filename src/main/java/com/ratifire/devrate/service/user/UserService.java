@@ -437,7 +437,8 @@ public class UserService {
           return UserMainMasterySkillDto.builder()
               .specializationDto(dto.getSpecializationDto())
               .masteryDto(dto.getMasteryDto())
-              .skillDto(dto.getSkillDto().stream().filter(skillDto -> !skillDto.isHidden()).toList())
+              .skillDto(
+                  dto.getSkillDto().stream().filter(skillDto -> !skillDto.isHidden()).toList())
               .build();
         })
         .toList();
