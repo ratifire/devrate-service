@@ -1,6 +1,6 @@
 post:
   tags:
-    - authentication
+    - Authentication
   summary: Authenticate user
   description: Authenticates a user based on the provided login credentials.
   security: [ ]

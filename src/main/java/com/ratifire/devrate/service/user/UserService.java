@@ -12,6 +12,7 @@ import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.dto.UserMainMasterySkillDto;
 import com.ratifire.devrate.dto.UserPictureDto;
 import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.Bookmark;
@@ -40,6 +41,7 @@ import com.ratifire.devrate.service.specialization.SpecializationService;
 import com.ratifire.devrate.util.interview.InterviewPair;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -72,6 +74,7 @@ public class UserService {
   private final DataMapper<BookmarkDto, Bookmark> bookmarkMapper;
   private final DataMapper<InterviewSummaryDto, InterviewSummary> interviewSummaryMapper;
   private final DataMapper<SpecializationDto, Specialization> specializationDataMapper;
+  private final DataMapper<UserMainMasterySkillDto, Specialization> userMainMasterySkillMapper;
   private final DataMapper<InterviewRequestDto, InterviewRequest> interviewRequestMapper;
 
   /**
@@ -411,6 +414,37 @@ public class UserService {
   }
 
   /**
+   * Retrieves a list of all main mastery skills for the specified user.
+   *
+   * @param userId the ID of the user whose mastery skills are to be retrieved.
+   * @return a list of all main mastery skills for the user.
+   */
+  public List<UserMainMasterySkillDto> getPrivateMainMasterySkillsByUserId(long userId) {
+    User user = findUserById(userId);
+    return userMainMasterySkillMapper.toDto(user.getSpecializations());
+  }
+
+  /**
+   * Retrieves a list of all main mastery skills for the specified user, excluding hidden skills.
+   *
+   * @param userId the ID of the user whose mastery skills are to be retrieved.
+   * @return a list of main mastery skills for the user, excluding hidden skills.
+   */
+  public List<UserMainMasterySkillDto> getPublicMainMasterySkillsByUserId(long userId) {
+    User user = findUserById(userId);
+    return user.getSpecializations().stream()
+        .map(specialization -> {
+          UserMainMasterySkillDto dto = userMainMasterySkillMapper.toDto(specialization);
+          return UserMainMasterySkillDto.builder()
+              .specializationDto(dto.getSpecializationDto())
+              .masteryDto(dto.getMasteryDto())
+              .skillDto(dto.getSkillDto().stream().filter(skillDto -> !skillDto.isHidden()).toList())
+              .build();
+        })
+        .toList();
+  }
+
+  /**
    * Creates specialization information. Сreate masteries for specialization.
    *
    * @param specializationDto the user's specialization information as a DTO
@@ -546,7 +580,7 @@ public class UserService {
   /**
    * Checks if the rejector is the candidate in the interview.
    *
-   * @param rejector The user who rejected the interview.
+   * @param rejector         The user who rejected the interview.
    * @param candidateRequest The interview request from the candidate.
    * @return true if the rejector is the candidate, false otherwise.
    */
@@ -557,8 +591,8 @@ public class UserService {
   /**
    * Notifies users involved in the interview rejection.
    *
-   * @param recipient The user for whom rejected the interview.
-   * @param rejector The user who rejected the interview.
+   * @param recipient     The user for whom rejected the interview.
+   * @param rejector      The user who rejected the interview.
    * @param scheduledTime The scheduled time of the interview.
    */
   private void notifyUsers(User recipient, User rejector,

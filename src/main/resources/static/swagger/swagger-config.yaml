@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: DevRate Platform API
-  description: API endpoints for managing user registration, interview processes, and candidate evaluations on the Devrate platform.
+  description: API endpoints for managing user registration, interview processes, and candidate evaluations on the DevRate platform.
   termsOfService: DevRate
   contact:
     name: DevRate
@@ -17,27 +17,27 @@ servers:
   - url: https://devrate.com
     description: Production environment
 tags:
-  - name: registration
+  - name: Registration
     description: endpoint for user registration
   - name: Notification
     description: Operations related to sending notifications
-  - name: authentication
+  - name: Authentication
     description: Endpoints for user authentication
-  - name: password-reset
+  - name: Password-Reset
     description: Endpoints for password reset functionality
-  - name: user info
+  - name: User Info
     description: Endpoints for user personal info functionality
-  - name: employment records
+  - name: Employment Records
     description: Endpoints for user Employment Records management
-  - name: achievement
+  - name: Achievement
     description: Endpoints for user achievement management
-  - name: bookmark
+  - name: Bookmark
     description: Endpoints for user bookmark management
   - name: Interview Request
     description: Endpoints for interview request management
-  - name: interview summary
+  - name: Interview Summary
     description: Endpoints for interview summary management
-  - name: static data
+  - name: Static Data
     description: Endpoints for retrieving static data
   - name: Specialization
     description: Endpoints for user Specialization management
@@ -75,6 +75,10 @@ paths:
     $ref: './paths/users/users-id-contacts.yaml'
   /users/{userId}/educations:
     $ref: './paths/users/users-id-educations.yaml'
+  /users/{userId}/private-mastery-skills:
+    $ref: './paths/users/users-id-private-mastery-skills.yaml'
+  /users/{userId}/public-mastery-skills:
+    $ref: './paths/users/users-id-public-mastery-skills.yaml'
   /educations/{id}:
     $ref: './paths/educations/educations-id.yaml'
   /users/{userId}/employment-records:
@@ -133,6 +137,5 @@ paths:
     $ref: './paths/skills/skills-id-calculateMark-mark.yaml'
   /skills/{id}/hide/{hide}:
     $ref: './paths/skills/skills-id-hide-hide.yaml'
-
 security:
   - basicAuth: [ ]

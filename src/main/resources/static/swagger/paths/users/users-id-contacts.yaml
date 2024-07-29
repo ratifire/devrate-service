@@ -1,6 +1,6 @@
 post:
   tags:
-    - user info
+    - User Info
   summary: Save contacts
   description: Save contacts of the specified users
   operationId: saveContacts
@@ -42,7 +42,7 @@ post:
             $ref: '../../components/schemas/ErrorResponse.yaml'
 get:
   tags:
-    - user info
+    - User Info
   summary: Get all contacts by user ID
   description: Retrieve all contacts of the specified user
   operationId: findAllContactsByUserId

@@ -1,6 +1,6 @@
 get:
   tags:
-    - static data
+    - Static Data
   summary: Get static files from user folder
   description: Returns the content of the static file by its name from the user folder.
   security: [ ]

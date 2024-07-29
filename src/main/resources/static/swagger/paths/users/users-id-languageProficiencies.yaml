@@ -1,6 +1,6 @@
 post:
   tags:
-    - user info
+    - User Info
   summary: Save language proficiencies
   description: Save language proficiencies of the specified user
   operationId: saveLanguageProficiencies
@@ -42,7 +42,7 @@ post:
             $ref: '../../components/schemas/ErrorResponse.yaml'
 get:
   tags:
-    - user info
+    - User Info
   summary: Get all language proficiencies by user ID
   description: Retrieve all language proficiencies of the specified user
   operationId: findAllLanguageProficienciesByUserId

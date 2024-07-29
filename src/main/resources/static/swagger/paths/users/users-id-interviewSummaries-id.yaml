@@ -1,6 +1,6 @@
 delete:
   tags:
-    - interview summary
+    - Interview Summary
   summary: Delete interview summary By ID
   description: Deletes the association between a user and an interview summary.
   operationId: deleteInterviewSummary
