@@ -435,11 +435,13 @@ public class UserService {
         .map(specialization -> {
           UserMainMasterySkillDto dto = userMainMasterySkillMapper.toDto(specialization);
           return UserMainMasterySkillDto.builder()
-              .specializationDto(dto.getSpecializationDto())
-              .masteryDto(dto.getMasteryDto())
-              .skillDto(
-                  dto.getSkillDto().stream().filter(skillDto -> !skillDto.isHidden()).toList())
-              .build();
+              .specialization(dto.getSpecialization())
+              .mainMastery(dto.getMainMastery())
+              .mainMasterySkills(
+                  dto.getMainMasterySkills()
+                      .stream()
+                      .filter(skillDto -> !skillDto.isHidden())
+                      .toList()).build();
         })
         .toList();
   }

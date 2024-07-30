@@ -13,8 +13,8 @@ import org.mapstruct.Mapping;
 public abstract class UserMainMasterySkillMapper implements
     DataMapper<UserMainMasterySkillDto, Specialization> {
 
-  @Mapping(target = "specializationDto", source = "specialization")
-  @Mapping(target = "masteryDto", source = "specialization.mainMastery")
-  @Mapping(target = "skillDto", source = "specialization.mainMastery.skills")
+  @Mapping(target = "specialization", source = "specialization")
+  @Mapping(target = "mainMastery", source = "specialization.mainMastery")
+  @Mapping(target = "mainMasterySkills", source = "specialization.mainMastery.skills")
   public abstract UserMainMasterySkillDto toDto(Specialization specialization);
 }

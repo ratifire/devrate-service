@@ -13,7 +13,7 @@ import lombok.Getter;
 @EqualsAndHashCode
 public class UserMainMasterySkillDto {
 
-  private SpecializationDto specializationDto;
-  private MasteryDto masteryDto;
-  private List<SkillDto> skillDto;
+  private SpecializationDto specialization;
+  private MasteryDto mainMastery;
+  private List<SkillDto> mainMasterySkills;
 }

@@ -1,15 +1,15 @@
 type: object
 description: "Data Transfer Object representing a user main mastery skills."
 properties:
-  specializationDto:
+  specialization:
     type: object
     $ref: '../../components/schemas/SpecializationDto.yaml'
     description: "Details about the user's specialization."
-  masteryDto:
+  mainMastery:
     type: object
     $ref: '../../components/schemas/MasteryDto.yaml'
     description: "Information about the user's mastery."
-  skillDto:
+  mainMasterySkills:
     type: object
     $ref: '../../components/schemas/SkillDto.yaml'
     description: "List of skills associated with the user's mastery."
