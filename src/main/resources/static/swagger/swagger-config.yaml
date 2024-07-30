@@ -14,7 +14,7 @@ info:
 servers:
   - url: http://localhost:8080
     description: Local environment
-  - url: https://devrate.com
+  - url: https://devrate.com.ua
     description: Production environment
 tags:
   - name: registration
