@@ -1,13 +1,15 @@
 package com.ratifire.devrate.service.interview;
 
+import com.ratifire.devrate.entity.Event;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
+import com.ratifire.devrate.enums.EventType;
 import com.ratifire.devrate.exception.InterviewNotFoundException;
+import com.ratifire.devrate.repository.EventRepository;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
 import com.ratifire.devrate.util.interview.InterviewPair;
 import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
 import com.ratifire.devrate.util.zoom.service.ZoomApiService;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +27,7 @@ public class InterviewService {
 
   private final InterviewRepository interviewRepository;
   private final ZoomApiService zoomApiService;
+  private final EventRepository eventRepository;
   private static final Logger logger = LoggerFactory.getLogger(InterviewService.class);
 
   /**
@@ -39,18 +42,31 @@ public class InterviewService {
     InterviewRequest candidate = interviewPair.getCandidate();
     InterviewRequest interviewer = interviewPair.getInterviewer();
 
-    return zoomApiService.createMeeting("Topic", "Agenda", LocalDateTime.now())
+    ZonedDateTime matchedStartTime = getMatchedStartTime(candidate.getAvailableDates(),
+        interviewer.getAvailableDates());
+
+    return zoomApiService
+        .createMeeting("Topic", "Agenda", matchedStartTime.toLocalDateTime())
         .map(zoomMeeting -> {
           Interview interview = Interview.builder()
               .candidateRequest(candidate)
               .interviewerRequest(interviewer)
-              .startTime(
-                  getMatchedStartTime(candidate.getAvailableDates(),
-                      interviewer.getAvailableDates()))
+              .startTime(matchedStartTime)
               .zoomMeetingId(zoomMeeting.id)
               .build();
-
           interviewRepository.save(interview);
+
+          Event interviewEvent = Event.builder()
+              .type(EventType.INTERVIEW)
+              .zoomLink(zoomMeeting.getJoinUrl())
+              .hostId(interviewer.getUser().getId())
+              .participantIds(List.of(candidate.getUser().getId()))
+              .startTime(matchedStartTime.toLocalDateTime())
+              .build();
+          eventRepository.save(interviewEvent);
+          interviewer.getUser().setEvents(List.of(interviewEvent));
+          candidate.getUser().setEvents(List.of(interviewEvent));
+
           return interview;
         })
         .or(() -> {
