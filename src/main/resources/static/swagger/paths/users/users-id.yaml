@@ -1,6 +1,6 @@
 get:
   tags:
-    - user info
+    - User Info
   summary: Get user by user ID
   description: Retrieve a specific user personal info based on the user ID
   operationId: findById
@@ -33,7 +33,7 @@ get:
             $ref: '../../components/schemas/ErrorResponse.yaml'
 delete:
   tags:
-    - user info
+    - User Info
   summary: Delete user by user ID
   description: Delete a specific user personal info based on the user ID
   operationId: delete

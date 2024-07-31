@@ -1,6 +1,6 @@
 get:
   tags:
-    - education
+    - Education
   summary: Get Education By ID
   description: Retrieves an education record based on the provided ID.
   operationId: getEducationById
@@ -33,7 +33,7 @@ get:
             $ref: '../../components/schemas/ErrorResponse.yaml'
 put:
   tags:
-    - education
+    - Education
   summary: Update Education By ID
   description: Updates an existing education record identified by the provided ID.
   operationId: updateEducation
@@ -72,7 +72,7 @@ put:
             $ref: '../../components/schemas/ErrorResponse.yaml'
 delete:
   tags:
-    - education
+    - Education
   summary: Delete Education By ID
   description: Deletes an education record identified by the provided ID.
   operationId: deleteEducation

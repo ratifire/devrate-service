@@ -1,6 +1,6 @@
 get:
   tags:
-    - bookmark
+    - Bookmark
   summary: Get bookmarks By UserId
   description: Retrieves all user`s bookmarks based on the provided UserId.
   operationId: getBookmarksByUserId
@@ -35,7 +35,7 @@ get:
             $ref: '../../components/schemas/ErrorResponse.yaml'
 post:
   tags:
-    - bookmark
+    - Bookmark
   summary: Create new bookmark
   description: Creates a new bookmark for a specified user.
   operationId: createBookmark
