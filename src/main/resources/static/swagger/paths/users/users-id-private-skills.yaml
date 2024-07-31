@@ -1,27 +1,25 @@
-patch:
-  summary: Update hide skill information
+get:
   tags:
-    - Skill
+    - User Info
+  summary: Get all main mastery skills for a user.
+  description: Retrieve all main mastery skills, for the specified user.
+  operationId: getPrivateMainMasterySkillsByUserId
   parameters:
-    - name: id
-      in: path
+    - in: path
+      name: userId
+      description: The ID of the user.
       required: true
       schema:
         type: integer
-      description: ID of the skill
-    - name: hide
-      in: path
-      required: true
-      schema:
-        type: boolean
-      description: Hide the skill (true) or unhide (false)
   responses:
     '200':
-      description: Skill updated
+      description: A list of the user main mastery skills.
       content:
         application/json:
           schema:
-            $ref: '../../components/schemas/SkillDto.yaml'
+            type: array
+            items:
+              $ref: '../../components/schemas/UserMainMasterySkillDto.yaml'
     '400':
       description: Bad request, e.g., missing or invalid user ID.
       content:

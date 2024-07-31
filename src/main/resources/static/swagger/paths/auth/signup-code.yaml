@@ -1,6 +1,6 @@
 put:
   tags:
-    - registration
+    - Registration
   description: Confirming the user's email by matching the code
   security: [ ]
   operationId: confirmEmail

@@ -1,6 +1,6 @@
 get:
   tags:
-    - achievement
+    - Achievement
   summary: Get Achievements By UserId
   description: Retrieves all user`s achievements based on the provided UserId.
   operationId: getAchievementsByUserId
@@ -33,7 +33,7 @@ get:
             $ref: '../../components/schemas/ErrorResponse.yaml'
 post:
   tags:
-    - achievement
+    - Achievement
   summary: Create New Achievement
   description: Creates a new achievement for a specified user.
   operationId: createAchievement

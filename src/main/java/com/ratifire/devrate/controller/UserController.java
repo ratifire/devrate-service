@@ -11,6 +11,7 @@ import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.dto.UserMainMasterySkillDto;
 import com.ratifire.devrate.dto.UserPictureDto;
 import com.ratifire.devrate.service.user.UserService;
 import jakarta.validation.Valid;
@@ -160,7 +161,7 @@ public class UserController {
   /**
    * Adds or updates a picture for a user by their user ID.
    *
-   * @param userId the ID of the user for whom the picture is to be added or updated
+   * @param userId      the ID of the user for whom the picture is to be added or updated
    * @param userPicture the picture data as a base64 string to upload
    */
   @PostMapping("/{userId}/pictures")
@@ -265,7 +266,7 @@ public class UserController {
    * Deletes the association between a user and an interview summary.
    *
    * @param userId the ID of the user whose association with the interview summary is to be deleted
-   * @param id the ID of the interview summary to be removed from the user's associations
+   * @param id     the ID of the interview summary to be removed from the user's associations
    */
   @DeleteMapping("/{userId}/interview-summaries/{id}")
   public void deleteInterviewSummary(@PathVariable long userId, @PathVariable long id) {
@@ -293,6 +294,30 @@ public class UserController {
   public SpecializationDto createSpecialization(
       @Valid @RequestBody SpecializationDto specializationDto, @PathVariable long userId) {
     return userService.createSpecialization(specializationDto, userId);
+  }
+
+  /**
+   * Retrieves all main mastery skills for the specified user.
+   *
+   * @param userId the ID of the user whose private mastery skills are being retrieved.
+   * @return a list of all main mastery skills for the user, including hidden skills.
+   */
+  @GetMapping("/{userId}/private-skills")
+  public List<UserMainMasterySkillDto> getPrivateMainMasterySkillsByUserId(
+      @PathVariable long userId) {
+    return userService.getPrivateMainMasterySkillsByUserId(userId);
+  }
+
+  /**
+   * Retrieves all main mastery skills for the specified user, excluding hidden skills.
+   *
+   * @param userId the ID of the user whose public mastery skills are being retrieved.
+   * @return a list of all main mastery skills for the user, excluding hidden skills.
+   */
+  @GetMapping("/{userId}/public-skills")
+  public List<UserMainMasterySkillDto> getPublicMainMasterySkillsByUserId(
+      @PathVariable long userId) {
+    return userService.getPublicMainMasterySkillsByUserId(userId);
   }
 
   /**

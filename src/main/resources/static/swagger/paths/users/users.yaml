@@ -1,6 +1,6 @@
 put:
   tags:
-    - user info
+    - User Info
   summary: Update user by user ID
   description: Update an existing user personal info based on the user ID
   operationId: update

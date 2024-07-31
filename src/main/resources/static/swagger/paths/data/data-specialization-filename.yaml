@@ -1,6 +1,6 @@
 get:
   tags:
-    - static data
+    - Static Data
   summary: Get static file from specialization folder
   description: "Returns the content of the static file by its name from the specialization 
       folder."
