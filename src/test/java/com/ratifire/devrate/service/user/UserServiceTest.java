@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.AchievementDto;
@@ -30,8 +29,6 @@ import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.InterviewSummary;
 import com.ratifire.devrate.entity.LanguageProficiency;
-import com.ratifire.devrate.entity.Mastery;
-import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.InterviewSummaryNotFoundException;
@@ -44,7 +41,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +48,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
