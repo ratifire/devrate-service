@@ -19,8 +19,9 @@ import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.MasteryHistoryRepository;
 import com.ratifire.devrate.repository.MasteryRepository;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,6 +58,8 @@ public class MasteryServiceTest {
   private SkillDto skillDto;
   private List<SkillDto> skillDtos;
   private MasteryHistoryDto historyDto;
+  private LocalDate fromDate;
+  private LocalDate toDate;
 
   /**
    * Setup method executed before each test method.
@@ -105,12 +108,13 @@ public class MasteryServiceTest {
     skillDtos.add(skillDto);
 
     historyDto = MasteryHistoryDto.builder()
-        .id(1L)
         .masteryId(2L)
-        .timestamp(new Date())
+        .date(LocalDate.now())
         .softSkillMark(BigDecimal.valueOf(6))
         .hardSkillMark(BigDecimal.valueOf(6))
         .build();
+    fromDate = LocalDate.now().minusDays(10);
+    toDate = LocalDate.now();
   }
 
   @Test
@@ -152,8 +156,7 @@ public class MasteryServiceTest {
   public void createSkillTest() {
     when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
     when(dataMapper.toEntity(any(SkillDto.class))).thenReturn(skill);
-    when(masteryRepository.existsByIdAndSkills_Name(anyLong(), anyString()))
-        .thenReturn(false);
+    when(masteryRepository.existsByIdAndSkills_Name(anyLong(), anyString())).thenReturn(false);
     when(dataMapper.toDto(any(Skill.class))).thenReturn(skillDto);
 
     SkillDto result = masteryService.createSkill(skillDto, 1L);
@@ -170,8 +173,7 @@ public class MasteryServiceTest {
 
     when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
     when(dataMapper.toEntity(anyList())).thenReturn(skills);
-    when(masteryRepository.existsByIdAndSkills_Name(anyLong(), anyString()))
-        .thenReturn(false);
+    when(masteryRepository.existsByIdAndSkills_Name(anyLong(), anyString())).thenReturn(false);
     when(dataMapper.toDto(skills)).thenReturn(skillDtos);
 
     List<SkillDto> result = masteryService.createSkills(skillDtos, 1L);
@@ -183,27 +185,34 @@ public class MasteryServiceTest {
   }
 
   @Test
-  public void testGetMasteryHistory() {
-    when(masteryHistoryRepository.findHistoriesByMasteryId(2L)).thenReturn(List.of(historyDto));
+  public void testGetMasteryHistoryInRange() {
+    when(masteryHistoryRepository.findByMasteryIdAndDateBetween(anyLong(),
+        any(LocalDate.class), any(LocalDate.class)))
+        .thenReturn(new ArrayList<>());
 
-    List<MasteryHistoryDto> result = masteryService.getMasteryHistory(2L);
+    when(dataMapper.toDto(anyList())).thenReturn(Arrays.asList(historyDto));
+
+    List<MasteryHistoryDto> result = masteryService.getMasteryHistory(2L, fromDate, toDate);
 
     assertNotNull(result);
     assertEquals(1, result.size());
 
     MasteryHistoryDto dto = result.get(0);
-    assertEquals(historyDto.getId(), dto.getId());
     assertEquals(historyDto.getMasteryId(), dto.getMasteryId());
-    assertEquals(historyDto.getTimestamp(), dto.getTimestamp());
+    assertEquals(historyDto.getDate(), dto.getDate());
     assertEquals(historyDto.getSoftSkillMark(), dto.getSoftSkillMark());
     assertEquals(historyDto.getHardSkillMark(), dto.getHardSkillMark());
   }
 
   @Test
-  public void testGetMasteryHistoryNotFound() {
-    when(masteryHistoryRepository.findHistoriesByMasteryId(2L)).thenReturn(new ArrayList<>());
+  public void testGetMasteryHistoryInRangeNotFound() {
+    when(masteryHistoryRepository.findByMasteryIdAndDateBetween(anyLong(),
+        any(LocalDate.class), any(LocalDate.class)))
+        .thenReturn(new ArrayList<>());
 
-    List<MasteryHistoryDto> result = masteryService.getMasteryHistory(2L);
+    when(dataMapper.toDto(anyList())).thenReturn(new ArrayList<>());
+
+    List<MasteryHistoryDto> result = masteryService.getMasteryHistory(2L, fromDate, toDate);
 
     assertNotNull(result);
     assertTrue(result.isEmpty());

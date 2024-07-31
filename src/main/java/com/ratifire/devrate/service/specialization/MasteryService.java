@@ -13,7 +13,7 @@ import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.MasteryHistoryRepository;
 import com.ratifire.devrate.repository.MasteryRepository;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +33,7 @@ public class MasteryService {
   private final DataMapper<MasteryDto, Mastery> masteryMapper;
   private final DataMapper<SkillDto, Skill> skillMapper;
   private final MasteryHistoryRepository masteryHistoryRepository;
+  private final DataMapper<MasteryHistoryDto, MasteryHistory> masteryHistoryMapper;
 
   /**
    * Retrieves Mastery by ID.
@@ -177,7 +178,7 @@ public class MasteryService {
   private void saveHistory(Mastery mastery) {
     MasteryHistory history = MasteryHistory.builder()
         .mastery(mastery)
-        .timestamp(new Date())
+        .date(LocalDate.now())
         .hardSkillMark(mastery.getHardSkillMark())
         .softSkillMark(mastery.getSoftSkillMark())
         .build();
@@ -185,13 +186,17 @@ public class MasteryService {
   }
 
   /**
-   * Retrieves a list of MasteryHistoryDto entries for a given Mastery ID,
-   * sorted by timestamp in descending order.
+   * Retrieves the history of a Mastery within a specified date range.
    *
-   * @param masteryId the ID of the Mastery for which history is requested
-   * @return a list of MasteryHistoryDto, can be empty if no history found
+   * @param masteryId the ID of the Mastery to retrieve history for
+   * @param from the start date of the date range (inclusive)
+   * @param to the end date of the date range (inclusive)
+   * @return a list of MasteryHistoryDto containing the history entries for the specified
+   *         Mastery ID within the given date range
    */
-  public List<MasteryHistoryDto> getMasteryHistory(Long masteryId) {
-    return masteryHistoryRepository.findHistoriesByMasteryId(masteryId);
+  public List<MasteryHistoryDto> getMasteryHistory(Long masteryId, LocalDate from, LocalDate to) {
+    List<MasteryHistory> histories = masteryHistoryRepository
+        .findByMasteryIdAndDateBetween(masteryId, from, to);
+    return masteryHistoryMapper.toDto(histories);
   }
 }

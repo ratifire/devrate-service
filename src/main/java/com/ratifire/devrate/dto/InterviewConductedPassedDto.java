@@ -1,26 +1,24 @@
 package com.ratifire.devrate.dto;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Data Transfer Object (DTO) for Mastery History.
+ * Data Transfer Object (DTO) representing the count of conducted
+ * and passed interviews on a specific date.
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode
-public class MasteryHistoryDto {
-  private Long masteryId;
+public class InterviewConductedPassedDto {
   private LocalDate date;
-  private BigDecimal hardSkillMark;
-  private BigDecimal softSkillMark;
+  private long conducted;
+  private long passed;
+
 }

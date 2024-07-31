@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.AchievementDto;
@@ -16,6 +17,7 @@ import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
+import com.ratifire.devrate.dto.InterviewConductedPassedDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.SpecializationDto;
@@ -69,6 +71,8 @@ class UserServiceTest {
 
   private final long userId = 1L;
   private final long interviewSummaryId = 1L;
+  private LocalDate fromDate;
+  private LocalDate toDate;
   private User testUser;
   private InterviewSummary testInterviewSummary;
   private EmploymentRecordDto employmentRecordDto;
@@ -88,6 +92,8 @@ class UserServiceTest {
   private Specialization specialization;
   private List<SpecializationDto> specializationDtos;
   private List<InterviewSummaryDto> interviewSummaryDtos;
+  private InterviewSummary candidateSummary;
+  private InterviewSummary interviewerSummary;
 
   /**
    * Setup method executed before each test method.
@@ -214,6 +220,23 @@ class UserServiceTest {
         new InterviewSummaryDto(2L, LocalDate.of(
             2023, 6, 15), 45L, 1L, 3L)
     );
+
+    fromDate = LocalDate.of(2023, 6, 1);
+    toDate = LocalDate.of(2023, 6, 30);
+
+    candidateSummary = InterviewSummary.builder()
+        .id(1L)
+        .date(LocalDate.of(2023, 6, 14))
+        .candidateId(userId)
+        .interviewerId(2L)
+        .build();
+
+    interviewerSummary = InterviewSummary.builder()
+        .id(2L)
+        .date(LocalDate.of(2023, 6, 15))
+        .candidateId(3L)
+        .interviewerId(userId)
+        .build();
   }
 
   @Test
@@ -398,5 +421,30 @@ class UserServiceTest {
 
     assertThrows(InterviewSummaryNotFoundException.class,
         () -> userService.deleteInterviewSummary(userId, interviewSummaryId));
+  }
+
+  @Test
+  void testGetInterviewsConductedPassed() {
+    when(interviewSummaryRepository.findByCandidateIdAndDateBetween(anyLong(),
+        any(LocalDate.class), any(LocalDate.class)))
+        .thenReturn(Arrays.asList(candidateSummary));
+    when(interviewSummaryRepository.findByInterviewerIdAndDateBetween(anyLong(),
+        any(LocalDate.class), any(LocalDate.class)))
+        .thenReturn(Arrays.asList(interviewerSummary));
+
+    List<InterviewConductedPassedDto> result = userService
+        .getInterviewsConductedPassed(userId, fromDate, toDate);
+
+    assertEquals(2, result.size());
+
+    InterviewConductedPassedDto passedDto = result.stream()
+        .filter(dto -> dto.getDate().equals(candidateSummary.getDate()))
+        .findFirst().orElse(null);
+    InterviewConductedPassedDto conductedDto = result.stream()
+        .filter(dto -> dto.getDate().equals(interviewerSummary.getDate()))
+        .findFirst().orElse(null);
+
+    assertTrue(passedDto != null && passedDto.getPassed() == 1);
+    assertTrue(conductedDto != null && conductedDto.getConducted() == 1);
   }
 }

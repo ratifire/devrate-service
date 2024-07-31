@@ -9,10 +9,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -37,8 +35,7 @@ public class MasteryHistory {
   private Mastery mastery;
 
   @Column(nullable = false)
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date timestamp;
+  private LocalDate date;
 
   @Column(precision = 4, scale = 2)
   private BigDecimal hardSkillMark;
