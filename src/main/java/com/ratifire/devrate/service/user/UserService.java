@@ -21,6 +21,7 @@ import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.InterviewSummary;
 import com.ratifire.devrate.entity.LanguageProficiency;
+import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
@@ -431,19 +432,13 @@ public class UserService {
    */
   public List<UserMainMasterySkillDto> getPublicMainMasterySkillsByUserId(long userId) {
     User user = findUserById(userId);
-    return user.getSpecializations().stream()
-        .map(specialization -> {
-          UserMainMasterySkillDto dto = userMainMasterySkillMapper.toDto(specialization);
-          return UserMainMasterySkillDto.builder()
-              .specialization(dto.getSpecialization())
-              .mainMastery(dto.getMainMastery())
-              .mainMasterySkills(
-                  dto.getMainMasterySkills()
-                      .stream()
-                      .filter(skillDto -> !skillDto.isHidden())
-                      .toList()).build();
-        })
-        .toList();
+    user.getSpecializations().forEach(specialization -> {
+      List<Skill> skills = specialization.getMainMastery().getSkills().stream()
+          .filter(skill -> !skill.isHidden())
+          .toList();
+      specialization.getMainMastery().setSkills(skills);
+    });
+    return userMainMasterySkillMapper.toDto(user.getSpecializations());
   }
 
   /**

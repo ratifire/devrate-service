@@ -302,7 +302,7 @@ public class UserController {
    * @param userId the ID of the user whose private mastery skills are being retrieved.
    * @return a list of all main mastery skills for the user, including hidden skills.
    */
-  @GetMapping("/{userId}/private-mastery-skills")
+  @GetMapping("/{userId}/private-skills")
   public List<UserMainMasterySkillDto> getPrivateMainMasterySkillsByUserId(
       @PathVariable long userId) {
     return userService.getPrivateMainMasterySkillsByUserId(userId);
@@ -314,7 +314,7 @@ public class UserController {
    * @param userId the ID of the user whose public mastery skills are being retrieved.
    * @return a list of all main mastery skills for the user, excluding hidden skills.
    */
-  @GetMapping("/{userId}/public-mastery-skills")
+  @GetMapping("/{userId}/public-skills")
   public List<UserMainMasterySkillDto> getPublicMainMasterySkillsByUserId(
       @PathVariable long userId) {
     return userService.getPublicMainMasterySkillsByUserId(userId);

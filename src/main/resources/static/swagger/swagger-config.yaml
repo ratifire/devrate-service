@@ -75,10 +75,10 @@ paths:
     $ref: './paths/users/users-id-contacts.yaml'
   /users/{userId}/educations:
     $ref: './paths/users/users-id-educations.yaml'
-  /users/{userId}/private-mastery-skills:
-    $ref: './paths/users/users-id-private-mastery-skills.yaml'
-  /users/{userId}/public-mastery-skills:
-    $ref: './paths/users/users-id-public-mastery-skills.yaml'
+  /users/{userId}/private-skills:
+    $ref: './paths/users/users-id-private-skills.yaml'
+  /users/{userId}/public-skills:
+    $ref: './paths/users/users-id-public-skills.yaml'
   /educations/{id}:
     $ref: './paths/educations/educations-id.yaml'
   /users/{userId}/employment-records:

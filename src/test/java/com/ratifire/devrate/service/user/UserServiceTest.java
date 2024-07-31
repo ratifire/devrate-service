@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.AchievementDto;
@@ -18,7 +19,10 @@ import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
+import com.ratifire.devrate.dto.MasteryDto;
+import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.dto.SpecializationDto;
+import com.ratifire.devrate.dto.UserMainMasterySkillDto;
 import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.Bookmark;
 import com.ratifire.devrate.entity.Contact;
@@ -26,6 +30,8 @@ import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.InterviewSummary;
 import com.ratifire.devrate.entity.LanguageProficiency;
+import com.ratifire.devrate.entity.Mastery;
+import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.InterviewSummaryNotFoundException;
@@ -34,9 +40,11 @@ import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.InterviewSummaryRepository;
 import com.ratifire.devrate.repository.UserRepository;
 import com.ratifire.devrate.service.specialization.SpecializationService;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,6 +52,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
@@ -88,6 +97,7 @@ class UserServiceTest {
   private Specialization specialization;
   private List<SpecializationDto> specializationDtos;
   private List<InterviewSummaryDto> interviewSummaryDtos;
+  private List<UserMainMasterySkillDto> userMainMasterySkillDtos;
 
   /**
    * Setup method executed before each test method.
@@ -214,6 +224,31 @@ class UserServiceTest {
         new InterviewSummaryDto(2L, LocalDate.of(
             2023, 6, 15), 45L, 1L, 3L)
     );
+
+    userMainMasterySkillDtos = List.of(UserMainMasterySkillDto
+        .builder()
+        .specialization(specializationDto)
+        .mainMastery(MasteryDto.builder()
+            .id(1L)
+            .level("JUNIOR")
+            .hardSkillMark(BigDecimal.valueOf(5))
+            .softSkillMark(BigDecimal.valueOf(5))
+            .build())
+        .mainMasterySkills(Arrays.asList(SkillDto.builder()
+                .id(10L)
+                .name("SQL")
+                .hidden(true)
+                .averageMark(BigDecimal.valueOf(5))
+                .grows(false)
+                .build(),
+            SkillDto.builder()
+                .id(11L)
+                .name("Spring")
+                .hidden(false)
+                .averageMark(BigDecimal.valueOf(7))
+                .grows(true)
+                .build()))
+        .build());
   }
 
   @Test
@@ -398,5 +433,23 @@ class UserServiceTest {
 
     assertThrows(InterviewSummaryNotFoundException.class,
         () -> userService.deleteInterviewSummary(userId, interviewSummaryId));
+  }
+
+  @Test
+  void getPrivateMainMasterySkillsByUserId_Successful() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(dataMapper.toDto(any())).thenReturn(userMainMasterySkillDtos);
+
+    List<UserMainMasterySkillDto> result = userService.getPrivateMainMasterySkillsByUserId(userId);
+    assertEquals(userMainMasterySkillDtos, result);
+  }
+
+  @Test
+  void getPublicMainMasterySkillsByUserId_Successful() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(dataMapper.toDto(any())).thenReturn(userMainMasterySkillDtos);
+
+    List<UserMainMasterySkillDto> result = userService.getPublicMainMasterySkillsByUserId(userId);
+    assertEquals(userMainMasterySkillDtos, result);
   }
 }
