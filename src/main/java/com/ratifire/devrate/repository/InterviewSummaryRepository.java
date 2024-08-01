@@ -15,6 +15,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RepositoryRestResource(exported = false)
 public interface InterviewSummaryRepository extends JpaRepository<InterviewSummary, Long> {
-  @Query("SELECT i FROM InterviewSummary i WHERE (i.candidateId = :id OR i.interviewerId = :id) AND i.date BETWEEN :from AND :to")
-  List<InterviewSummary> findByCandidateOrInterviewerAndDateBetween(@Param("id") long id, @Param("from") LocalDate from, @Param("to") LocalDate to);
+  @Query("SELECT i FROM InterviewSummary i "
+      + "WHERE (i.candidateId = :id OR i.interviewerId = :id) "
+      + "AND i.date BETWEEN :from AND :to")
+  List<InterviewSummary> findByCandidateOrInterviewerAndDateBetween(
+      @Param("id") long id,
+      @Param("from") LocalDate from,
+      @Param("to") LocalDate to);
 }

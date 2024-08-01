@@ -1,17 +1,13 @@
 type: object
 properties:
-  id:
-    type: integer
-    format: int64
-    description: Unique identifier for the history record
   masteryId:
     type: integer
     format: int64
     description: ID of the mastery
-  timestamp:
+  date:
     type: string
-    format: date-time
-    description: Timestamp of when the mark was updated
+    format: date
+    description: The date of the history record in ISO format (yyyy-MM-dd)
   hardSkillMark:
     type: number
     format: double
@@ -22,6 +18,6 @@ properties:
     description: Soft skill mark
 required:
   - masteryId
-  - timestamp
+  - date
   - hardSkillMark
   - softSkillMark

@@ -45,8 +45,6 @@ tags:
     description: Endpoints for user Mastery management
   - name: Skill
     description: Endpoints for user Skill management
-  - name: Mastery History
-    description: Endpoint for accessing the history of changes to hard/soft marks related to mastery
 paths:
   /auth/signup:
     $ref: './paths/auth/signup.yaml'
@@ -135,7 +133,9 @@ paths:
   /skills/{id}/hide/{hide}:
     $ref: './paths/skills/skills-id-hide-hide.yaml'
   /masteries/{masteryId}/history:
-    $ref: './paths/masteries/mastery-history.yaml'
+    $ref: './paths/masteries/masteries-id-mastery-history.yaml'
+  /users/{userId}/interview-summaries/statistics:
+    $ref: './paths/users/users-id-interviewSummaries-statistics.yaml'
 
 security:
   - basicAuth: [ ]
