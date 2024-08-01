@@ -425,12 +425,9 @@ class UserServiceTest {
 
   @Test
   void testGetInterviewsConductedPassed() {
-    when(interviewSummaryRepository.findByCandidateIdAndDateBetween(anyLong(),
+    when(interviewSummaryRepository.findByCandidateOrInterviewerAndDateBetween(anyLong(),
         any(LocalDate.class), any(LocalDate.class)))
-        .thenReturn(Arrays.asList(candidateSummary));
-    when(interviewSummaryRepository.findByInterviewerIdAndDateBetween(anyLong(),
-        any(LocalDate.class), any(LocalDate.class)))
-        .thenReturn(Arrays.asList(interviewerSummary));
+        .thenReturn(Arrays.asList(candidateSummary, interviewerSummary));
 
     List<InterviewConductedPassedDto> result = userService
         .getInterviewsConductedPassed(userId, fromDate, toDate);

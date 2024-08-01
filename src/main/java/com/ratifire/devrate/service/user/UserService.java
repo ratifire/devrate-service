@@ -42,7 +42,6 @@ import com.ratifire.devrate.util.interview.InterviewPair;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -403,18 +402,12 @@ public class UserService {
    */
   public List<InterviewConductedPassedDto> getInterviewsConductedPassed(
       long userId, LocalDate from, LocalDate to) {
-    List<InterviewSummary> candidateSummaries = interviewSummaryRepository
-        .findByCandidateIdAndDateBetween(userId, from, to);
-    List<InterviewSummary> interviewerSummaries = interviewSummaryRepository
-        .findByInterviewerIdAndDateBetween(userId, from, to);
+    List<InterviewSummary> interviewSummaries = interviewSummaryRepository
+        .findByCandidateOrInterviewerAndDateBetween(userId, from, to);
 
     Map<LocalDate, InterviewConductedPassedDto> interviewMap = new HashMap<>();
 
-    List<InterviewSummary> allSummaries = new ArrayList<>();
-    allSummaries.addAll(candidateSummaries);
-    allSummaries.addAll(interviewerSummaries);
-
-    for (InterviewSummary summary : allSummaries) {
+    for (InterviewSummary summary : interviewSummaries) {
       LocalDate date = summary.getDate();
       interviewMap.putIfAbsent(date, new InterviewConductedPassedDto(date, 0, 0));
 

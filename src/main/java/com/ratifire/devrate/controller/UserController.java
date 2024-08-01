@@ -273,7 +273,7 @@ public class UserController {
    * @param to the end date of the date range (inclusive)
    * @return the list of conducted and passed interviews as a DTO
    */
-  @GetMapping("/{userId}/interviews/date-range")
+  @GetMapping("/{userId}/interview-summaries/statistics")
   public List<InterviewConductedPassedDto> getInterviewsConductedPassed(
       @PathVariable long userId,
       @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
