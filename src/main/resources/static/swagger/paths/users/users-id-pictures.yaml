@@ -1,6 +1,6 @@
 get:
   tags:
-    - user info
+    - User Info
   summary: Get User Picture
   description: Retrieves the picture associated with the user by their user ID.
   operationId: getUserPicture
@@ -44,7 +44,7 @@ get:
             $ref: '../../components/schemas/ErrorResponse.yaml'
 post:
   tags:
-    - user info
+    - User Info
   summary: Add or Update User Picture
   description: Adds or updates the picture for the user by their user ID.
   operationId: addUserPicture
@@ -85,7 +85,7 @@ post:
             $ref: '../../components/schemas/ErrorResponse.yaml'
 delete:
   tags:
-    - user info
+    - User Info
   summary: Remove User Picture
   description: Removes the picture for the user by their user ID.
   operationId: removeUserPicture

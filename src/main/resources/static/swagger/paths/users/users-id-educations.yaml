@@ -1,6 +1,6 @@
 post:
   tags:
-    - education
+    - Education
   summary: Create New Education
   description: Creates a new education record for a specified user.
   operationId: createEducation
@@ -38,7 +38,7 @@ post:
             $ref: '../../components/schemas/ErrorResponse.yaml'
 get:
   tags:
-    - education
+    - Education
   summary: Get all educations by user ID
   description: Retrieve all educations of the specified user
   operationId: getEducationsByUserId

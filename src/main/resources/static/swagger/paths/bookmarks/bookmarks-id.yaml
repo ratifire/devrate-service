@@ -1,6 +1,6 @@
 delete:
   tags:
-    - bookmark
+    - Bookmark
   summary: Delete Bookmark By ID
   description: Deletes a bookmark by the provided ID.
   operationId: delete
