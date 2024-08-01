@@ -17,7 +17,7 @@ import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
-import com.ratifire.devrate.dto.InterviewConductedPassedDto;
+import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.MasteryDto;
@@ -472,20 +472,20 @@ class UserServiceTest {
   }
 
   @Test
-  void testGetInterviewsConductedPassed() {
+  void testGetInterviewStatConductedPassedByDate() {
     when(interviewSummaryRepository.findByCandidateOrInterviewerAndDateBetween(anyLong(),
         any(LocalDate.class), any(LocalDate.class)))
         .thenReturn(Arrays.asList(candidateSummary, interviewerSummary));
 
-    List<InterviewConductedPassedDto> result = userService
-        .getInterviewsConductedPassed(userId, fromDate, toDate);
+    List<InterviewStatsConductedPassedByDateDto> result = userService
+        .getInterviewStatConductedPassedByDate(userId, fromDate, toDate);
 
     assertEquals(2, result.size());
 
-    InterviewConductedPassedDto passedDto = result.stream()
+    InterviewStatsConductedPassedByDateDto passedDto = result.stream()
         .filter(dto -> dto.getDate().equals(candidateSummary.getDate()))
         .findFirst().orElse(null);
-    InterviewConductedPassedDto conductedDto = result.stream()
+    InterviewStatsConductedPassedByDateDto conductedDto = result.stream()
         .filter(dto -> dto.getDate().equals(interviewerSummary.getDate()))
         .findFirst().orElse(null);
 

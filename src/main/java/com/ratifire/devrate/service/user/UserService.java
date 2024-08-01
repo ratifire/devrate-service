@@ -7,8 +7,8 @@ import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
-import com.ratifire.devrate.dto.InterviewConductedPassedDto;
 import com.ratifire.devrate.dto.InterviewRequestDto;
+import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.SpecializationDto;
@@ -403,28 +403,28 @@ public class UserService {
    * @return a list of InterviewConductedPassedDto objects with the count
    *         of conducted and passed interviews per date
    */
-  public List<InterviewConductedPassedDto> getInterviewsConductedPassed(
+  public List<InterviewStatsConductedPassedByDateDto> getInterviewStatConductedPassedByDate(
       long userId, LocalDate from, LocalDate to) {
     List<InterviewSummary> interviewSummaries = interviewSummaryRepository
         .findByCandidateOrInterviewerAndDateBetween(userId, from, to);
 
-    Map<LocalDate, InterviewConductedPassedDto> interviewMap = new HashMap<>();
+    Map<LocalDate, InterviewStatsConductedPassedByDateDto> interviewStats = new HashMap<>();
 
     for (InterviewSummary summary : interviewSummaries) {
       LocalDate date = summary.getDate();
-      interviewMap.putIfAbsent(date, new InterviewConductedPassedDto(date, 0, 0));
+      interviewStats.putIfAbsent(date, new InterviewStatsConductedPassedByDateDto(date, 0, 0));
 
       if (summary.getCandidateId() == userId) {
-        interviewMap.get(date).setPassed(interviewMap.get(date).getPassed() + 1);
+        interviewStats.get(date).setPassed(interviewStats.get(date).getPassed() + 1);
       }
 
       if (summary.getInterviewerId() == userId) {
-        interviewMap.get(date).setConducted(interviewMap.get(date).getConducted() + 1);
+        interviewStats.get(date).setConducted(interviewStats.get(date).getConducted() + 1);
       }
     }
 
-    return interviewMap.values().stream()
-        .sorted(Comparator.comparing(InterviewConductedPassedDto::getDate))
+    return interviewStats.values().stream()
+        .sorted(Comparator.comparing(InterviewStatsConductedPassedByDateDto::getDate))
         .toList();
   }
 

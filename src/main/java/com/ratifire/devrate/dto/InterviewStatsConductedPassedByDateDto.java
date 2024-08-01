@@ -16,7 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class InterviewConductedPassedDto {
+public class InterviewStatsConductedPassedByDateDto {
   private LocalDate date;
   private long conducted;
   private long passed;

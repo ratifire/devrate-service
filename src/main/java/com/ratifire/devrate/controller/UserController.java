@@ -6,8 +6,8 @@ import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
-import com.ratifire.devrate.dto.InterviewConductedPassedDto;
 import com.ratifire.devrate.dto.InterviewRequestDto;
+import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.SpecializationDto;
@@ -275,11 +275,11 @@ public class UserController {
    * @return the list of conducted and passed interviews as a DTO
    */
   @GetMapping("/{userId}/interview-summaries/statistics")
-  public List<InterviewConductedPassedDto> getInterviewsConductedPassed(
+  public List<InterviewStatsConductedPassedByDateDto> getInterviewsConductedPassed(
       @PathVariable long userId,
       @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
       @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-    return userService.getInterviewsConductedPassed(userId, from, to);
+    return userService.getInterviewStatConductedPassedByDate(userId, from, to);
   }
 
   /**
