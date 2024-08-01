@@ -38,8 +38,8 @@ public class ContactValueValidator implements
     ContactType type = contactDto.getType();
     String value = contactDto.getValue();
 
-    if (type == null || value == null) {
-      return false;
+    if (value.isEmpty()) {
+      return true;
     }
 
     Predicate<String> validator = VALIDATORS.get(type);
