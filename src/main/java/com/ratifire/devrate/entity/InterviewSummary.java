@@ -35,5 +35,4 @@ public class InterviewSummary {
 
   @Column(name = "interviewer_id", nullable = false)
   private long interviewerId;
-
 }

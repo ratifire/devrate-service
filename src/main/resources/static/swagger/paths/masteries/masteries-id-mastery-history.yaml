@@ -1,0 +1,53 @@
+get:
+  tags:
+    - Mastery
+  summary: Get mastery history by Mastery ID
+  description: Endpoint for accessing the history of changes to hard/soft marks related to mastery
+  parameters:
+    - name: masteryId
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: The ID of the Mastery to retrieve history for.
+    - name: from
+      in: query
+      required: true
+      schema:
+        type: string
+        format: date
+      description: The start date of the date range (inclusive) in ISO format (yyyy-MM-dd).
+    - name: to
+      in: query
+      required: true
+      schema:
+        type: string
+        format: date
+      description: The end date of the date range (inclusive) in ISO format (yyyy-MM-dd).
+  responses:
+    '200':
+      description: Mastery history found
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../components/schemas/MasteryHistoryDto.yaml'
+    '400':
+      description: Bad Request. The request cannot be fulfilled due to bad syntax.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '404':
+      description: Not Found. No history found for the given Mastery ID.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
