@@ -107,7 +107,7 @@ public class User {
   )
   private List<InterviewSummary> interviewSummaries;
 
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "user_event",
       joinColumns = @JoinColumn(name = "user_id"),

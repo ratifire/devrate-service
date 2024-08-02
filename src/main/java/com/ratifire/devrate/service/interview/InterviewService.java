@@ -64,8 +64,8 @@ public class InterviewService {
               .startTime(matchedStartTime.toLocalDateTime())
               .build();
           eventRepository.save(interviewEvent);
-          interviewer.getUser().setEvents(List.of(interviewEvent));
-          candidate.getUser().setEvents(List.of(interviewEvent));
+          interviewer.getUser().getEvents().add(interviewEvent);
+          candidate.getUser().getEvents().add(interviewEvent);
 
           return interview;
         })

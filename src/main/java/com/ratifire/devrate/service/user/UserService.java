@@ -7,6 +7,7 @@ import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
+import com.ratifire.devrate.dto.EventDto;
 import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
@@ -20,6 +21,7 @@ import com.ratifire.devrate.entity.Bookmark;
 import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
+import com.ratifire.devrate.entity.Event;
 import com.ratifire.devrate.entity.InterviewSummary;
 import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.Skill;
@@ -27,6 +29,7 @@ import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
+import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.exception.InterviewSummaryNotFoundException;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
@@ -40,15 +43,18 @@ import com.ratifire.devrate.service.interview.InterviewMatchingService;
 import com.ratifire.devrate.service.interview.InterviewRequestService;
 import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.service.specialization.SpecializationService;
+import com.ratifire.devrate.util.interview.DateTimeUtils;
 import com.ratifire.devrate.util.interview.InterviewPair;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -641,5 +647,57 @@ public class UserService {
 
     String recipientEmail = userSecurityService.findEmailByUserId(recipient.getId());
     emailService.sendInterviewRejectionMessage(recipient, rejector, scheduledTime, recipientEmail);
+  }
+
+  /**
+   * Retrieves a list of events for a specified user that occur within a given time range.
+   *
+   * @param userId the ID of the user whose events are to be retrieved
+   * @param from   the start of the time range (inclusive)
+   * @param to     the end of the time range (inclusive)
+   * @return a list of {@link EventDto} objects representing the events for the user
+   */
+  public List<EventDto> findEventsBetweenDateTime(long userId, LocalDateTime from,
+      LocalDateTime to) {
+    User user = findUserById(userId);
+
+    return user.getEvents().stream()
+        .filter(event -> DateTimeUtils.isWithinRange(event.getStartTime(), from, to))
+        .map(this::constructEventDto)
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * Constructs an {@link EventDto} from a given {@link Event} entity.
+   *
+   * @param event the {@link Event} entity to be converted
+   * @return an {@link EventDto} object that represents the given event
+   */
+  private EventDto constructEventDto(Event event) {
+    User host = findUserById(event.getHostId());
+
+    EventDto.Participant hostEvent = new EventDto.Participant();
+    hostEvent.setName(host.getFirstName());
+    hostEvent.setSurname(host.getLastName());
+    hostEvent.setRole(InterviewRequestRole.INTERVIEWER);
+
+    List<EventDto.Participant> participants = event.getParticipantIds().stream()
+        .map(participantId -> {
+          User participant = findUserById(participantId);
+          EventDto.Participant participantEvent = new EventDto.Participant();
+          participantEvent.setName(participant.getFirstName());
+          participantEvent.setSurname(participant.getLastName());
+          participantEvent.setRole(InterviewRequestRole.CANDIDATE);
+          return participantEvent;
+        })
+        .collect(Collectors.toList());
+
+    return EventDto.builder()
+        .id(event.getId())
+        .zoomLink(event.getZoomLink())
+        .host(hostEvent)
+        .participants(participants)
+        .startTime(event.getStartTime())
+        .build();
   }
 }
