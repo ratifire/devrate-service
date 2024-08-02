@@ -32,7 +32,7 @@ public @interface ValidateContactValue {
 
   /**
    * Can be used by clients of the Bean Validation API to assign custom payload objects to a
-   * constraint. This attribute is not used by the API itself.
+   * constraint.
    *
    * @return the array of payload classes
    */
