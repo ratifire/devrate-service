@@ -19,7 +19,7 @@ public class ContactValueValidator implements
 
   private static final Pattern EMAIL_PATTERN = Pattern.compile(
       "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$");
-  private static final Pattern PHONE_PATTERN = Pattern.compile("^\\+?\\d{10,15}$");
+  private static final Pattern PHONE_PATTERN = Pattern.compile("^\\+\\d{10,15}$");
   private static final String TELEGRAM_BASE_URL = "https://t.me/";
   private static final String LINKEDIN_BASE_URL = "https://www.linkedin.com/in/";
   private static final String GITHUB_BASE_URL = "https://github.com/";
