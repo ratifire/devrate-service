@@ -8,11 +8,16 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * This class contains tests to ensure that controller methods in the specified package have the
+ * appropriate security annotations.
+ */
 class AuthorizationAnnotationTest {
 
   private static final String CONTROLLER_PACKAGE_PATH = "com.ratifire.devrate.controller";
@@ -20,6 +25,10 @@ class AuthorizationAnnotationTest {
   private static JavaClasses importedClasses;
 
 
+  /**
+   * Sets up the imported classes before all tests. It imports classes from the specified package
+   * path, excluding the class defined by EXCLUDED_CLASS_NAME.
+   */
   @BeforeAll
   static void setUp() {
     importedClasses = new ClassFileImporter()
@@ -27,8 +36,12 @@ class AuthorizationAnnotationTest {
         .importPackages(CONTROLLER_PACKAGE_PATH);
   }
 
+  /**
+   * Tests that methods annotated with @PostMapping, @PutMapping, @PatchMapping, and @DeleteMapping
+   * in classes annotated with @RestController have the @PreAuthorize annotation.
+   */
   @Test
-  void resourceControllerMethodsShouldHavePreauthorizeAnnotationTest() {
+  void resourceControllerPostPutPatchDeleteMethodsShouldHavePreauthorizeAnnotationTest() {
     methods()
         .that()
         .areDeclaredInClassesThat()
@@ -43,6 +56,23 @@ class AuthorizationAnnotationTest {
         .areAnnotatedWith(DeleteMapping.class)
         .should()
         .beAnnotatedWith(PreAuthorize.class)
+        .check(importedClasses);
+  }
+
+  /**
+   * Tests that methods annotated with @GetMapping in classes annotated with @RestController do not
+   * have the @PreAuthorize annotation.
+   */
+  @Test
+  void resourceControllerGetMethodsShouldNotHavePreauthorizeAnnotationTest() {
+    methods()
+        .that()
+        .areDeclaredInClassesThat()
+        .areAnnotatedWith(RestController.class)
+        .and()
+        .areAnnotatedWith(GetMapping.class)
+        .should()
+        .notBeAnnotatedWith(PreAuthorize.class)
         .check(importedClasses);
   }
 }
