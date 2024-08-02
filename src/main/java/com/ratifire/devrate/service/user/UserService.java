@@ -8,6 +8,7 @@ import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.InterviewRequestDto;
+import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.SpecializationDto;
@@ -41,8 +42,12 @@ import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.service.specialization.SpecializationService;
 import com.ratifire.devrate.util.interview.InterviewPair;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -386,6 +391,41 @@ public class UserService {
   public List<InterviewSummaryDto> getInterviewSummariesByUserId(long userId) {
     User user = findUserById(userId);
     return interviewSummaryMapper.toDto(user.getInterviewSummaries());
+  }
+
+  /**
+   * Counts the number of conducted and passed interviews for the specified
+   * user within a given date range.
+   *
+   * @param userId the ID of the user
+   * @param from the start date of the date range (inclusive)
+   * @param to the end date of the date range (inclusive)
+   * @return a list of InterviewConductedPassedDto objects with the count
+   *         of conducted and passed interviews per date
+   */
+  public List<InterviewStatsConductedPassedByDateDto> getInterviewStatConductedPassedByDate(
+      long userId, LocalDate from, LocalDate to) {
+    List<InterviewSummary> interviewSummaries = interviewSummaryRepository
+        .findByCandidateOrInterviewerAndDateBetween(userId, from, to);
+
+    Map<LocalDate, InterviewStatsConductedPassedByDateDto> interviewStats = new HashMap<>();
+
+    for (InterviewSummary summary : interviewSummaries) {
+      LocalDate date = summary.getDate();
+      interviewStats.putIfAbsent(date, new InterviewStatsConductedPassedByDateDto(date, 0, 0));
+
+      if (summary.getCandidateId() == userId) {
+        interviewStats.get(date).setPassed(interviewStats.get(date).getPassed() + 1);
+      }
+
+      if (summary.getInterviewerId() == userId) {
+        interviewStats.get(date).setConducted(interviewStats.get(date).getConducted() + 1);
+      }
+    }
+
+    return interviewStats.values().stream()
+        .sorted(Comparator.comparing(InterviewStatsConductedPassedByDateDto::getDate))
+        .toList();
   }
 
   /**

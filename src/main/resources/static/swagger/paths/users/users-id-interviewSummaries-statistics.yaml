@@ -1,0 +1,48 @@
+get:
+  tags:
+    - interview summary
+  summary: Get interview statistics by User ID
+  description: Endpoint for conducted and passed interviews by user ID and date range.
+  parameters:
+    - in: path
+      name: userId
+      description: The ID of the user.
+      required: true
+      schema:
+        type: integer
+        format: int64
+    - in: query
+      name: from
+      description: The start date of the date range (inclusive) in ISO format (yyyy-MM-dd).
+      required: true
+      schema:
+        type: string
+        format: date
+    - in: query
+      name: to
+      description: The end date of the date range (inclusive) in ISO format (yyyy-MM-dd).
+      required: true
+      schema:
+        type: string
+        format: date
+  responses:
+    '200':
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../components/schemas/InterviewConductedPassedDto.yaml'
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

@@ -1,11 +1,14 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.MasteryDto;
+import com.ratifire.devrate.dto.MasteryHistoryDto;
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.service.specialization.MasteryService;
 import jakarta.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -94,5 +98,22 @@ public class MasteryController {
   @PutMapping()
   public MasteryDto update(@RequestBody MasteryDto masteryDto) {
     return masteryService.update(masteryDto);
+  }
+
+  /**
+   * Endpoint to retrieve the history of a Mastery by its ID within a specified date range.
+   *
+   * @param masteryId the ID of the Mastery to retrieve history for
+   * @param from the start date of the date range (inclusive) in ISO format (yyyy-MM-dd)
+   * @param to the end date of the date range (inclusive) in ISO format (yyyy-MM-dd)
+   * @return a list of MasteryHistoryDto containing the history entries for the specified
+   *         Mastery ID within the given date range
+   */
+  @GetMapping("/{masteryId}/history")
+  public List<MasteryHistoryDto> getMasteryHistory(
+      @PathVariable Long masteryId,
+      @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+      @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+    return masteryService.getMasteryHistory(masteryId, from, to);
   }
 }
