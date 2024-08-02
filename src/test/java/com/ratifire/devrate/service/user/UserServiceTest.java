@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.AchievementDto;
@@ -16,9 +17,13 @@ import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
+import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
+import com.ratifire.devrate.dto.MasteryDto;
+import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.dto.SpecializationDto;
+import com.ratifire.devrate.dto.UserMainMasterySkillDto;
 import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.Bookmark;
 import com.ratifire.devrate.entity.Contact;
@@ -34,6 +39,7 @@ import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.InterviewSummaryRepository;
 import com.ratifire.devrate.repository.UserRepository;
 import com.ratifire.devrate.service.specialization.SpecializationService;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,6 +75,8 @@ class UserServiceTest {
 
   private final long userId = 1L;
   private final long interviewSummaryId = 1L;
+  private LocalDate fromDate;
+  private LocalDate toDate;
   private User testUser;
   private InterviewSummary testInterviewSummary;
   private EmploymentRecordDto employmentRecordDto;
@@ -88,6 +96,9 @@ class UserServiceTest {
   private Specialization specialization;
   private List<SpecializationDto> specializationDtos;
   private List<InterviewSummaryDto> interviewSummaryDtos;
+  private List<UserMainMasterySkillDto> userMainMasterySkillDtos;
+  private InterviewSummary candidateSummary;
+  private InterviewSummary interviewerSummary;
 
   /**
    * Setup method executed before each test method.
@@ -214,6 +225,48 @@ class UserServiceTest {
         new InterviewSummaryDto(2L, LocalDate.of(
             2023, 6, 15), 45L, 1L, 3L)
     );
+
+    userMainMasterySkillDtos = List.of(UserMainMasterySkillDto
+        .builder()
+        .specialization(specializationDto)
+        .mainMastery(MasteryDto.builder()
+            .id(1L)
+            .level("JUNIOR")
+            .hardSkillMark(BigDecimal.valueOf(5))
+            .softSkillMark(BigDecimal.valueOf(5))
+            .build())
+        .mainMasterySkills(Arrays.asList(SkillDto.builder()
+                .id(10L)
+                .name("SQL")
+                .hidden(true)
+                .averageMark(BigDecimal.valueOf(5))
+                .grows(false)
+                .build(),
+            SkillDto.builder()
+                .id(11L)
+                .name("Spring")
+                .hidden(false)
+                .averageMark(BigDecimal.valueOf(7))
+                .grows(true)
+                .build()))
+        .build());
+
+    fromDate = LocalDate.of(2023, 6, 1);
+    toDate = LocalDate.of(2023, 6, 30);
+
+    candidateSummary = InterviewSummary.builder()
+        .id(1L)
+        .date(LocalDate.of(2023, 6, 14))
+        .candidateId(userId)
+        .interviewerId(2L)
+        .build();
+
+    interviewerSummary = InterviewSummary.builder()
+        .id(2L)
+        .date(LocalDate.of(2023, 6, 15))
+        .candidateId(3L)
+        .interviewerId(userId)
+        .build();
   }
 
   @Test
@@ -398,5 +451,45 @@ class UserServiceTest {
 
     assertThrows(InterviewSummaryNotFoundException.class,
         () -> userService.deleteInterviewSummary(userId, interviewSummaryId));
+  }
+
+  @Test
+  void getPrivateMainMasterySkillsByUserId_Successful() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(dataMapper.toDto(any())).thenReturn(userMainMasterySkillDtos);
+
+    List<UserMainMasterySkillDto> result = userService.getPrivateMainMasterySkillsByUserId(userId);
+    assertEquals(userMainMasterySkillDtos, result);
+  }
+
+  @Test
+  void getPublicMainMasterySkillsByUserId_Successful() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(dataMapper.toDto(any())).thenReturn(userMainMasterySkillDtos);
+
+    List<UserMainMasterySkillDto> result = userService.getPublicMainMasterySkillsByUserId(userId);
+    assertEquals(userMainMasterySkillDtos, result);
+  }
+
+  @Test
+  void testGetInterviewStatConductedPassedByDate() {
+    when(interviewSummaryRepository.findByCandidateOrInterviewerAndDateBetween(anyLong(),
+        any(LocalDate.class), any(LocalDate.class)))
+        .thenReturn(Arrays.asList(candidateSummary, interviewerSummary));
+
+    List<InterviewStatsConductedPassedByDateDto> result = userService
+        .getInterviewStatConductedPassedByDate(userId, fromDate, toDate);
+
+    assertEquals(2, result.size());
+
+    InterviewStatsConductedPassedByDateDto passedDto = result.stream()
+        .filter(dto -> dto.getDate().equals(candidateSummary.getDate()))
+        .findFirst().orElse(null);
+    InterviewStatsConductedPassedByDateDto conductedDto = result.stream()
+        .filter(dto -> dto.getDate().equals(interviewerSummary.getDate()))
+        .findFirst().orElse(null);
+
+    assertTrue(passedDto != null && passedDto.getPassed() == 1);
+    assertTrue(conductedDto != null && conductedDto.getConducted() == 1);
   }
 }

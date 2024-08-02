@@ -1,6 +1,6 @@
 post:
   tags:
-    - registration
+    - Registration
   description: Register a new user
   security: [ ]
   operationId: registerUser

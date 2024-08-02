@@ -1,15 +1,19 @@
 package com.ratifire.devrate.service.specialization;
 
 import com.ratifire.devrate.dto.MasteryDto;
+import com.ratifire.devrate.dto.MasteryHistoryDto;
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.entity.Mastery;
+import com.ratifire.devrate.entity.MasteryHistory;
 import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.enums.SkillType;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
+import com.ratifire.devrate.repository.MasteryHistoryRepository;
 import com.ratifire.devrate.repository.MasteryRepository;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +32,8 @@ public class MasteryService {
   private final SkillService skillService;
   private final DataMapper<MasteryDto, Mastery> masteryMapper;
   private final DataMapper<SkillDto, Skill> skillMapper;
+  private final MasteryHistoryRepository masteryHistoryRepository;
+  private final DataMapper<MasteryHistoryDto, MasteryHistory> masteryHistoryMapper;
 
   /**
    * Retrieves Mastery by ID.
@@ -65,6 +71,7 @@ public class MasteryService {
 
     masteryMapper.updateEntity(masteryDto, mastery);
     masteryRepository.save(mastery);
+    saveHistory(mastery);
 
     return masteryMapper.toDto(mastery);
   }
@@ -161,5 +168,35 @@ public class MasteryService {
   public void setSkillsForMastery(Mastery mastery) {
     mastery.setSkills(skillService.loadSoftSkills());
     masteryRepository.save(mastery);
+  }
+
+  /**
+   * Saves the current state of the Mastery entity into the history.
+   *
+   * @param mastery the Mastery entity whose current state is to be saved in the history.
+   */
+  private void saveHistory(Mastery mastery) {
+    MasteryHistory history = MasteryHistory.builder()
+        .mastery(mastery)
+        .date(LocalDate.now())
+        .hardSkillMark(mastery.getHardSkillMark())
+        .softSkillMark(mastery.getSoftSkillMark())
+        .build();
+    masteryHistoryRepository.save(history);
+  }
+
+  /**
+   * Retrieves the history of a Mastery within a specified date range.
+   *
+   * @param masteryId the ID of the Mastery to retrieve history for
+   * @param from the start date of the date range (inclusive)
+   * @param to the end date of the date range (inclusive)
+   * @return a list of MasteryHistoryDto containing the history entries for the specified
+   *         Mastery ID within the given date range
+   */
+  public List<MasteryHistoryDto> getMasteryHistory(Long masteryId, LocalDate from, LocalDate to) {
+    List<MasteryHistory> histories = masteryHistoryRepository
+        .findByMasteryIdAndDateBetween(masteryId, from, to);
+    return masteryHistoryMapper.toDto(histories);
   }
 }

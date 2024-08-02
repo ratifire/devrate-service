@@ -1,6 +1,6 @@
 get:
   tags:
-    - employment records
+    - Employment Records
   summary: Get Employment record By ID
   description: Retrieves all user`s employment records based on the provided ID.
   operationId: findById
@@ -33,7 +33,7 @@ get:
             $ref: '../../components/schemas/ErrorResponse.yaml'
 put:
   tags:
-    - employment records
+    - Employment Records
   summary: Update employment-record By ID
   description: Updates an existing employment-record identified by the provided ID.
   operationId: update
@@ -72,7 +72,7 @@ put:
             $ref: '../../components/schemas/ErrorResponse.yaml'
 delete:
   tags:
-    - employment records
+    - Employment Records
   summary: Delete Employment Record By ID
   description: Deletes an employment record identified by the provided ID.
   operationId: delete

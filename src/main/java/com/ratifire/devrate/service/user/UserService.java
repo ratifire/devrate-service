@@ -8,10 +8,12 @@ import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.InterviewRequestDto;
+import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.dto.UserMainMasterySkillDto;
 import com.ratifire.devrate.dto.UserPictureDto;
 import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.Bookmark;
@@ -20,6 +22,7 @@ import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.InterviewSummary;
 import com.ratifire.devrate.entity.LanguageProficiency;
+import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
@@ -39,8 +42,12 @@ import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.service.specialization.SpecializationService;
 import com.ratifire.devrate.util.interview.InterviewPair;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -72,6 +79,7 @@ public class UserService {
   private final DataMapper<BookmarkDto, Bookmark> bookmarkMapper;
   private final DataMapper<InterviewSummaryDto, InterviewSummary> interviewSummaryMapper;
   private final DataMapper<SpecializationDto, Specialization> specializationDataMapper;
+  private final DataMapper<UserMainMasterySkillDto, Specialization> userMainMasterySkillMapper;
   private final DataMapper<InterviewRequestDto, InterviewRequest> interviewRequestMapper;
 
   /**
@@ -386,6 +394,41 @@ public class UserService {
   }
 
   /**
+   * Counts the number of conducted and passed interviews for the specified
+   * user within a given date range.
+   *
+   * @param userId the ID of the user
+   * @param from the start date of the date range (inclusive)
+   * @param to the end date of the date range (inclusive)
+   * @return a list of InterviewConductedPassedDto objects with the count
+   *         of conducted and passed interviews per date
+   */
+  public List<InterviewStatsConductedPassedByDateDto> getInterviewStatConductedPassedByDate(
+      long userId, LocalDate from, LocalDate to) {
+    List<InterviewSummary> interviewSummaries = interviewSummaryRepository
+        .findByCandidateOrInterviewerAndDateBetween(userId, from, to);
+
+    Map<LocalDate, InterviewStatsConductedPassedByDateDto> interviewStats = new HashMap<>();
+
+    for (InterviewSummary summary : interviewSummaries) {
+      LocalDate date = summary.getDate();
+      interviewStats.putIfAbsent(date, new InterviewStatsConductedPassedByDateDto(date, 0, 0));
+
+      if (summary.getCandidateId() == userId) {
+        interviewStats.get(date).setPassed(interviewStats.get(date).getPassed() + 1);
+      }
+
+      if (summary.getInterviewerId() == userId) {
+        interviewStats.get(date).setConducted(interviewStats.get(date).getConducted() + 1);
+      }
+    }
+
+    return interviewStats.values().stream()
+        .sorted(Comparator.comparing(InterviewStatsConductedPassedByDateDto::getDate))
+        .toList();
+  }
+
+  /**
    * Deletes the association between a user and an interview summary.
    *
    * @param userId the ID of the user whose association with the interview summary is to be deleted
@@ -408,6 +451,34 @@ public class UserService {
   public List<SpecializationDto> getSpecializationsByUserId(long userId) {
     User user = findUserById(userId);
     return specializationDataMapper.toDto(user.getSpecializations());
+  }
+
+  /**
+   * Retrieves a list of all main mastery skills for the specified user.
+   *
+   * @param userId the ID of the user whose mastery skills are to be retrieved.
+   * @return a list of all main mastery skills for the user.
+   */
+  public List<UserMainMasterySkillDto> getPrivateMainMasterySkillsByUserId(long userId) {
+    User user = findUserById(userId);
+    return userMainMasterySkillMapper.toDto(user.getSpecializations());
+  }
+
+  /**
+   * Retrieves a list of all main mastery skills for the specified user, excluding hidden skills.
+   *
+   * @param userId the ID of the user whose mastery skills are to be retrieved.
+   * @return a list of main mastery skills for the user, excluding hidden skills.
+   */
+  public List<UserMainMasterySkillDto> getPublicMainMasterySkillsByUserId(long userId) {
+    User user = findUserById(userId);
+    user.getSpecializations().forEach(specialization -> {
+      List<Skill> skills = specialization.getMainMastery().getSkills().stream()
+          .filter(skill -> !skill.isHidden())
+          .toList();
+      specialization.getMainMastery().setSkills(skills);
+    });
+    return userMainMasterySkillMapper.toDto(user.getSpecializations());
   }
 
   /**
@@ -546,7 +617,7 @@ public class UserService {
   /**
    * Checks if the rejector is the candidate in the interview.
    *
-   * @param rejector The user who rejected the interview.
+   * @param rejector         The user who rejected the interview.
    * @param candidateRequest The interview request from the candidate.
    * @return true if the rejector is the candidate, false otherwise.
    */
@@ -557,8 +628,8 @@ public class UserService {
   /**
    * Notifies users involved in the interview rejection.
    *
-   * @param recipient The user for whom rejected the interview.
-   * @param rejector The user who rejected the interview.
+   * @param recipient     The user for whom rejected the interview.
+   * @param rejector      The user who rejected the interview.
    * @param scheduledTime The scheduled time of the interview.
    */
   private void notifyUsers(User recipient, User rejector,

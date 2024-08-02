@@ -1,6 +1,6 @@
 post:
   tags:
-    - authentication
+    - Authentication
   summary: Logs out the user
   description: Logs out the currently authenticated user.
   security: [ ]
