@@ -10,6 +10,10 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
+/**
+ * Validator for the {@link ContactDto} class, ensuring that the value of a contact matches the
+ * expected format based on the ContactType.
+ */
 public class ContactValueValidator implements
     ConstraintValidator<ValidateContactValue, ContactDto> {
 
@@ -20,19 +24,19 @@ public class ContactValueValidator implements
   private static final String LINKEDIN_BASE_URL = "https://www.linkedin.com/in/";
   private static final String GITHUB_BASE_URL = "https://github.com/";
   private static final String BEHANCE_BASE_URL = "https://www.behance.net/";
-  private static final Map<ContactType, Predicate<String>> VALIDATORS = new EnumMap<>(
-      ContactType.class);
+  private final Map<ContactType, Predicate<String>> validatorsByContactType;
 
-  static {
-    VALIDATORS.put(ContactType.EMAIL, value -> EMAIL_PATTERN.matcher(value).matches());
-    VALIDATORS.put(ContactType.PHONE_NUMBER, value -> PHONE_PATTERN.matcher(value).matches());
-    VALIDATORS.put(ContactType.TELEGRAM_LINK, value -> value.startsWith(TELEGRAM_BASE_URL));
-    VALIDATORS.put(ContactType.LINKEDIN_LINK,
-        value -> value.startsWith(LINKEDIN_BASE_URL));
-    VALIDATORS.put(ContactType.GITHUB_LINK, value -> value.startsWith(GITHUB_BASE_URL));
-    VALIDATORS.put(ContactType.BEHANCE_LINK, value -> value.startsWith(BEHANCE_BASE_URL));
+  public ContactValueValidator() {
+    this.validatorsByContactType = initializeValidators();
   }
 
+  /**
+   * Validates the value of the given ContactDto based on its ContactType.
+   *
+   * @param contactDto the contact DTO to validate
+   * @param context    the context in which the constraint is evaluated
+   * @return True if the contact value is valid or empty, false otherwise
+   */
   @Override
   public boolean isValid(ContactDto contactDto, ConstraintValidatorContext context) {
     ContactType type = contactDto.getType();
@@ -42,7 +46,18 @@ public class ContactValueValidator implements
       return true;
     }
 
-    Predicate<String> validator = VALIDATORS.get(type);
+    Predicate<String> validator = validatorsByContactType.get(type);
     return validator != null && validator.test(value);
+  }
+
+  private Map<ContactType, Predicate<String>> initializeValidators() {
+    Map<ContactType, Predicate<String>> map = new EnumMap<>(ContactType.class);
+    map.put(ContactType.EMAIL, value -> EMAIL_PATTERN.matcher(value).matches());
+    map.put(ContactType.PHONE_NUMBER, value -> PHONE_PATTERN.matcher(value).matches());
+    map.put(ContactType.TELEGRAM_LINK, value -> value.startsWith(TELEGRAM_BASE_URL));
+    map.put(ContactType.LINKEDIN_LINK, value -> value.startsWith(LINKEDIN_BASE_URL));
+    map.put(ContactType.GITHUB_LINK, value -> value.startsWith(GITHUB_BASE_URL));
+    map.put(ContactType.BEHANCE_LINK, value -> value.startsWith(BEHANCE_BASE_URL));
+    return map;
   }
 }
