@@ -7,6 +7,7 @@ import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.InterviewRequestDto;
+import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.SpecializationDto;
@@ -15,8 +16,10 @@ import com.ratifire.devrate.dto.UserMainMasterySkillDto;
 import com.ratifire.devrate.dto.UserPictureDto;
 import com.ratifire.devrate.service.user.UserService;
 import jakarta.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -260,6 +264,22 @@ public class UserController {
   @GetMapping("/{userId}/interview-summaries")
   public List<InterviewSummaryDto> getInterviewSummariesByUserId(@PathVariable long userId) {
     return userService.getInterviewSummariesByUserId(userId);
+  }
+
+  /**
+   * Retrieves a list of conducted and passed interviews by user ID and date range.
+   *
+   * @param userId the ID of the user
+   * @param from the start date of the date range (inclusive)
+   * @param to the end date of the date range (inclusive)
+   * @return the list of conducted and passed interviews as a DTO
+   */
+  @GetMapping("/{userId}/interview-summaries/statistics")
+  public List<InterviewStatsConductedPassedByDateDto> getInterviewsConductedPassed(
+      @PathVariable long userId,
+      @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+      @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+    return userService.getInterviewStatConductedPassedByDate(userId, from, to);
   }
 
   /**

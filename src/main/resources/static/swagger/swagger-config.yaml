@@ -45,7 +45,6 @@ tags:
     description: Endpoints for user Mastery management
   - name: Skill
     description: Endpoints for user Skill management
-
 paths:
   /auth/signup:
     $ref: './paths/auth/signup.yaml'
@@ -137,5 +136,10 @@ paths:
     $ref: './paths/skills/skills-id-calculateMark-mark.yaml'
   /skills/{id}/hide/{hide}:
     $ref: './paths/skills/skills-id-hide-hide.yaml'
+  /masteries/{masteryId}/history:
+    $ref: './paths/masteries/masteries-id-mastery-history.yaml'
+  /users/{userId}/interview-summaries/statistics:
+    $ref: './paths/users/users-id-interviewSummaries-statistics.yaml'
+
 security:
   - basicAuth: [ ]

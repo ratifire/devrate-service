@@ -2,6 +2,7 @@ package com.ratifire.devrate.service.specialization;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -10,13 +11,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.MasteryDto;
+import com.ratifire.devrate.dto.MasteryHistoryDto;
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.mapper.DataMapper;
+import com.ratifire.devrate.repository.MasteryHistoryRepository;
 import com.ratifire.devrate.repository.MasteryRepository;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +30,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 
 /**
  * Unit tests for the MasteryService class.
@@ -39,6 +45,9 @@ public class MasteryServiceTest {
   private MasteryRepository masteryRepository;
 
   @Mock
+  private MasteryHistoryRepository masteryHistoryRepository;
+
+  @Mock
   private DataMapper dataMapper;
 
   private Mastery masteryJun;
@@ -48,6 +57,9 @@ public class MasteryServiceTest {
   private Skill skill;
   private SkillDto skillDto;
   private List<SkillDto> skillDtos;
+  private MasteryHistoryDto historyDto;
+  private LocalDate fromDate;
+  private LocalDate toDate;
 
   /**
    * Setup method executed before each test method.
@@ -94,6 +106,15 @@ public class MasteryServiceTest {
 
     skillDtos = new ArrayList<>();
     skillDtos.add(skillDto);
+
+    historyDto = MasteryHistoryDto.builder()
+        .masteryId(2L)
+        .date(LocalDate.now())
+        .softSkillMark(BigDecimal.valueOf(6))
+        .hardSkillMark(BigDecimal.valueOf(6))
+        .build();
+    fromDate = LocalDate.now().minusDays(10);
+    toDate = LocalDate.now();
   }
 
   @Test
@@ -161,5 +182,39 @@ public class MasteryServiceTest {
     assertEquals(skillDtos, result);
     assertEquals(BigDecimal.valueOf(5), skillDto.getAverageMark());
     verify(masteryRepository).save(masteryMid);
+  }
+
+  @Test
+  public void testGetMasteryHistoryInRange() {
+    when(masteryHistoryRepository.findByMasteryIdAndDateBetween(anyLong(),
+        any(LocalDate.class), any(LocalDate.class)))
+        .thenReturn(new ArrayList<>());
+
+    when(dataMapper.toDto(anyList())).thenReturn(Arrays.asList(historyDto));
+
+    List<MasteryHistoryDto> result = masteryService.getMasteryHistory(2L, fromDate, toDate);
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+
+    MasteryHistoryDto dto = result.get(0);
+    assertEquals(historyDto.getMasteryId(), dto.getMasteryId());
+    assertEquals(historyDto.getDate(), dto.getDate());
+    assertEquals(historyDto.getSoftSkillMark(), dto.getSoftSkillMark());
+    assertEquals(historyDto.getHardSkillMark(), dto.getHardSkillMark());
+  }
+
+  @Test
+  public void testGetMasteryHistoryInRangeNotFound() {
+    when(masteryHistoryRepository.findByMasteryIdAndDateBetween(anyLong(),
+        any(LocalDate.class), any(LocalDate.class)))
+        .thenReturn(new ArrayList<>());
+
+    when(dataMapper.toDto(anyList())).thenReturn(new ArrayList<>());
+
+    List<MasteryHistoryDto> result = masteryService.getMasteryHistory(2L, fromDate, toDate);
+
+    assertNotNull(result);
+    assertTrue(result.isEmpty());
   }
 }
