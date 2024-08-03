@@ -1,0 +1,18 @@
+type: object
+description: The object representing the events for the user
+properties:
+  id:
+    type: integer
+    description: The event ID
+  zoomLink:
+    type: string
+    description: Generated Zoom link for the event
+  host:
+    $ref: './ParticipantDto.yaml'
+  participants:
+    type: array
+    items:
+      $ref: './ParticipantDto.yaml'
+  startTime:
+    type: string
+    description: Date and time when the event process

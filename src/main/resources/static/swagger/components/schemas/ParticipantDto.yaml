@@ -1,0 +1,15 @@
+type: object
+description: The object representing the event participants
+properties:
+  name:
+    type: string
+    description: Participant name
+  surname:
+    type: string
+    description: Participant surname
+  role:
+    type: string
+    description: Role of the event participant. Role must be "CANDIDATE" in the context of participants, and "INTERVIEWER" for the host.
+    enum:
+      - INTERVIEWER
+      - CANDIDATE

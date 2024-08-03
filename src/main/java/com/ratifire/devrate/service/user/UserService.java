@@ -8,6 +8,7 @@ import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.EventDto;
+import com.ratifire.devrate.dto.EventDto.Participant;
 import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
@@ -674,22 +675,11 @@ public class UserService {
    * @return an {@link EventDto} object that represents the given event
    */
   private EventDto constructEventDto(Event event) {
-    User host = findUserById(event.getHostId());
+    Participant hostEvent = createParticipant(event.getHostId(), InterviewRequestRole.INTERVIEWER);
 
-    EventDto.Participant hostEvent = new EventDto.Participant();
-    hostEvent.setName(host.getFirstName());
-    hostEvent.setSurname(host.getLastName());
-    hostEvent.setRole(InterviewRequestRole.INTERVIEWER);
-
-    List<EventDto.Participant> participants = event.getParticipantIds().stream()
-        .map(participantId -> {
-          User participant = findUserById(participantId);
-          EventDto.Participant participantEvent = new EventDto.Participant();
-          participantEvent.setName(participant.getFirstName());
-          participantEvent.setSurname(participant.getLastName());
-          participantEvent.setRole(InterviewRequestRole.CANDIDATE);
-          return participantEvent;
-        })
+    List<Participant> participants = event.getParticipantIds().stream()
+        .map(participantId ->
+            createParticipant(participantId, InterviewRequestRole.CANDIDATE))
         .collect(Collectors.toList());
 
     return EventDto.builder()
@@ -699,5 +689,26 @@ public class UserService {
         .participants(participants)
         .startTime(event.getStartTime())
         .build();
+  }
+
+  /**
+   * Creates a {@link Participant} object based on the given user ID and role.
+   *
+   * @param userId the ID of the user to be converted to a {@link Participant}
+   * @param role   the role of the participant in the event
+   * @return a {@link Participant} object that represents the user with the given ID and role
+   */
+  private Participant createParticipant(long userId, InterviewRequestRole role) {
+    try {
+      User host = findUserById(userId);
+
+      return Participant.builder()
+          .name(host.getFirstName())
+          .surname(host.getLastName())
+          .role(role)
+          .build();
+    } catch (UserNotFoundException ex) {
+      return new Participant();
+    }
   }
 }
