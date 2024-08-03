@@ -1,5 +1,5 @@
-resource "aws_ecr_repository" "devrate_backend" {
-  name = "devrate-backend"
+resource "aws_ecr_repository" "devrate-service" {
+  name = "devrate-service"
 
   image_scanning_configuration {
     scan_on_push = true
@@ -9,7 +9,7 @@ resource "aws_ecr_repository" "devrate_backend" {
 }
 
 resource "aws_ecr_lifecycle_policy" "default_policy" {
-  repository = var.back_repository_name
+  repository = var.repository_name
 
   policy = <<EOF
 	{
@@ -30,5 +30,5 @@ resource "aws_ecr_lifecycle_policy" "default_policy" {
 	}
 	EOF
 
-  depends_on = [aws_ecr_repository.devrate_backend]
+  depends_on = [aws_ecr_repository.devrate-service]
 }

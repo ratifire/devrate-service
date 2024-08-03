@@ -95,9 +95,9 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
 }
 
 resource "aws_ecs_service" "back_services" {
-  name                 = "back-services-${aws_ecs_task_definition.devrate_back_td.revision}"
+  name                 = "back-services-${aws_ecs_task_definition.task_definition.revision}"
   cluster              = var.back_cluster_name
-  task_definition      = aws_ecs_task_definition.devrate_back_td.arn
+  task_definition      = aws_ecs_task_definition.task_definition.arn
   scheduling_strategy  = "REPLICA"
   desired_count        = 1
   force_new_deployment = true

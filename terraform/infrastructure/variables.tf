@@ -13,9 +13,9 @@ variable "instance_type" {
   default     = "t3.micro"
 }
 
-variable "back_repository_name" {
+variable "repository_name" {
   description = "Repository name"
-  default     = "devrate-backend"
+  default     = "devrate-service"
 }
 
 variable "list_of_ports" {
@@ -31,9 +31,4 @@ variable "cidr_blocks" {
 variable "back_port" {
   description = "Port number on which back service is listening"
   default     = 8080
-}
-
-variable "work_directory" {
-  description = "Work build directory for building docker image"
-  default     = "/home/runner/work/devrate-infrastructure/devrate-infrastructure/backend"
 }

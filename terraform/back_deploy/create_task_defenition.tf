@@ -1,4 +1,4 @@
-resource "aws_ecs_task_definition" "devrate_back_td" {
+resource "aws_ecs_task_definition" "task_definition" {
 
   family = "devrate_back_td"
 
