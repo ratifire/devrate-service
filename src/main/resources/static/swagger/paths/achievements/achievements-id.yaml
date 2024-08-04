@@ -3,7 +3,7 @@ get:
     - Achievement
   summary: Get Achievement By ID
   description: Retrieves achievement based on the provided ID.
-  operationId: getById
+  operationId: getAchievementById
   parameters:
     - in: path
       name: id
@@ -36,7 +36,7 @@ put:
     - Achievement
   summary: Update Achievement By ID
   description: Updates an existing achievement identified by the provided ID.
-  operationId: update
+  operationId: updateAchievement
   parameters:
     - in: path
       name: id
@@ -75,7 +75,7 @@ delete:
     - Achievement
   summary: Delete Achievement By ID
   description: Deletes achievement identified by the provided ID.
-  operationId: delete
+  operationId: deleteAchievement
   parameters:
     - in: path
       name: id
