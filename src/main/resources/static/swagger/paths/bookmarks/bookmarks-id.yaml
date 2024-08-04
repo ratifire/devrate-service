@@ -3,7 +3,7 @@ delete:
     - Bookmark
   summary: Delete Bookmark By ID
   description: Deletes a bookmark by the provided ID.
-  operationId: delete
+  operationId: deleteBookmark
   parameters:
     - in: path
       name: id
