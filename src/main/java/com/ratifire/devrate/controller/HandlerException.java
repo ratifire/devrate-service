@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -54,6 +55,14 @@ public class HandlerException {
     log.error("Handling Exception: {}", ex.getMessage(), ex);
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Oops! Something went wrong:( We're working to fix it! Please try again later:)");
+  }
+
+  /**
+   * Handles AccessDeniedException by returning an HTTP status 403 (Forbidden).
+   */
+  @ResponseStatus(HttpStatus.FORBIDDEN)
+  @ExceptionHandler(AccessDeniedException.class)
+  public void handleAccessDeniedException() {
   }
 
   /**

@@ -1,7 +1,10 @@
 package com.ratifire.devrate.repository;
 
 import com.ratifire.devrate.entity.Achievement;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
@@ -12,4 +15,6 @@ import org.springframework.stereotype.Repository;
 @RepositoryRestResource(exported = false)
 public interface AchievementRepository extends JpaRepository<Achievement, Long> {
 
+  @Query(value = "SELECT user_id FROM achievements WHERE id = :resourceId", nativeQuery = true)
+  Optional<Long> findUserIdByAchievementId(@Param("resourceId") long resourceId);
 }

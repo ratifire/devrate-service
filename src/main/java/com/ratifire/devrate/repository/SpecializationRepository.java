@@ -3,6 +3,8 @@ package com.ratifire.devrate.repository;
 import com.ratifire.devrate.entity.Specialization;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
@@ -18,5 +20,8 @@ public interface SpecializationRepository extends JpaRepository<Specialization, 
   boolean existsSpecializationByUserIdAndMainTrue(Long userId);
 
   boolean existsSpecializationByUserIdAndName(Long userId, String name);
+
+  @Query(value = "SELECT user_id FROM specializations WHERE id = :resourceId", nativeQuery = true)
+  Optional<Long> findUserIdBySpecializationId(@Param("resourceId") long resourceId);
 
 }
