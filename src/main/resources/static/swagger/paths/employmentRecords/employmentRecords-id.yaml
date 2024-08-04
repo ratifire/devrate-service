@@ -3,7 +3,7 @@ get:
     - Employment Records
   summary: Get Employment record By ID
   description: Retrieves all user`s employment records based on the provided ID.
-  operationId: findById
+  operationId: findEmploymentRecordById
   parameters:
     - in: path
       name: id
@@ -36,7 +36,7 @@ put:
     - Employment Records
   summary: Update employment-record By ID
   description: Updates an existing employment-record identified by the provided ID.
-  operationId: update
+  operationId: updateEmploymentRecord
   parameters:
     - in: path
       name: id
@@ -75,7 +75,7 @@ delete:
     - Employment Records
   summary: Delete Employment Record By ID
   description: Deletes an employment record identified by the provided ID.
-  operationId: delete
+  operationId: deleteEmploymentRecord
   parameters:
     - in: path
       name: id
