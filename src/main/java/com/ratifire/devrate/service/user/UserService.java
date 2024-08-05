@@ -683,6 +683,7 @@ public class UserService {
 
     return EventDto.builder()
         .id(event.getId())
+        .relatedId(event.getRelatedId())
         .zoomLink(event.getZoomLink())
         .host(hostEvent)
         .participants(participants)

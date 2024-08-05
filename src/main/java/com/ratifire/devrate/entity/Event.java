@@ -31,6 +31,14 @@ public class Event {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
+  /**
+   * Identifier related to the specific event type.
+   * For example, if the event type is 'interview', this field will store 'interviewId'.
+   * If the event type is 'conference', this field will store 'conferenceId', etc.
+   */
+  @Column(name = "related_id", nullable = false)
+  private long relatedId;
+
   @Enumerated(EnumType.STRING)
   private EventType type;
 

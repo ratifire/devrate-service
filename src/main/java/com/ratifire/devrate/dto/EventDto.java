@@ -21,6 +21,12 @@ import org.hibernate.validator.constraints.URL;
 public class EventDto {
 
   private long id;
+  /**
+   * Identifier related to the specific event type.
+   * For example, if the event type is 'interview', this field will store 'interviewId'.
+   * If the event type is 'conference', this field will store 'conferenceId', etc.
+   */
+  private long relatedId;
   @URL
   private String zoomLink;
   private Participant host;

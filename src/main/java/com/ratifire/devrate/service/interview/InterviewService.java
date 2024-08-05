@@ -62,6 +62,7 @@ public class InterviewService {
               .hostId(interviewer.getUser().getId())
               .participantIds(List.of(candidate.getUser().getId()))
               .startTime(matchedStartTime.toLocalDateTime())
+              .relatedId(interview.getId())
               .build();
           eventRepository.save(interviewEvent);
           interviewer.getUser().getEvents().add(interviewEvent);

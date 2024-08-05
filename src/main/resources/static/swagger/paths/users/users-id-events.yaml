@@ -35,6 +35,7 @@ get:
             $ref: '../../components/schemas/EventDto.yaml'
           example:
             id: 0
+            relatedId: 0
             zoomLink: "string"
             host:
               name: "string"
