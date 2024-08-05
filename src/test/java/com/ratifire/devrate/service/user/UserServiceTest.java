@@ -497,7 +497,7 @@ class UserServiceTest {
   }
 
   @Test
-  public void testFindEventsBetweenDateTime_noEvents() {
+  void testFindEventsBetweenDateTime_noEvents() {
     LocalDate from = LocalDate.now().minusDays(1);
     LocalDate to = LocalDate.now().plusDays(1);
 
@@ -511,7 +511,7 @@ class UserServiceTest {
   }
 
   @Test
-  public void testFindEventsBetweenDateTime_withEvents() {
+  void testFindEventsBetweenDateTime_withEvents() {
     Event event1 = new Event();
     event1.setId(1L);
     event1.setStartTime(LocalDateTime.now());
@@ -540,7 +540,7 @@ class UserServiceTest {
   }
 
   @Test
-  public void testFindEventsBetweenDateTime_userNotFound() {
+  void testFindEventsBetweenDateTime_userNotFound() {
     LocalDate from = LocalDate.now().minusDays(1);
     LocalDate to = LocalDate.now().plusDays(1);
 

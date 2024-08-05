@@ -48,14 +48,12 @@ import com.ratifire.devrate.util.interview.DateTimeUtils;
 import com.ratifire.devrate.util.interview.InterviewPair;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -664,7 +662,7 @@ public class UserService {
     return user.getEvents().stream()
         .filter(event -> DateTimeUtils.isWithinRange(event.getStartTime().toLocalDate(), from, to))
         .map(this::constructEventDto)
-        .collect(Collectors.toList());
+        .toList();
   }
 
   /**
@@ -679,7 +677,7 @@ public class UserService {
     List<Participant> participants = event.getParticipantIds().stream()
         .map(participantId ->
             createParticipant(participantId, InterviewRequestRole.CANDIDATE))
-        .collect(Collectors.toList());
+        .toList();
 
     return EventDto.builder()
         .id(event.getId())
