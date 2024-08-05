@@ -27,11 +27,11 @@ public class UserRegistrationDto {
 
   @NotBlank(message = "Last name cannot be blank")
   @Size(max = 100)
-  @Pattern(regexp = "^[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\s\\-']+$", message = "First name can only contain "
+  @Pattern(regexp = "^[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\s\\-']+$", message = "Last name can only contain "
       + "letters, spaces, hyphens, and apostrophes")
   private String lastName;
 
-  @NotBlank(message = "Country cannot be blank")
+  @NotBlank(message = "Country name cannot be blank")
   @Size(max = 100)
   private String country;
 
