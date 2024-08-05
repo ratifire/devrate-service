@@ -658,12 +658,11 @@ public class UserService {
    * @param to     the end of the time range (inclusive)
    * @return a list of {@link EventDto} objects representing the events for the user
    */
-  public List<EventDto> findEventsBetweenDateTime(long userId, LocalDateTime from,
-      LocalDateTime to) {
+  public List<EventDto> findEventsBetweenDateTime(long userId, LocalDate from, LocalDate to) {
     User user = findUserById(userId);
 
     return user.getEvents().stream()
-        .filter(event -> DateTimeUtils.isWithinRange(event.getStartTime(), from, to))
+        .filter(event -> DateTimeUtils.isWithinRange(event.getStartTime().toLocalDate(), from, to))
         .map(this::constructEventDto)
         .collect(Collectors.toList());
   }

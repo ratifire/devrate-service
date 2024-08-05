@@ -14,18 +14,18 @@ get:
         format: int64
     - in: query
       name: from
-      description: The start of the time range (inclusive), formatted as an ISO 8601 date-time string
+      description: The start of the date range (inclusive)
       required: true
       schema:
         type: string
-        format: date-time
+        format: date
     - in: query
       name: to
-      description: The end of the time range (inclusive), formatted as an ISO 8601 date-time string
+      description: The end of the date range (inclusive)
       required: true
       schema:
         type: string
-        format: date-time
+        format: date
   responses:
     '200':
       description: The events corresponding to the provided userId and date range

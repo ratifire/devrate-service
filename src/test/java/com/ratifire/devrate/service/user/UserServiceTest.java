@@ -498,8 +498,8 @@ class UserServiceTest {
 
   @Test
   public void testFindEventsBetweenDateTime_noEvents() {
-    LocalDateTime from = LocalDateTime.now().minusDays(1);
-    LocalDateTime to = LocalDateTime.now().plusDays(1);
+    LocalDate from = LocalDate.now().minusDays(1);
+    LocalDate to = LocalDate.now().plusDays(1);
 
     testUser.setEvents(List.of());
 
@@ -528,8 +528,8 @@ class UserServiceTest {
 
     testUser.setEvents(Arrays.asList(event1, event2));
 
-    LocalDateTime from = LocalDateTime.now().minusDays(1);
-    LocalDateTime to = LocalDateTime.now().plusDays(1);
+    LocalDate from = LocalDate.now().minusDays(1);
+    LocalDate to = LocalDate.now().plusDays(1);
 
     when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
 
@@ -541,8 +541,8 @@ class UserServiceTest {
 
   @Test
   public void testFindEventsBetweenDateTime_userNotFound() {
-    LocalDateTime from = LocalDateTime.now().minusDays(1);
-    LocalDateTime to = LocalDateTime.now().plusDays(1);
+    LocalDate from = LocalDate.now().minusDays(1);
+    LocalDate to = LocalDate.now().plusDays(1);
 
     when(userRepository.findById(any())).thenThrow(new UserNotFoundException("User not found"));
 
