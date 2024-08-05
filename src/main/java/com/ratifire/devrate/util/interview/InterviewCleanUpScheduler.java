@@ -1,4 +1,4 @@
-package com.ratifire.devrate.service.interview;
+package com.ratifire.devrate.util.interview;
 
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @RequiredArgsConstructor
-public class InterviewRequestCleanUpService {
+public class InterviewCleanUpScheduler {
 
   private static final long CLEANUP_INTERVAL = 21600000L; // 6 hours in milliseconds
 
