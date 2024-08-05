@@ -5,6 +5,7 @@ import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.service.specialization.SpecializationService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,6 +60,8 @@ public class SpecializationController {
    * @param specializationDto the updated specialization information as a DTO
    * @return the updated specialization information as a DTO
    */
+  @PreAuthorize("@resourceAuthorizationService.isResourceOwnedByLoggedUser('specializations', "
+      + "#specializationDto.id)")
   @PutMapping()
   public SpecializationDto update(@RequestBody SpecializationDto specializationDto) {
     return specializationService.update(specializationDto);
@@ -70,6 +73,7 @@ public class SpecializationController {
    * @param id the ID of the specialization that will become the new main specialization
    * @return the updated new main specialization as a DTO
    */
+  @PreAuthorize("@resourceAuthorizationService.isResourceOwnedByLoggedUser('specializations', #id)")
   @PutMapping("/{id}/set-main")
   public SpecializationDto setAsMainById(@PathVariable long id) {
     return specializationService.setAsMainById(id);
@@ -80,6 +84,7 @@ public class SpecializationController {
    *
    * @param id the ID of specialization
    */
+  @PreAuthorize("@resourceAuthorizationService.isResourceOwnedByLoggedUser('specializations', #id)")
   @DeleteMapping("/{id}")
   public void deleteById(@PathVariable long id) {
     specializationService.deleteById(id);
@@ -90,6 +95,9 @@ public class SpecializationController {
    *
    * @return new main mastery as a dto.
    */
+  @PreAuthorize("@resourceAuthorizationService.isResourceOwnedByLoggedUser('specializations', "
+      + "#specId) && "
+      + "@resourceAuthorizationService.isResourceOwnedByLoggedUser('masteries', #masteryId)")
   @PutMapping("/{specId}/set-main-mastery/{masteryId}")
   public MasteryDto setMainMasteryById(@PathVariable long specId,
       @PathVariable long masteryId) {

@@ -142,6 +142,10 @@ paths:
     $ref: './paths/users/users-id-interviewSummaries-statistics.yaml'
   /users/{userId}/events:
     $ref: './paths/users/users-id-events.yaml'
-
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
 security:
   - basicAuth: [ ]
