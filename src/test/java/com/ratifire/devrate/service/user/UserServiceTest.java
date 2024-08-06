@@ -108,6 +108,8 @@ class UserServiceTest {
    */
   @BeforeEach
   public void init() {
+    userService.setUserRepository(userRepository);
+
     testUser = User.builder()
         .id(userId)
         .employmentRecords(new ArrayList<>())
