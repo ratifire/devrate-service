@@ -3,7 +3,7 @@ get:
     - Event
   summary: Get Events By UserId and date range
   description: Retrieve events by user ID and date range
-  operationId: findEventsBetweenDateTime
+  operationId: findEventsBetweenDate
   parameters:
     - in: path
       name: userId

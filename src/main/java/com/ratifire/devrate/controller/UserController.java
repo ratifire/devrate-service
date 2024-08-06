@@ -389,9 +389,9 @@ public class UserController {
    * @return a list of {@link EventDto} objects representing the events for the user
    */
   @GetMapping("/{userId}/events")
-  public List<EventDto> findEventsBetweenDateTime(@PathVariable long userId,
+  public List<EventDto> findEventsBetweenDate(@PathVariable long userId,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-    return userService.findEventsBetweenDateTime(userId, from, to);
+    return userService.findEventsBetweenDate(userId, from, to);
   }
 }

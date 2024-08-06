@@ -55,6 +55,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,7 +67,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserService {
 
-  private final UserRepository userRepository;
+  private UserRepository userRepository;
   private final SpecializationRepository specializationRepository;
   private final InterviewSummaryRepository interviewSummaryRepository;
   private final SpecializationService specializationService;
@@ -86,6 +88,11 @@ public class UserService {
   private final DataMapper<SpecializationDto, Specialization> specializationDataMapper;
   private final DataMapper<UserMainMasterySkillDto, Specialization> userMainMasterySkillMapper;
   private final DataMapper<InterviewRequestDto, InterviewRequest> interviewRequestMapper;
+
+  @Autowired
+  public void setUserRepository(@Lazy UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
 
   /**
    * Retrieves a user by ID.
@@ -656,7 +663,7 @@ public class UserService {
    * @param to     the end of the time range (inclusive)
    * @return a list of {@link EventDto} objects representing the events for the user
    */
-  public List<EventDto> findEventsBetweenDateTime(long userId, LocalDate from, LocalDate to) {
+  public List<EventDto> findEventsBetweenDate(long userId, LocalDate from, LocalDate to) {
     User user = findUserById(userId);
 
     return user.getEvents().stream()

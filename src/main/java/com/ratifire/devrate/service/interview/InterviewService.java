@@ -5,8 +5,8 @@ import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.EventType;
 import com.ratifire.devrate.exception.InterviewNotFoundException;
-import com.ratifire.devrate.repository.EventRepository;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
+import com.ratifire.devrate.service.event.EventService;
 import com.ratifire.devrate.util.interview.InterviewPair;
 import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
 import com.ratifire.devrate.util.zoom.service.ZoomApiService;
@@ -27,7 +27,7 @@ public class InterviewService {
 
   private final InterviewRepository interviewRepository;
   private final ZoomApiService zoomApiService;
-  private final EventRepository eventRepository;
+  private final EventService eventService;
   private static final Logger logger = LoggerFactory.getLogger(InterviewService.class);
 
   /**
@@ -64,9 +64,7 @@ public class InterviewService {
               .startTime(matchedStartTime.toLocalDateTime())
               .relatedId(interview.getId())
               .build();
-          eventRepository.save(interviewEvent);
-          interviewer.getUser().getEvents().add(interviewEvent);
-          candidate.getUser().getEvents().add(interviewEvent);
+          eventService.save(interviewEvent, List.of(interviewer.getUser(), candidate.getUser()));
 
           return interview;
         })

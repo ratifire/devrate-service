@@ -505,7 +505,7 @@ class UserServiceTest {
 
     when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
 
-    List<EventDto> events = userService.findEventsBetweenDateTime(userId, from, to);
+    List<EventDto> events = userService.findEventsBetweenDate(userId, from, to);
 
     assertTrue(events.isEmpty());
   }
@@ -533,20 +533,20 @@ class UserServiceTest {
 
     when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
 
-    List<EventDto> events = userService.findEventsBetweenDateTime(userId, from, to);
+    List<EventDto> events = userService.findEventsBetweenDate(userId, from, to);
 
     assertEquals(1, events.size());
     assertEquals(event1.getId(), events.getFirst().getId());
   }
 
   @Test
-  void testFindEventsBetweenDateTime_userNotFound() {
+  void testFindEventsBetweenDate_userNotFound() {
     LocalDate from = LocalDate.now().minusDays(1);
     LocalDate to = LocalDate.now().plusDays(1);
 
     when(userRepository.findById(any())).thenThrow(new UserNotFoundException("User not found"));
 
     assertThrows(UserNotFoundException.class,
-        () -> userService.findEventsBetweenDateTime(userId, from, to));
+        () -> userService.findEventsBetweenDate(userId, from, to));
   }
 }
