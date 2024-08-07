@@ -19,19 +19,22 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class UserDto {
 
+  private static final String NAME_PATTERN = "^[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\s\\-']+$";
+  private static final String CITY_PATTERN = "^[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\s\\-']*$";
+
   @NotNull
   private long id;
 
   @NotBlank(message = "First name cannot be blank")
   @Size(max = 100)
-  @Pattern(regexp = "^[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\s\\-']+$", message = "First name can only contain "
-      + "letters, spaces, hyphens, and apostrophes")
+  @Pattern(regexp = NAME_PATTERN, message = "First name can only contain letters, spaces, hyphens,"
+      + " and apostrophes")
   private String firstName;
 
   @NotBlank(message = "Last name cannot be blank")
   @Size(max = 100)
-  @Pattern(regexp = "^[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\s\\-']+$", message = "Last name can only contain "
-      + "letters, spaces, hyphens, and apostrophes")
+  @Pattern(regexp = NAME_PATTERN, message = "Last name can only contain letters, spaces, hyphens,"
+      + " and apostrophes")
   private String lastName;
 
   @Size(max = 50)
@@ -42,8 +45,8 @@ public class UserDto {
   private String country;
 
   @Size(max = 100)
-  @Pattern(regexp = "^[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\s\\-']*$", message = "City name can only contain "
-      + "letters, spaces, hyphens, and apostrophes")
+  @Pattern(regexp = CITY_PATTERN, message = "City name can only contain letters, spaces, hyphens,"
+      + " and apostrophes")
   private String city;
 
   private boolean subscribed;
