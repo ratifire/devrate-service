@@ -37,6 +37,7 @@ public class UserDto {
 
   private boolean subscribed;
 
+  @Size(max = 455)
   private String description;
 
   private BigDecimal hardSkillMark;

@@ -61,8 +61,7 @@ public class UserController {
    */
   @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userDto.id)")
   @PutMapping
-  public UserDto update(@RequestBody UserDto userDto) {
-    return userService.update(userDto);
+  public UserDto update(@RequestBody @Valid UserDto userDto) {return userService.update(userDto);
   }
 
   /**
