@@ -52,7 +52,7 @@ public class User {
   @Column(name = "is_subscribed", nullable = false)
   private boolean subscribed;
 
-  @Column(length = 455)
+  @Column(length = 480)
   private String description;
 
   @Column(columnDefinition = "TEXT")
