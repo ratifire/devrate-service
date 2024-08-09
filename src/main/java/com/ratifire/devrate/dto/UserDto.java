@@ -51,7 +51,7 @@ public class UserDto {
 
   private boolean subscribed;
 
-  @Size(max = 455)
+  @Size(max = 480)
   private String description;
 
   private BigDecimal hardSkillMark;
