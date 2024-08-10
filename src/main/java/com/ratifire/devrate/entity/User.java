@@ -52,6 +52,7 @@ public class User {
   @Column(name = "is_subscribed", nullable = false)
   private boolean subscribed;
 
+  @Column(length = 480)
   private String description;
 
   @Column(columnDefinition = "TEXT")
@@ -106,5 +107,4 @@ public class User {
       inverseJoinColumns = @JoinColumn(name = "interview_summary_id")
   )
   private List<InterviewSummary> interviewSummaries;
-
 }
