@@ -15,7 +15,7 @@ variable "instance_type" {
 
 variable "repository_name" {
   description = "Repository name"
-  default     = "devrate-service"
+  default     = "backend-service"
 }
 
 variable "list_of_ports" {
