@@ -15,7 +15,7 @@ import lombok.Getter;
 public class UserRegistrationDto {
 
   private static final String NAME_PATTERN = "^[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\s\\-']+$";
-  private static final String PASSWORD_PATTERN = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$";
+  private static final String PASSWORD_PATTERN = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{7,}$";
 
   @NotBlank(message = "Email cannot be blank")
   @Size(max = 100)
