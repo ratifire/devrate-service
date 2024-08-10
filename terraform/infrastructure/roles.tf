@@ -17,8 +17,8 @@ locals {
   ]
 }
 
-resource "aws_iam_role" "ecs_ex_role" {
-  name = "ecs-ex-role"
+resource "aws_iam_role" "ecs_ex_role_backend" {
+  name = "ecs-ex-role-backend"
   assume_role_policy = jsonencode({
     "Version" : "2008-10-17",
     "Statement" : [
@@ -34,15 +34,15 @@ resource "aws_iam_role" "ecs_ex_role" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "ecs_policy_attachments_ex_role" {
+resource "aws_iam_role_policy_attachment" "ecs_policy_attachments_ex_backend_role" {
   count = length(local.policies_for_ex)
 
-  role       = aws_iam_role.ecs_ex_role.name
+  role       = aws_iam_role.ecs_ex_role_backend.name
   policy_arn = local.policies_for_ex[count.index]
 }
 
-resource "aws_iam_role" "ecs_inst_role" {
-  name = "ecs-inst-role"
+resource "aws_iam_role" "ecs_inst_role_backend" {
+  name = "ecs-inst-role-backend"
   assume_role_policy = jsonencode({
     "Version" : "2008-10-17",
     "Statement" : [
@@ -59,14 +59,14 @@ resource "aws_iam_role" "ecs_inst_role" {
 }
 
 
-resource "aws_iam_role_policy_attachment" "ecs_policy_attachments_inst_role" {
+resource "aws_iam_role_policy_attachment" "ecs_policy_attachments_inst_backend_role" {
   count = length(local.policies_for_inst)
 
-  role       = aws_iam_role.ecs_inst_role.name
+  role       = aws_iam_role.ecs_inst_role_backend.name
   policy_arn = local.policies_for_inst[count.index]
 }
 
-resource "aws_iam_instance_profile" "instance_profile_dr" {
-  name = "new-ecs-instance-profile-dr"
-  role = aws_iam_role.ecs_inst_role.name
+resource "aws_iam_instance_profile" "instance_profile_backend" {
+  name = "ecs-instance-profile-backend"
+  role = aws_iam_role.ecs_inst_role_backend.name
 }

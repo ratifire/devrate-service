@@ -1,6 +1,6 @@
 resource "aws_ecs_task_definition" "task_definition" {
 
-  family = "devrate_back_td"
+  family = "backend_td"
 
   container_definitions = jsonencode([
     {
@@ -22,11 +22,11 @@ resource "aws_ecs_task_definition" "task_definition" {
       environment = [
         {
           name  = "POSTGRES_USER",
-          value = "devrate"
+          value = "backend"
         },
         {
           name  = "PG_USERNAME",
-          value = "devrate"
+          value = "backend"
         },
         {
           name  = "PG_HOST",
@@ -34,19 +34,19 @@ resource "aws_ecs_task_definition" "task_definition" {
         },
         {
           name  = "PG_PASSWORD",
-          value = "devratedb"
+          value = "backenddb"
         },
         {
           name  = "PG_DATABASE",
-          value = "devrate"
+          value = "backend"
         },
         {
           name  = "POSTGRES_PASSWORD",
-          value = "devratedb"
+          value = "backenddb"
         },
         {
           name  = "POSTGRES_DB",
-          value = "devrate"
+          value = "backend"
         }
       ],
       mountPoints = [],

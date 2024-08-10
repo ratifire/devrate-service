@@ -1,5 +1,5 @@
-resource "aws_security_group" "devrate_security_group" {
-  name        = "Security_group_for_DevRate_project"
+resource "aws_security_group" "backend_security_group" {
+  name        = "Security_group_for_backend_project"
   description = "Allow tcp inbound traffic and all outbound traffic"
   vpc_id      = aws_default_vpc.default_vpc.id
 

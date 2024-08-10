@@ -1,5 +1,5 @@
-resource "aws_key_pair" "dr_key" {
-  key_name   = "terraform_ec2_key_pair"
+resource "aws_key_pair" "back_key" {
+  key_name   = "terraform_ec2_back_key_pair"
   public_key = tls_private_key.rsa-4096-example.public_key_openssh
 }
 

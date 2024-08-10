@@ -4,23 +4,23 @@ data "aws_caller_identity" "current_user" {}
 
 data "aws_availability_zones" "availability_zones" {}
 
-data "aws_security_group" "vpc_devrate_security_group" {
-  name = "Security_group_for_DevRate_project"
+data "aws_security_group" "vpc_backend_security_group" {
+  name = "Security_group_for_backend_project"
 }
 
 data "aws_key_pair" "keypair" {
-  key_name = "terraform_ec2_key_pair"
+  key_name = "terraform_ec2_back_key_pair"
 }
 
-data "aws_iam_instance_profile" "aws_iam_instance_profile_tt" {
-  name = "new-ecs-instance-profile-dr"
+data "aws_iam_instance_profile" "aws_iam_instance_profile_backend" {
+  name = "ecs-instance-profile-backend"
 }
 
 data "aws_vpcs" "all_vpcs" {}
 
 
 data "aws_db_instance" "db_host" {
-  db_instance_identifier = "pg-devrate"
+  db_instance_identifier = "pg-backend"
 }
 
 data "aws_subnets" "example" {
@@ -41,10 +41,10 @@ data "aws_subnets" "example" {
 }
 
 data "aws_iam_role" "ecs_task_execution_role_arn" {
-  name = "ecs-ex-role"
+  name = "ecs-ex-role-backend"
 }
 data "aws_iam_role" "ecs_instance_role" {
-  name = "ecs-inst-role"
+  name = "ecs-inst-role-backend"
 }
 
 data "aws_ami" "aws_linux_latest_ecs" {

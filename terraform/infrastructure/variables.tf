@@ -32,3 +32,13 @@ variable "back_port" {
   description = "Port number on which back service is listening"
   default     = 8080
 }
+
+variable "db_instance_identifier" {
+  description = "Name of db_instance_identifier"
+  default     = "pg-backend"
+}
+
+variable "db_name" {
+  description = "Name of database"
+  default     = "backend"
+}

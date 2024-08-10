@@ -5,12 +5,12 @@ variable "region" {
 
 variable "back_cluster_name" {
   description = "Back cluster name"
-  default     = "devrate-back-cluster"
+  default     = "backend-back-cluster"
 }
 
 variable "back_repository_name" {
   description = "Repository name"
-  default     = "devrate-backend"
+  default     = "backend-service"
 }
 
 variable "instance_type" {
