@@ -4,7 +4,7 @@ variable "region" {
 }
 
 variable "back_cluster_name" {
-  description = "Back cluster name"
+  description = "Back cluster name - test"
   default     = "backend-back-cluster"
 }
 
