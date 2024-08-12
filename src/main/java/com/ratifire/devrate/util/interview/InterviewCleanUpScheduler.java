@@ -38,13 +38,14 @@ public class InterviewCleanUpScheduler {
     List<InterviewRequest> expiredRequests =
         interviewRequestRepository.findByActiveTrueAndExpiredAtBefore(currentDateTime);
 
-    for (InterviewRequest interviewRequest : expiredRequests) {
-      User user = interviewRequest.getUser();
-      String email = userSecurityService.findEmailByUserId(user.getId());
-      sendInterviewRequestExpiryAlerts(user, email);
+    if (!expiredRequests.isEmpty()) {
+      for (InterviewRequest interviewRequest : expiredRequests) {
+        User user = interviewRequest.getUser();
+        String email = userSecurityService.findEmailByUserId(user.getId());
+        sendInterviewRequestExpiryAlerts(user, email);
+      }
+      interviewRequestRepository.deleteAll(expiredRequests);
     }
-
-    interviewRequestRepository.deleteAll(expiredRequests);
   }
 
   /**
