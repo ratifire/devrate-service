@@ -43,6 +43,7 @@ public class InterviewCleanUpScheduler {
       String email = userSecurityService.findEmailByUserId(user.getId());
       sendInterviewRequestExpiryAlerts(user, email);
     }
+
     interviewRequestRepository.deleteAll(expiredRequests);
   }
 
