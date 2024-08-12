@@ -94,6 +94,6 @@ class InterviewCleanUpSchedulerTest {
 
     interviewCleanUpScheduler.deleteExpiredAndActiveInterviewRequestsTask();
 
-    verify(interviewRequestRepository, never()).deleteAll(any());
+    verify(interviewRequestRepository, never()).deleteAll();
   }
 }
