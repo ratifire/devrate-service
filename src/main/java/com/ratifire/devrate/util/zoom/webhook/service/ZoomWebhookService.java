@@ -65,9 +65,7 @@ public class ZoomWebhookService {
     String endTime = payloadObject.getEndTime();
 
     try {
-      long meetingIdLong = MeetingUtils.parseMeetingId(meetingId);
-      Interview interview = interviewService.getInterviewByMeetingId(meetingIdLong);
-      interviewSummaryService.saveInterviewSummary(interview, endTime);
+      handleInterviewCompletion(meetingId, endTime);
     } catch (IllegalArgumentException e) {
       logger.error("Failed to save interview summary for meeting ID: " + meetingId + ". Reason: "
           + e.getMessage(), e);
@@ -77,5 +75,22 @@ public class ZoomWebhookService {
 
     return new ResponseEntity<>("Meeting id: " + meetingId
         + " ended at: " + endTime, HttpStatus.OK);
+  }
+
+  /**
+   * Handles the completion process of an interview by performing necessary operations after a
+   * meeting has ended.
+   *
+   * @param meetingId The ID of the meeting that has ended. This ID is expected to be a string
+   *                  representation of a long value.
+   * @param endTime   The time when the meeting ended, in a string format. This is used to update
+   *                  the interview summary.
+   * @throws IllegalArgumentException If the meeting ID is not a valid long or if the interview is
+   *                                  not found.
+   */
+  private void handleInterviewCompletion(String meetingId, String endTime) {
+    long meetingIdLong = MeetingUtils.parseMeetingId(meetingId);
+    Interview interview = interviewService.getInterviewByMeetingId(meetingIdLong);
+    interviewSummaryService.saveInterviewSummary(interview, endTime);
   }
 }
