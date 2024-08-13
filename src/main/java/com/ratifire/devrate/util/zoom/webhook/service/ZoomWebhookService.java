@@ -1,7 +1,10 @@
 package com.ratifire.devrate.util.zoom.webhook.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ratifire.devrate.entity.interview.Interview;
+import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.service.interview.InterviewSummaryService;
+import com.ratifire.devrate.util.interview.MeetingUtils;
 import com.ratifire.devrate.util.zoom.webhook.exception.ZoomWebhookException;
 import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest;
 import java.util.Map;
@@ -21,6 +24,7 @@ public class ZoomWebhookService {
 
   private final ZoomWebhookAuthService zoomWebhookAuthService;
   private final InterviewSummaryService interviewSummaryService;
+  private final InterviewService interviewService;
   private static final Logger logger = org.slf4j.LoggerFactory.getLogger(ZoomWebhookService.class);
 
   /**
@@ -60,8 +64,11 @@ public class ZoomWebhookService {
     String meetingId = payloadObject.getId();
     String endTime = payloadObject.getEndTime();
 
+    long meetingIdLong = MeetingUtils.parseMeetingId(meetingId);
+    Interview interview = interviewService.getInterviewByMeetingId(meetingIdLong);
+
     try {
-      interviewSummaryService.saveInterviewSummary(meetingId, endTime);
+      interviewSummaryService.saveInterviewSummary(interview, endTime);
     } catch (IllegalArgumentException e) {
       logger.error("Failed to save interview summary for meeting ID: " + meetingId + ". Reason: "
           + e.getMessage(), e);

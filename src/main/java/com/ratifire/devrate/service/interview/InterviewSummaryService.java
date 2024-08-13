@@ -6,7 +6,6 @@ import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.repository.InterviewSummaryRepository;
 import com.ratifire.devrate.service.user.UserService;
 import com.ratifire.devrate.util.interview.DateTimeUtils;
-import com.ratifire.devrate.util.interview.MeetingUtils;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -22,21 +21,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class InterviewSummaryService {
 
   private final InterviewSummaryRepository interviewSummaryRepository;
-  private final InterviewService interviewService;
   private final UserService userService;
 
 
   /**
-   * Saves an interview summary based on the provided meeting ID and end time.
+   * Saves an interview summary based on the provided interview and end time.
    *
-   * @param meetingId the ID of the meeting used to retrieve the interview
+   * @param interview the Interview object used to retrieve details for creating the summary
    * @param endTime   the end time of the interview, used to calculate the duration
    */
   @Transactional
-  public void saveInterviewSummary(String meetingId, String endTime) {
-    long meetingIdLong = MeetingUtils.parseMeetingId(meetingId);
-    Interview interview = interviewService.getInterviewByMeetingId(meetingIdLong);
-
+  public void saveInterviewSummary(Interview interview, String endTime) {
     User interviewer = interview.getInterviewerRequest().getUser();
     User candidate = interview.getCandidateRequest().getUser();
     ZonedDateTime startTime = interview.getStartTime();
