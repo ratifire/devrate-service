@@ -64,10 +64,9 @@ public class ZoomWebhookService {
     String meetingId = payloadObject.getId();
     String endTime = payloadObject.getEndTime();
 
-    long meetingIdLong = MeetingUtils.parseMeetingId(meetingId);
-    Interview interview = interviewService.getInterviewByMeetingId(meetingIdLong);
-
     try {
+      long meetingIdLong = MeetingUtils.parseMeetingId(meetingId);
+      Interview interview = interviewService.getInterviewByMeetingId(meetingIdLong);
       interviewSummaryService.saveInterviewSummary(interview, endTime);
     } catch (IllegalArgumentException e) {
       logger.error("Failed to save interview summary for meeting ID: " + meetingId + ". Reason: "
