@@ -12,8 +12,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -25,12 +28,15 @@ import org.thymeleaf.context.Context;
  * Service implementation for sending emails using JavaMailSender.
  */
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class EmailService {
 
   private static final Logger log = LogManager.getLogger(EmailService.class);
   private final JavaMailSender mailSender;
   private final TemplateEngine templateEngine;
+
+  @Value("${from.email.address}")
+  private String fromEmailAddress;
 
   /**
    * Sends a confirmation code email to the user.
@@ -109,7 +115,7 @@ public class EmailService {
     MimeMessage mimeMessage = mailSender.createMimeMessage();
     MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
     try {
-      helper.setFrom("ratifire@devrate.com");
+      helper.setFrom(fromEmailAddress);
       helper.setText(text, true);
       helper.setTo(recipient);
       helper.setSubject(subject);
