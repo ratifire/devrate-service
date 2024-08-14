@@ -69,6 +69,9 @@ resource "aws_autoscaling_lifecycle_hook" "lifecycle_hook" {
   default_result         = "CONTINUE"
   heartbeat_timeout      = 30
   lifecycle_transition   = "autoscaling:EC2_INSTANCE_TERMINATING"
+  depends_on = [
+    aws_autoscaling_group.ecs_back_asg
+  ]
 }
 
 resource "aws_autoscaling_group" "ecs_back_asg" {
