@@ -63,7 +63,7 @@ resource "aws_ecs_cluster_capacity_providers" "back_cluster_capacity_provider" {
   }
 }
 
-resource "aws_autoscaling_lifecycle_hook" "example" {
+resource "aws_autoscaling_lifecycle_hook" "lifecycle_hook" {
   name                   = "backend-ec2-asg-lifecycle-hook"
   autoscaling_group_name = aws_autoscaling_group.ecs_back_asg.name
   default_result         = "CONTINUE"
