@@ -63,14 +63,6 @@ resource "aws_ecs_cluster_capacity_providers" "back_cluster_capacity_provider" {
   }
 }
 
-resource "aws_autoscaling_lifecycle_hook" "lifecycle_hook" {
-  name                   = "backend-ec2-asg-lifecycle-hook"
-  autoscaling_group_name = aws_autoscaling_group.ecs_back_asg.name
-  default_result         = "CONTINUE"
-  heartbeat_timeout      = 30
-  lifecycle_transition   = "autoscaling:EC2_INSTANCE_TERMINATING"
-}
-
 resource "aws_autoscaling_group" "ecs_back_asg" {
   name = "ASGn-${aws_launch_template.ecs_back_launch.name_prefix}"
   launch_template {
@@ -83,16 +75,15 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
   health_check_type         = "EC2"
   health_check_grace_period = 300
   vpc_zone_identifier       = data.aws_subnets.example.ids
-  force_delete_warm_pool    = true
-  termination_policies      = ["OldestLaunchConfiguration", "Default"]
+  force_delete              = true
+  termination_policies      = ["Default"]
 
   initial_lifecycle_hook {
-    lifecycle_transition = "autoscaling:EC2_INSTANCE_LAUNCHING"
+    lifecycle_transition = "autoscaling:EC2_INSTANCE_TERMINATING"
     name                 = "example-launch-hook"
     default_result       = "CONTINUE"
     heartbeat_timeout    = 30
   }
-
   dynamic "tag" {
     for_each = {
       Name  = "Ecs-Back-Instance-ASG"
