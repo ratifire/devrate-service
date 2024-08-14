@@ -75,7 +75,7 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
   health_check_type         = "EC2"
   health_check_grace_period = 10
   vpc_zone_identifier       = data.aws_subnets.example.ids
-
+  force_delete = true
   termination_policies = ["OldestInstance"]
   dynamic "tag" {
     for_each = {
