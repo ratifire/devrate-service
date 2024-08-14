@@ -69,9 +69,6 @@ resource "aws_autoscaling_lifecycle_hook" "lifecycle_hook" {
   default_result         = "CONTINUE"
   heartbeat_timeout      = 30
   lifecycle_transition   = "autoscaling:EC2_INSTANCE_TERMINATING"
-  depends_on = [
-    aws_autoscaling_group.ecs_back_asg
-  ]
 }
 
 resource "aws_autoscaling_group" "ecs_back_asg" {
@@ -88,6 +85,13 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
   vpc_zone_identifier       = data.aws_subnets.example.ids
   force_delete_warm_pool    = true
   termination_policies      = ["OldestLaunchConfiguration", "Default"]
+
+  initial_lifecycle_hook {
+    lifecycle_transition = "autoscaling:EC2_INSTANCE_LAUNCHING"
+    name                 = "example-launch-hook"
+    default_result       = "CONTINUE"
+    heartbeat_timeout    = 30
+  }
 
   dynamic "tag" {
     for_each = {
