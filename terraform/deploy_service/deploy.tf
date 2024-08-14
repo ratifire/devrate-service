@@ -3,11 +3,11 @@ resource "aws_ecs_cluster" "backend_cluster" {
 }
 
 resource "aws_launch_template" "ecs_back_launch" {
-  name_prefix            = "ecs_back_launch"
-  image_id               = data.aws_ami.aws_linux_latest_ecs.image_id
-  instance_type          = var.instance_type
+  name_prefix   = "ecs_back_launch"
+  image_id      = data.aws_ami.aws_linux_latest_ecs.image_id
+  instance_type = var.instance_type
   vpc_security_group_ids = [data.aws_security_group.vpc_backend_security_group.id]
-  key_name               = data.aws_key_pair.keypair.key_name
+  key_name      = data.aws_key_pair.keypair.key_name
   user_data = base64encode(<<-EOF
       #!/bin/bash
       echo ECS_CLUSTER=${aws_ecs_cluster.backend_cluster.name} >> /etc/ecs/ecs.config;
@@ -53,14 +53,14 @@ resource "aws_ecs_capacity_provider" "back_capacity_provider" {
 }
 
 resource "aws_autoscaling_lifecycle_hook" "example" {
-  count = 0
+  count                  = 0
   autoscaling_group_name = aws_autoscaling_group.ecs_back_asg.name
-  lifecycle_transition = "autoscaling:EC2_INSTANCE_TERMINATING"
-  name = "example"
+  lifecycle_transition   = "autoscaling:EC2_INSTANCE_TERMINATING"
+  name                   = "example"
 }
 
 resource "aws_ecs_cluster_capacity_providers" "back_cluster_capacity_provider" {
-  cluster_name       = var.back_cluster_name
+  cluster_name = var.back_cluster_name
   capacity_providers = [aws_ecs_capacity_provider.back_capacity_provider.name]
 
   default_capacity_provider_strategy {
@@ -82,7 +82,7 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
   health_check_type         = "EC2"
   health_check_grace_period = 10
   vpc_zone_identifier       = data.aws_subnets.example.ids
-  force_delete = true
+  force_delete              = true
   termination_policies = ["OldestInstance"]
   dynamic "tag" {
     for_each = {
