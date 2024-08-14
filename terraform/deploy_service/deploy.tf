@@ -80,7 +80,7 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
 
   initial_lifecycle_hook {
     lifecycle_transition = "autoscaling:EC2_INSTANCE_TERMINATING"
-    name                 = "example-launch-hook"
+    name                 = "ecs-managed-draining-termination-hook"
     default_result       = "CONTINUE"
     heartbeat_timeout    = 30
   }
