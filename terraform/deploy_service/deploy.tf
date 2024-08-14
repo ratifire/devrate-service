@@ -73,15 +73,15 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
   max_size                  = 2
   desired_capacity          = 1
   health_check_type         = "EC2"
-  health_check_grace_period = 1
+  health_check_grace_period = 300
   vpc_zone_identifier       = data.aws_subnets.example.ids
   force_delete_warm_pool    = true
+  termination_policies      = ["OldestLaunchConfiguration", "Default"]
 
   dynamic "tag" {
     for_each = {
-      Name   = "Ecs-Back-Instance-ASG"
-      Owner  = "Max Matveichuk"
-      TAGKEY = "TAGVALUE"
+      Name  = "Ecs-Back-Instance-ASG"
+      Owner = "Max Matveichuk"
     }
     content {
       key                 = tag.key
