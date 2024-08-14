@@ -34,7 +34,7 @@ resource "aws_launch_template" "ecs_back_launch" {
 }
 
 resource "aws_ecs_capacity_provider" "back_capacity_provider" {
-  name = "back-ec2-capacity-provider"
+  name = "backend-ec2-capacity-provider"
 
   auto_scaling_group_provider {
     auto_scaling_group_arn         = aws_autoscaling_group.ecs_back_asg.arn
