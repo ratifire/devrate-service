@@ -52,6 +52,13 @@ resource "aws_ecs_capacity_provider" "back_capacity_provider" {
   }
 }
 
+resource "aws_autoscaling_lifecycle_hook" "example" {
+  count = 0
+  autoscaling_group_name = aws_autoscaling_group.ecs_back_asg.name
+  lifecycle_transition = "autoscaling:EC2_INSTANCE_TERMINATING"
+  name = "example"
+}
+
 resource "aws_ecs_cluster_capacity_providers" "back_cluster_capacity_provider" {
   cluster_name       = var.back_cluster_name
   capacity_providers = [aws_ecs_capacity_provider.back_capacity_provider.name]
