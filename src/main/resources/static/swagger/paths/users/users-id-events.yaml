@@ -1,0 +1,60 @@
+get:
+  tags:
+    - Event
+  summary: Get Events By UserId and date range
+  description: Retrieve events by user ID and date range
+  operationId: findEventsBetweenDate
+  parameters:
+    - in: path
+      name: userId
+      description: The userId of the events to retrieve.
+      required: true
+      schema:
+        type: integer
+        format: int64
+    - in: query
+      name: from
+      description: The start of the date range (inclusive)
+      required: true
+      schema:
+        type: string
+        format: date
+    - in: query
+      name: to
+      description: The end of the date range (inclusive)
+      required: true
+      schema:
+        type: string
+        format: date
+  responses:
+    '200':
+      description: The events corresponding to the provided userId and date range
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/EventDto.yaml'
+          example:
+            id: 0
+            relatedId: 0
+            zoomLink: "string"
+            host:
+              name: "string"
+              surname: "string"
+              role: "INTERVIEWER"
+            participants:
+              - name: "string"
+                surname: "string"
+                role: "CANDIDATE"
+            startTime: "string"
+    '400':
+      description: The user who requested the events was not found
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
