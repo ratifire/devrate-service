@@ -5,6 +5,7 @@ import com.ratifire.devrate.util.parser.DataParser;
 import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest.Payload.Meeting;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,8 +20,7 @@ public class InterviewCompletionService {
 
   private final InterviewService interviewService;
   private final InterviewSummaryService interviewSummaryService;
-  private static final Logger logger = org.slf4j.LoggerFactory.getLogger(
-      InterviewCompletionService.class);
+  private static final Logger logger = LoggerFactory.getLogger(InterviewCompletionService.class);
 
 
   /**
