@@ -9,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Service responsible for handling the completion process of an interview.
+ */
 @Service
 @RequiredArgsConstructor
 public class InterviewCompletionService {

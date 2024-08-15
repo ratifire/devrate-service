@@ -4,6 +4,9 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import lombok.experimental.UtilityClass;
 
+/**
+ * Utility class for parsing data.
+ */
 @UtilityClass
 public class DataParser {
 
