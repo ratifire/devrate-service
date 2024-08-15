@@ -1,15 +1,11 @@
 package com.ratifire.devrate.util.zoom.webhook.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ratifire.devrate.entity.interview.Interview;
-import com.ratifire.devrate.service.interview.InterviewService;
-import com.ratifire.devrate.service.interview.InterviewSummaryService;
-import com.ratifire.devrate.util.interview.MeetingUtils;
+import com.ratifire.devrate.service.interview.InterviewCompletionService;
 import com.ratifire.devrate.util.zoom.webhook.exception.ZoomWebhookException;
 import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,9 +19,7 @@ import org.springframework.stereotype.Service;
 public class ZoomWebhookService {
 
   private final ZoomWebhookAuthService zoomWebhookAuthService;
-  private final InterviewSummaryService interviewSummaryService;
-  private final InterviewService interviewService;
-  private static final Logger logger = org.slf4j.LoggerFactory.getLogger(ZoomWebhookService.class);
+  private final InterviewCompletionService interviewCompletionService;
 
   /**
    * Handles all webhook events from Zoom.
@@ -64,33 +58,6 @@ public class ZoomWebhookService {
     String meetingId = payloadObject.getId();
     String endTime = payloadObject.getEndTime();
 
-    try {
-      handleInterviewCompletion(meetingId, endTime);
-    } catch (IllegalArgumentException e) {
-      logger.error("Failed to save interview summary for meeting ID: " + meetingId + ". Reason: "
-          + e.getMessage(), e);
-      return new ResponseEntity<>("Invalid meeting details provided.",
-          HttpStatus.BAD_REQUEST);
-    }
-
-    return new ResponseEntity<>("Meeting id: " + meetingId
-        + " ended at: " + endTime, HttpStatus.OK);
-  }
-
-  /**
-   * Handles the completion process of an interview by performing necessary operations after a
-   * meeting has ended.
-   *
-   * @param meetingId The ID of the meeting that has ended. This ID is expected to be a string
-   *                  representation of a long value.
-   * @param endTime   The time when the meeting ended, in a string format. This is used to update
-   *                  the interview summary.
-   * @throws IllegalArgumentException If the meeting ID is not a valid long or if the interview is
-   *                                  not found.
-   */
-  private void handleInterviewCompletion(String meetingId, String endTime) {
-    long meetingIdLong = MeetingUtils.parseMeetingId(meetingId);
-    Interview interview = interviewService.getInterviewByMeetingId(meetingIdLong);
-    interviewSummaryService.saveInterviewSummary(interview, endTime);
+    return interviewCompletionService.completeInterview(meetingId, endTime);
   }
 }
