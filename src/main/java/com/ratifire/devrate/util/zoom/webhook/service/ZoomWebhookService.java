@@ -34,30 +34,18 @@ public class ZoomWebhookService {
       String> headers) throws JsonProcessingException, ZoomWebhookException {
     zoomWebhookAuthService.validateToken(headers.get("authorization"));
 
-    String event = payload.getEvent();
-    return switch (event) {
-      case "endpoint.url_validation" -> zoomWebhookAuthService.handleUrlValidationEvent(payload);
-      case "meeting.ended" -> handleMeetingEndedEvent(payload);
-      default -> throw new ZoomWebhookException("Unknown event type");
-    };
-  }
-
-  /**
-   * Handles meeting ended events.
-   *
-   * @param payload The payload containing event data.
-   * @return ResponseEntity with the status of the meeting.
-   */
-  private ResponseEntity<String> handleMeetingEndedEvent(WebHookRequest payload) {
     WebHookRequest.Payload.Meeting payloadObject = payload.getPayload().getMeeting();
     if (payloadObject == null) {
       return new ResponseEntity<>("Error: The payload or meeting details are missing.",
           HttpStatus.BAD_REQUEST);
     }
 
-    String meetingId = payloadObject.getId();
-    String endTime = payloadObject.getEndTime();
-
-    return interviewCompletionService.completeInterview(meetingId, endTime);
+    String event = payload.getEvent();
+    return switch (event) {
+      case "endpoint.url_validation" -> zoomWebhookAuthService.handleUrlValidationEvent(payload);
+      case "meeting.ended" -> interviewCompletionService.completeInterview(payloadObject.getId(),
+          payloadObject.getEndTime());
+      default -> throw new ZoomWebhookException("Unknown event type");
+    };
   }
 }
