@@ -6,7 +6,6 @@ import com.ratifire.devrate.util.zoom.webhook.exception.ZoomWebhookException;
 import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -34,17 +33,11 @@ public class ZoomWebhookService {
       String> headers) throws JsonProcessingException, ZoomWebhookException {
     zoomWebhookAuthService.validateToken(headers.get("authorization"));
 
-    WebHookRequest.Payload.Meeting payloadObject = payload.getPayload().getMeeting();
-    if (payloadObject == null) {
-      return new ResponseEntity<>("Error: The payload or meeting details are missing.",
-          HttpStatus.BAD_REQUEST);
-    }
-
     String event = payload.getEvent();
     return switch (event) {
       case "endpoint.url_validation" -> zoomWebhookAuthService.handleUrlValidationEvent(payload);
-      case "meeting.ended" -> interviewCompletionService.completeInterview(payloadObject.getId(),
-          payloadObject.getEndTime());
+      case "meeting.ended" ->
+          interviewCompletionService.completeInterviewProcess(payload.getPayload().getMeeting());
       default -> throw new ZoomWebhookException("Unknown event type");
     };
   }
