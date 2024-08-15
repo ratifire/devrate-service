@@ -10,4 +10,8 @@ public class InterviewNotFoundException extends ResourceNotFoundException {
   public InterviewNotFoundException(long id) {
     super(String.format(MESSAGE_ID_NOT_FOUND, id));
   }
+
+  public InterviewNotFoundException(String message) {
+    super(message);
+  }
 }
