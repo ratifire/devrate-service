@@ -4,6 +4,7 @@ import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Specialization;
+import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.exception.SpecializationNotFoundException;
@@ -216,5 +217,21 @@ public class SpecializationService {
     specialization.setMainMastery(newMainMastery);
     specializationRepository.save(specialization);
     return masteryMapper.toDto(newMainMastery);
+  }
+
+  /**
+   * Updates the interview counts for the interviewer and candidate specializations.
+   *
+   * @param interview the interview from which the interviewer and candidate specializations are
+   *                  derived
+   */
+  public void updateInterviewCount(Interview interview) {
+    Specialization interviewer = interview.getInterviewerRequest().getMastery().getSpecialization();
+    Specialization candidate = interview.getCandidateRequest().getMastery().getSpecialization();
+
+    interviewer.setConductedInterviews(interviewer.getConductedInterviews() + 1);
+    candidate.setCompletedInterviews(candidate.getCompletedInterviews() + 1);
+
+    specializationRepository.saveAll(List.of(interviewer, candidate));
   }
 }
