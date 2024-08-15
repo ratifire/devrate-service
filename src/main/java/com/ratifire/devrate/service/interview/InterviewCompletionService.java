@@ -1,6 +1,7 @@
 package com.ratifire.devrate.service.interview;
 
 import com.ratifire.devrate.entity.interview.Interview;
+import com.ratifire.devrate.service.specialization.SpecializationService;
 import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest.Payload.Meeting;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ public class InterviewCompletionService {
 
   private final InterviewService interviewService;
   private final InterviewSummaryService interviewSummaryService;
+  private final SpecializationService specializationService;
 
 
   /**
@@ -28,6 +30,7 @@ public class InterviewCompletionService {
   public String completeInterviewProcess(Meeting meeting) {
     Interview interview = interviewService.getInterviewByMeetingId(Long.parseLong(meeting.getId()));
     interviewSummaryService.saveInterviewSummary(interview, meeting.getEndTime());
+    specializationService.updateInterviewCount(interview);
     //TODO: add the other needed logic for completing the interview process
     return "Interview process completed successfully!";
   }
