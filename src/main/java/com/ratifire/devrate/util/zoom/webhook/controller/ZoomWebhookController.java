@@ -6,6 +6,7 @@ import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest;
 import com.ratifire.devrate.util.zoom.webhook.service.ZoomWebhookService;
 import java.util.Map;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,6 +39,7 @@ public class ZoomWebhookController {
       @RequestBody WebHookRequest payload,
       @RequestHeader Map<String, String> headers) throws JsonProcessingException,
       ZoomWebhookException {
-    return zoomWebhookService.handleZoomWebhook(payload, headers);
+    return new ResponseEntity<>(zoomWebhookService.handleZoomWebhook(payload, headers),
+        HttpStatus.OK);
   }
 }

@@ -20,5 +20,4 @@ public class DateTimeUtils {
   public static ZonedDateTime convertToUtcTimeZone(ZonedDateTime dateTime) {
     return dateTime.withZoneSameInstant(ZoneId.of("UTC"));
   }
-
 }
