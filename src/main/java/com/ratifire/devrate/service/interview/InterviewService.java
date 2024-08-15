@@ -107,7 +107,8 @@ public class InterviewService {
    */
   public Interview getInterviewByMeetingId(long meetingId) {
     return interviewRepository.findByZoomMeetingId(meetingId)
-        .orElseThrow(() -> new InterviewNotFoundException(meetingId));
+        .orElseThrow(() -> new InterviewNotFoundException(
+            String.format("Interview with meetingId %d not found.", meetingId)));
   }
 
 }
