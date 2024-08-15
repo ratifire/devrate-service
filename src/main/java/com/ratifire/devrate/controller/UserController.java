@@ -61,7 +61,7 @@ public class UserController {
    */
   @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userDto.id)")
   @PutMapping
-  public UserDto update(@RequestBody UserDto userDto) {
+  public UserDto update(@Valid @RequestBody UserDto userDto) {
     return userService.update(userDto);
   }
 
@@ -281,8 +281,8 @@ public class UserController {
    * Retrieves a list of conducted and passed interviews by user ID and date range.
    *
    * @param userId the ID of the user
-   * @param from the start date of the date range (inclusive)
-   * @param to the end date of the date range (inclusive)
+   * @param from   the start date of the date range (inclusive)
+   * @param to     the end date of the date range (inclusive)
    * @return the list of conducted and passed interviews as a DTO
    */
   @GetMapping("/{userId}/interview-summaries/statistics")
