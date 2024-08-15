@@ -5,7 +5,6 @@ import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.repository.InterviewSummaryRepository;
 import com.ratifire.devrate.service.user.UserService;
-import com.ratifire.devrate.util.parser.DataParser;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -36,7 +35,7 @@ public class InterviewSummaryService {
 
     InterviewSummary interviewSummary = InterviewSummary.builder()
         .date(startTime.toLocalDate())
-        .duration(Duration.between(startTime, DataParser.parseToZonedDateTime(endTime)).toMinutes())
+        .duration(Duration.between(startTime, ZonedDateTime.parse(endTime)).toMinutes())
         .candidateId(candidate.getId())
         .interviewerId(interviewer.getId())
         .build();

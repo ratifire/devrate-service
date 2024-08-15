@@ -6,7 +6,6 @@ import com.ratifire.devrate.util.zoom.webhook.exception.ZoomWebhookException;
 import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,12 +24,13 @@ public class ZoomWebhookService {
    *
    * @param payload The payload containing event data.
    * @param headers The headers of the request.
-   * @return ResponseEntity with the result of processing the event.
+   * @return String with the result of processing the event.
    * @throws JsonProcessingException If an error occurs during JSON processing.
-   * @throws ZoomWebhookException If the event type is unknown or an error occurs during processing.
+   * @throws ZoomWebhookException    If the event type is unknown or an error occurs during
+   *                                 processing.
    */
-  public ResponseEntity<String> handleZoomWebhook(WebHookRequest payload, Map<String,
-      String> headers) throws JsonProcessingException, ZoomWebhookException {
+  public String handleZoomWebhook(WebHookRequest payload, Map<String, String> headers)
+      throws JsonProcessingException, ZoomWebhookException {
     zoomWebhookAuthService.validateToken(headers.get("authorization"));
 
     String event = payload.getEvent();
