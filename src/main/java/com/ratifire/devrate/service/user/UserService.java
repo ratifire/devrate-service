@@ -441,6 +441,18 @@ public class UserService {
   }
 
   /**
+   * Adds an interview summary to a list of users and saves the updated user entities.
+   *
+   * @param users            the list of User objects to which the interview summary should be
+   *                         added
+   * @param interviewSummary the InterviewSummary to be added to each user
+   */
+  public void addInterviewSummaryToUsers(List<User> users, InterviewSummary interviewSummary) {
+    users.forEach(user -> user.getInterviewSummaries().add(interviewSummary));
+    userRepository.saveAll(users);
+  }
+
+  /**
    * Deletes the association between a user and an interview summary.
    *
    * @param userId the ID of the user whose association with the interview summary is to be deleted

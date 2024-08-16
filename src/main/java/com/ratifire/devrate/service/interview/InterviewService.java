@@ -112,4 +112,18 @@ public class InterviewService {
 
     return rejected;
   }
+
+  /**
+   * Retrieves an interview by its associated Zoom meeting ID.
+   *
+   * @param meetingId the Zoom meeting ID associated with the interview
+   * @return the Interview associated with the given meeting ID
+   * @throws InterviewNotFoundException if no interview is found for the provided meeting ID
+   */
+  public Interview getInterviewByMeetingId(long meetingId) {
+    return interviewRepository.findByZoomMeetingId(meetingId)
+        .orElseThrow(() -> new InterviewNotFoundException(
+            String.format("Interview with meetingId %d not found.", meetingId)));
+  }
+
 }
