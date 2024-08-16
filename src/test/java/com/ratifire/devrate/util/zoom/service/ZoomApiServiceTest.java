@@ -42,6 +42,9 @@ public class ZoomApiServiceTest {
   private String description;
   private LocalDateTime time;
 
+  /**
+   * Setup method executed before each test method.
+   */
   @BeforeEach
   public void before() {
     createMeetingResponse = new ZoomCreateMeetingResponse();
