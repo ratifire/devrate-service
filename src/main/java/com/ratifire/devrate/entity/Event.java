@@ -36,14 +36,14 @@ public class Event {
    * For example, if the event type is 'interview', this field will store 'interviewId'.
    * If the event type is 'conference', this field will store 'conferenceId', etc.
    */
-  @Column(name = "related_id", nullable = false)
-  private long relatedId;
+  @Column(name = "event_type_id", nullable = false)
+  private long eventTypeId;
 
   @Enumerated(EnumType.STRING)
   private EventType type;
 
-  @Column(name = "zoom_link", nullable = false)
-  private String zoomLink;
+  @Column(name = "room_link", nullable = false)
+  private String roomLink;
 
   @Column(name = "host_id", nullable = false)
   private long hostId;

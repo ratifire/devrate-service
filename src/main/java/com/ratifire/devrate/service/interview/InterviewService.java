@@ -58,11 +58,11 @@ public class InterviewService {
 
           Event interviewEvent = Event.builder()
               .type(EventType.INTERVIEW)
-              .zoomLink(zoomMeeting.getJoinUrl())
+              .roomLink(zoomMeeting.getJoinUrl())
               .hostId(interviewer.getUser().getId())
               .participantIds(List.of(candidate.getUser().getId()))
               .startTime(matchedStartTime.toLocalDateTime())
-              .relatedId(interview.getId())
+              .eventTypeId(interview.getId())
               .build();
           eventService.save(interviewEvent, List.of(interviewer.getUser(), candidate.getUser()));
 
