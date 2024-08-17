@@ -151,6 +151,22 @@ public class UserService {
   }
 
   /**
+   * Refreshes the interview counts for a list of users.
+   *
+   * @param users the list of users for whom the interview counts need to be refreshed. Each user's
+   *              conducted and completed interview counts will be recalculated and updated in the
+   *              database.
+   */
+  public void refreshUserInterviewCounts(List<User> users) {
+    users.forEach(user -> {
+      long userId = user.getId();
+      user.setConductedInterviews(interviewSummaryRepository.countByInterviewerId(userId));
+      user.setCompletedInterviews(interviewSummaryRepository.countByCandidateId(userId));
+      updateUser(user);
+    });
+  }
+
+  /**
    * Retrieves all language proficiencies associated with the user.
    *
    * @param userId the ID of the user to associate the language proficiencies with
