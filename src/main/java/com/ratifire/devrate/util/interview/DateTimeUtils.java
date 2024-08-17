@@ -1,5 +1,6 @@
 package com.ratifire.devrate.util.interview;
 
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -19,5 +20,17 @@ public class DateTimeUtils {
    */
   public static ZonedDateTime convertToUtcTimeZone(ZonedDateTime dateTime) {
     return dateTime.withZoneSameInstant(ZoneId.of("UTC"));
+  }
+
+  /**
+   * Checks if a given {@link LocalDate} is within the specified range.
+   *
+   * @param dateTime the {@link LocalDate} to check
+   * @param from     the start of the range (inclusive)
+   * @param to       the end of the range (inclusive)
+   * @return {@code true} if {@code date} in range, otherwise {@code false}
+   */
+  public static boolean isWithinRange(LocalDate dateTime, LocalDate from, LocalDate to) {
+    return !dateTime.isBefore(from) && !dateTime.isAfter(to);
   }
 }

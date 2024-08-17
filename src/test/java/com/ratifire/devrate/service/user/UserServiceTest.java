@@ -17,6 +17,7 @@ import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
+import com.ratifire.devrate.dto.EventDto;
 import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
@@ -29,6 +30,7 @@ import com.ratifire.devrate.entity.Bookmark;
 import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
+import com.ratifire.devrate.entity.Event;
 import com.ratifire.devrate.entity.InterviewSummary;
 import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.Specialization;
@@ -41,6 +43,7 @@ import com.ratifire.devrate.repository.UserRepository;
 import com.ratifire.devrate.service.specialization.SpecializationService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -105,6 +108,8 @@ class UserServiceTest {
    */
   @BeforeEach
   public void init() {
+    userService.setUserRepository(userRepository);
+
     testUser = User.builder()
         .id(userId)
         .employmentRecords(new ArrayList<>())
@@ -491,5 +496,59 @@ class UserServiceTest {
 
     assertTrue(passedDto != null && passedDto.getPassed() == 1);
     assertTrue(conductedDto != null && conductedDto.getConducted() == 1);
+  }
+
+  @Test
+  void testFindEventsBetweenDateTime_noEvents() {
+    LocalDate from = LocalDate.now().minusDays(1);
+    LocalDate to = LocalDate.now().plusDays(1);
+
+    testUser.setEvents(List.of());
+
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+
+    List<EventDto> events = userService.findEventsBetweenDate(userId, from, to);
+
+    assertTrue(events.isEmpty());
+  }
+
+  @Test
+  void testFindEventsBetweenDateTime_withEvents() {
+    Event event1 = new Event();
+    event1.setId(1L);
+    event1.setStartTime(LocalDateTime.now());
+    event1.setHostId(2L);
+    event1.setRoomLink("roomLink1");
+    event1.setParticipantIds(Arrays.asList(3L, 4L));
+
+    Event event2 = new Event();
+    event2.setId(2L);
+    event2.setStartTime(LocalDateTime.now().plusDays(2));
+    event2.setHostId(2L);
+    event2.setRoomLink("roomLink2");
+    event2.setParticipantIds(Arrays.asList(3L, 4L));
+
+    testUser.setEvents(Arrays.asList(event1, event2));
+
+    LocalDate from = LocalDate.now().minusDays(1);
+    LocalDate to = LocalDate.now().plusDays(1);
+
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+
+    List<EventDto> events = userService.findEventsBetweenDate(userId, from, to);
+
+    assertEquals(1, events.size());
+    assertEquals(event1.getId(), events.getFirst().getId());
+  }
+
+  @Test
+  void testFindEventsBetweenDate_userNotFound() {
+    LocalDate from = LocalDate.now().minusDays(1);
+    LocalDate to = LocalDate.now().plusDays(1);
+
+    when(userRepository.findById(any())).thenThrow(new UserNotFoundException("User not found"));
+
+    assertThrows(UserNotFoundException.class,
+        () -> userService.findEventsBetweenDate(userId, from, to));
   }
 }

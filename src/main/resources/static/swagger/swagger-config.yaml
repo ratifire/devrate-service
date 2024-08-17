@@ -140,6 +140,8 @@ paths:
     $ref: './paths/masteries/masteries-id-mastery-history.yaml'
   /users/{userId}/interview-summaries/statistics:
     $ref: './paths/users/users-id-interviewSummaries-statistics.yaml'
+  /users/{userId}/events:
+    $ref: './paths/users/users-id-events.yaml'
 components:
   securitySchemes:
     basicAuth:
