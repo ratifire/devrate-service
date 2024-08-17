@@ -107,4 +107,12 @@ public class User {
       inverseJoinColumns = @JoinColumn(name = "interview_summary_id")
   )
   private List<InterviewSummary> interviewSummaries;
+
+  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinTable(
+      name = "user_event",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "event_id")
+  )
+  private List<Event> events;
 }

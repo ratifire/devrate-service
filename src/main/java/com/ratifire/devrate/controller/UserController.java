@@ -1,11 +1,11 @@
 package com.ratifire.devrate.controller;
 
-
 import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
+import com.ratifire.devrate.dto.EventDto;
 import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
@@ -378,5 +378,20 @@ public class UserController {
   @DeleteMapping("/{userId}/interviews/{id}")
   public void deleteRejectedInterview(@PathVariable long userId, @PathVariable long id) {
     userService.deleteRejectedInterview(userId, id);
+  }
+
+  /**
+   * Retrieves a list of events for a specified user that occur within a given date range.
+   *
+   * @param userId the ID of the user whose events are to be retrieved
+   * @param from   the start of the date range (inclusive)
+   * @param to     the end of the date range (inclusive)
+   * @return a list of {@link EventDto} objects representing the events for the user
+   */
+  @GetMapping("/{userId}/events")
+  public List<EventDto> findEventsBetweenDate(@PathVariable long userId,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+    return userService.findEventsBetweenDate(userId, from, to);
   }
 }
