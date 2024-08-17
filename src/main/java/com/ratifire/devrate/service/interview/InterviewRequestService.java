@@ -71,4 +71,13 @@ public class InterviewRequestService {
     interviewRequestRepository.save(activeRequest);
     interviewRequestRepository.save(rejectedRequest);
   }
+
+  /**
+   * Deletes interview requests by their IDs.
+   *
+   * @param ids the list of interview request IDs to be deleted.
+   */
+  public void deleteInterviewRequests(List<Long> ids) {
+    interviewRequestRepository.deleteAllById(ids);
+  }
 }
