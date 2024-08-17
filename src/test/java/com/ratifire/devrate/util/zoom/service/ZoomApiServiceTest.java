@@ -26,7 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * Test class for the {@link ZoomApiService}.
  */
 @ExtendWith(MockitoExtension.class)
-public class ZoomApiServiceTest {
+class ZoomApiServiceTest {
 
   @InjectMocks
   private ZoomApiService zoomApiService;
@@ -46,7 +46,7 @@ public class ZoomApiServiceTest {
    * Setup method executed before each test method.
    */
   @BeforeEach
-  public void before() {
+  void before() {
     createMeetingResponse = new ZoomCreateMeetingResponse();
     createMeetingResponse.setId(89635331342L);
     createMeetingResponse.setJoinUrl("https://us05web.zoom.us/j/89635331342?pwd=DxasGmWCAMBFm3.1");
@@ -57,7 +57,7 @@ public class ZoomApiServiceTest {
   }
 
   @Test
-  public void createMeetingTest() {
+  void createMeetingTest() {
     when(zoomApiClient.post(any(), any(), any())).thenReturn(
         Optional.ofNullable(createMeetingResponse));
 
@@ -69,14 +69,14 @@ public class ZoomApiServiceTest {
   }
 
   @Test
-  public void deleteMeetingTest() throws ZoomApiException {
+  void deleteMeetingTest() throws ZoomApiException {
     doNothing().when(zoomApiClient).delete(any());
     zoomApiService.deleteMeeting(any());
     verify(zoomApiClient, times(1)).delete(any());
   }
 
   @Test
-  public void deleteMeeting_ThrowsZoomApiExceptionTest() throws ZoomApiException {
+  void deleteMeeting_ThrowsZoomApiExceptionTest() throws ZoomApiException {
     doThrow(ZoomApiException.class).when(zoomApiClient).delete(any());
     assertThrows(ZoomApiException.class, () -> zoomApiService.deleteMeeting(any()));
     verify(zoomApiClient, times(1)).delete(any());
