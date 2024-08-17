@@ -220,12 +220,13 @@ public class SpecializationService {
   }
 
   /**
-   * Updates the interview counts for the interviewer and candidate specializations.
+   * Updates the interview counts for the interviewer and candidate specializations after the
+   * interview has been completed and conducted.
    *
    * @param interview the interview from which the interviewer and candidate specializations are
    *                  derived
    */
-  public void updateInterviewCount(Interview interview) {
+  public void updateUserInterviewCounts(Interview interview) {
     Specialization interviewer = interview.getInterviewerRequest().getMastery().getSpecialization();
     Specialization candidate = interview.getCandidateRequest().getMastery().getSpecialization();
 
