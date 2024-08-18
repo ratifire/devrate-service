@@ -7,6 +7,9 @@ properties:
   surname:
     type: string
     description: Participant surname
+  status:
+    type: string
+    description: Participant status (from the profile like Junior Frontend Dev etc.)
   role:
     type: string
     description: Role of the event participant. Role must be "CANDIDATE" in the context of participants, and "INTERVIEWER" for the host.
