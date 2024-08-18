@@ -41,6 +41,7 @@ public class EventDto {
   public static class Participant {
     private String name;
     private String surname;
+    private String status;
     private InterviewRequestRole role;
   }
 }
