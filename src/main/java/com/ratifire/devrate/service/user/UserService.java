@@ -733,11 +733,12 @@ public class UserService {
    */
   private Participant createParticipant(long userId, InterviewRequestRole role) {
     try {
-      User host = findUserById(userId);
+      User user = findUserById(userId);
 
       return Participant.builder()
-          .name(host.getFirstName())
-          .surname(host.getLastName())
+          .name(user.getFirstName())
+          .surname(user.getLastName())
+          .status(user.getStatus())
           .role(role)
           .build();
     } catch (UserNotFoundException ex) {

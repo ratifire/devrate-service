@@ -40,10 +40,12 @@ get:
             host:
               name: "string"
               surname: "string"
+              status: "string"
               role: "INTERVIEWER"
             participants:
               - name: "string"
                 surname: "string"
+                status: "string"
                 role: "CANDIDATE"
             startTime: "string"
     '400':
