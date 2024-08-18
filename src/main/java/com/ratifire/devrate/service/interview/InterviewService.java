@@ -10,6 +10,7 @@ import com.ratifire.devrate.service.event.EventService;
 import com.ratifire.devrate.util.interview.InterviewPair;
 import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
 import com.ratifire.devrate.util.zoom.service.ZoomApiService;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -58,11 +59,11 @@ public class InterviewService {
 
           Event interviewEvent = Event.builder()
               .type(EventType.INTERVIEW)
-              .zoomLink(zoomMeeting.getJoinUrl())
+              .roomLink(zoomMeeting.getJoinUrl())
               .hostId(interviewer.getUser().getId())
               .participantIds(List.of(candidate.getUser().getId()))
               .startTime(matchedStartTime.toLocalDateTime())
-              .relatedId(interview.getId())
+              .eventTypeId(interview.getId())
               .build();
           eventService.save(interviewEvent, List.of(interviewer.getUser(), candidate.getUser()));
 
@@ -111,5 +112,27 @@ public class InterviewService {
     }
 
     return rejected;
+  }
+
+  /**
+   * Retrieves an interview by its associated Zoom meeting ID.
+   *
+   * @param meetingId the Zoom meeting ID associated with the interview
+   * @return the Interview associated with the given meeting ID
+   * @throws InterviewNotFoundException if no interview is found for the provided meeting ID
+   */
+  public Interview getInterviewByMeetingId(long meetingId) {
+    return interviewRepository.findByZoomMeetingId(meetingId)
+        .orElseThrow(() -> new InterviewNotFoundException(
+            String.format("Interview with meetingId %d not found.", meetingId)));
+  }
+
+  /**
+   * Deletes an interview by its ID.
+   *
+   * @param id The ID of the interview to delete.
+   */
+  public void deleteInterview(long id) {
+    interviewRepository.deleteById(id);
   }
 }

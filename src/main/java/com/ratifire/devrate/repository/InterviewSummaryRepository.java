@@ -27,4 +27,8 @@ public interface InterviewSummaryRepository extends JpaRepository<InterviewSumma
       @Param("id") long id,
       @Param("from") LocalDate from,
       @Param("to") LocalDate to);
+
+  int countByCandidateId(long userId);
+
+  int countByInterviewerId(long userId);
 }

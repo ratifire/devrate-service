@@ -26,9 +26,9 @@ public class EventDto {
    * For example, if the event type is 'interview', this field will store 'interviewId'.
    * If the event type is 'conference', this field will store 'conferenceId', etc.
    */
-  private long relatedId;
+  private long eventTypeId;
   @URL
-  private String zoomLink;
+  private String link;
   private Participant host;
   private List<Participant> participants;
   private LocalDateTime startTime;
@@ -44,6 +44,7 @@ public class EventDto {
   public static class Participant {
     private String name;
     private String surname;
+    private String status;
     private InterviewRequestRole role;
   }
 }

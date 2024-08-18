@@ -518,14 +518,14 @@ class UserServiceTest {
     event1.setId(1L);
     event1.setStartTime(LocalDateTime.now());
     event1.setHostId(2L);
-    event1.setZoomLink("zoomLink1");
+    event1.setRoomLink("roomLink1");
     event1.setParticipantIds(Arrays.asList(3L, 4L));
 
     Event event2 = new Event();
     event2.setId(2L);
     event2.setStartTime(LocalDateTime.now().plusDays(2));
     event2.setHostId(2L);
-    event2.setZoomLink("zoomLink2");
+    event2.setRoomLink("roomLink2");
     event2.setParticipantIds(Arrays.asList(3L, 4L));
 
     testUser.setEvents(Arrays.asList(event1, event2));

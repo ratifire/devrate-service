@@ -33,11 +33,7 @@ public class EventService {
    */
   @Transactional
   public void save(Event event, List<User> attendees) {
-    attendees.forEach(user -> {
-      if (user != null && user.getEvents() != null) {
-        user.getEvents().add(event);
-      }
-    });
+    attendees.forEach(user -> user.getEvents().add(event));
 
     userRepository.saveAll(attendees);
     eventRepository.save(event);

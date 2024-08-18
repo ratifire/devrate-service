@@ -163,6 +163,22 @@ public class UserService {
   }
 
   /**
+   * Refreshes the interview counts for a list of users.
+   *
+   * @param users the list of users for whom the interview counts need to be refreshed. Each user's
+   *              conducted and completed interview counts will be recalculated and updated in the
+   *              database.
+   */
+  public void refreshUserInterviewCounts(List<User> users) {
+    users.forEach(user -> {
+      long userId = user.getId();
+      user.setConductedInterviews(interviewSummaryRepository.countByInterviewerId(userId));
+      user.setCompletedInterviews(interviewSummaryRepository.countByCandidateId(userId));
+      updateUser(user);
+    });
+  }
+
+  /**
    * Retrieves all language proficiencies associated with the user.
    *
    * @param userId the ID of the user to associate the language proficiencies with
@@ -441,6 +457,18 @@ public class UserService {
   }
 
   /**
+   * Adds an interview summary to a list of users and saves the updated user entities.
+   *
+   * @param users            the list of User objects to which the interview summary should be
+   *                         added
+   * @param interviewSummary the InterviewSummary to be added to each user
+   */
+  public void addInterviewSummaryToUsers(List<User> users, InterviewSummary interviewSummary) {
+    users.forEach(user -> user.getInterviewSummaries().add(interviewSummary));
+    userRepository.saveAll(users);
+  }
+
+  /**
    * Deletes the association between a user and an interview summary.
    *
    * @param userId the ID of the user whose association with the interview summary is to be deleted
@@ -688,8 +716,8 @@ public class UserService {
 
     return EventDto.builder()
         .id(event.getId())
-        .relatedId(event.getRelatedId())
-        .zoomLink(event.getZoomLink())
+        .eventTypeId(event.getEventTypeId())
+        .link(event.getRoomLink())
         .host(hostEvent)
         .participants(participants)
         .startTime(event.getStartTime())
@@ -705,11 +733,12 @@ public class UserService {
    */
   private Participant createParticipant(long userId, InterviewRequestRole role) {
     try {
-      User host = findUserById(userId);
+      User user = findUserById(userId);
 
       return Participant.builder()
-          .name(host.getFirstName())
-          .surname(host.getLastName())
+          .name(user.getFirstName())
+          .surname(user.getLastName())
+          .status(user.getStatus())
           .role(role)
           .build();
     } catch (UserNotFoundException ex) {

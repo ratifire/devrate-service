@@ -10,8 +10,6 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 /**
@@ -45,17 +43,16 @@ public class ZoomWebhookAuthService {
    * Handles URL validation events.
    *
    * @param payload The payload containing event data.
-   * @return ResponseEntity with the encrypted token.
+   * @return String with the encrypted token.
    * @throws JsonProcessingException If an error occurs during JSON processing.
    */
-  public ResponseEntity<String> handleUrlValidationEvent(WebHookRequest payload)
+  public String handleUrlValidationEvent(WebHookRequest payload)
       throws JsonProcessingException {
     String plainToken = payload.getPayload().getPlainToken();
     String encryptedToken = generateHmacSha256(zoomSecret, plainToken);
     TokenResponse model = new TokenResponse(plainToken, encryptedToken);
-    String valueAsString = objectMapper.writeValueAsString(model);
 
-    return new ResponseEntity<>(valueAsString, HttpStatus.OK);
+    return objectMapper.writeValueAsString(model);
   }
 
   /**
