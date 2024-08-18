@@ -13,6 +13,9 @@ target/
 .springBeans
 .sts4-cache
 
+# ngrok
+ngrok.exe
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
