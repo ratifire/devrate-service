@@ -126,4 +126,12 @@ public class InterviewService {
             String.format("Interview with meetingId %d not found.", meetingId)));
   }
 
+  /**
+   * Deletes an interview by its ID.
+   *
+   * @param id The ID of the interview to delete.
+   */
+  public void deleteInterview(long id) {
+    interviewRepository.deleteById(id);
+  }
 }
