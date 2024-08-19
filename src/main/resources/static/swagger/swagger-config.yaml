@@ -14,7 +14,7 @@ info:
 servers:
   - url: http://localhost:8080
     description: Local environment
-  - url: http://13.60.230.54:8080
+  - url: http://13.60.185.113:8080
     description: Production environment
 tags:
   - name: Registration
