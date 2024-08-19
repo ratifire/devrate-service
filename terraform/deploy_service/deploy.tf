@@ -77,7 +77,7 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
   vpc_zone_identifier       = data.aws_subnets.default_subnets.ids
   force_delete              = true
   termination_policies      = ["Default"]
-
+  load_balancers            = [aws_lb.back_ecs_alb.id]
   initial_lifecycle_hook {
     lifecycle_transition = "autoscaling:EC2_INSTANCE_TERMINATING"
     name                 = "ecs-managed-draining-termination-hook"
@@ -116,10 +116,7 @@ resource "aws_ecs_service" "back_services" {
     base              = 1
     weight            = 100
   }
-  network_configuration {
-    subnets         = data.aws_subnets.default_subnets.ids
-    security_groups = [data.aws_security_group.vpc_backend_security_group.id]
-  }
+
   load_balancer {
     target_group_arn = aws_lb_target_group.ecs_tg.arn
     container_name   = "back-container"
