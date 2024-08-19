@@ -73,7 +73,7 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
   max_size                  = 2
   desired_capacity          = 1
   health_check_type         = "EC2"
-  health_check_grace_period = 300
+  health_check_grace_period = 200
   vpc_zone_identifier       = data.aws_subnets.default_subnets.ids
   force_delete              = true
   termination_policies      = ["Default"]
@@ -136,6 +136,7 @@ resource "aws_lb" "back_ecs_alb" {
   load_balancer_type = "application"
   security_groups    = [data.aws_security_group.vpc_backend_security_group.id]
   subnets            = data.aws_subnets.default_subnets.ids
+
 }
 
 resource "aws_lb_target_group" "ecs_tg" {
@@ -143,6 +144,12 @@ resource "aws_lb_target_group" "ecs_tg" {
   port     = 8080
   protocol = "HTTP"
   vpc_id   = data.aws_vpcs.all_vpcs.ids[0]
+  health_check {
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    interval            = 30
+    protocol            = "HTTP"
+  }
 }
 
 resource "aws_lb_listener" "ecs_listener" {

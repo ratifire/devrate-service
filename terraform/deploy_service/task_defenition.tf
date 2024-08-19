@@ -72,7 +72,7 @@ resource "aws_ecs_task_definition" "task_definition" {
     "EC2"
   ]
   cpu    = "1024"
-  memory = "923"
+  memory = "450"
   runtime_platform {
     operating_system_family = "LINUX"
     cpu_architecture        = "X86_64"
