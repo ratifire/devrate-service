@@ -122,7 +122,7 @@ resource "aws_ecs_service" "back_services" {
   }
   load_balancer {
     target_group_arn = aws_lb_target_group.ecs_tg.arn
-    container_name   = back-container
+    container_name   = "back-container"
     container_port   = 8080
   }
   ordered_placement_strategy {
