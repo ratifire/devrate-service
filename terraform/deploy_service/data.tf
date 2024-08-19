@@ -23,7 +23,7 @@ data "aws_db_instance" "db_host" {
   db_instance_identifier = "pg-backend"
 }
 
-data "aws_subnets" "example" {
+data "aws_subnets" "default_subnets" {
   filter {
     name   = "vpc-id"
     values = ["vpc-00b9e5046c1050334"]
