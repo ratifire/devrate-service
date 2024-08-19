@@ -67,3 +67,8 @@ data "aws_instance" "filtered_instance_details" {
   for_each    = toset(data.aws_instances.filtered_instances.ids)
   instance_id = each.value
 }
+
+data "aws_lb " "lb" {
+  name       = aws_lb.back_ecs_alb.name
+  depends_on = [aws_lb.back_ecs_alb]
+}

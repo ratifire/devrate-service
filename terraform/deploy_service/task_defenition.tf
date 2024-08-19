@@ -6,7 +6,7 @@ resource "aws_ecs_task_definition" "task_definition" {
     {
       name              = "back-container",
       image             = "${data.aws_caller_identity.current_user.account_id}.dkr.ecr.${var.region}.amazonaws.com/${var.back_repository_name}:${var.image_tag}",
-      cpu               = 512,
+      cpu               = 0,
       memory            = 430,
       memoryReservation = 430,
       portMappings = [
@@ -71,8 +71,8 @@ resource "aws_ecs_task_definition" "task_definition" {
   requires_compatibilities = [
     "EC2"
   ]
-  cpu    = "1024"
-  memory = "910"
+  cpu    = "512"
+  memory = "450"
   runtime_platform {
     operating_system_family = "LINUX"
     cpu_architecture        = "X86_64"
