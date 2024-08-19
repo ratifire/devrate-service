@@ -68,7 +68,7 @@ data "aws_instance" "filtered_instance_details" {
   instance_id = each.value
 }
 
-data "aws_lb " "lb" {
+data "aws_lb" "lb" {
   name       = aws_lb.back_ecs_alb.name
   depends_on = [aws_lb.back_ecs_alb]
 }
