@@ -10,7 +10,6 @@ import com.ratifire.devrate.service.event.EventService;
 import com.ratifire.devrate.util.interview.InterviewPair;
 import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
 import com.ratifire.devrate.util.zoom.service.ZoomApiService;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
