@@ -13,7 +13,7 @@ resource "aws_ecs_task_definition" "task_definition" {
         "command" : ["CMD-SHELL", "curl -f ${data.aws_lb.lb.dns_name}:8080/actuator/health || exit 1"],
         "interval" : 60,
         "timeout" : 5,
-        "retries" : 3
+        "retries" : 4
       },
       portMappings = [
         {

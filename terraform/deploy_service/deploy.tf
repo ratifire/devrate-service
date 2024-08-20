@@ -73,7 +73,7 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
   max_size                  = 2
   desired_capacity          = 2
   health_check_type         = "EC2"
-  health_check_grace_period = 200
+  health_check_grace_period = 300
   vpc_zone_identifier       = data.aws_subnets.default_subnets.ids
   force_delete              = true
   termination_policies      = ["Default"]
