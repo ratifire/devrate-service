@@ -40,7 +40,6 @@ jobs:
       - name: Update AWS_SES_SECRET_ACCESS_KEY
         run: sed -i 's|<AWS_SES_SECRET_ACCESS_KEY>|'"${{ env.AWS_SES_SECRET_ACCESS_KEY }}"'|' src/main/resources/application-local.properties
 
-
       - name: run tests
         run: mvn test
 

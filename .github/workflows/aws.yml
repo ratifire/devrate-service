@@ -58,6 +58,12 @@ jobs:
       - name: Run tests
         run: mvn test
 
+      - name: Update AWS_SES_ACCESS_KEY_ID
+        run: sed -i 's|<AWS_SES_ACCESS_KEY_ID>|'"${{ env.AWS_SES_ACCESS_KEY_ID }}"'|' src/main/resources/application-local.properties
+
+      - name: Update AWS_SES_SECRET_ACCESS_KEY
+        run: sed -i 's|<AWS_SES_SECRET_ACCESS_KEY>|'"${{ env.AWS_SES_SECRET_ACCESS_KEY }}"'|' src/main/resources/application-local.properties
+
       - name: Run build
         run: mvn package -DskipTests
 
