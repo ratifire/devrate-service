@@ -104,12 +104,14 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
 }
 
 resource "aws_ecs_service" "back_services" {
-  name                 = "back-service"
-  cluster              = var.back_cluster_name
-  task_definition      = aws_ecs_task_definition.task_definition.arn
-  scheduling_strategy  = "REPLICA"
-  desired_count        = 1
-  force_new_deployment = true
+  name                               = "back-service"
+  cluster                            = var.back_cluster_name
+  task_definition                    = aws_ecs_task_definition.task_definition.arn
+  scheduling_strategy                = "REPLICA"
+  desired_count                      = 1
+  force_new_deployment               = true
+  deployment_minimum_healthy_percent = 50
+  deployment_maximum_percent         = 200
   capacity_provider_strategy {
     capacity_provider = aws_ecs_capacity_provider.back_capacity_provider.name
     base              = 1
