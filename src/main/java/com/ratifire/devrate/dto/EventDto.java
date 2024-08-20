@@ -6,7 +6,6 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.URL;
 
@@ -17,7 +16,6 @@ import org.hibernate.validator.constraints.URL;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 public class EventDto {
 
   private long id;
@@ -40,7 +38,6 @@ public class EventDto {
   @Data
   @NoArgsConstructor
   @AllArgsConstructor
-  @EqualsAndHashCode
   public static class Participant {
     private String name;
     private String surname;
