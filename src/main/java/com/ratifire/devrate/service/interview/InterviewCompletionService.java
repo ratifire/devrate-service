@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class InterviewCompletionService {
 
   private final InterviewService interviewService;
+  private final InterviewRequestService interviewRequestService;
   private final InterviewSummaryService interviewSummaryService;
   private final SpecializationService specializationService;
   private final UserService userService;
@@ -35,7 +36,12 @@ public class InterviewCompletionService {
     specializationService.updateUserInterviewCounts(interview);
     userService.refreshUserInterviewCounts(List.of(interview.getInterviewerRequest().getUser(),
         interview.getCandidateRequest().getUser()));
-    //TODO: add the other needed logic for completing the interview process
+    //TODO: add logic for sending notifications to users (candidate and interviewer)
+    // about the interview feedback
+    interviewService.deleteInterview(interview.getId());
+    interviewRequestService.deleteInterviewRequests(
+        List.of(interview.getInterviewerRequest().getId(),
+            interview.getCandidateRequest().getId()));
     return "Interview process completed successfully!";
   }
 }
