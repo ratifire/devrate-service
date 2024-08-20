@@ -34,7 +34,7 @@ resource "aws_launch_template" "ecs_back_launch" {
 }
 
 resource "aws_ecs_capacity_provider" "back_capacity_provider" {
-  name = "back-ec2-capacity-provider"
+  name = "backend-ec2-capacity-provider"
 
   auto_scaling_group_provider {
     auto_scaling_group_arn         = aws_autoscaling_group.ecs_back_asg.arn
@@ -73,15 +73,21 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
   max_size                  = 2
   desired_capacity          = 1
   health_check_type         = "EC2"
-  health_check_grace_period = 10
+  health_check_grace_period = 300
   vpc_zone_identifier       = data.aws_subnets.example.ids
+  force_delete              = true
+  termination_policies      = ["Default"]
 
-  termination_policies = ["OldestInstance"]
+  initial_lifecycle_hook {
+    lifecycle_transition = "autoscaling:EC2_INSTANCE_TERMINATING"
+    name                 = "ecs-managed-draining-termination-hook"
+    default_result       = "CONTINUE"
+    heartbeat_timeout    = 30
+  }
   dynamic "tag" {
     for_each = {
-      Name   = "Ecs-Back-Instance-ASG"
-      Owner  = "Max Matveichuk"
-      TAGKEY = "TAGVALUE"
+      Name  = "Ecs-Back-Instance-ASG"
+      Owner = "Max Matveichuk"
     }
     content {
       key                 = tag.key

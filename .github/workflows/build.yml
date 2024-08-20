@@ -6,6 +6,8 @@ env:
   AWS_REGION: 'eu-north-1'
   ECR_REPOSITORY: backend-service
   IMAGE_TAG: ${{ github.sha }}
+  AWS_SES_ACCESS_KEY_ID: ${{ secrets.AWS_SES_ACCESS_KEY_ID }}
+  AWS_SES_SECRET_ACCESS_KEY: ${{ secrets.AWS_SES_SECRET_ACCESS_KEY }}
 
 
 on:
@@ -31,6 +33,13 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
+
+      - name: Update AWS_SES_ACCESS_KEY_ID
+        run: sed -i 's|<AWS_SES_ACCESS_KEY_ID>|'"${{ env.AWS_SES_ACCESS_KEY_ID }}"'|' src/main/resources/application-local.properties
+
+      - name: Update AWS_SES_SECRET_ACCESS_KEY
+        run: sed -i 's|<AWS_SES_SECRET_ACCESS_KEY>|'"${{ env.AWS_SES_SECRET_ACCESS_KEY }}"'|' src/main/resources/application-local.properties
+
 
       - name: run tests
         run: mvn test
