@@ -71,7 +71,7 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
   }
   min_size                  = 1
   max_size                  = 2
-  desired_capacity          = 1
+  desired_capacity          = 2
   health_check_type         = "EC2"
   health_check_grace_period = 200
   vpc_zone_identifier       = data.aws_subnets.default_subnets.ids
@@ -149,7 +149,8 @@ resource "aws_lb_target_group" "ecs_tg" {
   health_check {
     healthy_threshold   = 2
     unhealthy_threshold = 2
-    interval            = 30
+    interval            = 10
+    timeout             = 5
     protocol            = "HTTP"
   }
 }
