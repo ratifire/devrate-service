@@ -1,6 +1,7 @@
 package com.ratifire.devrate.util.zoom.webhook.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.service.interview.InterviewCompletionService;
 import com.ratifire.devrate.util.zoom.webhook.exception.ZoomWebhookException;
 import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest;
@@ -18,22 +19,29 @@ public class ZoomWebhookService {
 
   private final ZoomWebhookAuthService zoomWebhookAuthService;
   private final InterviewCompletionService interviewCompletionService;
+  private final ObjectMapper objectMapper;
 
   /**
    * Handles all webhook events from Zoom.
    *
-   * @param payload The payload containing event data.
+   * @param requestBody The payload containing event data.
    * @param headers The headers of the request.
    * @return String with the result of processing the event.
    * @throws JsonProcessingException If an error occurs during JSON processing.
    * @throws ZoomWebhookException    If the event type is unknown or an error occurs during
    *                                 processing.
    */
-  public String handleZoomWebhook(WebHookRequest payload, Map<String, String> headers)
+  public String handleZoomWebhook(String requestBody, Map<String, String> headers)
       throws JsonProcessingException, ZoomWebhookException {
-    zoomWebhookAuthService.validateToken(headers.get("authorization"));
 
+    String signature = headers.get("x-zm-signature");
+    String timestamp = headers.get("x-zm-request-timestamp");
+
+    zoomWebhookAuthService.validateSignature(signature, requestBody, timestamp);
+
+    WebHookRequest payload = objectMapper.readValue(requestBody, WebHookRequest.class);
     String event = payload.getEvent();
+
     return switch (event) {
       case "endpoint.url_validation" -> zoomWebhookAuthService.handleUrlValidationEvent(payload);
       case "meeting.ended" ->

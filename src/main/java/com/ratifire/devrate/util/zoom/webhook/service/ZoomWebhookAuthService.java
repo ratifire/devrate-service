@@ -19,23 +19,26 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ZoomWebhookAuthService {
 
-  @Value("${zoom.verification.token}")
-  private String zoomVerificationToken;
-
   @Value("${zoom.secret}")
   private String zoomSecret;
 
   private final ObjectMapper objectMapper;
 
   /**
-   * Validates the received token.
+   * Validates the signature of the Zoom webhook.
    *
-   * @param receivedToken The token received in the request headers.
-   * @throws ZoomWebhookException If the token is invalid.
+   * @param signature The signature received in the request headers.
+   * @param requestBody The raw body of the request.
+   * @param timestamp The timestamp received in the request headers.
+   * @throws ZoomWebhookException If the signature is invalid.
    */
-  public void validateToken(String receivedToken) throws ZoomWebhookException {
-    if (!zoomVerificationToken.equals(receivedToken)) {
-      throw new ZoomWebhookException("Unauthorized: Invalid token received.");
+  public void validateSignature(String signature, String requestBody, String timestamp)
+      throws ZoomWebhookException {
+    String message = String.format("v0:%s:%s", timestamp, requestBody);
+    String computedSignature = "v0=" + generateHmacSha256(zoomSecret, message);
+
+    if (!computedSignature.equals(signature)) {
+      throw new ZoomWebhookException("Unauthorized: Invalid signature.");
     }
   }
 
