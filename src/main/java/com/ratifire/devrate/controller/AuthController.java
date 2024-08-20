@@ -82,7 +82,7 @@ public class AuthController {
    * @param email The email for the user account needing a password reset.
    * @return ResponseEntity with status OK if successful.
    */
-  @PostMapping("/request-password-reset")
+  @PostMapping ("/request-password-reset")
   public ResponseEntity<Void> requestPasswordReset(@RequestParam String email) {
     passwordResetService.requestPasswordReset(email);
     return ResponseEntity.ok().build();
