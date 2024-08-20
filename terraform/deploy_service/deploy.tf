@@ -147,9 +147,9 @@ resource "aws_lb_target_group" "ecs_tg" {
   protocol = "HTTP"
   vpc_id   = data.aws_vpcs.all_vpcs.ids[0]
   health_check {
-    healthy_threshold   = 2
-    unhealthy_threshold = 2
-    interval            = 40
+    healthy_threshold   = 4
+    unhealthy_threshold = 3
+    interval            = 60
     protocol            = "HTTP"
   }
 }
