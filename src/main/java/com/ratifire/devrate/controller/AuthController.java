@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -31,6 +32,16 @@ public class AuthController {
   private final AuthenticationService authenticationService;
   private final RegistrationService registrationService;
   private final PasswordResetService passwordResetService;
+
+  /**
+   * Endpoint for user login.
+   *
+   * @return A UserDto object representing the authenticated user.
+   */
+  @GetMapping("/health")
+  public ResponseEntity<String> healthCheck() {
+    return ResponseEntity.ok("Service is up and running");
+  }
 
   /**
    * Endpoint for user login.
@@ -82,7 +93,7 @@ public class AuthController {
    * @param email The email for the user account needing a password reset.
    * @return ResponseEntity with status OK if successful.
    */
-  @PostMapping ("/request-password-reset")
+  @PostMapping("/request-password-reset")
   public ResponseEntity<Void> requestPasswordReset(@RequestParam String email) {
     passwordResetService.requestPasswordReset(email);
     return ResponseEntity.ok().build();

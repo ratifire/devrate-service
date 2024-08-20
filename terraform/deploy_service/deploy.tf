@@ -151,7 +151,7 @@ resource "aws_lb_target_group" "ecs_tg" {
     unhealthy_threshold = 3
     interval            = 60
     protocol            = "HTTP"
-    path                = "/actuator/health"
+    path                = "/auth/health"
   }
 }
 
