@@ -48,7 +48,7 @@ public class EventService {
    */
   @Transactional
   public void deleteByEventTypeId(long eventTypeId) {
-    Event event = eventRepository.findEventByEventTypeId(eventTypeId)
+    Event event = eventRepository.findByEventTypeId(eventTypeId)
         .orElseThrow(() -> new EventByEventTypeIdNotFoundException(eventTypeId));
 
     List<User> users = userRepository.findAllByEventsContaining(event);
