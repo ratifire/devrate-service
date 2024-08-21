@@ -56,7 +56,7 @@ class EventServiceTest {
   }
 
   @Test
-  void save_ShouldSaveEventAndUpdateUsers() {
+  void saveShouldSaveEventAndAddEventToUsers() {
     List<User> attendees = Arrays.asList(host, participant);
 
     eventService.save(event, attendees);
@@ -66,7 +66,7 @@ class EventServiceTest {
   }
 
   @Test
-  void deleteByEventTypeId_ShouldDeleteEventAndUpdateUsers_WhenEventIsFound() {
+  void deleteByEventTypeIdShouldDeleteEventAndUpdateUsersWhenEventIsFound() {
     long eventTypeId = 1L;
     List<User> attendees = Arrays.asList(host, participant);
 
@@ -80,7 +80,7 @@ class EventServiceTest {
   }
 
   @Test
-  void deleteByEventTypeId_ShouldThrowException_WhenEventIsNotFound() {
+  void deleteByEventTypeIdShouldThrowExceptionWhenEventIsNotFound() {
     long eventTypeId = 1L;
 
     when(eventRepository.findByEventTypeId(eventTypeId)).thenReturn(Optional.empty());
