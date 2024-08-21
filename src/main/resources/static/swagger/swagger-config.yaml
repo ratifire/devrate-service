@@ -45,6 +45,8 @@ tags:
     description: Endpoints for user Mastery management
   - name: Skill
     description: Endpoints for user Skill management
+  - name: Event
+    description: Endpoints for managing calendar events
 paths:
   /auth/signup:
     $ref: './paths/auth/signup.yaml'
@@ -142,6 +144,8 @@ paths:
     $ref: './paths/users/users-id-interviewSummaries-statistics.yaml'
   /users/{userId}/events:
     $ref: './paths/users/users-id-events.yaml'
+  /users/{userId}/interviews/{id}:
+    $ref: './paths/users/users-id-interviews-id.yaml'
 components:
   securitySchemes:
     basicAuth:

@@ -102,6 +102,7 @@ public class InterviewService {
         .orElseThrow(() -> new InterviewNotFoundException(interviewId));
 
     interviewRepository.deleteById(interviewId);
+    eventService.deleteByEventTypeId(interviewId);
 
     try {
       zoomApiService.deleteMeeting(rejected.getZoomMeetingId());

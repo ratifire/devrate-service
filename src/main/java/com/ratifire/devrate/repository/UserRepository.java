@@ -1,6 +1,8 @@
 package com.ratifire.devrate.repository;
 
+import com.ratifire.devrate.entity.Event;
 import com.ratifire.devrate.entity.User;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,4 +20,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   @Query("SELECT u.picture FROM User u WHERE u.id = :id")
   String findPictureByUserId(@Param("id") long id);
+
+  List<User> findAllByEventsContaining(Event event);
 }
