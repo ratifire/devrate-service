@@ -1,5 +1,5 @@
 resource "aws_ecs_cluster" "backend_cluster" {
-  name = "backend-back-cluster"
+  name = var.back_cluster_name
 }
 
 resource "aws_launch_template" "ecs_back_launch" {
@@ -120,8 +120,8 @@ resource "aws_ecs_service" "back_services" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.ecs_tg.arn
-    container_name   = "back-container"
-    container_port   = 8080
+    container_name   = var.back_container_name
+    container_port   = var.back_port
   }
   ordered_placement_strategy {
     type  = "spread"
@@ -143,7 +143,7 @@ resource "aws_lb" "back_ecs_alb" {
 
 resource "aws_lb_target_group" "ecs_tg" {
   name     = "ecs-tg"
-  port     = 8080
+  port     = var.back_port
   protocol = "HTTP"
   vpc_id   = data.aws_vpcs.all_vpcs.ids[0]
   health_check {
@@ -157,7 +157,7 @@ resource "aws_lb_target_group" "ecs_tg" {
 
 resource "aws_lb_listener" "ecs_listener" {
   load_balancer_arn = aws_lb.back_ecs_alb.arn
-  port              = "8080"
+  port              = var.back_port
   protocol          = "HTTP"
 
   default_action {

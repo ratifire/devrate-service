@@ -17,7 +17,7 @@ resource "aws_ecs_task_definition" "task_definition" {
       },
       portMappings = [
         {
-          name          = "back-container-${var.back_port}-tcp",
+          name          = "${var.back_container_name}-${var.back_port}-tcp",
           containerPort = var.back_port,
           hostPort      = var.back_port,
           protocol      = "tcp",
@@ -60,7 +60,7 @@ resource "aws_ecs_task_definition" "task_definition" {
       logConfiguration = {
         logDriver = "awslogs",
         options = {
-          awslogs-group         = "/ecs/back-container",
+          awslogs-group         = "/ecs/${var.back_container_name}",
           awslogs-create-group  = "true",
           awslogs-region        = var.region,
           awslogs-stream-prefix = "ecs"

@@ -1,10 +1,10 @@
-name: 'Deploy_Service_to_AWS'
+name: Deploy Service to AWS
 
 env:
-  AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
-  AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
   AWS_REGION: 'eu-north-1'
   IMAGE_TAG: ${{ github.sha }}
+  AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+  AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
   AWS_SES_ACCESS_KEY_ID: ${{ secrets.AWS_SES_ACCESS_KEY_ID }}
   AWS_SES_SECRET_ACCESS_KEY: ${{ secrets.AWS_SES_SECRET_ACCESS_KEY }}
 on:
@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   terraform:
-    name: 'Terraform_deploy_service_to_AWS'
+    name: Terraform deploy service to AWS
     runs-on: ubuntu-latest
     environment: production
     env:
