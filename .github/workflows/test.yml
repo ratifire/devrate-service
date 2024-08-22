@@ -28,7 +28,7 @@ jobs:
         id: create_infrastructure
         run: |
           gh workflow run terraform_deploy.yml --ref ${{ env.BRANCH_NAME }}
-          gh run watch --exit-status --workflow=terraform_deploy.yml
+          gh run watch --exit-status terraform_deploy.yml
 
       - name: Run build-and-push-image workflow
         id: build_and_push_image
