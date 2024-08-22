@@ -1,4 +1,4 @@
-name: Deploy Service to AWS
+name: Deploy_Service_to_AWS
 
 env:
   AWS_REGION: 'eu-north-1'

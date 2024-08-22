@@ -1,4 +1,4 @@
-name: Destroy Service
+name: Destroy_Service
 
 env:
   AWS_REGION: 'eu-north-1'

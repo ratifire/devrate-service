@@ -27,10 +27,10 @@ jobs:
       - name: Run destroy_service workflow
         id: destroy_service
         run: |
-          gh workflow run Destroy Service --ref ${{ env.BRANCH_NAME }}
-          echo "Waiting for Destroy Service to complete..."
+          gh workflow run Destroy_Service --ref ${{ env.BRANCH_NAME }}
+          echo "Waiting for Destroy_Service to complete..."
           sleep 10
-          RUN_ID=$(gh run list --workflow=Destroy Service --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
+          RUN_ID=$(gh run list --workflow=Destroy_Service --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
           if [ -z "$RUN_ID" ]; then
             echo "No in-progress run found. Skipping watch."
           else
@@ -42,10 +42,10 @@ jobs:
         id: terraform_destroy
         if: steps.create_infrastructure.conclusion == 'success'
         run: |
-          gh workflow run Terraform destroy --ref ${{ env.BRANCH_NAME }}
-          echo "Waiting for Terraform destroy to complete..."
+          gh workflow run Terraform_destroy --ref ${{ env.BRANCH_NAME }}
+          echo "Waiting for Terraform_destroy to complete..."
           sleep 10
-          RUN_ID=$(gh run list --workflow=Terraform destroy --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
+          RUN_ID=$(gh run list --workflow=Terraform_destroy --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
           if [ -z "$RUN_ID" ]; then
             echo "No in-progress run found. Skipping watch."
           else
