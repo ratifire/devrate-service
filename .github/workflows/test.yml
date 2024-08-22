@@ -11,6 +11,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Get current branch name
+        id: get_branch_name
+        run: |
+          # Extract branch name from GITHUB_REF
+          BRANCH_NAME=$(echo "${GITHUB_REF}" | sed 's/refs\/heads\///')
+          echo "Current branch: ${BRANCH_NAME}"
+          # Save branch name to GitHub Actions environment variable
+          echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
+
       - name: Authenticate GitHub CLI
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
@@ -18,27 +27,18 @@ jobs:
       - name: Run create-infrastructure workflow
         id: create_infrastructure
         run: |
-          BRANCH_NAME=$(echo "${GITHUB_REF}" | sed 's/refs\/heads\///')
-          echo "Running terraform_deploy.yml on branch ${BRANCH_NAME}"
-          run_id=$(gh workflow run terraform_deploy.yml --ref $BRANCH_NAME --json | jq -r '.id')
-          echo "Waiting for terraform_deploy.yml workflow to complete..."
-          gh run watch --exit-status $run_id
+          gh workflow run terraform_deploy.yml --ref ${{ env.BRANCH_NAME }}
+          gh run watch --exit-status --workflow=terraform_deploy.yml
 
       - name: Run build-and-push-image workflow
         id: build_and_push_image
-        if: success() && steps.create_infrastructure.outcome == 'success'
+        if: steps.create_infrastructure.conclusion == 'success'
         run: |
-          BRANCH_NAME=$(echo "${GITHUB_REF}" | sed 's/refs\/heads\///')
-          echo "Running build.yml on branch ${BRANCH_NAME}"
-          run_id=$(gh workflow run build.yml --ref $BRANCH_NAME --json | jq -r '.id')
-          echo "Waiting for build.yml workflow to complete..."
-          gh run watch --exit-status $run_id
+          gh workflow run build.yml --ref ${{ env.BRANCH_NAME }}
+          gh run watch --exit-status --workflow=build.yml
 
       - name: Run deploy-application workflow
-        if: success() && steps.build_and_push_image.outcome == 'success'
+        if: steps.build_and_push_image.conclusion == 'success'
         run: |
-          BRANCH_NAME=$(echo "${GITHUB_REF}" | sed 's/refs\/heads\///')
-          echo "Running deploy_service_to_AWS.yml on branch ${BRANCH_NAME}"
-          run_id=$(gh workflow run deploy_service_to_AWS.yml --ref $BRANCH_NAME --json | jq -r '.id')
-          echo "Waiting for deploy_service_to_AWS.yml workflow to complete..."
-          gh run watch --exit-status $run_id
+          gh workflow run deploy_service_to_AWS.yml --ref ${{ env.BRANCH_NAME }}
+          gh run watch --exit-status --workflow=deploy_service_to_AWS.yml
