@@ -9,10 +9,6 @@ env:
   AWS_SES_SECRET_ACCESS_KEY: ${{ secrets.AWS_SES_SECRET_ACCESS_KEY }}
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: [ "Build" ]
-    types:
-      - completed
 
 permissions:
   id-token: write

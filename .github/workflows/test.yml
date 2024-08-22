@@ -27,18 +27,42 @@ jobs:
       - name: Run create-infrastructure workflow
         id: create_infrastructure
         run: |
-          gh workflow run terraform_deploy.yml --ref ${{ env.BRANCH_NAME }}
-          gh run watch --exit-status terraform_deploy.yml
+          gh workflow run Terraform_deploy --ref ${{ env.BRANCH_NAME }}
+          echo "Waiting for Terraform_deploy to complete..."
+          sleep 10
+          RUN_ID=$(gh run list --workflow=Terraform_deploy --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
+          if [ -z "$RUN_ID" ]; then
+            echo "No in-progress run found. Skipping watch."
+          else
+            echo "Waiting for workflow run $RUN_ID to complete..."
+              gh run watch $RUN_ID --exit-status
+          fi   
 
       - name: Run build-and-push-image workflow
         id: build_and_push_image
         if: steps.create_infrastructure.conclusion == 'success'
         run: |
-          gh workflow run build.yml --ref ${{ env.BRANCH_NAME }}
-          gh run watch --exit-status --workflow=build.yml
+          gh workflow run Build --ref ${{ env.BRANCH_NAME }}
+          echo "Waiting for Build to complete..."
+          sleep 10
+          RUN_ID=$(gh run list --workflow=Build --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
+          if [ -z "$RUN_ID" ]; then
+            echo "No in-progress run found. Skipping watch."
+          else
+            echo "Waiting for workflow run $RUN_ID to complete..."
+              gh run watch $RUN_ID --exit-status
+          fi 
 
       - name: Run deploy-application workflow
         if: steps.build_and_push_image.conclusion == 'success'
         run: |
-          gh workflow run deploy_service_to_AWS.yml --ref ${{ env.BRANCH_NAME }}
-          gh run watch --exit-status --workflow=deploy_service_to_AWS.yml
+          gh workflow run Deploy_Service_to_AWS --ref ${{ env.BRANCH_NAME }}
+          echo "Waiting for Deploy_Service_to_AWS to complete..."
+          sleep 10
+          RUN_ID=$(gh run list --workflow=Deploy_Service_to_AWS --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
+          if [ -z "$RUN_ID" ]; then
+            echo "No in-progress run found. Skipping watch."
+          else
+            echo "Waiting for workflow run $RUN_ID to complete..."
+              gh run watch $RUN_ID --exit-status
+          fi 
