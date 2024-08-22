@@ -26,7 +26,7 @@ jobs:
         run: |
           run_id=$(gh workflow run terraform_deploy.yml --ref ${{ env.BRANCH_NAME }} --json | jq -r '.id')
           echo "Waiting for terraform_deploy.yml workflow to complete..."
-          gh run watch $run_id --exit-status --interval 10
+          gh run watch $run_id
 
       - name: Run build-and-push-image workflow
         id: build_and_push_image
