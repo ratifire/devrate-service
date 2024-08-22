@@ -2,7 +2,6 @@ package com.ratifire.devrate.util.zoom.webhook.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ratifire.devrate.util.zoom.webhook.exception.ZoomWebhookException;
-import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest;
 import com.ratifire.devrate.util.zoom.webhook.service.ZoomWebhookService;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -27,7 +26,7 @@ public class ZoomWebhookController {
   /**
    * Endpoint for receiving Zoom webhook events.
    *
-   * @param payload The payload containing event data.
+   * @param requestBody The payload containing event data.
    * @param headers The headers of the request.
    * @return ResponseEntity with the result of processing the event.
    * @throws JsonProcessingException If an error occurs during JSON processing.
@@ -36,10 +35,10 @@ public class ZoomWebhookController {
    */
   @PostMapping("/webhook/events")
   public ResponseEntity<String> handleZoomWebhook(
-      @RequestBody WebHookRequest payload,
+      @RequestBody String requestBody,
       @RequestHeader Map<String, String> headers) throws JsonProcessingException,
       ZoomWebhookException {
-    return new ResponseEntity<>(zoomWebhookService.handleZoomWebhook(payload, headers),
+    return new ResponseEntity<>(zoomWebhookService.handleZoomWebhook(requestBody, headers),
         HttpStatus.OK);
   }
 }
