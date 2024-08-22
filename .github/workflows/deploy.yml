@@ -1,4 +1,4 @@
-name: Deploy Application
+name: Deploy
 
 on:
   workflow_dispatch:
@@ -11,15 +11,58 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Get current branch name
+        id: get_branch_name
+        run: |
+          # Extract branch name from GITHUB_REF
+          BRANCH_NAME=$(echo "${GITHUB_REF}" | sed 's/refs\/heads\///')
+          echo "Current branch: ${BRANCH_NAME}"
+          # Save branch name to GitHub Actions environment variable
+          echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
+
       - name: Authenticate GitHub CLI
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
 
       - name: Run create-infrastructure workflow
-        run: gh workflow run terraform_deploy.yml --ref ${{ github.event.inputs.branch }}
+        id: create_infrastructure
+        run: |
+          gh workflow run Terraform_deploy --ref ${{ env.BRANCH_NAME }}
+          echo "Waiting for Terraform_deploy to complete..."
+          sleep 10
+          RUN_ID=$(gh run list --workflow=Terraform_deploy --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
+          if [ -z "$RUN_ID" ]; then
+            echo "No in-progress run found. Skipping watch."
+          else
+            echo "Waiting for workflow run $RUN_ID to complete..."
+              gh run watch $RUN_ID --exit-status --interval 15
+          fi   
 
       - name: Run build-and-push-image workflow
-        run: gh workflow run build.yml --ref ${{ github.event.inputs.branch }}
+        id: build_and_push_image
+        if: steps.create_infrastructure.conclusion == 'success'
+        run: |
+          gh workflow run Build --ref ${{ env.BRANCH_NAME }}
+          echo "Waiting for Build to complete..."
+          sleep 10
+          RUN_ID=$(gh run list --workflow=Build --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
+          if [ -z "$RUN_ID" ]; then
+            echo "No in-progress run found. Skipping watch."
+          else
+            echo "Waiting for workflow run $RUN_ID to complete..."
+              gh run watch $RUN_ID --exit-status --interval 15
+          fi 
 
       - name: Run deploy-application workflow
-        run: gh workflow run deploy_service_to_AWS.yml --ref ${{ github.event.inputs.branch }}
+        if: steps.build_and_push_image.conclusion == 'success'
+        run: |
+          gh workflow run Deploy_Service_to_AWS --ref ${{ env.BRANCH_NAME }}
+          echo "Waiting for Deploy_Service_to_AWS to complete..."
+          sleep 10
+          RUN_ID=$(gh run list --workflow=Deploy_Service_to_AWS --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
+          if [ -z "$RUN_ID" ]; then
+            echo "No in-progress run found. Skipping watch."
+          else
+            echo "Waiting for workflow run $RUN_ID to complete..."
+              gh run watch $RUN_ID --exit-status --interval 15
+          fi 
