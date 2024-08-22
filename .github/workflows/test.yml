@@ -1,12 +1,7 @@
-name: Deploy Application
+name: Deploy
 
 on:
   workflow_dispatch:
-    inputs:
-      branch:
-        description: 'Branch to deploy'
-        required: true
-        default: 'main'
 
 jobs:
   deploy:
@@ -21,10 +16,20 @@ jobs:
           echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
 
       - name: Run create-infrastructure workflow
-        run: gh workflow run terraform_deploy.yml --ref ${{ github.event.inputs.branch }}
+        id: create_infrastructure
+        run: |
+          gh workflow run terraform_deploy.yml --ref ${{ github.event.inputs.branch }}
+          gh run watch --exit-status --workflow=terraform_deploy.yml
 
       - name: Run build-and-push-image workflow
-        run: gh workflow run build.yml --ref ${{ github.event.inputs.branch }}
+        id: build_and_push_image
+        if: steps.create_infrastructure.conclusion == 'success'
+        run: |
+          gh workflow run build.yml --ref ${{ github.event.inputs.branch }}
+          gh run watch --exit-status --workflow=build.yml
 
       - name: Run deploy-application workflow
-        run: gh workflow run deploy_service_to_AWS.yml --ref ${{ github.event.inputs.branch }}
+        if: steps.build_and_push_image.conclusion == 'success'
+        run: |
+          gh workflow run deploy_service_to_AWS.yml --ref ${{ github.event.inputs.branch }}
+          gh run watch --exit-status --workflow=deploy_service_to_AWS.yml
