@@ -18,18 +18,27 @@ jobs:
       - name: Run create-infrastructure workflow
         id: create_infrastructure
         run: |
-          gh workflow run terraform_deploy.yml --ref ${{ github.ref }}
-          gh run watch --exit-status --workflow=terraform_deploy.yml
+          BRANCH_NAME=$(echo "${GITHUB_REF}" | sed 's/refs\/heads\///')
+          echo "Running terraform_deploy.yml on branch ${BRANCH_NAME}"
+          run_id=$(gh workflow run terraform_deploy.yml --ref $BRANCH_NAME --json | jq -r '.id')
+          echo "Waiting for terraform_deploy.yml workflow to complete..."
+          gh run watch --exit-status $run_id
 
       - name: Run build-and-push-image workflow
         id: build_and_push_image
-        if: steps.create_infrastructure.conclusion == 'success'
+        if: success() && steps.create_infrastructure.outcome == 'success'
         run: |
-          gh workflow run build.yml --ref ${{ github.ref }}
-          gh run watch --exit-status --workflow=build.yml
+          BRANCH_NAME=$(echo "${GITHUB_REF}" | sed 's/refs\/heads\///')
+          echo "Running build.yml on branch ${BRANCH_NAME}"
+          run_id=$(gh workflow run build.yml --ref $BRANCH_NAME --json | jq -r '.id')
+          echo "Waiting for build.yml workflow to complete..."
+          gh run watch --exit-status $run_id
 
       - name: Run deploy-application workflow
-        if: steps.build_and_push_image.conclusion == 'success'
+        if: success() && steps.build_and_push_image.outcome == 'success'
         run: |
-          gh workflow run deploy_service_to_AWS.yml --ref ${{ github.ref }}
-          gh run watch --exit-status --workflow=deploy_service_to_AWS.yml
+          BRANCH_NAME=$(echo "${GITHUB_REF}" | sed 's/refs\/heads\///')
+          echo "Running deploy_service_to_AWS.yml on branch ${BRANCH_NAME}"
+          run_id=$(gh workflow run deploy_service_to_AWS.yml --ref $BRANCH_NAME --json | jq -r '.id')
+          echo "Waiting for deploy_service_to_AWS.yml workflow to complete..."
+          gh run watch --exit-status $run_id
