@@ -2,11 +2,6 @@ name: Deploy Application
 
 on:
   workflow_dispatch:
-    inputs:
-      branch:
-        description: 'Branch to deploy'
-        required: true
-        default: 'main'
 
 jobs:
   deploy:

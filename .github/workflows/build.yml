@@ -12,6 +12,10 @@ env:
 
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: [ "Terraform_deploy" ]
+    types:
+      - completed
 
 permissions:
   id-token: write
