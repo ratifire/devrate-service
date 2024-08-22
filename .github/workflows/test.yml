@@ -35,7 +35,7 @@ jobs:
             echo "No in-progress run found. Skipping watch."
           else
             echo "Waiting for workflow run $RUN_ID to complete..."
-              gh run watch $RUN_ID --exit-status
+              gh run watch $RUN_ID --exit-status --interval 15
           fi   
 
       - name: Run build-and-push-image workflow
