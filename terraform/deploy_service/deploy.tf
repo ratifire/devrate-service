@@ -73,15 +73,15 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
   max_size                  = 2
   desired_capacity          = 2
   health_check_type         = "EC2"
-  health_check_grace_period = 300
+  health_check_grace_period = 200
   vpc_zone_identifier       = data.aws_subnets.default_subnets.ids
   force_delete              = true
-  termination_policies      = ["Default"]
+  termination_policies      = ["OldestInstance"]
   initial_lifecycle_hook {
     lifecycle_transition = "autoscaling:EC2_INSTANCE_TERMINATING"
     name                 = "ecs-managed-draining-termination-hook"
     default_result       = "CONTINUE"
-    heartbeat_timeout    = 30
+    heartbeat_timeout    = 60
   }
   dynamic "tag" {
     for_each = {
