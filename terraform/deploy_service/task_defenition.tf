@@ -53,6 +53,10 @@ resource "aws_ecs_task_definition" "task_definition" {
         {
           name  = "POSTGRES_DB",
           value = "backend"
+        },
+        {
+          name  = "ACTIVE_PROFILE",
+          value = "dev"
         }
       ],
       mountPoints = [],
