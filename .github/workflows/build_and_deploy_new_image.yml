@@ -1,11 +1,9 @@
 # This workflow will build and push a new container image to Amazon ECR,
 # and then will deploy a new task definition to Amazon ECS.
 
-name: Amazon ECS
+name: Build_and_Deploy_new_Image
 
 on:
-  schedule:
-    - cron: '00 16 * * 1-5'
   workflow_dispatch:
 
 env:
