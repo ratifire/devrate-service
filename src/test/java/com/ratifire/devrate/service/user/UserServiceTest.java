@@ -641,8 +641,8 @@ class UserServiceTest {
     when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
     when(userSecurityService.findEmailByUserId(anyLong())).thenReturn(userEmail);
     when(userSecurityService.findEmailByUserId(anyLong())).thenReturn(userEmail);
-    when(interviewMatchingService.match(interviewRequest, List.of(interviewRequest.getUser()))).
-        thenReturn(Optional.empty());
+    when(interviewMatchingService.match(interviewRequest,
+        List.of(interviewRequest.getUser()))).thenReturn(Optional.empty());
 
     doNothing().when(notificationService).rejectInterview(any(), any(), any());
     doNothing().when(emailService).sendInterviewRejectionMessage(any(), any(), any(), any());
@@ -666,8 +666,8 @@ class UserServiceTest {
     when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
     when(userSecurityService.findEmailByUserId(anyLong())).thenReturn(userEmail);
     when(userSecurityService.findEmailByUserId(anyLong())).thenReturn(userEmail);
-    when(interviewMatchingService.match(interviewRequest, List.of(interviewRequest.getUser()))).
-        thenReturn(Optional.of(interview));
+    when(interviewMatchingService.match(interviewRequest,
+        List.of(interviewRequest.getUser()))).thenReturn(Optional.of(interview));
 
     doNothing().when(emailService).sendInterviewRejectionMessage(any(), any(), any(), any());
     doNothing().when(interviewRequestService).handleRejectedInterview(any(), any());
@@ -694,8 +694,8 @@ class UserServiceTest {
     when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
     when(userSecurityService.findEmailByUserId(anyLong())).thenReturn(userEmail);
     when(userSecurityService.findEmailByUserId(anyLong())).thenReturn(userEmail);
-    when(interviewMatchingService.match(interviewRequest, List.of(interviewRequest.getUser()))).
-        thenReturn(Optional.empty())
+    when(interviewMatchingService.match(interviewRequest,
+        List.of(interviewRequest.getUser()))).thenReturn(Optional.empty())
         .thenReturn(Optional.of(interview));
 
     doNothing().when(emailService).sendInterviewRejectionMessage(any(), any(), any(), any());
