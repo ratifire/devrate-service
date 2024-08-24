@@ -10,6 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.dto.AchievementDto;
@@ -18,6 +22,7 @@ import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.EventDto;
+import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
@@ -35,15 +40,24 @@ import com.ratifire.devrate.entity.InterviewSummary;
 import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.entity.interview.Interview;
+import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.exception.InterviewSummaryNotFoundException;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.InterviewSummaryRepository;
 import com.ratifire.devrate.repository.UserRepository;
+import com.ratifire.devrate.service.NotificationService;
+import com.ratifire.devrate.service.UserSecurityService;
+import com.ratifire.devrate.service.email.EmailService;
+import com.ratifire.devrate.service.interview.InterviewMatchingService;
+import com.ratifire.devrate.service.interview.InterviewRequestService;
+import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.service.specialization.SpecializationService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -71,10 +85,28 @@ class UserServiceTest {
   private UserRepository userRepository;
 
   @Mock
-  private SpecializationService specializationService;
+  private UserSecurityService userSecurityService;
 
   @Mock
   private InterviewSummaryRepository interviewSummaryRepository;
+
+  @Mock
+  private InterviewMatchingService interviewMatchingService;
+
+  @Mock
+  private InterviewRequestService interviewRequestService;
+
+  @Mock
+  private InterviewService interviewService;
+
+  @Mock
+  private EmailService emailService;
+
+  @Mock
+  private NotificationService notificationService;
+
+  @Mock
+  private SpecializationService specializationService;
 
   private final long userId = 1L;
   private final long interviewSummaryId = 1L;
@@ -86,6 +118,7 @@ class UserServiceTest {
   private EmploymentRecord employmentRecord;
   private List<LanguageProficiencyDto> languageProficiencyDtos;
   private final String userPicture = "123";
+  private final String userEmail = "user@gmail.com";
 
   private Achievement achievement;
   private AchievementDto achievementDto;
@@ -102,6 +135,9 @@ class UserServiceTest {
   private List<UserMainMasterySkillDto> userMainMasterySkillDtos;
   private InterviewSummary candidateSummary;
   private InterviewSummary interviewerSummary;
+  private InterviewRequest interviewRequest;
+  private InterviewRequestDto interviewRequestDto;
+  private Interview interview;
 
   /**
    * Setup method executed before each test method.
@@ -271,6 +307,17 @@ class UserServiceTest {
         .date(LocalDate.of(2023, 6, 15))
         .candidateId(3L)
         .interviewerId(userId)
+        .build();
+
+    interviewRequest = InterviewRequest.builder()
+        .user(testUser)
+        .build();
+    interviewRequestDto = InterviewRequestDto.builder().build();
+    interview = Interview.builder()
+        .id(1L)
+        .interviewerRequest(interviewRequest)
+        .candidateRequest(interviewRequest)
+        .startTime(ZonedDateTime.now())
         .build();
   }
 
@@ -550,5 +597,122 @@ class UserServiceTest {
 
     assertThrows(UserNotFoundException.class,
         () -> userService.findEventsBetweenDate(userId, from, to));
+  }
+
+  @Test
+  void testCreateAndMatchInterviewRequest_MatchFoundSuccessfully() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(dataMapper.toEntity(any(InterviewRequestDto.class))).thenReturn(interviewRequest);
+    when(interviewRequestService.save(any(InterviewRequest.class))).thenReturn(interviewRequest);
+    when(userSecurityService.findEmailByUserId(anyLong())).thenReturn(userEmail);
+    when(interviewMatchingService.match(any(InterviewRequest.class))).thenReturn(
+        Optional.of(interview));
+
+    doNothing().when(notificationService).addInterviewScheduled(any(), any(), any());
+    doNothing().when(emailService).sendInterviewScheduledEmail(any(), any(), any(), any());
+
+    userService.createAndMatchInterviewRequest(userId, interviewRequestDto);
+
+    verify(userSecurityService, times(2)).findEmailByUserId(anyLong());
+    verify(notificationService, times(2))
+        .addInterviewScheduled(any(), any(), any());
+    verify(emailService, times(2))
+        .sendInterviewScheduledEmail(any(), any(), any(), any());
+  }
+
+  @Test
+  void testCreateAndMatchInterviewRequest_NoMatchFound() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(dataMapper.toEntity(any(InterviewRequestDto.class))).thenReturn(interviewRequest);
+    when(interviewRequestService.save(any(InterviewRequest.class))).thenReturn(interviewRequest);
+    when(interviewMatchingService.match(any(InterviewRequest.class)))
+        .thenReturn(Optional.empty());
+
+    userService.createAndMatchInterviewRequest(userId, interviewRequestDto);
+
+    verify(userSecurityService, never()).findEmailByUserId(anyLong());
+    verify(notificationService, never()).addInterviewScheduled(any(), any(), any());
+    verify(emailService, never()).sendInterviewScheduledEmail(any(), any(), any(), any());
+  }
+
+  @Test
+  void testDeleteRejectedInterview_Than_NoMatchedInterviewForRejectedRequest_And_ActiveRequest() {
+    when(interviewService.deleteRejectedInterview(anyLong())).thenReturn(interview);
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(userSecurityService.findEmailByUserId(anyLong())).thenReturn(userEmail);
+    when(userSecurityService.findEmailByUserId(anyLong())).thenReturn(userEmail);
+    when(interviewMatchingService.match(interviewRequest, List.of(interviewRequest.getUser()))).
+        thenReturn(Optional.empty());
+
+    doNothing().when(notificationService).rejectInterview(any(), any(), any());
+    doNothing().when(emailService).sendInterviewRejectionMessage(any(), any(), any(), any());
+    doNothing().when(interviewRequestService).handleRejectedInterview(any(), any());
+
+    userService.deleteRejectedInterview(userId, userId);
+
+    verify(userSecurityService, times(1))
+        .findEmailByUserId(anyLong());
+    verify(notificationService, times(2))
+        .rejectInterview(any(), any(), any());
+    verify(notificationService, never())
+        .addInterviewScheduled(any(), any(), any());
+    verify(emailService, never())
+        .sendInterviewScheduledEmail(any(), any(), any(), any());
+  }
+
+  @Test
+  void testDeleteRejectedInterview_Than_MatchedInterviewForRejectedRequest_And_ActiveRequest() {
+    when(interviewService.deleteRejectedInterview(anyLong())).thenReturn(interview);
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(userSecurityService.findEmailByUserId(anyLong())).thenReturn(userEmail);
+    when(userSecurityService.findEmailByUserId(anyLong())).thenReturn(userEmail);
+    when(interviewMatchingService.match(interviewRequest, List.of(interviewRequest.getUser()))).
+        thenReturn(Optional.of(interview));
+
+    doNothing().when(emailService).sendInterviewRejectionMessage(any(), any(), any(), any());
+    doNothing().when(interviewRequestService).handleRejectedInterview(any(), any());
+    doNothing().when(notificationService).rejectInterview(any(), any(), any());
+    doNothing().when(notificationService).addInterviewScheduled(any(), any(), any());
+    doNothing().when(emailService).sendInterviewScheduledEmail(any(), any(), any(), any());
+
+    userService.deleteRejectedInterview(userId, userId);
+
+    verify(userSecurityService, times(5))
+        .findEmailByUserId(anyLong());
+    verify(notificationService, times(2))
+        .rejectInterview(any(), any(), any());
+    verify(notificationService, times(4))
+        .addInterviewScheduled(any(), any(), any());
+    verify(emailService, times(4))
+        .sendInterviewScheduledEmail(any(), any(), any(), any());
+
+  }
+
+  @Test
+  void testDeleteRejectedInterview_Than_OnlyOneMatchedInterview() {
+    when(interviewService.deleteRejectedInterview(anyLong())).thenReturn(interview);
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(userSecurityService.findEmailByUserId(anyLong())).thenReturn(userEmail);
+    when(userSecurityService.findEmailByUserId(anyLong())).thenReturn(userEmail);
+    when(interviewMatchingService.match(interviewRequest, List.of(interviewRequest.getUser()))).
+        thenReturn(Optional.empty())
+        .thenReturn(Optional.of(interview));
+
+    doNothing().when(emailService).sendInterviewRejectionMessage(any(), any(), any(), any());
+    doNothing().when(interviewRequestService).handleRejectedInterview(any(), any());
+    doNothing().when(notificationService).rejectInterview(any(), any(), any());
+    doNothing().when(notificationService).addInterviewScheduled(any(), any(), any());
+    doNothing().when(emailService).sendInterviewScheduledEmail(any(), any(), any(), any());
+
+    userService.deleteRejectedInterview(userId, userId);
+
+    verify(userSecurityService, times(3))
+        .findEmailByUserId(anyLong());
+    verify(notificationService, times(2))
+        .rejectInterview(any(), any(), any());
+    verify(notificationService, times(2))
+        .addInterviewScheduled(any(), any(), any());
+    verify(emailService, times(2))
+        .sendInterviewScheduledEmail(any(), any(), any(), any());
   }
 }
