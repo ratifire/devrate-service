@@ -5,7 +5,7 @@ name: Amazon ECS
 
 on:
   schedule:
-    - cron: '00 6 * * *'
+    - cron: '00 16 * * 1-5'
   workflow_dispatch:
 
 env:
