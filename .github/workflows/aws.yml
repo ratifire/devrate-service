@@ -42,7 +42,7 @@ jobs:
         run: sed -i 's|<AWS_SES_SECRET_ACCESS_KEY>|'"${{ env.AWS_SES_SECRET_ACCESS_KEY }}"'|' src/main/resources/application-local.properties
 
       - name: Update ACTIVE_PROFILE
-        run: sed -i 's|<ACTIVE_PROFILE>|'"${{ env.ACTIVE_PROFILE }}"'|' src/main/resources/application.properties
+        run: sed -i 's|ACTIVE_PROFILE|'"${{ env.ACTIVE_PROFILE }}"'|' src/main/resources/application.properties
 
       - name: Run tests
         run: mvn test
