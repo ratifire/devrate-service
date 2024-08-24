@@ -9,7 +9,6 @@ env:
   AWS_SES_ACCESS_KEY_ID: ${{ secrets.AWS_SES_ACCESS_KEY_ID }}
   AWS_SES_SECRET_ACCESS_KEY: ${{ secrets.AWS_SES_SECRET_ACCESS_KEY }}
 
-
 on:
   workflow_dispatch:
 
@@ -39,6 +38,9 @@ jobs:
 
       - name: Update AWS_SES_SECRET_ACCESS_KEY
         run: sed -i 's|<AWS_SES_SECRET_ACCESS_KEY>|'"${{ env.AWS_SES_SECRET_ACCESS_KEY }}"'|' src/main/resources/application-local.properties
+
+      - name: Update ACTIVE_PROFILE
+        run: sed -i 's|<ACTIVE_PROFILE>|'"${{ dev }}"'|' src/main/resources/application.properties
 
       - name: run tests
         run: mvn test
