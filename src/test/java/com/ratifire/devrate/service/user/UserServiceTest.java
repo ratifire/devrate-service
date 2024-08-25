@@ -636,7 +636,7 @@ class UserServiceTest {
   }
 
   @Test
-  void testDeleteRejectedInterview_Than_NoMatchedInterviewForRejectedRequest_And_ActiveRequest() {
+  void testDeleteRejectedInterview_Then_NoMatchedInterviewForRejectedRequest_And_ActiveRequest() {
     when(interviewService.deleteRejectedInterview(anyLong())).thenReturn(interview);
     when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
     when(userSecurityService.findEmailByUserId(anyLong())).thenReturn(userEmail);
@@ -661,7 +661,7 @@ class UserServiceTest {
   }
 
   @Test
-  void testDeleteRejectedInterview_Than_MatchedInterviewForRejectedRequest_And_ActiveRequest() {
+  void testDeleteRejectedInterview_Then_MatchedInterviewForRejectedRequest_And_ActiveRequest() {
     when(interviewService.deleteRejectedInterview(anyLong())).thenReturn(interview);
     when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
     when(userSecurityService.findEmailByUserId(anyLong())).thenReturn(userEmail);
@@ -689,7 +689,7 @@ class UserServiceTest {
   }
 
   @Test
-  void testDeleteRejectedInterview_Than_OnlyOneMatchedInterview() {
+  void testDeleteRejectedInterview_Then_OnlyOneMatchedInterview() {
     when(interviewService.deleteRejectedInterview(anyLong())).thenReturn(interview);
     when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
     when(userSecurityService.findEmailByUserId(anyLong())).thenReturn(userEmail);
