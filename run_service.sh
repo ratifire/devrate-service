@@ -9,6 +9,7 @@ echo "Remove devrate-service image"
 docker rmi devrate-service-app
 
 echo "Restart service"
+docker-compose build --no-cache
 docker-compose up
 
 
