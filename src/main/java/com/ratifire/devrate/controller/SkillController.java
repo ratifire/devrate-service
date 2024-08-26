@@ -2,14 +2,12 @@ package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.service.specialization.SkillService;
-import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,19 +29,6 @@ public class SkillController {
   @GetMapping("/{id}")
   public SkillDto findById(@PathVariable Long id) {
     return skillService.findById(id);
-  }
-
-  /**
-   * Calculates averageMark and update skill information: averageMark, counter and grows.
-   *
-   * @param id   - the ID of the skill.
-   * @param mark - the new mark to be included in the average calculation.
-   * @return updated skill as a DTO
-   */
-  @PreAuthorize("@resourceAuthorizationService.isResourceOwnedByLoggedUser('skills', #id)")
-  @PutMapping("/{id}/calculate-mark/{mark}")
-  public SkillDto updateMark(@PathVariable long id, @PathVariable BigDecimal mark) {
-    return skillService.updateMark(id, mark);
   }
 
   /**
