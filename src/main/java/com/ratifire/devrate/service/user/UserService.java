@@ -1,6 +1,5 @@
 package com.ratifire.devrate.service.user;
 
-import static com.ratifire.devrate.enums.InterviewRequestRole.INTERVIEWER;
 import static com.ratifire.devrate.util.interview.DateTimeUtils.convertToUtcTimeZone;
 
 import com.ratifire.devrate.dto.AchievementDto;
@@ -703,7 +702,7 @@ public class UserService {
    * @return an {@link EventDto} object that represents the given event
    */
   private EventDto constructEventDto(Event event) {
-    Participant hostEvent = createParticipant(event.getHostId(), INTERVIEWER);
+    Participant hostEvent = createParticipant(event.getHostId(), InterviewRequestRole.INTERVIEWER);
 
     List<Participant> participants = event.getParticipantIds().stream()
         .map(participantId ->
