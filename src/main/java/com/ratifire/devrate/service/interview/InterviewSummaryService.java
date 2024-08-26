@@ -3,8 +3,11 @@ package com.ratifire.devrate.service.interview;
 import com.ratifire.devrate.entity.InterviewSummary;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
+import com.ratifire.devrate.enums.InterviewRequestRole;
+import com.ratifire.devrate.exception.InterviewSummaryNotFoundException;
+import com.ratifire.devrate.exception.RoleNotFoundException;
+import com.ratifire.devrate.mapper.UserInterviewSummaryLinker;
 import com.ratifire.devrate.repository.InterviewSummaryRepository;
-import com.ratifire.devrate.service.user.UserService;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -19,8 +22,20 @@ import org.springframework.stereotype.Service;
 public class InterviewSummaryService {
 
   private final InterviewSummaryRepository interviewSummaryRepository;
-  private final UserService userService;
+  private final UserInterviewSummaryLinker userInterviewSummaryLinker;
 
+
+  /**
+   * Retrieves an InterviewSummary entity by its identifier.
+   *
+   * @param id the unique identifier of the InterviewSummary to be retrieved.
+   * @return the InterviewSummary associated with the provided id.
+   * @throws InterviewSummaryNotFoundException if no InterviewSummary is found for the given id.
+   */
+  public InterviewSummary findById(long id) {
+    return interviewSummaryRepository.findById(id).orElseThrow(() ->
+        new InterviewSummaryNotFoundException(id));
+  }
 
   /**
    * Saves an interview summary based on the provided interview and end time.
@@ -42,6 +57,41 @@ public class InterviewSummaryService {
 
     interviewSummaryRepository.save(interviewSummary);
 
-    userService.addInterviewSummaryToUsers(List.of(interviewer, candidate), interviewSummary);
+    userInterviewSummaryLinker.linkAndSaveInterviewSummaryToUsers(List.of(interviewer, candidate),
+        interviewSummary);
+  }
+
+  /**
+   * Add a comment to the appropriate field in the InterviewSummary.
+   *
+   * @param id              the identifier of the InterviewSummary to which the comment is to be
+   *                        added.
+   * @param reviewerId      the ID of the reviewer.
+   * @param reviewerComment the text of the comment to be saved.
+   * @return the role of the reviewer in the interview
+   */
+  public InterviewRequestRole addComment(long id, long reviewerId, String reviewerComment) {
+    InterviewSummary summary = findById(id);
+    InterviewRequestRole role = getParticipantRole(summary, reviewerId);
+    switch (role) {
+      case CANDIDATE -> summary.setCandidateComment(reviewerComment);
+      case INTERVIEWER -> summary.setInterviewerComment(reviewerComment);
+      default -> throw new RoleNotFoundException("Unknown role: " + role);
+    }
+    interviewSummaryRepository.save(summary);
+    return role;
+  }
+
+  /**
+   * Determines the role of a participant in an interview based on their user ID.
+   *
+   * @param summary    the InterviewSummary containing the interview details
+   * @param reviewerId the user ID of the participant whose role is to be determined
+   * @return the InterviewRequestRole of the participant
+   */
+  private InterviewRequestRole getParticipantRole(InterviewSummary summary, long reviewerId) {
+    return summary.getCandidateId() == reviewerId
+        ? InterviewRequestRole.CANDIDATE
+        : InterviewRequestRole.INTERVIEWER;
   }
 }
