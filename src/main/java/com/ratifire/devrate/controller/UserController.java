@@ -6,6 +6,7 @@ import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.EventDto;
+import com.ratifire.devrate.dto.FeedbackDto;
 import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
@@ -393,5 +394,12 @@ public class UserController {
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
     return userService.findEventsBetweenDate(userId, from, to);
+  }
+
+  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#reviewerId)")
+  @PostMapping("/{reviewerId}/feedbacks")
+  public void saveFeedback(@PathVariable long reviewerId,
+      @Valid @RequestBody FeedbackDto feedbackDto) {
+    userService.saveFeedback(reviewerId, feedbackDto);
   }
 }
