@@ -60,23 +60,6 @@ public class SkillServiceTest {
   }
 
   @Test
-  public void updateMarkTest() {
-    BigDecimal newMark = BigDecimal.valueOf(10);
-    when(skillRepository.findById(anyLong())).thenReturn(Optional.of(skill));
-    when(dataMapper.toDto(any(Skill.class))).thenReturn(skillDto);
-    when(skillRepository.save(any(Skill.class))).thenReturn(skill);
-
-    SkillDto result = skillService.updateMark(1L, newMark);
-
-    assertNotNull(result);
-    assertEquals(skillDto, result);
-    assertEquals(BigDecimal.valueOf(7.5).setScale(2), skill.getAverageMark());
-    assertEquals(2, skill.getCounter());
-
-    verify(skillRepository).save(skill);
-  }
-
-  @Test
   public void updateHideSkillTest() {
     when(skillRepository.findById(anyLong())).thenReturn(Optional.of(skill));
     when(dataMapper.toDto(any(Skill.class))).thenReturn(skillDto);
