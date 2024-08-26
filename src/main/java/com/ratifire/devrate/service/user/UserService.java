@@ -1,5 +1,6 @@
 package com.ratifire.devrate.service.user;
 
+import static com.ratifire.devrate.enums.InterviewRequestRole.INTERVIEWER;
 import static com.ratifire.devrate.util.interview.DateTimeUtils.convertToUtcTimeZone;
 
 import com.ratifire.devrate.dto.AchievementDto;
@@ -9,6 +10,7 @@ import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.EventDto;
 import com.ratifire.devrate.dto.EventDto.Participant;
+import com.ratifire.devrate.dto.FeedbackDto;
 import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
@@ -43,6 +45,9 @@ import com.ratifire.devrate.service.email.EmailService;
 import com.ratifire.devrate.service.interview.InterviewMatchingService;
 import com.ratifire.devrate.service.interview.InterviewRequestService;
 import com.ratifire.devrate.service.interview.InterviewService;
+import com.ratifire.devrate.service.interview.InterviewSummaryService;
+import com.ratifire.devrate.service.specialization.MasteryService;
+import com.ratifire.devrate.service.specialization.SkillService;
 import com.ratifire.devrate.service.specialization.SpecializationService;
 import com.ratifire.devrate.util.interview.DateTimeUtils;
 import com.ratifire.devrate.util.interview.InterviewPair;
@@ -71,9 +76,12 @@ public class UserService {
   private final SpecializationRepository specializationRepository;
   private final InterviewSummaryRepository interviewSummaryRepository;
   private final SpecializationService specializationService;
+  private final MasteryService masteryService;
+  private final SkillService skillService;
   private final InterviewMatchingService interviewMatchingService;
   private final InterviewRequestService interviewRequestService;
   private final InterviewService interviewService;
+  private final InterviewSummaryService interviewSummaryService;
   private final UserSecurityService userSecurityService;
   private final EmailService emailService;
   private final NotificationService notificationService;
@@ -457,18 +465,6 @@ public class UserService {
   }
 
   /**
-   * Adds an interview summary to a list of users and saves the updated user entities.
-   *
-   * @param users            the list of User objects to which the interview summary should be
-   *                         added
-   * @param interviewSummary the InterviewSummary to be added to each user
-   */
-  public void addInterviewSummaryToUsers(List<User> users, InterviewSummary interviewSummary) {
-    users.forEach(user -> user.getInterviewSummaries().add(interviewSummary));
-    userRepository.saveAll(users);
-  }
-
-  /**
    * Deletes the association between a user and an interview summary.
    *
    * @param userId the ID of the user whose association with the interview summary is to be deleted
@@ -707,7 +703,7 @@ public class UserService {
    * @return an {@link EventDto} object that represents the given event
    */
   private EventDto constructEventDto(Event event) {
-    Participant hostEvent = createParticipant(event.getHostId(), InterviewRequestRole.INTERVIEWER);
+    Participant hostEvent = createParticipant(event.getHostId(), INTERVIEWER);
 
     List<Participant> participants = event.getParticipantIds().stream()
         .map(participantId ->
@@ -744,5 +740,26 @@ public class UserService {
     } catch (UserNotFoundException ex) {
       return new Participant();
     }
+  }
+
+  /**
+   * Saves feedback provided by a reviewer and updates associated mastery marks.
+   *
+   * @param reviewerId  The ID of the reviewer submitting the feedback.
+   * @param feedbackDto The  FeedbackDto object containing all the feedback details
+   */
+  @Transactional
+  public void saveFeedback(long reviewerId, FeedbackDto feedbackDto) {
+    //TODO implement validation to ensure the data provided by the user is valid
+
+    InterviewRequestRole reviewerRole = interviewSummaryService.addComment(
+        feedbackDto.getInterviewSummaryId(), reviewerId, feedbackDto.getComment());
+
+    skillService.updateMarks(feedbackDto.getSkills());
+
+    masteryService.updateMasteryMarks(feedbackDto.getEvaluatedMasteryId(), reviewerRole);
+
+    //TODO implement removing the evaluation record (naming can be improved?) after feedback has
+    // been successfully processed
   }
 }
