@@ -58,15 +58,15 @@ public class ZoomWebhookServiceTest {
   }
 
   @Test
-  void handleZoomWebhook_urlValidationEvent_shouldReturnEncryptedToken()
+  void handleZoomWebhookUrlValidationEventShouldReturnEncryptedToken()
       throws JsonProcessingException, ZoomWebhookException {
     requestBody = "{\"event\":\"endpoint.url_validation\",\"payload\""
-        + ":{\"plain_token\":\"test_token\"}}";
+        + ":{\"plain_token\":\"4f7d4bca6e9f441e8eae7e872b76c3bc\"}}";
 
     WebHookRequest payload = WebHookRequest.builder()
         .event("endpoint.url_validation")
         .payload(WebHookRequest.Payload.builder()
-            .plainToken("test_token")
+            .plainToken("4f7d4bca6e9f441e8eae7e872b76c3bc")
             .build())
         .build();
 
@@ -85,7 +85,7 @@ public class ZoomWebhookServiceTest {
   }
 
   @Test
-  void handleZoomWebhook_unknownEvent_shouldThrowException()
+  void handleZoomWebhookUnknownEventShouldThrowException()
       throws JsonProcessingException, ZoomWebhookException {
     requestBody = "{\"event\":\"unknown_event\"}";
 
@@ -108,14 +108,14 @@ public class ZoomWebhookServiceTest {
   }
 
   @Test
-  void handleZoomWebhook_meetingEndedEvent_shouldCallInterviewCompletionService()
+  void handleZoomWebhookMeetingEndedEventShouldCallInterviewCompletionService()
       throws JsonProcessingException, ZoomWebhookException {
     requestBody = "{\"event\":\"meeting.ended\",\"payload\":{\"object\""
-        + ":{\"id\":\"12345\"}}}";
+        + ":{\"id\":\"abc123-def456-ghi789\"}}}";
 
     WebHookRequest.Payload.Meeting expectedMeeting = WebHookRequest.Payload
         .Meeting.builder()
-        .id("12345")
+        .id("abc123-def456-ghi789")
         .build();
 
     WebHookRequest payload = WebHookRequest.builder()
@@ -137,8 +137,9 @@ public class ZoomWebhookServiceTest {
   }
 
   @Test
-  void handleZoomWebhook_invalidSignature_shouldThrowException() throws ZoomWebhookException {
-    requestBody = "{\"event\":\"meeting.ended\",\"payload\":{\"object\":{\"id\":\"12345\"}}}";
+  void handleZoomWebhookInvalidSignatureShouldThrowException() throws ZoomWebhookException {
+    requestBody = "{\"event\":\"meeting.ended\",\"payload\":{\"object\":"
+        + "{\"id\":\"abc123-def456-ghi789\"}}}";
     headers.put("x-zm-signature", "invalid_signature");
 
     doThrow(new ZoomWebhookException("Unauthorized: Invalid signature."))
@@ -155,7 +156,7 @@ public class ZoomWebhookServiceTest {
   }
 
   @Test
-  void handleZoomWebhook_malformedJson_shouldThrowException()
+  void handleZoomWebhookMalformedJsonShouldThrowException()
       throws JsonProcessingException, ZoomWebhookException {
     requestBody = "malformed_json";
 
