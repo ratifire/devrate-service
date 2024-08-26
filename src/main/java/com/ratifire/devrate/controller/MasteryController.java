@@ -88,19 +88,6 @@ public class MasteryController {
   }
 
   /**
-   * Updates Mastery by ID.
-   *
-   * @param masteryDto the updated Mastery information as a DTO
-   * @return the updated Mastery information as a DTO
-   */
-  @PreAuthorize("@resourceAuthorizationService.isResourceOwnedByLoggedUser('masteries', "
-      + "#masteryDto.id)")
-  @PutMapping()
-  public MasteryDto update(@RequestBody MasteryDto masteryDto) {
-    return masteryService.update(masteryDto);
-  }
-
-  /**
    * Endpoint to retrieve the history of a Mastery by its ID within a specified date range.
    *
    * @param masteryId the ID of the Mastery to retrieve history for
