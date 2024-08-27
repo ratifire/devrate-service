@@ -27,10 +27,10 @@ jobs:
       - name: Run create-infrastructure workflow
         id: create_infrastructure
         run: |
-          gh workflow run Terraform deploy --ref ${{ env.BRANCH_NAME }}
-          echo "Waiting for Terraform deploy to complete..."
+          gh workflow run Terraform_deploy --ref ${{ env.BRANCH_NAME }}
+          echo "Waiting for Terraform_deploy to complete..."
           sleep 10
-          RUN_ID=$(gh run list --workflow=Terraform deploy --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
+          RUN_ID=$(gh run list --workflow=Terraform_deploy --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
           if [ -z "$RUN_ID" ]; then
             echo "No in-progress run found. Skipping watch."
           else
@@ -56,10 +56,10 @@ jobs:
       - name: Run deploy-application workflow
         if: steps.build_and_push_image.conclusion == 'success'
         run: |
-          gh workflow run Deploy Service to AWS --ref ${{ env.BRANCH_NAME }}
-          echo "Waiting for Deploy Service to AWS to complete..."
+          gh workflow run Deploy_Service_to_AWS --ref ${{ env.BRANCH_NAME }}
+          echo "Waiting for Deploy_Service_to_AWS to complete..."
           sleep 10
-          RUN_ID=$(gh run list --workflow=Deploy Service to AWS --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
+          RUN_ID=$(gh run list --workflow=Deploy_Service_to_AWS --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
           if [ -z "$RUN_ID" ]; then
             echo "No in-progress run found. Skipping watch."
           else

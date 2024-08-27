@@ -1,11 +1,13 @@
-name: 'Terraform_deploy'
+name: Terraform_deploy
 
 env:
+  AWS_REGION: 'eu-north-1'
   AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
   AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-  AWS_REGION: 'eu-north-1'
 
 on:
+  schedule:
+    - cron: '00 06 * * 1-5'
   workflow_dispatch:
 
 permissions:
@@ -14,7 +16,7 @@ permissions:
 
 jobs:
   terraform:
-    name: 'Terraform_deploy_infrastructure'
+    name: Terraform deploy infrastructure
     runs-on: ubuntu-latest
     environment: production
     env:

@@ -9,9 +9,15 @@ resource "aws_ecs_task_definition" "task_definition" {
       cpu               = 0,
       memory            = 819,
       memoryReservation = 819,
+      healthCheck : {
+        "command" : ["CMD-SHELL", "curl -f ${data.aws_lb.lb.dns_name}:${var.back_port}/actuator/health || exit 1"],
+        "interval" : 60,
+        "timeout" : 5,
+        "retries" : 4
+      },
       portMappings = [
         {
-          name          = "back-container-${var.back_port}-tcp",
+          name          = "${var.back_container_name}-${var.back_port}-tcp",
           containerPort = var.back_port,
           hostPort      = var.back_port,
           protocol      = "tcp",
@@ -47,6 +53,10 @@ resource "aws_ecs_task_definition" "task_definition" {
         {
           name  = "POSTGRES_DB",
           value = "backend"
+        },
+        {
+          name  = "ACTIVE_PROFILE",
+          value = "dev"
         }
       ],
       mountPoints = [],
@@ -54,7 +64,7 @@ resource "aws_ecs_task_definition" "task_definition" {
       logConfiguration = {
         logDriver = "awslogs",
         options = {
-          awslogs-group         = "/ecs/back-container",
+          awslogs-group         = "/ecs/${var.back_container_name}",
           awslogs-create-group  = "true",
           awslogs-region        = var.region,
           awslogs-stream-prefix = "ecs"
