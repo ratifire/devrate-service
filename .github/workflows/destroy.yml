@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  destroy:
     runs-on: ubuntu-latest
 
     steps:
@@ -42,7 +42,7 @@ jobs:
 
       - name: Run terraform_destroy workflow
         id: terraform_destroy
-        if: steps.create_infrastructure.conclusion == 'success'
+        if: steps.destroy_service.conclusion == 'success'
         run: |
           gh workflow run Terraform_destroy --ref ${{ env.BRANCH_NAME }}
           echo "Waiting for Terraform_destroy to complete..."
