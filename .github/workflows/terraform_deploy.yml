@@ -6,8 +6,6 @@ env:
   AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
 
 on:
-  schedule:
-    - cron: '00 06 * * 1-5'
   workflow_dispatch:
 
 permissions:
@@ -48,6 +46,6 @@ jobs:
 
     - name: Terraform Plan
       run: terraform plan -input=false
-      
+
     - name: Terraform apply
       run: terraform apply -auto-approve -input=false
