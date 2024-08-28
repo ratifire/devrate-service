@@ -38,7 +38,7 @@ public class ZoomWebhookAuthServiceTest {
   }
 
   @Test
-  void testValidateSignature_WithValidSignature_ShouldPass() {
+  void testValidateSignatureWithValidSignatureShouldPass() {
     String requestBody = "{\"event\":\"test_event\"}";
     String timestamp = "1623855600";
 
@@ -50,7 +50,7 @@ public class ZoomWebhookAuthServiceTest {
   }
 
   @Test
-  void testValidateSignature_WithInvalidSignature_ShouldThrowException() {
+  void testValidateSignatureWithInvalidSignatureShouldThrowException() {
     String requestBody = "{\"event\":\"test_event\"}";
     String timestamp = "1623855600";
 
