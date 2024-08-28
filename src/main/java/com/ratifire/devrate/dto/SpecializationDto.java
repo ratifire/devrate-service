@@ -19,4 +19,8 @@ public class SpecializationDto {
   private String name;
 
   private boolean main;
+
+  private int completedInterviews;
+
+  private int conductedInterviews;
 }

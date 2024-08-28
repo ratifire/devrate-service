@@ -11,6 +11,16 @@ properties:
   main:
     type: boolean
     description: Whether the specialization is the main specialization
+  completedInterviews:
+    type: integer
+    format: int64
+    description: The number of completed interviews for the specialization
+    readOnly: true
+  conductedInterviews:
+      type: integer
+      format: int64
+      description: The number of conducted interviews for the specialization
+      readOnly: true
 required:
   - name
   - main
