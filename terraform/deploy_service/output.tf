@@ -21,3 +21,8 @@ output "vpc_ids" {
   description = "All VPC ids"
   value       = data.aws_vpcs.all_vpcs.ids
 }
+
+output "lb_dns_name" {
+  description = "The DNS name of the load balancer."
+  value       = data.aws_lb.lb.dns_name
+}

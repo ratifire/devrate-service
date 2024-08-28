@@ -2,7 +2,7 @@ terraform {
   backend "s3" {
     bucket  = "devrate-bucket-back-1"
     encrypt = true
-    key     = "AWS/backend-infrastructure-tstates/terraform.tfstate"
+    key     = "AWS/build-test-backend-infrastructure-tstates/terraform.tfstate"
     region  = "eu-north-1"
   }
 }

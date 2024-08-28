@@ -1,9 +1,9 @@
-name: 'Destroy_Service.yml'
+name: Destroy_Service
 
 env:
+  AWS_REGION: 'eu-north-1'
   AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
   AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-  AWS_REGION: 'eu-north-1'
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   terraform:
-    name: 'Terraform_destroy_service.yml'
+    name: Terraform_destroy_service
     runs-on: ubuntu-latest
     environment: production
     env:

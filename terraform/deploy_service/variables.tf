@@ -5,7 +5,12 @@ variable "region" {
 
 variable "back_cluster_name" {
   description = "Back cluster name."
-  default     = "backend-back-cluster"
+  default     = "backend-cluster"
+}
+
+variable "back_container_name" {
+  description = "Back container name."
+  default     = "back-container"
 }
 
 variable "back_repository_name" {
