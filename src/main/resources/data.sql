@@ -14,9 +14,9 @@ INSERT INTO users (id, first_name, last_name, status, country, city, is_subscrib
                    completed_interviews, conducted_interviews)
 SELECT * FROM (
     VALUES
-    (8881, 'Dev1', 'Rate1', 'Java Back-End', 'Ukraine', 'Dnipro', true, 'Java developer', 11, 8),
-    (8882, 'Dev2', 'Rate2', 'ReactJS', 'Ukraine', 'Bila Tserkva', true, 'ReactJS developer', 13, 7),
-    (8883, 'Dev3', 'Rate3', 'React+JAVA', 'Ukraine', 'Lviv', true, 'Full Stack developer', 9, 14)
+    (8881, 'Ratifire', 'First', 'Java Back-End', 'Ukraine', 'Dnipro', true, 'Java developer', 11, 8),
+    (8882, 'Dev', 'Second', 'ReactJS', 'Ukraine', 'Bila Tserkva', true, 'ReactJS developer', 13, 7),
+    (8883, 'Rate', 'Third', 'React+JAVA', 'Ukraine', 'Lviv', true, 'Full Stack developer', 9, 14)
 ) AS new_users (id, first_name, last_name, status, country, city, is_subscribed, description,
                 completed_interviews, conducted_interviews)
 WHERE NOT EXISTS (
@@ -27,9 +27,9 @@ WHERE NOT EXISTS (
 INSERT INTO user_security (id, email, is_verified, created_at, password, role_id, user_id)
 SELECT * FROM (
     VALUES
-    (7771, 'dev1@test.com', true, CURRENT_TIMESTAMP, '$2a$12$WPDhaS64wu1a4e3fKbIAaOvs3YC2a31jgV3trdv5hW6mOF.zbhqq2', 2, 8881),
-    (7772, 'dev2@test.com', true, CURRENT_TIMESTAMP, '$2a$12$WPDhaS64wu1a4e3fKbIAaOvs3YC2a31jgV3trdv5hW6mOF.zbhqq2', 2, 8882),
-    (7773, 'dev3@test.com', true, CURRENT_TIMESTAMP, '$2a$12$WPDhaS64wu1a4e3fKbIAaOvs3YC2a31jgV3trdv5hW6mOF.zbhqq2', 2, 8883)
+    (7771, 'dev.rate1@proton.me', true, CURRENT_TIMESTAMP, '$2a$12$WFWGCRxsMF7rVSyTmzVRaeDdTvc3NKbH7xVNUxRvSUZpwvBHkWvmi', 2, 8881),
+    (7772, 'dev.rate2@proton.me', true, CURRENT_TIMESTAMP, '$2a$12$WFWGCRxsMF7rVSyTmzVRaeDdTvc3NKbH7xVNUxRvSUZpwvBHkWvmi', 2, 8882),
+    (7773, 'dev.rate3@proton.me', true, CURRENT_TIMESTAMP, '$2a$12$WFWGCRxsMF7rVSyTmzVRaeDdTvc3NKbH7xVNUxRvSUZpwvBHkWvmi', 2, 8883)
 ) AS new_user_security (id, email, is_verified, created_at, password, role_id, user_id)
 WHERE NOT EXISTS (
     SELECT 1 FROM user_security WHERE id = new_user_security.id OR email = new_user_security.email
