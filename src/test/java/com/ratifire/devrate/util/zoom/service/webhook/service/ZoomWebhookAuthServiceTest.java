@@ -34,8 +34,7 @@ public class ZoomWebhookAuthServiceTest {
 
   @BeforeEach
   void setUp() {
-    String zoomSecret = "testSecret";
-    ReflectionTestUtils.setField(zoomWebhookAuthService, "zoomSecret", zoomSecret);
+    ReflectionTestUtils.setField(zoomWebhookAuthService, "zoomSecret", "testSecret");
   }
 
   @Test
