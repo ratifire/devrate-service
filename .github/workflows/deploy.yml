@@ -1,6 +1,8 @@
 name: Deploy
 
 on:
+#  schedule:
+#    - cron: '00 06 * * 1-5'
   workflow_dispatch:
 
 jobs:
