@@ -27,8 +27,8 @@ WHERE NOT EXISTS (
 INSERT INTO user_security (id, email, is_verified, created_at, password, role_id, user_id)
 SELECT * FROM (
     VALUES
-    (7771, 'dev.rate1@proton.me', true, CURRENT_TIMESTAMP, '$2a$12$WFWGCRxsMF7rVSyTmzVRaeDdTvc3NKbH7xVNUxRvSUZpwvBHkWvmi', 2, 8881),
-    (7772, 'dev.rate2@proton.me', true, CURRENT_TIMESTAMP, '$2a$12$WFWGCRxsMF7rVSyTmzVRaeDdTvc3NKbH7xVNUxRvSUZpwvBHkWvmi', 2, 8882),
+    (7771, 'dev1@test.com', true, CURRENT_TIMESTAMP, '$2a$12$WFWGCRxsMF7rVSyTmzVRaeDdTvc3NKbH7xVNUxRvSUZpwvBHkWvmi', 2, 8881),
+    (7772, 'dev2@test.com', true, CURRENT_TIMESTAMP, '$2a$12$WFWGCRxsMF7rVSyTmzVRaeDdTvc3NKbH7xVNUxRvSUZpwvBHkWvmi', 2, 8882),
     (7773, 'dev.rate3@proton.me', true, CURRENT_TIMESTAMP, '$2a$12$WFWGCRxsMF7rVSyTmzVRaeDdTvc3NKbH7xVNUxRvSUZpwvBHkWvmi', 2, 8883)
 ) AS new_user_security (id, email, is_verified, created_at, password, role_id, user_id)
 WHERE NOT EXISTS (

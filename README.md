@@ -243,15 +243,25 @@ The following accounts have been added for application testing:
 
 1. **User 1**
     - Email: dev1@test.com
-    - Password: 12345678
+    - Password: Dev1234!
 
 2. **User 2**
     - Email: dev2@test.com
-    - Password: 12345678
+    - Password: Dev1234!
 
 3. **User 3**
-    - Email: dev3@test.com
-    - Password: 12345678
+    - Email: dev.rate3@proton.me
+    - Password: Dev1234!
+
+The following accounts are using for users registration:
+
+1. **New User 1**
+    - Email: dev.rate1@proton.me
+    - Password: Dev1234!
+
+2. **New User 2**
+    - Email: dev.rate2@proton.me
+    - Password: Dev1234!
 
 
 ## Project Information
