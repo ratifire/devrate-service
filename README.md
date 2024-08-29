@@ -249,6 +249,8 @@ The following accounts have been added for application testing:
     - Email: dev.rate3@proton.me
     - Password: Dev1234!
 
+** These emails and password are also used to log in to the email account.
+
 The following Email addresses are using for users registration (https://proton.me/):
 
 1. **New Email 1**
