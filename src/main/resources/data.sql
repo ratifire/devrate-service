@@ -14,9 +14,8 @@ INSERT INTO users (id, first_name, last_name, status, country, city, is_subscrib
                    completed_interviews, conducted_interviews)
 SELECT * FROM (
     VALUES
-    (8881, 'Dev1', 'Rate1', 'Java Back-End', 'Ukraine', 'Dnipro', true, 'Java developer', 11, 8),
-    (8882, 'Dev2', 'Rate2', 'ReactJS', 'Ukraine', 'Bila Tserkva', true, 'ReactJS developer', 13, 7),
-    (8883, 'Dev3', 'Rate3', 'React+JAVA', 'Ukraine', 'Lviv', true, 'Full Stack developer', 9, 14)
+    (8881, 'John', 'Rate', 'Java Back-End', 'Ukraine', 'Dnipro', true, 'Java developer', 11, 8),
+    (8882, 'Ratifire', 'First', 'ReactJS', 'Ukraine', 'Bila Tserkva', true, 'ReactJS developer', 13, 7)
 ) AS new_users (id, first_name, last_name, status, country, city, is_subscribed, description,
                 completed_interviews, conducted_interviews)
 WHERE NOT EXISTS (
@@ -27,9 +26,8 @@ WHERE NOT EXISTS (
 INSERT INTO user_security (id, email, is_verified, created_at, password, role_id, user_id)
 SELECT * FROM (
     VALUES
-    (7771, 'dev1@test.com', true, CURRENT_TIMESTAMP, '$2a$12$WPDhaS64wu1a4e3fKbIAaOvs3YC2a31jgV3trdv5hW6mOF.zbhqq2', 2, 8881),
-    (7772, 'dev2@test.com', true, CURRENT_TIMESTAMP, '$2a$12$WPDhaS64wu1a4e3fKbIAaOvs3YC2a31jgV3trdv5hW6mOF.zbhqq2', 2, 8882),
-    (7773, 'dev3@test.com', true, CURRENT_TIMESTAMP, '$2a$12$WPDhaS64wu1a4e3fKbIAaOvs3YC2a31jgV3trdv5hW6mOF.zbhqq2', 2, 8883)
+    (7771, 'john.rate3@tutamail.com', true, CURRENT_TIMESTAMP, '$2a$12$jjNu2RoOrBhC3JNHyaO0yuNZX7Uqjrd8SprH4FAvCrqX8yDXfG1Wi', 2, 8881),
+    (7772, 'dev.rate3@proton.me', true, CURRENT_TIMESTAMP, '$2a$12$WFWGCRxsMF7rVSyTmzVRaeDdTvc3NKbH7xVNUxRvSUZpwvBHkWvmi', 2, 8882)
 ) AS new_user_security (id, email, is_verified, created_at, password, role_id, user_id)
 WHERE NOT EXISTS (
     SELECT 1 FROM user_security WHERE id = new_user_security.id OR email = new_user_security.email
@@ -134,8 +132,6 @@ INSERT INTO interview_summaries (id, date, duration, candidate_id, interviewer_i
 VALUES
     (1000, '2024-07-21', 60, 8881, 8882),
     (2000, '2024-07-21', 45, 8882, 8881),
-    (3000, '2024-07-23', 30, 8881, 8883),
-    (4000, '2024-07-23', 90, 8883, 8881),
     (5000, '2024-07-23', 75, 8881, 8882),
     (6000, '2024-07-24', 60, 8882, 8881),
     (7000, '2024-07-25', 45, 8881, 8882),
@@ -167,12 +163,11 @@ VALUES
 -- Ensure the interview_summary_id exists in interview_summaries table
 INSERT INTO interview_summaries_users (user_id, interview_summary_id)
 VALUES
-    (8881, 1000), (8881, 2000), (8881, 3000), (8881, 4000), (8881, 5000),
-    (8881, 6000), (8881, 7000), (8881, 8000), (8881, 9000), (8881, 10000),
-    (8881, 11000), (8881, 12000), (8881, 13000), (8881, 14000), (8881, 15000),
-    (8881, 16000), (8881, 17000), (8881, 18000), (8881, 19000), (8881, 20000),
-    (8881, 21000), (8881, 22000), (8881, 23000), (8881, 24000), (8881, 25000),
-    (8881, 26000);
+    (8881, 1000), (8881, 2000), (8881, 5000), (8881, 6000), (8881, 7000),
+    (8881, 8000), (8881, 9000), (8881, 10000), (8881, 11000), (8881, 12000),
+    (8881, 13000), (8881, 14000), (8881, 15000), (8881, 16000), (8881, 17000),
+    (8881, 18000), (8881, 19000), (8881, 20000), (8881, 21000), (8881, 22000),
+    (8881, 23000), (8881, 24000), (8881, 25000), (8881, 26000);
 
 
 
