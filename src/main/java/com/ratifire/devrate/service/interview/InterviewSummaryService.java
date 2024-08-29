@@ -6,12 +6,13 @@ import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.exception.InterviewSummaryNotFoundException;
 import com.ratifire.devrate.exception.RoleNotFoundException;
-import com.ratifire.devrate.mapper.UserInterviewSummaryLinker;
 import com.ratifire.devrate.repository.InterviewSummaryRepository;
+import com.ratifire.devrate.repository.UserRepository;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -22,8 +23,12 @@ import org.springframework.stereotype.Service;
 public class InterviewSummaryService {
 
   private final InterviewSummaryRepository interviewSummaryRepository;
-  private final UserInterviewSummaryLinker userInterviewSummaryLinker;
+  private UserRepository userRepository;
 
+  @Autowired
+  public void setUserRepository(UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
 
   /**
    * Retrieves an InterviewSummary entity by its identifier.
@@ -38,12 +43,25 @@ public class InterviewSummaryService {
   }
 
   /**
-   * Saves an interview summary based on the provided interview and end time.
+   * Saves an interview summary and updates the interview summaries list for each participant.
+   *
+   * @param summary      the interview summary to be saved
+   * @param participants list of users who participated in the interview
+   */
+  public void save(InterviewSummary summary, List<User> participants) {
+    participants.forEach(user -> user.getInterviewSummaries().add(summary));
+
+    userRepository.saveAll(participants);
+    interviewSummaryRepository.save(summary);
+  }
+
+  /**
+   * Creates an interview summary based on the provided interview and end time.
    *
    * @param interview the Interview object used to retrieve details for creating the summary
    * @param endTime   the end time of the interview, used to calculate the duration
    */
-  public void saveInterviewSummary(Interview interview, String endTime) {
+  public void createInterviewSummary(Interview interview, String endTime) {
     User interviewer = interview.getInterviewerRequest().getUser();
     User candidate = interview.getCandidateRequest().getUser();
     ZonedDateTime startTime = interview.getStartTime();
@@ -55,10 +73,7 @@ public class InterviewSummaryService {
         .interviewerId(interviewer.getId())
         .build();
 
-    interviewSummaryRepository.save(interviewSummary);
-
-    userInterviewSummaryLinker.linkAndSaveInterviewSummaryToUsers(List.of(interviewer, candidate),
-        interviewSummary);
+    save(interviewSummary, List.of(interviewer, candidate));
   }
 
   /**
