@@ -242,24 +242,20 @@ making it easy to test email notifications without sending them to actual email 
 The following accounts have been added for application testing:
 
 1. **User 1**
-    - Email: dev1@test.com
-    - Password: Dev1234!
+    - Email: john.rate3@tutamail.com
+    - Password: Dev1234!!
 
 2. **User 2**
-    - Email: dev2@test.com
-    - Password: Dev1234!
-
-3. **User 3**
     - Email: dev.rate3@proton.me
     - Password: Dev1234!
 
-The following accounts are using for users registration:
+The following Email addresses are using for users registration (https://proton.me/):
 
-1. **New User 1**
+1. **New Email 1**
     - Email: dev.rate1@proton.me
     - Password: Dev1234!
 
-2. **New User 2**
+2. **New Email 2**
     - Email: dev.rate2@proton.me
     - Password: Dev1234!
 
