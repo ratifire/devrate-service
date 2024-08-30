@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
  */
 @Component
 @RequiredArgsConstructor
+@Data
 public class ZoomAuthHelper {
 
   private static final int MINUTES_BEFORE_TOKEN_EXPIRED = 10;
