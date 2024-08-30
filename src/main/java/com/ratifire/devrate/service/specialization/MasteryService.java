@@ -205,7 +205,6 @@ public class MasteryService {
    */
   public void updateMasteryMarks(long masteryId, InterviewRequestRole reviewerRole) {
     Mastery mastery = getMasteryById(masteryId);
-    saveHistory(mastery);
 
     BigDecimal updatedSoftSkillMark = calculateAverageMark(
         skillMapper.toEntity(getSoftSkillsByMasteryId(masteryId)));
@@ -219,6 +218,7 @@ public class MasteryService {
     }
 
     updateMastery(mastery);
+    saveHistory(mastery);
   }
 
   private BigDecimal calculateAverageMark(List<Skill> skills) {
