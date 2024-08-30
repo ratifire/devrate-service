@@ -1,7 +1,7 @@
 package com.ratifire.devrate.dto;
 
 import com.ratifire.devrate.enums.InterviewRequestRole;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,7 +29,7 @@ public class EventDto {
   private String link;
   private Participant host;
   private List<Participant> participants;
-  private LocalDateTime startTime;
+  private ZonedDateTime startTime;
 
   /**
    * Data Transfer Object representing the participant data of the calendar event.
