@@ -43,11 +43,8 @@ public class ZoomApiClient {
       T body = restTemplate.postForEntity(url, httpEntity, response).getBody();
       return Optional.ofNullable(body);
     } catch (Throwable ex) {
-      logger.error("Error occurred while sending POST request to URL: {}: {}. "
-              + "ZOOM_CLIENT_ID: {}; ZOOM_CLIENT_SECRET: {}; ZOOM_ACCOUNT_ID: {}", url,
-          ex.getMessage(), zoomAuthHelper.getAuthRequest().getZoomClientId(),
-          zoomAuthHelper.getAuthRequest().getZoomClientSecret(),
-          zoomAuthHelper.getAuthRequest().getZoomAccountId());
+      logger.error("Error occurred while sending POST request to URL: {}: {}", url,
+          ex.getMessage());
       return Optional.empty();
     }
   }
