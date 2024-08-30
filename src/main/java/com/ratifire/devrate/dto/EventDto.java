@@ -1,5 +1,6 @@
 package com.ratifire.devrate.dto;
 
+import com.ratifire.devrate.enums.EventType;
 import com.ratifire.devrate.enums.InterviewRequestRole;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -25,6 +26,7 @@ public class EventDto {
    * If the event type is 'conference', this field will store 'conferenceId', etc.
    */
   private long eventTypeId;
+  private EventType type;
   @URL
   private String link;
   private Participant host;

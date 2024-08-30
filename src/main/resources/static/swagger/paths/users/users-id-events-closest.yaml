@@ -29,6 +29,7 @@ get:
           example:
             id: 0
             eventTypeId: 0
+            type: "INTERVIEW"
             link: "string"
             host:
               name: "string"

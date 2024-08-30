@@ -717,6 +717,7 @@ public class UserService {
     return EventDto.builder()
         .id(event.getId())
         .eventTypeId(event.getEventTypeId())
+        .type(event.getType())
         .link(event.getRoomLink())
         .host(hostEvent)
         .participants(participants)
