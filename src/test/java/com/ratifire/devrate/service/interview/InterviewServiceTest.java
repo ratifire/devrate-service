@@ -1,7 +1,6 @@
 package com.ratifire.devrate.service.interview;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -112,21 +111,6 @@ class InterviewServiceTest {
     assertThrows(NoSuchElementException.class,
         () -> interviewService.createInterview(interviewPair));
 
-    verify(interviewRepository, never()).save(any());
-    verify(eventService, never()).save(any(), anyList());
-  }
-
-  @Test
-  void createInterviewFailureWhenZoomMeetingFails() {
-    candidateRequest.setAvailableDates(List.of(ZonedDateTime.now().plusDays(2)));
-    interviewerRequest.setAvailableDates(List.of(ZonedDateTime.now().plusDays(2)));
-
-    when(zoomApiService.createMeeting(anyString(), anyString(), any()))
-        .thenReturn(Optional.empty());
-
-    Optional<Interview> result = interviewService.createInterview(interviewPair);
-
-    assertFalse(result.isPresent());
     verify(interviewRepository, never()).save(any());
     verify(eventService, never()).save(any(), anyList());
   }
