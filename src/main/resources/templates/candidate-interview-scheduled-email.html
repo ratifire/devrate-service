@@ -34,6 +34,16 @@
   .details-table th {
     background-color: #f2f2f2;
   }
+  .zoom-info {
+    margin-top: 20px;
+  }
+  .zoom-info a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  .zoom-info a:hover {
+    text-decoration: underline;
+  }
 </style>
 <body>
 <div class="container">
@@ -70,6 +80,10 @@
           th:text="${interviewRequest?.mastery?.hardSkillMark}"></span></td>
     </tr>
   </table>
+
+  <div class="zoom-info">
+    <p><strong>Zoom Meeting Link:</strong> <a th:href="${zoomJoinUrl}" th:text="${zoomJoinUrl}" target="_blank"></a></p>
+  </div>
 
   <p>We are committed to providing you with a great interview experience. Please be prepared and
     ready at the scheduled time, as your participation is crucial in helping us identify the best

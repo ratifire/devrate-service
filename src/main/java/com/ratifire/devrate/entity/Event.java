@@ -9,7 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -52,5 +52,5 @@ public class Event {
   private List<Long> participantIds;
 
   @Column(name = "start_time", nullable = false)
-  private LocalDateTime startTime;
+  private ZonedDateTime startTime;
 }

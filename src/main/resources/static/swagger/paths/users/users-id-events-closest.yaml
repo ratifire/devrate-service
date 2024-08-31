@@ -1,9 +1,9 @@
 get:
   tags:
     - Event
-  summary: Get Events By UserId and date range
-  description: Retrieve events by user ID and date range
-  operationId: findEventsBetweenDate
+  summary: Get Events By UserId from a specified date and time
+  description: Retrieve events by user ID from a specified date and time
+  operationId: findEventsFromDateTime
   parameters:
     - in: path
       name: userId
@@ -14,21 +14,14 @@ get:
         format: int64
     - in: query
       name: from
-      description: The start of the date range (inclusive)
-      required: true
-      schema:
-        type: string
-        format: date
-    - in: query
-      name: to
-      description: The end of the date range (inclusive)
+      description: The date and time from which the events will be selected (inclusive)
       required: true
       schema:
         type: string
         format: date
   responses:
     '200':
-      description: The events corresponding to the provided userId and date range
+      description: The events corresponding to the provided userId from a specified date and time
       content:
         application/json:
           schema:
