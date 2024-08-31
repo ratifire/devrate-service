@@ -7,6 +7,9 @@ properties:
   eventTypeId:
     type: integer
     description: Identifier related to the specific event type. Currently it will be related interview id. In future it can be conference id or training id, regarding to the type.
+  type:
+    type: string
+    description: Event type, such as 'Interview', 'Webinar', 'Conference'
   link:
     type: string
     description: Generated Zoom link for the event

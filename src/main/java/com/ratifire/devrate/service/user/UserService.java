@@ -719,6 +719,7 @@ public class UserService {
     return EventDto.builder()
         .id(event.getId())
         .eventTypeId(event.getEventTypeId())
+        .type(event.getType())
         .link(event.getRoomLink())
         .host(hostEvent)
         .participants(participants)
@@ -746,5 +747,23 @@ public class UserService {
     } catch (UserNotFoundException ex) {
       return new Participant();
     }
+  }
+
+  /**
+   * Retrieves a list of events for a given user that start from a specified date and time in UTC.
+   *
+   * @param userId the ID of the user whose events are to be retrieved
+   * @param from   the starting date and time from which events should be retrieved
+   * @return a list of {@link EventDto} objects representing the events starting from
+   * @throws UserNotFoundException if no user with the specified ID is found
+   */
+  public List<EventDto> findEventsFromDateTime(long userId, ZonedDateTime from) {
+    User user = findUserById(userId);
+
+    return user.getEvents().stream()
+        .filter(event -> !event.getStartTime().isBefore(convertToUtcTimeZone(from)))
+        .sorted(Comparator.comparing(Event::getStartTime))
+        .map(this::constructEventDto)
+        .toList();
   }
 }
