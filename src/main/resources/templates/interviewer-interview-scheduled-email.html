@@ -44,6 +44,16 @@
     .no-border {
       border: none;
     }
+    .zoom-info {
+      margin-top: 20px;
+    }
+    .zoom-info a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    .zoom-info a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -80,6 +90,10 @@
       </td>
     </tr>
   </table>
+
+  <div class="zoom-info">
+    <p><strong>Zoom Meeting Link:</strong> <a th:href="${zoomJoinUrl}" th:text="${zoomJoinUrl}" target="_blank"></a></p>
+  </div>
 
   <p>We truly appreciate your commitment and the effort you put into providing valuable feedback.
     Your insights are instrumental in helping us identify the best candidates.</p>
