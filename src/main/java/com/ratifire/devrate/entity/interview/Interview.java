@@ -40,5 +40,7 @@ public class Interview {
 
   private long zoomMeetingId;
 
+  private String zoomJoinUrl;
+
   private ZonedDateTime startTime;
 }

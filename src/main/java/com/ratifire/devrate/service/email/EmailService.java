@@ -171,14 +171,16 @@ public class EmailService {
    * @param email             the email address of the recipient
    * @param interviewDateTime the date and time of the interview
    * @param interviewRequest  the interview request containing details about the interview
+   * @param zoomJoinUrl       the join url to the zoom meeting
    */
   public void sendInterviewScheduledEmail(User recipient, String email,
-      ZonedDateTime interviewDateTime, InterviewRequest interviewRequest) {
+      ZonedDateTime interviewDateTime, InterviewRequest interviewRequest, String zoomJoinUrl) {
 
     Map<String, Object> model = new HashMap<>();
     model.put("recipient", recipient);
     model.put("interviewDateTime", interviewDateTime);
     model.put("interviewRequest", interviewRequest);
+    model.put("zoomJoinUrl", zoomJoinUrl);
 
     String template =
         interviewRequest.getRole().equals(InterviewRequestRole.CANDIDATE)

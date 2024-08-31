@@ -144,6 +144,8 @@ paths:
     $ref: './paths/users/users-id-interviewSummaries-statistics.yaml'
   /users/{userId}/events:
     $ref: './paths/users/users-id-events.yaml'
+  /users/{userId}/events/closest:
+    $ref: './paths/users/users-id-events-closest.yaml'
   /users/{userId}/interviews/{id}:
     $ref: './paths/users/users-id-interviews-id.yaml'
 components:

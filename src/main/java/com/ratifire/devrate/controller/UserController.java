@@ -18,6 +18,7 @@ import com.ratifire.devrate.dto.UserPictureDto;
 import com.ratifire.devrate.service.user.UserService;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -394,6 +395,19 @@ public class UserController {
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
     return userService.findEventsBetweenDate(userId, from, to);
+  }
+
+  /**
+   * Retrieves a list of events for a given user that start from a specified date and time.
+   *
+   * @param userId the ID of the user whose events are to be retrieved
+   * @param from   the starting date and time in ISO format (e.g., {@code 2024-08-28T12:00:00Z})
+   * @return a list of {@link EventDto} objects representing the events starting from
+   */
+  @GetMapping("/{userId}/events/closest")
+  public List<EventDto> findEventsFromDateTime(@PathVariable long userId,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime from) {
+    return userService.findEventsFromDateTime(userId, from);
   }
 
   @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#reviewerId)")

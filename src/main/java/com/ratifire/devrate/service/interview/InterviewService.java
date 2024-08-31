@@ -53,6 +53,7 @@ public class InterviewService {
               .interviewerRequest(interviewer)
               .startTime(matchedStartTime)
               .zoomMeetingId(zoomMeeting.id)
+              .zoomJoinUrl(zoomMeeting.getJoinUrl())
               .build();
           interviewRepository.save(interview);
 
@@ -61,7 +62,7 @@ public class InterviewService {
               .roomLink(zoomMeeting.getJoinUrl())
               .hostId(interviewer.getUser().getId())
               .participantIds(List.of(candidate.getUser().getId()))
-              .startTime(matchedStartTime.toLocalDateTime())
+              .startTime(matchedStartTime)
               .eventTypeId(interview.getId())
               .build();
           eventService.save(interviewEvent, List.of(interviewer.getUser(), candidate.getUser()));

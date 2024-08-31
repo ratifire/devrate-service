@@ -559,8 +559,8 @@ public class UserService {
     InterviewRequest interviewer = interview.getInterviewerRequest();
     InterviewRequest candidate = interview.getCandidateRequest();
 
-    notifyParticipant(candidate, interviewer, interviewStartTimeInUtc);
-    notifyParticipant(interviewer, candidate, interviewStartTimeInUtc);
+    notifyParticipant(candidate, interviewer, interviewStartTimeInUtc, interview.getZoomJoinUrl());
+    notifyParticipant(interviewer, candidate, interviewStartTimeInUtc, interview.getZoomJoinUrl());
   }
 
   /**
@@ -571,9 +571,11 @@ public class UserService {
    * @param secondParticipantRequest the interview request of the other participant in the
    *                                 interview
    * @param interviewStartTimeInUtc  the start time of the interview in UTC
+   * @param zoomJoinUrl              the join url to the zoom meeting
    */
   private void notifyParticipant(InterviewRequest recipientRequest,
-      InterviewRequest secondParticipantRequest, ZonedDateTime interviewStartTimeInUtc) {
+      InterviewRequest secondParticipantRequest, ZonedDateTime interviewStartTimeInUtc,
+      String zoomJoinUrl) {
 
     User recipient = recipientRequest.getUser();
     String recipientEmail = userSecurityService.findEmailByUserId(recipient.getId());
@@ -583,7 +585,7 @@ public class UserService {
         interviewStartTimeInUtc);
 
     emailService.sendInterviewScheduledEmail(recipient, recipientEmail,
-        interviewStartTimeInUtc, secondParticipantRequest);
+        interviewStartTimeInUtc, secondParticipantRequest, zoomJoinUrl);
   }
 
   /**
@@ -712,6 +714,7 @@ public class UserService {
     return EventDto.builder()
         .id(event.getId())
         .eventTypeId(event.getEventTypeId())
+        .type(event.getType())
         .link(event.getRoomLink())
         .host(hostEvent)
         .participants(participants)
@@ -739,6 +742,24 @@ public class UserService {
     } catch (UserNotFoundException ex) {
       return new Participant();
     }
+  }
+
+  /**
+   * Retrieves a list of events for a given user that start from a specified date and time in UTC.
+   *
+   * @param userId the ID of the user whose events are to be retrieved
+   * @param from   the starting date and time from which events should be retrieved
+   * @return a list of {@link EventDto} objects representing the events starting from
+   * @throws UserNotFoundException if no user with the specified ID is found
+   */
+  public List<EventDto> findEventsFromDateTime(long userId, ZonedDateTime from) {
+    User user = findUserById(userId);
+
+    return user.getEvents().stream()
+        .filter(event -> !event.getStartTime().isBefore(convertToUtcTimeZone(from)))
+        .sorted(Comparator.comparing(Event::getStartTime))
+        .map(this::constructEventDto)
+        .toList();
   }
 
   /**

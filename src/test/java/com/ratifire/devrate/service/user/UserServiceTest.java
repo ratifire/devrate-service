@@ -56,7 +56,6 @@ import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.service.specialization.SpecializationService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -546,7 +545,7 @@ class UserServiceTest {
   }
 
   @Test
-  void testFindEventsBetweenDateTime_noEvents() {
+  void testFindEventsBetweenDateNoEventsFound() {
     LocalDate from = LocalDate.now().minusDays(1);
     LocalDate to = LocalDate.now().plusDays(1);
 
@@ -560,17 +559,17 @@ class UserServiceTest {
   }
 
   @Test
-  void testFindEventsBetweenDateTime_withEvents() {
+  void testFindEventsBetweenDateWithEvents() {
     Event event1 = new Event();
     event1.setId(1L);
-    event1.setStartTime(LocalDateTime.now());
+    event1.setStartTime(ZonedDateTime.now());
     event1.setHostId(2L);
     event1.setRoomLink("roomLink1");
     event1.setParticipantIds(Arrays.asList(3L, 4L));
 
     Event event2 = new Event();
     event2.setId(2L);
-    event2.setStartTime(LocalDateTime.now().plusDays(2));
+    event2.setStartTime(ZonedDateTime.now().plusDays(2));
     event2.setHostId(2L);
     event2.setRoomLink("roomLink2");
     event2.setParticipantIds(Arrays.asList(3L, 4L));
@@ -589,7 +588,7 @@ class UserServiceTest {
   }
 
   @Test
-  void testFindEventsBetweenDate_userNotFound() {
+  void testFindEventsBetweenDateUserNotFound() {
     LocalDate from = LocalDate.now().minusDays(1);
     LocalDate to = LocalDate.now().plusDays(1);
 
@@ -597,6 +596,58 @@ class UserServiceTest {
 
     assertThrows(UserNotFoundException.class,
         () -> userService.findEventsBetweenDate(userId, from, to));
+  }
+
+  @Test
+  void testFindEventsFromDateTimeNoEventsFound() {
+    ZonedDateTime from = ZonedDateTime.now().minusDays(1);
+
+    testUser.setEvents(List.of());
+
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+
+    List<EventDto> events = userService.findEventsFromDateTime(userId, from);
+
+    assertTrue(events.isEmpty());
+  }
+
+  @Test
+  void testFindEventsFromDateTimeWithEvents() {
+    Event event1 = new Event();
+    event1.setId(1L);
+    event1.setStartTime(ZonedDateTime.now());
+    event1.setHostId(2L);
+    event1.setRoomLink("roomLink1");
+    event1.setParticipantIds(Arrays.asList(3L, 4L));
+
+    Event event2 = new Event();
+    event2.setId(2L);
+    event2.setStartTime(ZonedDateTime.now().plusDays(2));
+    event2.setHostId(2L);
+    event2.setRoomLink("roomLink2");
+    event2.setParticipantIds(Arrays.asList(3L, 4L));
+
+    testUser.setEvents(Arrays.asList(event1, event2));
+
+    ZonedDateTime from = ZonedDateTime.now().minusDays(1);
+
+    when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+
+    List<EventDto> events = userService.findEventsFromDateTime(userId, from);
+
+    assertEquals(2, events.size());
+    assertEquals(event1.getId(), events.getFirst().getId());
+    assertEquals(event2.getId(), events.getLast().getId());
+  }
+
+  @Test
+  void testFindEventsFromDateTimeUserNotFound() {
+    ZonedDateTime from = ZonedDateTime.now().minusDays(1);
+
+    when(userRepository.findById(any())).thenThrow(new UserNotFoundException("User not found"));
+
+    assertThrows(UserNotFoundException.class,
+        () -> userService.findEventsFromDateTime(userId, from));
   }
 
   @Test
@@ -609,7 +660,7 @@ class UserServiceTest {
         Optional.of(interview));
 
     doNothing().when(notificationService).addInterviewScheduled(any(), any(), any());
-    doNothing().when(emailService).sendInterviewScheduledEmail(any(), any(), any(), any());
+    doNothing().when(emailService).sendInterviewScheduledEmail(any(), any(), any(), any(), any());
 
     userService.createAndMatchInterviewRequest(userId, interviewRequestDto);
 
@@ -617,7 +668,7 @@ class UserServiceTest {
     verify(notificationService, times(2))
         .addInterviewScheduled(any(), any(), any());
     verify(emailService, times(2))
-        .sendInterviewScheduledEmail(any(), any(), any(), any());
+        .sendInterviewScheduledEmail(any(), any(), any(), any(), any());
   }
 
   @Test
@@ -632,7 +683,7 @@ class UserServiceTest {
 
     verify(userSecurityService, never()).findEmailByUserId(anyLong());
     verify(notificationService, never()).addInterviewScheduled(any(), any(), any());
-    verify(emailService, never()).sendInterviewScheduledEmail(any(), any(), any(), any());
+    verify(emailService, never()).sendInterviewScheduledEmail(any(), any(), any(), any(), any());
   }
 
   @Test
@@ -657,7 +708,7 @@ class UserServiceTest {
     verify(notificationService, never())
         .addInterviewScheduled(any(), any(), any());
     verify(emailService, never())
-        .sendInterviewScheduledEmail(any(), any(), any(), any());
+        .sendInterviewScheduledEmail(any(), any(), any(), any(), any());
   }
 
   @Test
@@ -673,7 +724,7 @@ class UserServiceTest {
     doNothing().when(interviewRequestService).handleRejectedInterview(any(), any());
     doNothing().when(notificationService).rejectInterview(any(), any(), any());
     doNothing().when(notificationService).addInterviewScheduled(any(), any(), any());
-    doNothing().when(emailService).sendInterviewScheduledEmail(any(), any(), any(), any());
+    doNothing().when(emailService).sendInterviewScheduledEmail(any(), any(), any(), any(), any());
 
     userService.deleteRejectedInterview(userId, userId);
 
@@ -684,7 +735,7 @@ class UserServiceTest {
     verify(notificationService, times(4))
         .addInterviewScheduled(any(), any(), any());
     verify(emailService, times(4))
-        .sendInterviewScheduledEmail(any(), any(), any(), any());
+        .sendInterviewScheduledEmail(any(), any(), any(), any(), any());
 
   }
 
@@ -702,7 +753,7 @@ class UserServiceTest {
     doNothing().when(interviewRequestService).handleRejectedInterview(any(), any());
     doNothing().when(notificationService).rejectInterview(any(), any(), any());
     doNothing().when(notificationService).addInterviewScheduled(any(), any(), any());
-    doNothing().when(emailService).sendInterviewScheduledEmail(any(), any(), any(), any());
+    doNothing().when(emailService).sendInterviewScheduledEmail(any(), any(), any(), any(), any());
 
     userService.deleteRejectedInterview(userId, userId);
 
@@ -713,6 +764,6 @@ class UserServiceTest {
     verify(notificationService, times(2))
         .addInterviewScheduled(any(), any(), any());
     verify(emailService, times(2))
-        .sendInterviewScheduledEmail(any(), any(), any(), any());
+        .sendInterviewScheduledEmail(any(), any(), any(), any(), any());
   }
 }
