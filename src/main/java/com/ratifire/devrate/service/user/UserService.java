@@ -564,8 +564,8 @@ public class UserService {
     InterviewRequest interviewer = interview.getInterviewerRequest();
     InterviewRequest candidate = interview.getCandidateRequest();
 
-    notifyParticipant(candidate, interviewer, interviewStartTimeInUtc);
-    notifyParticipant(interviewer, candidate, interviewStartTimeInUtc);
+    notifyParticipant(candidate, interviewer, interviewStartTimeInUtc, interview.getZoomJoinUrl());
+    notifyParticipant(interviewer, candidate, interviewStartTimeInUtc, interview.getZoomJoinUrl());
   }
 
   /**
@@ -576,9 +576,11 @@ public class UserService {
    * @param secondParticipantRequest the interview request of the other participant in the
    *                                 interview
    * @param interviewStartTimeInUtc  the start time of the interview in UTC
+   * @param zoomJoinUrl              the join url to the zoom meeting
    */
   private void notifyParticipant(InterviewRequest recipientRequest,
-      InterviewRequest secondParticipantRequest, ZonedDateTime interviewStartTimeInUtc) {
+      InterviewRequest secondParticipantRequest, ZonedDateTime interviewStartTimeInUtc,
+      String zoomJoinUrl) {
 
     User recipient = recipientRequest.getUser();
     String recipientEmail = userSecurityService.findEmailByUserId(recipient.getId());
@@ -588,7 +590,7 @@ public class UserService {
         interviewStartTimeInUtc);
 
     emailService.sendInterviewScheduledEmail(recipient, recipientEmail,
-        interviewStartTimeInUtc, secondParticipantRequest);
+        interviewStartTimeInUtc, secondParticipantRequest, zoomJoinUrl);
   }
 
   /**

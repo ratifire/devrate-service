@@ -53,6 +53,7 @@ public class InterviewService {
               .interviewerRequest(interviewer)
               .startTime(matchedStartTime)
               .zoomMeetingId(zoomMeeting.id)
+              .zoomJoinUrl(zoomMeeting.getJoinUrl())
               .build();
           interviewRepository.save(interview);
 
