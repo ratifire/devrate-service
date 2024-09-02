@@ -576,10 +576,15 @@ class UserServiceTest {
 
     testUser.setEvents(Arrays.asList(event1, event2));
 
-    LocalDate from = LocalDate.now().minusDays(1);
-    LocalDate to = LocalDate.now().plusDays(1);
+    EventDto eventDto1 = EventDto.builder()
+        .id(1L)
+        .build();
 
     when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(dataMapper.toDto(event1)).thenReturn(eventDto1);
+
+    LocalDate from = LocalDate.now().minusDays(1);
+    LocalDate to = LocalDate.now().plusDays(1);
 
     List<EventDto> events = userService.findEventsBetweenDate(userId, from, to);
 
@@ -629,9 +634,18 @@ class UserServiceTest {
 
     testUser.setEvents(Arrays.asList(event1, event2));
 
-    ZonedDateTime from = ZonedDateTime.now().minusDays(1);
+    EventDto eventDto1 = EventDto.builder()
+        .id(1L)
+        .build();
+    EventDto eventDto2 = EventDto.builder()
+        .id(2L)
+        .build();
 
     when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(dataMapper.toDto(event1)).thenReturn(eventDto1);
+    when(dataMapper.toDto(event2)).thenReturn(eventDto2);
+
+    ZonedDateTime from = ZonedDateTime.now().minusDays(1);
 
     List<EventDto> events = userService.findEventsFromDateTime(userId, from);
 

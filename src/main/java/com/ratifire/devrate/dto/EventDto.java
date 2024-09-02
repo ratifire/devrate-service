@@ -29,8 +29,8 @@ public class EventDto {
   private EventType type;
   @URL
   private String link;
-  private Participant host;
-  private List<Participant> participants;
+  private ParticipantDto host;
+  private List<ParticipantDto> participantDtos;
   private ZonedDateTime startTime;
 
   /**
@@ -40,7 +40,7 @@ public class EventDto {
   @Data
   @NoArgsConstructor
   @AllArgsConstructor
-  public static class Participant {
+  public static class ParticipantDto {
     private String name;
     private String surname;
     private String status;
