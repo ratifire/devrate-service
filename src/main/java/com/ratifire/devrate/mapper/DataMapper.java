@@ -1,5 +1,6 @@
 package com.ratifire.devrate.mapper;
 
+import com.ratifire.devrate.entity.User;
 import java.util.List;
 import org.mapstruct.MappingTarget;
 
@@ -20,4 +21,8 @@ public interface DataMapper<D, E> {
   List<D> toDto(List<E> entity);
 
   E updateEntity(D dto, @MappingTarget E entity);
+
+  default D toDtoTest(E event, User entity2, List<User> entityList) {
+    throw new UnsupportedOperationException("");
+  }
 }

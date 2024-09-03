@@ -52,6 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -697,7 +698,11 @@ public class UserService {
 
     return user.getEvents().stream()
         .filter(event -> DateTimeUtils.isWithinRange(event.getStartTime().toLocalDate(), from, to))
-        .map(eventMapper::toDto)
+        .map(event -> {
+          User host = userRepository.findById(event.getHostId()).orElseThrow();
+          List<User> participants = userRepository.findAllById(event.getParticipantIds());
+          return eventMapper.toDtoTest(event, host, participants);
+        })
         .toList();
   }
 
@@ -715,7 +720,11 @@ public class UserService {
     return user.getEvents().stream()
         .filter(event -> !event.getStartTime().isBefore(convertToUtcTimeZone(from)))
         .sorted(Comparator.comparing(Event::getStartTime))
-        .map(eventMapper::toDto)
+        .map(event -> {
+          User host = userRepository.findById(event.getHostId()).orElseThrow();
+          List<User> participants = userRepository.findAllById(event.getParticipantIds());
+          return eventMapper.toDtoTest(event, host, participants);
+        })
         .toList();
   }
 }
