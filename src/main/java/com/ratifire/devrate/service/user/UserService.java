@@ -699,9 +699,9 @@ public class UserService {
     return user.getEvents().stream()
         .filter(event -> DateTimeUtils.isWithinRange(event.getStartTime().toLocalDate(), from, to))
         .map(event -> {
-          User host = userRepository.findById(event.getHostId()).orElseThrow();
+          User host = findUserById(event.getHostId());
           List<User> participants = userRepository.findAllById(event.getParticipantIds());
-          return eventMapper.toDtoTest(event, host, participants);
+          return eventMapper.toDto(event, host, participants);
         })
         .toList();
   }
@@ -721,9 +721,9 @@ public class UserService {
         .filter(event -> !event.getStartTime().isBefore(convertToUtcTimeZone(from)))
         .sorted(Comparator.comparing(Event::getStartTime))
         .map(event -> {
-          User host = userRepository.findById(event.getHostId()).orElseThrow();
+          User host = findUserById(event.getHostId());
           List<User> participants = userRepository.findAllById(event.getParticipantIds());
-          return eventMapper.toDtoTest(event, host, participants);
+          return eventMapper.toDto(event, host, participants);
         })
         .toList();
   }

@@ -20,9 +20,9 @@ public interface DataMapper<D, E> {
 
   List<D> toDto(List<E> entity);
 
-  E updateEntity(D dto, @MappingTarget E entity);
-
-  default D toDtoTest(E event, User entity2, List<User> entityList) {
-    throw new UnsupportedOperationException("");
+  default D toDto(E entity, User user, List<User> users) {
+    throw new UnsupportedOperationException("This method is not supported.");
   }
+
+  E updateEntity(D dto, @MappingTarget E entity);
 }

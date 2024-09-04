@@ -10,13 +10,17 @@ import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Interface for mapping Event Dto to Event entities.
+ * Interface for mapping Event entities to Event Dto.
  */
-@Mapper(componentModel = "spring", uses = {ParticipantMapper.class})
+@Mapper(componentModel = "spring")
 public abstract class EventMapper implements DataMapper<EventDto, Event> {
 
-  @Autowired
   protected ParticipantMapper participantMapper;
+
+  @Autowired
+  protected void setParticipantMapper(ParticipantMapper participantMapper) {
+    this.participantMapper = participantMapper;
+  }
 
   @Override
   @Mapping(source = "event.id", target = "id")
@@ -28,7 +32,5 @@ public abstract class EventMapper implements DataMapper<EventDto, Event> {
       + "com.ratifire.devrate.enums.InterviewRequestRole.INTERVIEWER))")
   @Mapping(target = "participantDtos", expression = "java(participantMapper.mapParticipants"
       + "(participants, com.ratifire.devrate.enums.InterviewRequestRole.CANDIDATE))")
-  public abstract EventDto toDtoTest(Event event, User host, List<User> participants);
-
-
+  public abstract EventDto toDto(Event event, User host, List<User> participants);
 }
