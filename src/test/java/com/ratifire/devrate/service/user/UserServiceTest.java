@@ -59,6 +59,7 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -576,10 +577,16 @@ class UserServiceTest {
 
     testUser.setEvents(Arrays.asList(event1, event2));
 
-    LocalDate from = LocalDate.now().minusDays(1);
-    LocalDate to = LocalDate.now().plusDays(1);
+    EventDto eventDto1 = EventDto.builder()
+        .id(1L)
+        .build();
 
     when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(userRepository.findAllById(any())).thenReturn(List.of(testUser));
+    when(dataMapper.toDto(any(), any(), any())).thenReturn(eventDto1);
+
+    LocalDate from = LocalDate.now().minusDays(1);
+    LocalDate to = LocalDate.now().plusDays(1);
 
     List<EventDto> events = userService.findEventsBetweenDate(userId, from, to);
 
@@ -629,9 +636,21 @@ class UserServiceTest {
 
     testUser.setEvents(Arrays.asList(event1, event2));
 
-    ZonedDateTime from = ZonedDateTime.now().minusDays(1);
+    EventDto eventDto1 = EventDto.builder()
+        .id(1L)
+        .build();
+    EventDto eventDto2 = EventDto.builder()
+        .id(2L)
+        .build();
 
     when(userRepository.findById(any())).thenReturn(Optional.of(testUser));
+    when(userRepository.findAllById(any())).thenReturn(List.of(testUser));
+    when(dataMapper.toDto(event1, testUser, Collections.singletonList(testUser)))
+        .thenReturn(eventDto1);
+    when(dataMapper.toDto(event2, testUser, Collections.singletonList(testUser)))
+        .thenReturn(eventDto2);
+
+    ZonedDateTime from = ZonedDateTime.now().minusDays(1);
 
     List<EventDto> events = userService.findEventsFromDateTime(userId, from);
 
