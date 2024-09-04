@@ -1,6 +1,7 @@
 package com.ratifire.devrate.service.specialization;
 
 import com.ratifire.devrate.dto.SkillDto;
+import com.ratifire.devrate.dto.SkillFeedbackDto;
 import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.enums.SkillType;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
@@ -9,6 +10,7 @@ import com.ratifire.devrate.repository.SkillRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -48,19 +50,32 @@ public class SkillService {
   }
 
   /**
-   * Calculates averageMark and update skill information: averageMark, counter and grows.
+   * Updates the marks for a list of skills based on the provided feedback.
    *
-   * @param id - skill ID.
+   * @param skillFeedbackDtos a list of SkillFeedbackDto objects containing the skill IDs and their
+   *                          corresponding new marks provided as feedback
    */
-  public SkillDto updateMark(long id, BigDecimal mark) {
-    Skill skill = getSkillById(id);
-    BigDecimal oldAverageMark = skill.getAverageMark();
-    long counter = skill.getCounter();
-    if (counter > 0) {
-      BigDecimal newAverageMark = calculateAverageMark(counter, oldAverageMark, mark);
-      return setMarkCounterGrowAndSave(skill, newAverageMark, counter + 1);
-    }
-    return setMarkCounterGrowAndSave(skill, mark, 1);
+  public void updateMarks(List<SkillFeedbackDto> skillFeedbackDtos) {
+    List<Long> skillIds = skillFeedbackDtos.stream()
+        .map(SkillFeedbackDto::getId)
+        .toList();
+
+    Map<Long, BigDecimal> skillIdToMarkMap = skillFeedbackDtos.stream()
+        .collect(Collectors.toMap(SkillFeedbackDto::getId, SkillFeedbackDto::getMark));
+
+    List<Skill> skills = skillRepository.findAllById(skillIds);
+
+    skills.forEach(skill -> {
+      BigDecimal newMark = skillIdToMarkMap.get(skill.getId());
+      BigDecimal oldAverageMark = skill.getAverageMark();
+      long counter = skill.getCounter();
+
+      BigDecimal newAverageMark = counter > 0
+          ? calculateAverageMark(counter, oldAverageMark, newMark)
+          : newMark;
+
+      setMarkCounterGrowAndSave(skill, newAverageMark, counter + 1);
+    });
   }
 
   /**
@@ -84,14 +99,13 @@ public class SkillService {
    * @param skill   the skill to be updated and saved
    * @param mark    the new mark to set for the skill
    * @param counter the new counter value to set for the skill
-   * @return the updated skill information as a DTO
    */
-  private SkillDto setMarkCounterGrowAndSave(Skill skill, BigDecimal mark, long counter) {
+  private void setMarkCounterGrowAndSave(Skill skill, BigDecimal mark, long counter) {
     int comparisonResult = skill.getAverageMark().compareTo(mark);
     skill.setGrows(comparisonResult <= 0);
     skill.setAverageMark(mark);
     skill.setCounter(counter);
-    return skillMapper.toDto(skillRepository.save(skill));
+    skillRepository.save(skill);
   }
 
   /**

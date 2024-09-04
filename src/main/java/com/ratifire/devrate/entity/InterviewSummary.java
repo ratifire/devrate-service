@@ -38,4 +38,10 @@ public class InterviewSummary {
 
   @Column(name = "interviewer_id", nullable = false)
   private long interviewerId;
+
+  @Column(name = "candidate_comment")
+  private String candidateComment;
+
+  @Column(name = "interviewer_comment")
+  private String interviewerComment;
 }

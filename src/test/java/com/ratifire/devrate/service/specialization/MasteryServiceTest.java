@@ -118,19 +118,6 @@ public class MasteryServiceTest {
   }
 
   @Test
-  public void updateTest() {
-    when(dataMapper.toDto(masteryMid)).thenReturn(masteryDtoJun);
-    when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
-
-    MasteryDto result = masteryService.update(masteryDtoJun);
-
-    assertNotNull(result);
-    assertEquals(masteryDtoJun, result);
-    verify(dataMapper).updateEntity(masteryDtoJun, masteryMid);
-    verify(masteryRepository).save(masteryMid);
-  }
-
-  @Test
   public void getSoftSkillsByMasteryIdTest() {
     when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
     when(dataMapper.toDto(masteryMid.getSkills())).thenReturn(new ArrayList<>());

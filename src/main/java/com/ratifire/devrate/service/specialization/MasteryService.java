@@ -1,11 +1,14 @@
 package com.ratifire.devrate.service.specialization;
 
+import static com.ratifire.devrate.enums.InterviewRequestRole.INTERVIEWER;
+
 import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.MasteryHistoryDto;
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.MasteryHistory;
 import com.ratifire.devrate.entity.Skill;
+import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.enums.SkillType;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
@@ -13,9 +16,9 @@ import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.MasteryHistoryRepository;
 import com.ratifire.devrate.repository.MasteryRepository;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.Named;
 import org.springframework.stereotype.Service;
@@ -60,20 +63,12 @@ public class MasteryService {
   }
 
   /**
-   * Updates Mastery information: HardSkillMark and SoftSkillMark.
+   * Updates existing Mastery.
    *
-   * @param masteryDto the updated Mastery as a DTO
-   * @return the updated Mastery as a DTO
+   * @param mastery the updated Mastery
    */
-  public MasteryDto update(MasteryDto masteryDto) {
-    long id = masteryDto.getId();
-    Mastery mastery = getMasteryById(id);
-
-    masteryMapper.updateEntity(masteryDto, mastery);
+  public void updateMastery(Mastery mastery) {
     masteryRepository.save(mastery);
-    saveHistory(mastery);
-
-    return masteryMapper.toDto(mastery);
   }
 
   /**
@@ -86,7 +81,7 @@ public class MasteryService {
   public List<SkillDto> getSoftSkillsByMasteryId(Long id) {
     return getSkillsByMasteryId(id).stream()
         .filter(skillDto -> skillDto.getType() == SkillType.SOFT_SKILL)
-        .collect(Collectors.toList());
+        .toList();
   }
 
   /**
@@ -99,7 +94,7 @@ public class MasteryService {
   public List<SkillDto> getHardSkillsByMasteryId(Long id) {
     return getSkillsByMasteryId(id).stream()
         .filter(skillDto -> skillDto.getType() == SkillType.HARD_SKILL)
-        .collect(Collectors.toList());
+        .toList();
   }
 
   /**
@@ -198,5 +193,40 @@ public class MasteryService {
     List<MasteryHistory> histories = masteryHistoryRepository
         .findByMasteryIdAndDateBetween(masteryId, from, to);
     return masteryHistoryMapper.toDto(histories);
+  }
+
+  /**
+   * Updates the mastery marks for both soft and potentially hard skills based on the role of the
+   * reviewer.
+   *
+   * @param masteryId    The ID of the Mastery entity to be updated.
+   * @param reviewerRole The role of the reviewer, which determines whether hard skills should also
+   *                     be updated.
+   */
+  public void updateMasteryMarks(long masteryId, InterviewRequestRole reviewerRole) {
+    Mastery mastery = getMasteryById(masteryId);
+
+    BigDecimal updatedSoftSkillMark = calculateAverageMark(
+        skillMapper.toEntity(getSoftSkillsByMasteryId(masteryId)));
+
+    mastery.setSoftSkillMark(updatedSoftSkillMark);
+
+    if (reviewerRole == INTERVIEWER) {
+      BigDecimal updatedHardSkillMark = calculateAverageMark(
+          skillMapper.toEntity(getHardSkillsByMasteryId(masteryId)));
+      mastery.setHardSkillMark(updatedHardSkillMark);
+    }
+
+    updateMastery(mastery);
+    saveHistory(mastery);
+  }
+
+  private BigDecimal calculateAverageMark(List<Skill> skills) {
+    BigDecimal sumAverageSkillsMarks = skills.stream()
+        .map(Skill::getAverageMark)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    return sumAverageSkillsMarks.divide(BigDecimal.valueOf(skills.size()), 2,
+        RoundingMode.HALF_UP);
   }
 }

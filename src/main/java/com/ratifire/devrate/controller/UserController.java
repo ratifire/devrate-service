@@ -6,6 +6,7 @@ import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.EventDto;
+import com.ratifire.devrate.dto.FeedbackDto;
 import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
@@ -407,5 +408,12 @@ public class UserController {
   public List<EventDto> findEventsFromDateTime(@PathVariable long userId,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime from) {
     return userService.findEventsFromDateTime(userId, from);
+  }
+
+  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#reviewerId)")
+  @PostMapping("/{reviewerId}/feedbacks")
+  public void saveFeedback(@PathVariable long reviewerId,
+      @Valid @RequestBody FeedbackDto feedbackDto) {
+    userService.saveFeedback(reviewerId, feedbackDto);
   }
 }

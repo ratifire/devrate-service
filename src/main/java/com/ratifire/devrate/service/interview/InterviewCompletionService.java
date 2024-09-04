@@ -32,7 +32,7 @@ public class InterviewCompletionService {
   @Transactional
   public String completeInterviewProcess(Meeting meeting) {
     Interview interview = interviewService.getInterviewByMeetingId(Long.parseLong(meeting.getId()));
-    interviewSummaryService.saveInterviewSummary(interview, meeting.getEndTime());
+    interviewSummaryService.createInterviewSummary(interview, meeting.getEndTime());
     specializationService.updateUserInterviewCounts(interview);
     userService.refreshUserInterviewCounts(List.of(interview.getInterviewerRequest().getUser(),
         interview.getCandidateRequest().getUser()));
