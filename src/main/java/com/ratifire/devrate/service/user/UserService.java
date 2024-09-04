@@ -31,7 +31,6 @@ import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
-import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.exception.InterviewSummaryNotFoundException;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
@@ -58,6 +57,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -95,6 +95,7 @@ public class UserService {
   private final DataMapper<SpecializationDto, Specialization> specializationDataMapper;
   private final DataMapper<UserMainMasterySkillDto, Specialization> userMainMasterySkillMapper;
   private final DataMapper<InterviewRequestDto, InterviewRequest> interviewRequestMapper;
+  private final DataMapper<EventDto, Event> eventMapper;
 
   @Autowired
   public void setUserRepository(@Lazy UserRepository userRepository) {
@@ -693,55 +694,12 @@ public class UserService {
 
     return user.getEvents().stream()
         .filter(event -> DateTimeUtils.isWithinRange(event.getStartTime().toLocalDate(), from, to))
-        .map(this::constructEventDto)
+        .map(event -> {
+          User host = findUserById(event.getHostId());
+          List<User> participants = userRepository.findAllById(event.getParticipantIds());
+          return eventMapper.toDto(event, host, participants);
+        })
         .toList();
-  }
-
-  /**
-   * Constructs an {@link EventDto} from a given {@link Event} entity.
-   *
-   * @param event the {@link Event} entity to be converted
-   * @return an {@link EventDto} object that represents the given event
-   */
-  private EventDto constructEventDto(Event event) {
-    Participant hostEvent = createParticipant(event.getHostId(), InterviewRequestRole.INTERVIEWER);
-
-    List<Participant> participants = event.getParticipantIds().stream()
-        .map(participantId ->
-            createParticipant(participantId, InterviewRequestRole.CANDIDATE))
-        .toList();
-
-    return EventDto.builder()
-        .id(event.getId())
-        .eventTypeId(event.getEventTypeId())
-        .type(event.getType())
-        .link(event.getRoomLink())
-        .host(hostEvent)
-        .participants(participants)
-        .startTime(event.getStartTime())
-        .build();
-  }
-
-  /**
-   * Creates a {@link Participant} object based on the given user ID and role.
-   *
-   * @param userId the ID of the user to be converted to a {@link Participant}
-   * @param role   the role of the participant in the event
-   * @return a {@link Participant} object that represents the user with the given ID and role
-   */
-  private Participant createParticipant(long userId, InterviewRequestRole role) {
-    try {
-      User user = findUserById(userId);
-
-      return Participant.builder()
-          .name(user.getFirstName())
-          .surname(user.getLastName())
-          .status(user.getStatus())
-          .role(role)
-          .build();
-    } catch (UserNotFoundException ex) {
-      return new Participant();
-    }
   }
 
   /**
@@ -758,7 +716,11 @@ public class UserService {
     return user.getEvents().stream()
         .filter(event -> !event.getStartTime().isBefore(convertToUtcTimeZone(from)))
         .sorted(Comparator.comparing(Event::getStartTime))
-        .map(this::constructEventDto)
+        .map(event -> {
+          User host = findUserById(event.getHostId());
+          List<User> participants = userRepository.findAllById(event.getParticipantIds());
+          return eventMapper.toDto(event, host, participants);
+        })
         .toList();
   }
 

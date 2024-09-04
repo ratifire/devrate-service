@@ -6,7 +6,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.URL;
 
@@ -14,7 +14,7 @@ import org.hibernate.validator.constraints.URL;
  * Data Transfer Object representing the calendar event.
  */
 @Builder
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class EventDto {
@@ -29,18 +29,18 @@ public class EventDto {
   private EventType type;
   @URL
   private String link;
-  private Participant host;
-  private List<Participant> participants;
+  private ParticipantDto host;
+  private List<ParticipantDto> participantDtos;
   private ZonedDateTime startTime;
 
   /**
    * Data Transfer Object representing the participant data of the calendar event.
    */
   @Builder
-  @Data
+  @Getter
   @NoArgsConstructor
   @AllArgsConstructor
-  public static class Participant {
+  public static class ParticipantDto {
     private String name;
     private String surname;
     private String status;
