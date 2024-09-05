@@ -87,7 +87,7 @@ class InterviewServiceTest {
     candidateRequest.setAvailableDates(List.of(matchingDate));
     interviewerRequest.setAvailableDates(List.of(matchingDate));
 
-    when(zoomApiService.createMeeting(anyString(), anyString(), eq(matchingDate.toLocalDateTime())))
+    when(zoomApiService.createMeeting(anyString(), anyString(), any(ZonedDateTime.class)))
         .thenReturn(Optional.of(zoomCreateMeetingResponse));
 
     Optional<Interview> result = interviewService.createInterview(interviewPair);

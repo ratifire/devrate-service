@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
 import com.ratifire.devrate.util.zoom.network.ZoomApiClient;
 import com.ratifire.devrate.util.zoom.payloads.ZoomCreateMeetingResponse;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ class ZoomApiServiceTest {
   private ZoomCreateMeetingResponse createMeetingResponse;
   private String topic;
   private String description;
-  private LocalDateTime time;
+  private ZonedDateTime time;
 
   /**
    * Setup method executed before each test method.
@@ -53,7 +53,7 @@ class ZoomApiServiceTest {
 
     topic = "Test Topic";
     description = "Test Description";
-    time = LocalDateTime.now();
+    time = ZonedDateTime.now();
   }
 
   @Test
