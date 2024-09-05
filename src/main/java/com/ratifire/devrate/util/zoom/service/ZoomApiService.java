@@ -7,7 +7,7 @@ import com.ratifire.devrate.util.zoom.network.ZoomApiClient;
 import com.ratifire.devrate.util.zoom.payloads.ZoomCreateMeetingRequest;
 import com.ratifire.devrate.util.zoom.payloads.ZoomCreateMeetingRequest.Settings;
 import com.ratifire.devrate.util.zoom.payloads.ZoomCreateMeetingResponse;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -41,7 +41,7 @@ public class ZoomApiService {
    * @return the join URL for the created meeting.
    */
   public Optional<ZoomCreateMeetingResponse> createMeeting(String topic, String meetDescription,
-      LocalDateTime startTime) {
+      ZonedDateTime startTime) {
     String jsonRequest = buildJsonCreateMeetingRequest(topic, meetDescription, startTime);
     String url = zoomApiUrl + ZOOM_USER_BASE_URL + "/me/meetings";
 
@@ -49,19 +49,19 @@ public class ZoomApiService {
   }
 
   private String buildJsonCreateMeetingRequest(String topic, String meetDescription,
-      LocalDateTime startTime) {
+      ZonedDateTime startTime) {
     try {
       ZoomCreateMeetingRequest request = ZoomCreateMeetingRequest.builder()
           .topic(topic)
           .type(2)
           .agenda(meetDescription)
           .duration(40)
-          .startTime(startTime.toString())
+          .startTime(startTime)
           .timezone("UTC")
           .settings(Settings.builder()
               .joinBeforeHost(true)
               .meetingAuthentication(false)
-              .jbhTime(0)
+              .jbhTime(5)
               .privateMeeting(true)
               .build())
           .build();

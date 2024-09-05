@@ -46,7 +46,7 @@ public class InterviewService {
         interviewer.getAvailableDates());
 
     return zoomApiService
-        .createMeeting("Topic", "Agenda", matchedStartTime.toLocalDateTime())
+        .createMeeting("Topic", "Agenda", matchedStartTime)
         .map(zoomMeeting -> {
           Interview interview = Interview.builder()
               .candidateRequest(candidate)

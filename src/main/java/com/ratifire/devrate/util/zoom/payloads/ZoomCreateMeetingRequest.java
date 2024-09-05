@@ -1,6 +1,7 @@
 package com.ratifire.devrate.util.zoom.payloads;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.time.ZonedDateTime;
 import lombok.Builder;
 import lombok.Data;
 
@@ -15,7 +16,7 @@ public class ZoomCreateMeetingRequest {
   private int duration;
   private Settings settings;
   @JsonProperty("start_time")
-  private String startTime;
+  private ZonedDateTime startTime;
   private String timezone;
   private String topic;
   private int type;
@@ -27,7 +28,7 @@ public class ZoomCreateMeetingRequest {
   @Data
   public static class Settings {
     @JsonProperty("jbh_time")
-    private int jbhTime;
+    private Integer jbhTime;
     @JsonProperty("join_before_host")
     private boolean joinBeforeHost;
     @JsonProperty("meeting_authentication")
