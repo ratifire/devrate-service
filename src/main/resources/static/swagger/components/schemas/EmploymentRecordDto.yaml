@@ -5,14 +5,14 @@ properties:
     format: int64
     description: The unique identifier for the employment record
     readOnly: true
-  startDate:
-    type: string
-    format: date
-    description: The starting date of the employment record
-  endDate:
-    type: string
-    format: date
-    description: The ending date of the employment record
+  startYear:
+    type: integer
+    format: int64
+    description: The starting year of the employment record
+  endYear:
+    type: integer
+    format: int64
+    description: The ending year of the employment record
   position:
     type: string
     description: The position held during employment
@@ -28,8 +28,8 @@ properties:
       type: string
     description: Responsibilities during employment
 required:
-  - startDate
-  - endDate
+  - startYear
+  - endYear
   - position
   - companyName
   - description
