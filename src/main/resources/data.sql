@@ -125,22 +125,22 @@ WHERE NOT EXISTS (SELECT 1
                   WHERE id = language_proficiencies.id);
 
 --  Create employment_records records
-INSERT INTO employment_records (start_date, end_date, position, company_name, description, responsibilities, user_id)
+INSERT INTO employment_records (start_year, end_year, position, company_name, description, responsibilities, user_id)
 SELECT * FROM (
 VALUES
-    (DATE '2021-01-01', DATE '2022-06-01', 'Software Engineer', 'Tech Corp', 'Developed and maintained software applications.',
+    (2021, 2022, 'Software Engineer', 'Tech Corp', 'Developed and maintained software applications.',
      ARRAY['Developed new features', 'Maintained codebase', 'Collaborated with team'], 8881),
-    (DATE '2019-05-01', DATE '2021-01-01', 'Frontend Developer', 'Web Solutions Inc.', 'Designed and implemented user interfaces.',
+    (2019, 2021, 'Frontend Developer', 'Web Solutions Inc.', 'Designed and implemented user interfaces.',
      ARRAY['Designed UI layouts', 'Implemented responsive designs', 'Conducted user testing'], 8881),
-    (DATE '2018-08-01', DATE '2021-01-01', 'Intern', 'StartUp Ltd.', 'Assisted with various tasks in the development team.',
+    (2018, 2021, 'Intern', 'StartUp Ltd.', 'Assisted with various tasks in the development team.',
      ARRAY['Assisted with code reviews', 'Wrote documentation', 'Participated in team meetings'], 8881),
-    (DATE '2020-03-01', DATE '2023-08-01', 'Data Scientist', 'Data Analytics LLC', 'Analyzed and interpreted complex data to help companies make informed decisions.',
+    (2020, 2023, 'Data Scientist', 'Data Analytics LLC', 'Analyzed and interpreted complex data to help companies make informed decisions.',
      ARRAY['Developed data models', 'Performed statistical analysis', 'Created visualizations'], 8882),
-    (DATE '2017-11-01', DATE '2020-02-01', 'Marketing Manager', 'Creative Agency', 'Led marketing campaigns and strategies to drive brand growth and engagement.',
+    (2017, 2020, 'Marketing Manager', 'Creative Agency', 'Led marketing campaigns and strategies to drive brand growth and engagement.',
      ARRAY['Managed marketing campaigns', 'Coordinated with external agencies', 'Analyzed campaign performance'], 8882),
-    (DATE '2015-06-01', DATE '2017-10-01', 'Sales Associate', 'Retail World', 'Provided customer service and supported sales operations in a retail environment.',
+    (2015, 2017, 'Sales Associate', 'Retail World', 'Provided customer service and supported sales operations in a retail environment.',
      ARRAY['Assisted customers', 'Processed sales transactions', 'Maintained store inventory'], 8882)
-) AS employment_records (start_date, end_date, position, company_name, description, responsibilities, user_id)
+) AS employment_records (start_year, end_year, position, company_name, description, responsibilities, user_id)
 WHERE NOT EXISTS (SELECT 1
                   FROM employment_records
                   WHERE id = employment_records.id);
