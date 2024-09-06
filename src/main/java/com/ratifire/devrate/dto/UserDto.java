@@ -19,20 +19,22 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class UserDto {
 
-  private static final String NAME_PATTERN = "^[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\s\\-']+$";
-  private static final String CITY_PATTERN = "^[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\s\\-']*$";
+  private static final String NAME_PATTERN = "^[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\s\\-']*"
+      + "[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\-']$";
+  private static final String CITY_PATTERN = "^[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\s\\-']*"
+      + "[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\-']$";
 
   @NotNull
   private long id;
 
   @NotBlank(message = "First name cannot be blank")
-  @Size(max = 100)
+  @Size(max = 50)
   @Pattern(regexp = NAME_PATTERN, message = "First name can only contain letters, spaces, hyphens,"
       + " and apostrophes")
   private String firstName;
 
   @NotBlank(message = "Last name cannot be blank")
-  @Size(max = 100)
+  @Size(max = 50)
   @Pattern(regexp = NAME_PATTERN, message = "Last name can only contain letters, spaces, hyphens,"
       + " and apostrophes")
   private String lastName;
