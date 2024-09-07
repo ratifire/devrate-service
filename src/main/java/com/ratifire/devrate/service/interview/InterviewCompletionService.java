@@ -31,6 +31,7 @@ public class InterviewCompletionService {
    */
   @Transactional
   public String completeInterviewProcess(Meeting meeting) {
+    System.out.println(meeting);
     Interview interview = interviewService.getInterviewByMeetingId(Long.parseLong(meeting.getId()));
     interviewSummaryService.createInterviewSummary(interview, meeting.getEndTime());
     specializationService.updateUserInterviewCounts(interview);
