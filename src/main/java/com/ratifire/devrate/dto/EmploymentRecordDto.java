@@ -1,7 +1,9 @@
 package com.ratifire.devrate.dto;
 
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDate;
+import jakarta.validation.constraints.Positive;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,14 +24,19 @@ public class EmploymentRecordDto {
   private Long id;
 
   @NotNull
-  private LocalDate startDate;
-
-  private LocalDate endDate;
+  @Positive
+  @Digits(integer = 4, fraction = 0, message = "Provide valid Year in the format YYYY")
+  private Integer startYear;
 
   @NotNull
+  @Positive
+  @Digits(integer = 4, fraction = 0, message = "Provide valid Year in the format YYYY")
+  private Integer endYear;
+
+  @NotBlank
   private String position;
 
-  @NotNull
+  @NotBlank
   private String companyName;
 
   private String description;

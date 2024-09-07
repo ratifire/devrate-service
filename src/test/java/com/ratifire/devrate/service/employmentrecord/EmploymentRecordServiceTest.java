@@ -45,8 +45,8 @@ class EmploymentRecordServiceTest {
   public void before() {
     employmentRecordDto = EmploymentRecordDto.builder()
         .id(employmentId)
-        .startDate(LocalDate.of(2023, 1, 1))
-        .endDate(LocalDate.of(2023, 11, 22))
+        .startYear(1997)
+        .endYear(1998)
         .position("Java Developer")
         .companyName("Example Company 4")
         .description("Worked on various projects")
@@ -55,8 +55,8 @@ class EmploymentRecordServiceTest {
 
     employmentRecord = EmploymentRecord.builder()
         .id(employmentId)
-        .startDate(LocalDate.of(2023, 1, 1))
-        .endDate(LocalDate.of(2023, 11, 22))
+        .startYear(1995)
+        .endYear(1996)
         .position("Java Developer")
         .companyName("Example Company 4")
         .description("Worked on various projects")

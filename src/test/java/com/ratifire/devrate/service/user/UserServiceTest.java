@@ -165,8 +165,8 @@ class UserServiceTest {
 
     employmentRecordDto = EmploymentRecordDto.builder()
         .id(1L)
-        .startDate(LocalDate.ofEpochDay(2023 - 01 - 01))
-        .endDate(LocalDate.ofEpochDay(2022 - 01 - 01))
+        .startYear(1997)
+        .endYear(1998)
         .position("Java Developer")
         .companyName("New Company")
         .description("Worked on various projects")
@@ -175,8 +175,8 @@ class UserServiceTest {
 
     employmentRecord = EmploymentRecord.builder()
         .id(1L)
-        .startDate(LocalDate.of(2023, 1, 1))
-        .endDate(LocalDate.of(2023, 11, 22))
+        .startYear(1998)
+        .endYear(1999)
         .position("Java Developer")
         .companyName("Example Company 4")
         .description("Worked on various projects")
