@@ -49,10 +49,10 @@ public class InterviewSummaryService {
    * @param participants list of users who participated in the interview
    */
   public void save(InterviewSummary summary, List<User> participants) {
-    participants.forEach(user -> user.getInterviewSummaries().add(summary));
-
-    userRepository.saveAll(participants);
     interviewSummaryRepository.save(summary);
+
+    participants.forEach(user -> user.getInterviewSummaries().add(summary));
+    userRepository.saveAll(participants);
   }
 
   /**
