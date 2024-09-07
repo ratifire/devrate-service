@@ -6,6 +6,8 @@ import com.ratifire.devrate.service.user.UserService;
 import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest.Payload.Meeting;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class InterviewCompletionService {
+
+  private static final Logger logger = LoggerFactory.getLogger(InterviewCompletionService.class);
 
   private final InterviewService interviewService;
   private final InterviewRequestService interviewRequestService;
@@ -31,7 +35,7 @@ public class InterviewCompletionService {
    */
   @Transactional
   public String completeInterviewProcess(Meeting meeting) {
-    System.out.println(meeting);
+    logger.info("Zoom webhook triggered meeting.ended - {}", meeting.toString());
     Interview interview = interviewService.getInterviewByMeetingId(Long.parseLong(meeting.getId()));
     interviewSummaryService.createInterviewSummary(interview, meeting.getEndTime());
     specializationService.updateUserInterviewCounts(interview);
