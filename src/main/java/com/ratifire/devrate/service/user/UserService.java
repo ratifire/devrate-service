@@ -736,9 +736,10 @@ public class UserService {
     InterviewRequestRole reviewerRole = interviewSummaryService.addComment(
         feedbackDto.getInterviewSummaryId(), reviewerId, feedbackDto.getComment());
 
-    skillService.updateMarks(feedbackDto.getSkills());
+    skillService.updateSkillMarksAfterGettingFeedback(feedbackDto.getSkills());
 
-    masteryService.updateMasteryMarks(feedbackDto.getEvaluatedMasteryId(), reviewerRole);
+    masteryService.updateMasteryAverageMarksAfterGettingFeedback(
+        feedbackDto.getEvaluatedMasteryId(), reviewerRole);
 
     //TODO implement removing the evaluation record (naming can be improved?) after feedback has
     // been successfully processed
