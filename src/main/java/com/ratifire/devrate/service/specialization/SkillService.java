@@ -2,6 +2,7 @@ package com.ratifire.devrate.service.specialization;
 
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.dto.SkillFeedbackDto;
+import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.enums.SkillType;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
@@ -13,7 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * The service responsible for managing user`s Skill.
@@ -25,6 +29,13 @@ public class SkillService {
   private final SkillRepository skillRepository;
   private final DataMapper<SkillDto, Skill> skillMapper;
   private final List<String> defaultSoftSkills;
+
+  private MasteryService masteryService;
+
+  @Autowired
+  public void setMasteryService(@Lazy MasteryService masteryService) {
+    this.masteryService = masteryService;
+  }
 
   /**
    * Retrieves Skill by ID.
@@ -50,12 +61,12 @@ public class SkillService {
   }
 
   /**
-   * Updates the marks for a list of skills based on the provided feedback.
+   * Updates the marks after getting feedback for a list of skills based on the provided feedback.
    *
    * @param skillFeedbackDtos a list of SkillFeedbackDto objects containing the skill IDs and their
    *                          corresponding new marks provided as feedback
    */
-  public void updateMarks(List<SkillFeedbackDto> skillFeedbackDtos) {
+  public void updateSkillMarksAfterGettingFeedback(List<SkillFeedbackDto> skillFeedbackDtos) {
     List<Long> skillIds = skillFeedbackDtos.stream()
         .map(SkillFeedbackDto::getId)
         .toList();
@@ -108,13 +119,24 @@ public class SkillService {
     skillRepository.save(skill);
   }
 
+
   /**
-   * Deletes skill by ID.
+   * Deletes a skill by its ID and updates the mastery average marks.
    *
-   * @param id the ID of the skill whose is to be deleted
+   * @param id the ID of the skill to be deleted
    */
+  @Transactional
   public void delete(long id) {
-    skillRepository.deleteById(id);
+    Mastery mastery = masteryService.findMasteryBySkillId(id);
+
+    mastery.getSkills().stream()
+        .filter(s -> s.getId() == id)
+        .findFirst()
+        .ifPresent(skill -> {
+          mastery.getSkills().remove(skill);
+          masteryService.refreshAverageMark(mastery, skill.getType());
+          masteryService.updateMastery(mastery);
+        });
   }
 
   /**
