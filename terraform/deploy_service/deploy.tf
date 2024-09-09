@@ -154,14 +154,3 @@ resource "aws_lb_target_group" "http_ecs_tg" {
     path                = "/actuator/health"
   }
 }
-
-resource "aws_lb_listener" "http_ecs_listener" {
-  load_balancer_arn = aws_lb.back_ecs_alb.arn
-  port              = var.back_port
-  protocol          = "HTTP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.http_ecs_tg.arn
-  }
-}
