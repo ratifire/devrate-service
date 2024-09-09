@@ -254,10 +254,6 @@ public class MasteryService {
   }
 
   private BigDecimal calculateAverageMark(List<Skill> skills) {
-    if (skills.isEmpty()) {
-      return BigDecimal.ZERO;
-    }
-
     BigDecimal sumAverageSkillsMarks = skills.stream()
         .map(Skill::getAverageMark)
         .reduce(BigDecimal.ZERO, BigDecimal::add);
