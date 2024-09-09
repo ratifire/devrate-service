@@ -17,12 +17,12 @@ SELECT * FROM (
     (8881, 'John', 'Rate', 'Java Back-End', 'Ukraine', 'Dnipro', true,
      'Dedicated and results-driven professional with extensive experience in software development and ' ||
      'project management. Proven track record in designing, implementing, and optimizing complex systems, ' ||
-     'and leading cross-functional teams to achieve project goals.', 11, 8),
+     'and leading cross-functional teams to achieve project goals.', 16, 18),
     (8882, 'Ratifire', 'First', 'ReactJS', 'Ukraine', 'Bila Tserkva', true,
      'Accomplished technology specialist with a robust background in software engineering and system architecture. ' ||
      'Expertise in developing scalable applications and integrating advanced technologies to drive ' ||
      'innovation and efficiency. Strong analytical and troubleshooting skills, with a history of successful ' ||
-     'project delivery and client satisfaction.', 13, 7)
+     'project delivery and client satisfaction.', 25, 9)
 ) AS new_users (id, first_name, last_name, status, country, city, is_subscribed, description,
                 completed_interviews, conducted_interviews)
 WHERE NOT EXISTS (SELECT 1
