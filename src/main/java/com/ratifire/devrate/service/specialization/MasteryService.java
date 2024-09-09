@@ -63,6 +63,16 @@ public class MasteryService {
   }
 
   /**
+   * Retrieves Mastery by Skill ID.
+   *
+   * @param skillId the ID of the Skill
+   * @return the Mastery as entity
+   */
+  public Mastery findMasteryBySkillId(long skillId) {
+    return masteryRepository.findMasteryBySkillId(skillId);
+  }
+
+  /**
    * Updates existing Mastery.
    *
    * @param mastery the updated Mastery
@@ -116,14 +126,14 @@ public class MasteryService {
    * @param masteryId the ID of the mastery to associate with the skill
    * @return the created skill information as a DTO
    */
-  public SkillDto createSkill(SkillDto skillDto,
-      long masteryId) {
+  public SkillDto createSkill(SkillDto skillDto, long masteryId) {
     Mastery mastery = getMasteryById(masteryId);
     existSkillByName(masteryId, skillDto.getName());
     Skill skill = skillMapper.toEntity(skillDto);
     skill.setAverageMark(BigDecimal.ZERO);
     mastery.getSkills().add(skill);
-    masteryRepository.save(mastery);
+    refreshMasteryAverageMark(mastery, skill.getType());
+    updateMastery(mastery);
     return skillMapper.toDto(skill);
   }
 
@@ -140,8 +150,29 @@ public class MasteryService {
     List<Skill> skills = skillMapper.toEntity(skillDtos);
     skills.forEach(skill -> skill.setAverageMark(BigDecimal.ZERO));
     mastery.getSkills().addAll(skills);
-    masteryRepository.save(mastery);
+    refreshMasteryAverageMark(mastery, skillDtos.get(0).getType());
+    updateMastery(mastery);
     return skillMapper.toDto(skills);
+  }
+
+  /**
+   * Recalculates and updates the average mark for a mastery based on the specified type of skills.
+   *
+   * @param mastery   the mastery whose average mark should be refreshed
+   * @param skillType the type of skills (soft or hard) to consider for the average mark
+   */
+  public void refreshMasteryAverageMark(Mastery mastery, SkillType skillType) {
+    List<Skill> skills = mastery.getSkills().stream()
+        .filter(s -> s.getType() == skillType)
+        .toList();
+
+    BigDecimal newAverageMark = calculateAverageMark(skills);
+
+    if (skillType == SkillType.SOFT_SKILL) {
+      mastery.setSoftSkillMark(newAverageMark);
+    } else {
+      mastery.setHardSkillMark(newAverageMark);
+    }
   }
 
   /**
@@ -196,14 +227,15 @@ public class MasteryService {
   }
 
   /**
-   * Updates the mastery marks for both soft and potentially hard skills based on the role of the
-   * reviewer.
+   * Updates the mastery marks after getting feedback for both soft and potentially hard skills
+   * based on the role of the reviewer.
    *
    * @param masteryId    The ID of the Mastery entity to be updated.
    * @param reviewerRole The role of the reviewer, which determines whether hard skills should also
    *                     be updated.
    */
-  public void updateMasteryMarks(long masteryId, InterviewRequestRole reviewerRole) {
+  public void updateMasteryAverageMarksAfterGettingFeedback(long masteryId,
+      InterviewRequestRole reviewerRole) {
     Mastery mastery = getMasteryById(masteryId);
 
     BigDecimal updatedSoftSkillMark = calculateAverageMark(

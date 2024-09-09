@@ -17,12 +17,12 @@ SELECT * FROM (
     (8881, 'John', 'Rate', 'Java Back-End', 'Ukraine', 'Dnipro', true,
      'Dedicated and results-driven professional with extensive experience in software development and ' ||
      'project management. Proven track record in designing, implementing, and optimizing complex systems, ' ||
-     'and leading cross-functional teams to achieve project goals.', 11, 8),
+     'and leading cross-functional teams to achieve project goals.', 16, 18),
     (8882, 'Ratifire', 'First', 'ReactJS', 'Ukraine', 'Bila Tserkva', true,
      'Accomplished technology specialist with a robust background in software engineering and system architecture. ' ||
      'Expertise in developing scalable applications and integrating advanced technologies to drive ' ||
      'innovation and efficiency. Strong analytical and troubleshooting skills, with a history of successful ' ||
-     'project delivery and client satisfaction.', 13, 7)
+     'project delivery and client satisfaction.', 25, 9)
 ) AS new_users (id, first_name, last_name, status, country, city, is_subscribed, description,
                 completed_interviews, conducted_interviews)
 WHERE NOT EXISTS (SELECT 1
@@ -162,18 +162,18 @@ WHERE NOT EXISTS (SELECT 1
 INSERT INTO masteries (id, level, soft_skill_mark, hard_skill_mark, specialization_id)
 SELECT * FROM (
 VALUES
-    (10001, 1, 5.31, 6.73, 6661),
-    (10002, 2, 8.12, 5.25, 6661),
-    (10003, 3, 8.83, 9.46, 6661),
-    (10004, 1, 4.22, 5.01, 6662),
-    (10005, 2, 7.32, 9.23, 6662),
-    (10006, 3, 9.63, 8.16, 6662),
-    (10007, 1, 6.45, 7.82, 6663),
-    (10008, 2, 8.21, 6.58, 6663),
-    (10009, 3, 7.94, 9.31, 6663),
-    (10010, 1, 5.67, 4.89, 6664),
-    (10011, 2, 9.12, 8.47, 6664),
-    (10012, 3, 8.59, 7.63, 6664)
+    (10001, 1, 8.18, 5.75, 6661),
+    (10002, 2, 7.66, 4.92, 6661),
+    (10003, 3, 7.09, 6.02, 6661),
+    (10004, 1, 7.25, 7.50, 6662),
+    (10005, 2, 7.91, 7.61, 6662),
+    (10006, 3, 7.47, 7.90, 6662),
+    (10007, 1, 7.91, 7.75, 6663),
+    (10008, 2, 7.92, 8.07, 6663),
+    (10009, 3, 7.38, 7.78, 6663),
+    (10010, 1, 7.40, 8.07, 6664),
+    (10011, 2, 7.89, 8.11, 6664),
+    (10012, 3, 7.89, 8.23, 6664)
 ) AS masteries (id, level, soft_skill_mark, hard_skill_mark, specialization_id)
 WHERE NOT EXISTS (SELECT 1
                   FROM masteries
