@@ -163,11 +163,11 @@ resource "aws_lb_listener" "http_ecs_listener" {
   default_action {
     type = "redirect"
     redirect {
-      host              = "devrate.org"
-      path              = "/#{path}"
-      port              = "443"
-      protocol          = "HTTPS"
-      status_code       = "HTTP_301"
+      host        = "devrate.org"
+      path        = "/#{path}"
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
     }
   }
 }
