@@ -119,7 +119,7 @@ resource "aws_ecs_service" "back_services" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.ecs_tg.arn
+    target_group_arn = aws_lb_target_group.https_ecs_tg.arn
     container_name   = var.back_container_name
     container_port   = var.back_port
   }
@@ -141,8 +141,8 @@ resource "aws_lb" "back_ecs_alb" {
 
 }
 
-resource "aws_lb_target_group" "ecs_tg" {
-  name     = "ecs-tg"
+resource "aws_lb_target_group" "http_ecs_tg" {
+  name     = "http-ecs-tg"
   port     = var.back_port
   protocol = "HTTP"
   vpc_id   = data.aws_vpcs.all_vpcs.ids[0]
@@ -155,13 +155,13 @@ resource "aws_lb_target_group" "ecs_tg" {
   }
 }
 
-resource "aws_lb_listener" "ecs_listener" {
+resource "aws_lb_listener" "http_ecs_listener" {
   load_balancer_arn = aws_lb.back_ecs_alb.arn
   port              = var.back_port
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.ecs_tg.arn
+    target_group_arn = aws_lb_target_group.http_ecs_tg.arn
   }
 }

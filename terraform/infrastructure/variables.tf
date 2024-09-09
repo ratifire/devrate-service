@@ -20,7 +20,7 @@ variable "repository_name" {
 
 variable "list_of_ports" {
   description = "The list of ports the app will use for each other"
-  default     = ["22", "80", "3000", "8080", "5432"]
+  default     = ["22", "80", "3000", "8080", "5432", "443"]
 }
 
 variable "cidr_blocks" {
