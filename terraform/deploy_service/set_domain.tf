@@ -1,7 +1,7 @@
 
 resource "aws_route53_record" "back_a_record" {
   zone_id = data.aws_route53_zone.dns_back_zone.zone_id
-  name    = "devrate.org"
+  name    = "app.devrate.org"
   type    = "A"
 
   alias {
