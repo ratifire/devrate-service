@@ -1,10 +1,6 @@
-resource "aws_route53_zone" "devrate_zone" {
-  name = "devrate.org"
-}
 
-
-resource "aws_route53_record" "devrate_record" {
-  zone_id = aws_route53_zone.devrate_zone.zone_id
+resource "aws_route53_record" "back_a_record" {
+  zone_id = data.aws_route53_zone.dns_back_zone.zone_id
   name    = "devrate.org"
   type    = "A"
 

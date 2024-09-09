@@ -72,3 +72,7 @@ data "aws_lb" "lb" {
   name       = aws_lb.back_ecs_alb.name
   depends_on = [aws_lb.back_ecs_alb]
 }
+
+data "aws_route53_zone" "dns_back_zone" {
+  name = "devrate.org"
+}
