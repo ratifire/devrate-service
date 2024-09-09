@@ -119,9 +119,9 @@ resource "aws_ecs_service" "back_services" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.http_ecs_tg.arn
+    target_group_arn = aws_lb_target_group.https_ecs_tg.arn
     container_name   = var.back_container_name
-    container_port   = var.back_port
+    container_port   = 443
   }
   ordered_placement_strategy {
     type  = "spread"
