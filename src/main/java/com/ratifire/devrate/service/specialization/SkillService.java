@@ -134,7 +134,7 @@ public class SkillService {
         .findFirst()
         .ifPresent(skill -> {
           mastery.getSkills().remove(skill);
-          masteryService.refreshAverageMark(mastery, skill.getType());
+          masteryService.refreshMasteryAverageMark(mastery, skill.getType());
           masteryService.updateMastery(mastery);
         });
   }

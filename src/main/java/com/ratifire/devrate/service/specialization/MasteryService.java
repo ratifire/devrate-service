@@ -132,7 +132,7 @@ public class MasteryService {
     Skill skill = skillMapper.toEntity(skillDto);
     skill.setAverageMark(BigDecimal.ZERO);
     mastery.getSkills().add(skill);
-    refreshAverageMark(mastery, skill.getType());
+    refreshMasteryAverageMark(mastery, skill.getType());
     updateMastery(mastery);
     return skillMapper.toDto(skill);
   }
@@ -150,7 +150,7 @@ public class MasteryService {
     List<Skill> skills = skillMapper.toEntity(skillDtos);
     skills.forEach(skill -> skill.setAverageMark(BigDecimal.ZERO));
     mastery.getSkills().addAll(skills);
-    refreshAverageMark(mastery, skillDtos.get(0).getType());
+    refreshMasteryAverageMark(mastery, skillDtos.get(0).getType());
     updateMastery(mastery);
     return skillMapper.toDto(skills);
   }
@@ -161,7 +161,7 @@ public class MasteryService {
    * @param mastery   the mastery whose average mark should be refreshed
    * @param skillType the type of skills (soft or hard) to consider for the average mark
    */
-  public void refreshAverageMark(Mastery mastery, SkillType skillType) {
+  public void refreshMasteryAverageMark(Mastery mastery, SkillType skillType) {
     List<Skill> skills = mastery.getSkills().stream()
         .filter(s -> s.getType() == skillType)
         .toList();
