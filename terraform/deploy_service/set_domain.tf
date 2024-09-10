@@ -1,5 +1,5 @@
 resource "aws_acm_certificate" "devrate_cert" {
-  domain_name       = "devrate.org"
+  domain_name       = var.domain_name
   validation_method = "DNS"
 }
 
@@ -19,7 +19,7 @@ resource "aws_lb_listener" "https_ecs_listener" {
 
 resource "aws_route53_record" "sub_a_record" {
   zone_id = data.aws_route53_zone.dns_back_zone.zone_id
-  name    = "back.devrate.org"
+  name    = var.subdomain_name
   type    = "A"
   alias {
     name                   = aws_lb.back_ecs_alb.dns_name

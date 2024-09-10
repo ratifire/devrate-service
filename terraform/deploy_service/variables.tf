@@ -31,3 +31,13 @@ variable "back_port" {
   description = "Port number on which back service is listening"
   default     = 8080
 }
+
+variable "subdomain_name" {
+  description = "Subdomain name"
+  default     = "server.devrate.org"
+}
+
+variable "domain_name" {
+  description = "Domain name"
+  default     = "devrate.org"
+}
