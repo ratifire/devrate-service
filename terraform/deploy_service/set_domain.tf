@@ -24,8 +24,8 @@ resource "aws_route53_record" "back_aaaa_record" {
 
 
 resource "aws_acm_certificate" "devrate_cert" {
-  domain_name               = "devrate.org"
-  validation_method         = "DNS"
+  domain_name       = "devrate.org"
+  validation_method = "DNS"
 }
 
 
