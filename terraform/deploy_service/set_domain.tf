@@ -29,3 +29,17 @@ resource "aws_lb_listener" "https_ecs_listener" {
   }
 }
 
+
+resource "aws_route53_record" "sub_a_record" {
+  zone_id = data.aws_route53_zone.dns_back_zone.zone_id
+  name    = "back.devrate.org"
+  type    = "A"
+  ttl     = 30
+  alias {
+    name                   = aws_lb.back_ecs_alb.dns_name
+    zone_id                = aws_lb.back_ecs_alb.zone_id
+    evaluate_target_health = true
+  }
+  depends_on = [aws_route53_record.back_a_record]
+}
+
