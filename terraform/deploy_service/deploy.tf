@@ -163,7 +163,7 @@ resource "aws_lb_listener" "http_ecs_listener" {
   default_action {
     type = "redirect"
     redirect {
-      host        = "devrate.org"
+      host        = var.subdomain_name
       path        = "/#{path}"
       port        = "443"
       protocol    = "HTTPS"
