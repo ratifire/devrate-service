@@ -1,7 +1,7 @@
 
 resource "aws_route53_record" "back_a_record" {
   zone_id = data.aws_route53_zone.dns_back_zone.zone_id
-  name    = "devrate.org"
+  name    = "back.devrate.org"
   type    = "A"
 
   alias {
@@ -14,6 +14,7 @@ resource "aws_route53_record" "back_a_record" {
 
 resource "aws_acm_certificate" "devrate_cert" {
   domain_name       = "devrate.org"
+  subject_alternative_names = ["back.devrate.org"]
   validation_method = "DNS"
 }
 
