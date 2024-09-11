@@ -119,7 +119,7 @@ resource "aws_ecs_service" "back_services" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.http_ecs_tg.arn
+    target_group_arn = aws_lb_target_group.http_ecs_back_tg.arn
     container_name   = var.back_container_name
     container_port   = var.back_port
   }
@@ -133,7 +133,7 @@ resource "aws_ecs_service" "back_services" {
 }
 
 resource "aws_lb" "back_ecs_alb" {
-  name               = "ecs-alb"
+  name               = "ecs-back-alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [data.aws_security_group.vpc_backend_security_group.id]
@@ -141,8 +141,8 @@ resource "aws_lb" "back_ecs_alb" {
 
 }
 
-resource "aws_lb_target_group" "http_ecs_tg" {
-  name     = "http-ecs-tg"
+resource "aws_lb_target_group" "http_ecs_back_tg" {
+  name     = "http-ecs-back-tg"
   port     = var.back_port
   protocol = "HTTP"
   vpc_id   = data.aws_vpcs.all_vpcs.ids[0]
@@ -155,7 +155,7 @@ resource "aws_lb_target_group" "http_ecs_tg" {
   }
 }
 
-resource "aws_lb_listener" "http_ecs_listener" {
+resource "aws_lb_listener" "http_ecs_back_listener" {
   load_balancer_arn = aws_lb.back_ecs_alb.arn
   port              = var.back_port
   protocol          = "HTTP"
