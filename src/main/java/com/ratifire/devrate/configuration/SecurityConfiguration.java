@@ -88,7 +88,8 @@ public class SecurityConfiguration {
   @ConditionalOnProperty(prefix = "cors", name = "enabled", havingValue = "false")
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(List.of("https://devrate.org"));
+    configuration.setAllowedOrigins(
+        List.of("http://localhost:3000", "https://devrate.org", "http://devrate.org"));
     configuration.setAllowedMethods(List.of("*"));
     configuration.setAllowedHeaders(List.of("*"));
     configuration.setAllowCredentials(true);
