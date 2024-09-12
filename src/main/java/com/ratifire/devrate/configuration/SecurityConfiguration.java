@@ -109,7 +109,7 @@ public class SecurityConfiguration {
     return new ServletContextInitializer() {
       @Override
       public void onStartup(ServletContext servletContext) throws ServletException {
-        servletContext.getSessionCookieConfig().setDomain("*.devrate.org");
+        servletContext.getSessionCookieConfig().setDomain(".devrate.org");
         servletContext.getSessionCookieConfig().setPath("/");
       }
     };
