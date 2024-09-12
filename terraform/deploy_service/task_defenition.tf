@@ -81,7 +81,7 @@ resource "aws_ecs_task_definition" "task_definition" {
   requires_compatibilities = [
     "EC2"
   ]
-  cpu    = "1024"
+  cpu    = "2048"
   memory = "923"
   runtime_platform {
     operating_system_family = "LINUX"
