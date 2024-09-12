@@ -1,6 +1,14 @@
 package com.ratifire.devrate.configuration;
 
 import com.ratifire.devrate.service.authorization.ResourceOwnerVerifier;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,6 +104,33 @@ public class SecurityConfiguration {
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
     return source;
+  }
+
+  /**
+   * Configures SameSite.
+   */
+  @Bean
+  public Filter cookieFilter() {
+    return new Filter() {
+      @Override
+      public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+          throws IOException, ServletException {
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
+
+        httpResponse.setHeader("Set-Cookie",
+            "cookieName=cookieValue; SameSite=None; Secure; HttpOnly");
+
+        chain.doFilter(request, response);
+      }
+
+      @Override
+      public void init(FilterConfig filterConfig) throws ServletException {
+      }
+
+      @Override
+      public void destroy() {
+      }
+    };
   }
 
   @Autowired
