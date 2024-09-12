@@ -107,7 +107,7 @@ public class SecurityConfiguration {
   }
 
   /**
-   * Configures SameSite
+   * Configures SameSite.
    */
   @Bean
   public Filter cookieFilter() {
@@ -132,7 +132,6 @@ public class SecurityConfiguration {
       }
     };
   }
-
 
   @Autowired
   public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
