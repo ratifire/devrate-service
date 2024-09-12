@@ -1,15 +1,12 @@
 package com.ratifire.devrate.configuration;
 
 import com.ratifire.devrate.service.authorization.ResourceOwnerVerifier;
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -92,7 +89,7 @@ public class SecurityConfiguration {
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(
-        List.of("http://localhost:3000", "https://devrate.org", "http://devrate.org"));
+        List.of("http://localhost:3000", "https://devrate.org"));
     configuration.setAllowedMethods(List.of("*"));
     configuration.setAllowedHeaders(List.of("*"));
     configuration.setAllowCredentials(true);
@@ -100,21 +97,6 @@ public class SecurityConfiguration {
     source.registerCorsConfiguration("/**", configuration);
     return source;
   }
-
-  /**
-   * Configures cookies.
-   */
-  @Bean
-  public ServletContextInitializer servletContextInitializer() {
-    return new ServletContextInitializer() {
-      @Override
-      public void onStartup(ServletContext servletContext) throws ServletException {
-        servletContext.getSessionCookieConfig().setDomain(".devrate.org");
-        servletContext.getSessionCookieConfig().setPath("/");
-      }
-    };
-  }
-
 
   @Autowired
   public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
