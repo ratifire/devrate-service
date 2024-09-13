@@ -10,6 +10,7 @@ import com.ratifire.devrate.repository.MasteryRepository;
 import com.ratifire.devrate.repository.NotificationRepository;
 import com.ratifire.devrate.repository.SkillRepository;
 import com.ratifire.devrate.repository.SpecializationRepository;
+import com.ratifire.devrate.repository.interview.InterviewFeedbackDetailRepository;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
 import jakarta.annotation.PostConstruct;
 import java.util.List;
@@ -36,6 +37,7 @@ public class ResourceAuthorizationService {
   private final SkillRepository skillRepository;
   private final InterviewSummaryRepository interviewSummaryRepository;
   private final InterviewRepository interviewRepository;
+  private final InterviewFeedbackDetailRepository interviewFeedbackDetailRepository;
   private final Map<String, ResourceOwnerVerifier> resourceTypeToOwnerVerifier;
 
 
@@ -54,6 +56,8 @@ public class ResourceAuthorizationService {
     resourceTypeToOwnerVerifier.put("skills", this::isSkillOwnedByUser);
     resourceTypeToOwnerVerifier.put("interview-summaries", this::isInterviewSummaryOwnedByUser);
     resourceTypeToOwnerVerifier.put("interviews", this::isInterviewOwnedByUser);
+    resourceTypeToOwnerVerifier.put("interviewFeedbackDetails",
+        this::isInterviewFeedbackDetailOwnedByUser);
   }
 
   /**
@@ -138,6 +142,14 @@ public class ResourceAuthorizationService {
           return interviewerId == loggedUserId || candidateId == loggedUserId;
         })
         .orElse(false);
+  }
+
+  private boolean isInterviewFeedbackDetailOwnedByUser(long interviewFeedbackDetailId,
+      long loggedUserId) {
+    Optional<Long> ownerUserId =
+        interviewFeedbackDetailRepository.findUserIdByInterviewFeedbackDetailId(
+            interviewFeedbackDetailId);
+    return ownerUserId.isPresent() && ownerUserId.get().equals(loggedUserId);
   }
 
   /**
