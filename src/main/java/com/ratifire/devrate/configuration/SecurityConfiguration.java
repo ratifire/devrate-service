@@ -1,12 +1,21 @@
 package com.ratifire.devrate.configuration;
 
 import com.ratifire.devrate.service.authorization.ResourceOwnerVerifier;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -24,7 +33,6 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.boot.web.servlet.ServletContextInitializer;
 
 /**
  * Configuration class for security settings.
@@ -116,9 +124,37 @@ public class SecurityConfiguration {
   @Bean
   public ServletContextInitializer servletContextInitializer() {
     return servletContext -> {
-      servletContext.getSessionCookieConfig().setDomain(".devrate.org");
+      servletContext.getSessionCookieConfig().setDomain("devrate.org");
       servletContext.getSessionCookieConfig().setPath("/");
     };
   }
+
+//  @Bean
+//  public Filter cookieFilter() {
+//    return new Filter() {
+//      @Override
+//      public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+//          throws IOException, ServletException {
+//        HttpServletResponse httpResponse = (HttpServletResponse) response;
+//
+//        // Обрабатываем только куки, если они есть
+//        httpResponse.setHeader("Set-Cookie",
+//            "cookieName=cookieValue; SameSite=None; Secure; HttpOnly");
+//
+//        chain.doFilter(request, response);
+//      }
+//
+//      // Оставляем методы init и destroy пустыми
+//      @Override
+//      public void init(FilterConfig filterConfig) throws ServletException {
+//      }
+//
+//      @Override
+//      public void destroy() {
+//      }
+//    };
+//  }
+
+
 
 }
