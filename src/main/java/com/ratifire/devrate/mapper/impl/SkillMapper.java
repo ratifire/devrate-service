@@ -1,8 +1,10 @@
 package com.ratifire.devrate.mapper.impl;
 
 import com.ratifire.devrate.dto.SkillDto;
+import com.ratifire.devrate.dto.SkillShortDto;
 import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.mapper.DataMapper;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -23,4 +25,8 @@ public abstract class SkillMapper implements DataMapper<SkillDto, Skill> {
       @MappingTarget Skill skill);
 
   public abstract SkillDto toDto(Skill skill);
+
+  public abstract List<SkillShortDto> toSkillShortDtos(List<Skill> skills);
+
+  public abstract SkillShortDto toSkillShortDto(Skill skill);
 }
