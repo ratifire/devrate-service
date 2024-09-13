@@ -107,32 +107,6 @@ public class SecurityConfiguration {
     return source;
   }
 
-  /**
-   * Configures SameSite.
-   */
-  @Bean
-  public Filter cookieFilter() {
-    return new Filter() {
-      @Override
-      public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-          throws IOException, ServletException {
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
-
-        httpResponse.setHeader("Set-Cookie",
-            "cookieName=cookieValue; SameSite=None; Secure; HttpOnly");
-
-        chain.doFilter(request, response);
-      }
-
-      @Override
-      public void init(FilterConfig filterConfig) throws ServletException {
-      }
-
-      @Override
-      public void destroy() {
-      }
-    };
-  }
 
   @Autowired
   public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
