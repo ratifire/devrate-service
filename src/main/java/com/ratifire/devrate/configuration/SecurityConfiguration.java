@@ -97,7 +97,8 @@ public class SecurityConfiguration {
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(
-        List.of("http://localhost:3000", "https://devrate.org"));
+        List.of("http://localhost:3000", "https://devrate.org", "wss://devrate.org",
+            "ws://devrate.org", "wss://server.devrate.org", "ws://server.devrate.org"));
     configuration.setAllowedMethods(List.of("*"));
     configuration.setAllowedHeaders(List.of("*"));
     configuration.setAllowCredentials(true);
