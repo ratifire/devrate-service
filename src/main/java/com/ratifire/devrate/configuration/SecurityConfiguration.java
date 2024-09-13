@@ -24,6 +24,7 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
 
 /**
  * Configuration class for security settings.
@@ -111,4 +112,13 @@ public class SecurityConfiguration {
   public Map<String, ResourceOwnerVerifier> resourceTypeToOwnerVerifier() {
     return new HashMap<>();
   }
+
+  @Bean
+  public ServletContextInitializer servletContextInitializer() {
+    return servletContext -> {
+      servletContext.getSessionCookieConfig().setDomain(".devrate.org");
+      servletContext.getSessionCookieConfig().setPath("/");
+    };
+  }
+
 }
