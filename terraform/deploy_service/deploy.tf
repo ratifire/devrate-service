@@ -154,20 +154,3 @@ resource "aws_lb_target_group" "http_ecs_back_tg" {
     path                = "/actuator/health"
   }
 }
-
-resource "aws_lb_listener" "http_ecs_back_listener" {
-  load_balancer_arn = aws_lb.back_ecs_alb.arn
-  port              = var.back_port
-  protocol          = "HTTP"
-
-  default_action {
-    type = "redirect"
-    redirect {
-      host        = var.subdomain_name
-      path        = "/#{path}"
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
-  }
-}
