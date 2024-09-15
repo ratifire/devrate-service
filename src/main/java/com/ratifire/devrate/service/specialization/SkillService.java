@@ -49,6 +49,17 @@ public class SkillService {
   }
 
   /**
+   * Finds and returns a list of skills by their IDs.
+   *
+   * @param ids the list of skill IDs to retrieve
+   * @return a list of Skill entities corresponding to the given IDs
+   * @throws ResourceNotFoundException if any of the skills with the given IDs are not found
+   */
+  public List<Skill> findAllById(List<Long> ids) {
+    return skillRepository.findAllById(ids);
+  }
+
+  /**
    * Retrieves Skill by ID.
    *
    * @param id the ID of the Skill

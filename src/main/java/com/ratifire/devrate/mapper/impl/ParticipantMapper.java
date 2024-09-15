@@ -1,6 +1,6 @@
 package com.ratifire.devrate.mapper.impl;
 
-import com.ratifire.devrate.dto.EventDto.ParticipantDto;
+import com.ratifire.devrate.dto.ParticipantDto;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.mapper.DataMapper;

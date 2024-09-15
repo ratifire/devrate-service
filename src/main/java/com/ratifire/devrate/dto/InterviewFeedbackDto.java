@@ -17,13 +17,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class FeedbackDto {
+public class InterviewFeedbackDto {
 
   @NotNull
   private long interviewSummaryId;
 
   @NotNull
-  private long evaluatedMasteryId;
+  private long interviewFeedbackDetailId;
 
   private String comment;
 
