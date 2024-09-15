@@ -2,10 +2,15 @@ package com.ratifire.devrate.util.websocket;
 
 import com.ratifire.devrate.exception.WebSocketSessionNotFoundException;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 /**
@@ -76,5 +81,24 @@ public class WebSocketSessionRegistry {
    */
   public boolean isExistAndOpen(WebSocketSession session) {
     return session != null && session.isOpen();
+  }
+
+  @Scheduled(fixedRate = 30000)
+  private void sendPeriodicMessages() {
+    String currentDateTime = DateTimeFormatter.ISO_INSTANT
+        .withZone(ZoneId.of("UTC"))
+        .format(Instant.now());
+
+    String message = String.format("[{\"text\": \"I'm alive, timestamp: %s\"}]", currentDateTime);
+
+    sessions.values().forEach(sessions -> sessions.forEach(session -> {
+      if (isExistAndOpen(session)) {
+        try {
+          session.sendMessage(new TextMessage(message));
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+    }));
   }
 }
