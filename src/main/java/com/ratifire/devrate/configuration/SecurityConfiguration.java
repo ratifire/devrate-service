@@ -99,8 +99,7 @@ public class SecurityConfiguration {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(
         List.of("http://localhost:3000", "https://devrate.org", "wss://devrate.org",
-            "ws://devrate.org", "wss://server.devrate.org", "ws://server.devrate.org",
-            "http://16.170.216.121:3000", "http://13.60.229.131:3000"));
+            "ws://devrate.org", "wss://server.devrate.org", "ws://server.devrate.org"));
     configuration.setAllowedMethods(List.of("*"));
     configuration.setAllowedHeaders(List.of("*"));
     configuration.setAllowCredentials(true);
@@ -128,33 +127,4 @@ public class SecurityConfiguration {
       servletContext.getSessionCookieConfig().setPath("/");
     };
   }
-
-//  @Bean
-//  public Filter cookieFilter() {
-//    return new Filter() {
-//      @Override
-//      public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-//          throws IOException, ServletException {
-//        HttpServletResponse httpResponse = (HttpServletResponse) response;
-//
-//        // Обрабатываем только куки, если они есть
-//        httpResponse.setHeader("Set-Cookie",
-//            "cookieName=cookieValue; SameSite=None; Secure; HttpOnly");
-//
-//        chain.doFilter(request, response);
-//      }
-//
-//      // Оставляем методы init и destroy пустыми
-//      @Override
-//      public void init(FilterConfig filterConfig) throws ServletException {
-//      }
-//
-//      @Override
-//      public void destroy() {
-//      }
-//    };
-//  }
-
-
-
 }
