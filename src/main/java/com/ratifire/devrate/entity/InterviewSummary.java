@@ -39,9 +39,9 @@ public class InterviewSummary {
   @Column(name = "interviewer_id", nullable = false)
   private long interviewerId;
 
-  @Column(name = "candidate_comment")
+  @Column(name = "candidate_comment", length = 500)
   private String candidateComment;
 
-  @Column(name = "interviewer_comment")
+  @Column(name = "interviewer_comment", length = 500)
   private String interviewerComment;
 }

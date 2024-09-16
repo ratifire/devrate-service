@@ -1,0 +1,12 @@
+type: object
+properties:
+  interviewStartTime:
+    type: string
+    description: Date and time when the interview was started
+  participant:
+    $ref: './ParticipantDto.yaml'
+  skills:
+    type: array
+    description: The list of skills that will be evaluated
+    items:
+      $ref: './SkillShortDto.yaml'
