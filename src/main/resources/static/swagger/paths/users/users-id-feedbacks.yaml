@@ -1,0 +1,25 @@
+post:
+  tags:
+    - Interview Feedback
+  summary: Add an interview feedback to evaluate opposite interview participant
+  description: Adds an interview feedback to evaluate opposite interview participant
+  parameters:
+    - in: path
+      name: reviewerId
+      description: ID of the user who evaluates
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    description: Interview feedback data
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/InterviewFeedbackDto.yaml'
+  responses:
+    '200':
+      description: Interview feedback created successfully
+    '400':
+      description: Bad Request. The request cannot be fulfilled due to bad syntax
