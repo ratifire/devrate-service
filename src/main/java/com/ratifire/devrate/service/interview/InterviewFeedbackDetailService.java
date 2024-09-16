@@ -12,10 +12,12 @@ import com.ratifire.devrate.exception.InterviewFeedbackDetailNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.interview.InterviewFeedbackDetailRepository;
 import com.ratifire.devrate.service.specialization.SkillService;
+import jakarta.transaction.Transactional;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,6 +27,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class InterviewFeedbackDetailService {
 
+  private static final long CLEANUP_INTERVAL = 2592000000L; // 30 days in milliseconds
+  private static final int RECORD_RETENTION_PERIOD_IN_MONTHS = 1;
   private final InterviewFeedbackDetailRepository interviewFeedbackDetailRepository;
   private final DataMapper<InterviewFeedbackDetailDto, InterviewFeedbackDetail>
       interviewFeedbackDetailMapper;
@@ -118,5 +122,22 @@ public class InterviewFeedbackDetailService {
    */
   public void deleteById(long id) {
     interviewFeedbackDetailRepository.deleteById(id);
+  }
+
+  /**
+   * Scheduled task to delete expired interview feedback details from the database.
+   *
+   * <p>This method runs periodically based on the {@code CLEANUP_INTERVAL} to remove records
+   * from the {@code interview_feedback_details} table where the interview start time is older than
+   * the specified {@code RECORD_RETENTION_PERIOD_IN_MONTHS}.
+   */
+  @Transactional
+  @Scheduled(fixedRate = CLEANUP_INTERVAL, initialDelay = 86400000) // initialDelay parameter is
+  // only for development phase, before release it must be removed
+  public void deleteExpiredInterviewFeedbackDetailsTask() {
+    ZonedDateTime expiredRecordsCutoffDate = ZonedDateTime.now()
+        .minusMonths(RECORD_RETENTION_PERIOD_IN_MONTHS);
+
+    interviewFeedbackDetailRepository.deleteExpiredFeedbackDetails(expiredRecordsCutoffDate);
   }
 }
