@@ -258,6 +258,10 @@ public class MasteryService {
         .map(Skill::getAverageMark)
         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+    if (skills.isEmpty()) {
+      return BigDecimal.ZERO;
+    }
+
     return sumAverageSkillsMarks.divide(BigDecimal.valueOf(skills.size()), 2,
         RoundingMode.HALF_UP);
   }

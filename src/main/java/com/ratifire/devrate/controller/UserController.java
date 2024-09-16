@@ -6,7 +6,7 @@ import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.EventDto;
-import com.ratifire.devrate.dto.FeedbackDto;
+import com.ratifire.devrate.dto.InterviewFeedbackDto;
 import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
@@ -410,10 +410,12 @@ public class UserController {
     return userService.findEventsFromDateTime(userId, from);
   }
 
-  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#reviewerId)")
+  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#reviewerId) && "
+      + "@resourceAuthorizationService.isResourceOwnedByLoggedUser('interviewFeedbackDetails' ,"
+      + " #interviewFeedbackDto.interviewFeedbackDetailId)")
   @PostMapping("/{reviewerId}/feedbacks")
   public void saveFeedback(@PathVariable long reviewerId,
-      @Valid @RequestBody FeedbackDto feedbackDto) {
-    userService.saveFeedback(reviewerId, feedbackDto);
+      @Valid @RequestBody InterviewFeedbackDto interviewFeedbackDto) {
+    userService.saveFeedback(reviewerId, interviewFeedbackDto);
   }
 }

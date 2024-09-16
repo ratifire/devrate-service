@@ -5,6 +5,7 @@ import com.ratifire.devrate.service.specialization.SpecializationService;
 import com.ratifire.devrate.service.user.UserService;
 import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest.Payload.Meeting;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ public class InterviewCompletionService {
   private final InterviewService interviewService;
   private final InterviewRequestService interviewRequestService;
   private final InterviewSummaryService interviewSummaryService;
+  private final InterviewFeedbackDetailService interviewFeedbackDetailService;
   private final SpecializationService specializationService;
   private final UserService userService;
 
@@ -37,12 +39,16 @@ public class InterviewCompletionService {
   public String completeInterviewProcess(Meeting meeting) {
     logger.info("Zoom webhook triggered meeting.ended - {}", meeting.toString());
     Interview interview = interviewService.getInterviewByMeetingId(Long.parseLong(meeting.getId()));
-    interviewSummaryService.createInterviewSummary(interview, meeting.getEndTime());
+    long interviewSummaryId = interviewSummaryService.createInterviewSummary(interview,
+        meeting.getEndTime());
+    Map<String, Long> interviewFeedbackDetailId =
+        interviewFeedbackDetailService.saveInterviewFeedbackDetail(interview, interviewSummaryId);
     specializationService.updateUserInterviewCounts(interview);
     userService.refreshUserInterviewCounts(List.of(interview.getInterviewerRequest().getUser(),
         interview.getCandidateRequest().getUser()));
     //TODO: add logic for sending notifications to users (candidate and interviewer)
-    // about the interview feedback
+    // about the interview feedback (need to transmit to front-end the next parameters:
+    // interviewSummaryId, interviewFeedbackDetailId) )
     interviewService.deleteInterview(interview.getId());
     interviewRequestService.deleteInterviewRequests(
         List.of(interview.getInterviewerRequest().getId(),

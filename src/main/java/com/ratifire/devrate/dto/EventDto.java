@@ -1,7 +1,6 @@
 package com.ratifire.devrate.dto;
 
 import com.ratifire.devrate.enums.EventType;
-import com.ratifire.devrate.enums.InterviewRequestRole;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -33,17 +32,4 @@ public class EventDto {
   private List<ParticipantDto> participantDtos;
   private ZonedDateTime startTime;
 
-  /**
-   * Data Transfer Object representing the participant data of the calendar event.
-   */
-  @Builder
-  @Getter
-  @NoArgsConstructor
-  @AllArgsConstructor
-  public static class ParticipantDto {
-    private String name;
-    private String surname;
-    private String status;
-    private InterviewRequestRole role;
-  }
 }

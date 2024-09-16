@@ -8,11 +8,12 @@ import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.EventDto;
-import com.ratifire.devrate.dto.FeedbackDto;
+import com.ratifire.devrate.dto.InterviewFeedbackDto;
 import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
+import com.ratifire.devrate.dto.SkillFeedbackDto;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.dto.UserMainMasterySkillDto;
@@ -29,9 +30,11 @@ import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
+import com.ratifire.devrate.entity.interview.InterviewFeedbackDetail;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.exception.InterviewSummaryNotFoundException;
+import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.InterviewSummaryRepository;
@@ -40,6 +43,7 @@ import com.ratifire.devrate.repository.UserRepository;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.email.EmailService;
+import com.ratifire.devrate.service.interview.InterviewFeedbackDetailService;
 import com.ratifire.devrate.service.interview.InterviewMatchingService;
 import com.ratifire.devrate.service.interview.InterviewRequestService;
 import com.ratifire.devrate.service.interview.InterviewService;
@@ -54,9 +58,11 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -80,6 +86,7 @@ public class UserService {
   private final InterviewRequestService interviewRequestService;
   private final InterviewService interviewService;
   private final InterviewSummaryService interviewSummaryService;
+  private final InterviewFeedbackDetailService interviewFeedbackDetailService;
   private final UserSecurityService userSecurityService;
   private final EmailService emailService;
   private final NotificationService notificationService;
@@ -726,22 +733,36 @@ public class UserService {
   /**
    * Saves feedback provided by a reviewer and updates associated mastery marks.
    *
-   * @param reviewerId  The ID of the reviewer submitting the feedback.
-   * @param feedbackDto The  FeedbackDto object containing all the feedback details
+   * @param reviewerId           The ID of the reviewer submitting the feedback.
+   * @param interviewFeedbackDto The  interviewFeedbackDto object containing all the feedback
+   *                             details
    */
   @Transactional
-  public void saveFeedback(long reviewerId, FeedbackDto feedbackDto) {
-    //TODO implement validation to ensure the data provided by the user is valid
+  public void saveFeedback(long reviewerId, InterviewFeedbackDto interviewFeedbackDto) {
+    InterviewFeedbackDetail feedbackDetail = interviewFeedbackDetailService.findDetailById(
+        interviewFeedbackDto.getInterviewFeedbackDetailId());
+
+    if (interviewFeedbackDto.getInterviewSummaryId() != feedbackDetail.getInterviewSummaryId()) {
+      throw new ResourceNotFoundException("Input invalid interview summary id");
+    }
+
+    if (!new HashSet<>(interviewFeedbackDetailService.findDetailById(
+        interviewFeedbackDto.getInterviewFeedbackDetailId()).getSkillsIds())
+        .equals(interviewFeedbackDto.getSkills().stream()
+            .map(SkillFeedbackDto::getId)
+            .collect(Collectors.toSet()))) {
+      throw new ResourceNotFoundException("Input invalid skills");
+    }
 
     InterviewRequestRole reviewerRole = interviewSummaryService.addComment(
-        feedbackDto.getInterviewSummaryId(), reviewerId, feedbackDto.getComment());
+        feedbackDetail.getInterviewSummaryId(), reviewerId,
+        interviewFeedbackDto.getComment());
 
-    skillService.updateSkillMarksAfterGettingFeedback(feedbackDto.getSkills());
+    skillService.updateSkillMarksAfterGettingFeedback(interviewFeedbackDto.getSkills());
 
     masteryService.updateMasteryAverageMarksAfterGettingFeedback(
-        feedbackDto.getEvaluatedMasteryId(), reviewerRole);
+        feedbackDetail.getEvaluatedMasteryId(), reviewerRole);
 
-    //TODO implement removing the evaluation record (naming can be improved?) after feedback has
-    // been successfully processed
+    interviewFeedbackDetailService.deleteById(feedbackDetail.getId());
   }
 }

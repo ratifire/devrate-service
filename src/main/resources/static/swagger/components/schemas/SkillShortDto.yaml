@@ -1,0 +1,15 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+    description: The unique identifier of the skill
+  name:
+    type: string
+    description: The name of the skill
+  type:
+    type: string
+    enum:
+      - HARD_SKILL
+      - SOFT_SKILL
+    description: The type of the skill (either HARD_SKILL or SOFT_SKILL)
