@@ -37,6 +37,8 @@ tags:
     description: Endpoints for interview request management
   - name: Interview Summary
     description: Endpoints for interview summary management
+  - name: Interview Feedback
+    description: Endpoints for interview feedback management
   - name: Static Data
     description: Endpoints for retrieving static data
   - name: Specialization
@@ -148,6 +150,10 @@ paths:
     $ref: './paths/users/users-id-events-closest.yaml'
   /users/{userId}/interviews/{id}:
     $ref: './paths/users/users-id-interviews-id.yaml'
+  /users/{reviewerId}/feedbacks:
+    $ref: './paths/users/users-id-feedbacks.yaml'
+  /feedback-details/{id}:
+    $ref: './paths/interviewFeedback/feedback-details-id.yaml'
 components:
   securitySchemes:
     basicAuth:
