@@ -56,15 +56,15 @@ WHERE NOT EXISTS (SELECT 1
                   WHERE id = bookmarks.id);
 
 --  Create achievement records
-INSERT INTO achievements (link, summary, description, user_id)
+INSERT INTO achievements (summary, description, user_id)
 SELECT * FROM (
 VALUES
-    ('https://www.google.com/', 'Best Developer Award 2023', 'Awarded for outstanding performance and contribution to the development team in 2023.', 8881),
-    ('https://www.linkedin.com/', 'Top Innovator Award', 'Recognized for innovative solutions and creative problem-solving skills.', 8881),
-    ('https://www.youtube.com/', 'Excellence in Project Management', 'Honored for exceptional skills in managing and delivering projects on time and within budget.', 8881),
-    ('https://www.google.com/', 'Employee of the Month', 'Awarded for exceptional work and dedication during the month of June.', 8882),
-    ('https://www.linkedin.com/', 'Outstanding Contribution to Open Source', 'Acknowledged for significant contributions to various open-source projects.', 8882)
-) AS achievements (link, summary, description, user_id)
+    ('Best Developer Award 2023', 'Awarded for outstanding performance and contribution to the development team in 2023.', 8881),
+    ('Top Innovator Award', 'Recognized for innovative solutions and creative problem-solving skills.', 8881),
+    ('Excellence in Project Management', 'Honored for exceptional skills in managing and delivering projects on time and within budget.', 8881),
+    ('Employee of the Month', 'Awarded for exceptional work and dedication during the month of June.', 8882),
+    ('Outstanding Contribution to Open Source', 'Acknowledged for significant contributions to various open-source projects.', 8882)
+) AS achievements (summary, description, user_id)
 WHERE NOT EXISTS (SELECT 1
                   FROM achievements
                   WHERE id = achievements.id);
