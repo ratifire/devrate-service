@@ -137,7 +137,6 @@ public class InterviewFeedbackDetailService {
   public void deleteExpiredInterviewFeedbackDetailsTask() {
     ZonedDateTime expiredRecordsCutoffDate = ZonedDateTime.now()
         .minusMonths(RECORD_RETENTION_PERIOD_IN_MONTHS);
-
     interviewFeedbackDetailRepository.deleteExpiredFeedbackDetails(expiredRecordsCutoffDate);
   }
 }
