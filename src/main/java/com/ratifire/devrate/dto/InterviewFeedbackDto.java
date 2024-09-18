@@ -20,9 +20,6 @@ import lombok.NoArgsConstructor;
 public class InterviewFeedbackDto {
 
   @NotNull
-  private long interviewSummaryId;
-
-  @NotNull
   private long interviewFeedbackDetailId;
 
   private String comment;
