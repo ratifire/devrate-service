@@ -742,8 +742,7 @@ public class UserService {
     InterviewFeedbackDetail feedbackDetail = interviewFeedbackDetailService.findDetailById(
         interviewFeedbackDto.getInterviewFeedbackDetailId());
 
-    if (!new HashSet<>(interviewFeedbackDetailService.findDetailById(
-        interviewFeedbackDto.getInterviewFeedbackDetailId()).getSkillsIds())
+    if (!new HashSet<>(feedbackDetail.getSkillsIds())
         .equals(interviewFeedbackDto.getSkills().stream()
             .map(SkillFeedbackDto::getId)
             .collect(Collectors.toSet()))) {
