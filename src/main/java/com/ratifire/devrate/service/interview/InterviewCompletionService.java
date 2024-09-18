@@ -47,8 +47,8 @@ public class InterviewCompletionService {
     userService.refreshUserInterviewCounts(List.of(interview.getInterviewerRequest().getUser(),
         interview.getCandidateRequest().getUser()));
     //TODO: add logic for sending notifications to users (candidate and interviewer)
-    // about the interview feedback (need to transmit to front-end the next parameters:
-    // interviewSummaryId, interviewFeedbackDetailId) )
+    // about the interview feedback (need to transmit to front-end the next parameter:
+    // interviewFeedbackDetailId)
     interviewService.deleteInterview(interview.getId());
     interviewRequestService.deleteInterviewRequests(
         List.of(interview.getInterviewerRequest().getId(),

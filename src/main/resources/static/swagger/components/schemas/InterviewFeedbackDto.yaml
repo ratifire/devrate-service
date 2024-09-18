@@ -1,9 +1,5 @@
 type: object
 properties:
-  interviewSummaryId:
-    type: integer
-    format: int64
-    description: The unique identifier of the interview summary
   interviewFeedbackDetailId:
     type: integer
     format: int64
@@ -17,6 +13,5 @@ properties:
     items:
       $ref: './SkillFeedbackDto.yaml'
 required:
-  - interviewSummaryId
   - interviewFeedbackDetailId
   - skills
