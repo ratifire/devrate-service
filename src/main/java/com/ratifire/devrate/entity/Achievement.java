@@ -31,6 +31,6 @@ public class Achievement {
   @Column(nullable = false)
   private String summary;
 
-  @Column(nullable = false, length = 300)
+  @Column(nullable = false, length = 170)
   private String description;
 }

@@ -24,7 +24,7 @@ public class AchievementDto {
   @NotBlank(message = "must not be null or empty")
   private String summary;
 
-  @Size(max = 300)
+  @Size(max = 170)
   @NotBlank(message = "must not be null or empty")
   private String description;
 
