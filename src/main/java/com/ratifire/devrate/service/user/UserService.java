@@ -742,12 +742,7 @@ public class UserService {
     InterviewFeedbackDetail feedbackDetail = interviewFeedbackDetailService.findDetailById(
         interviewFeedbackDto.getInterviewFeedbackDetailId());
 
-    if (interviewFeedbackDto.getInterviewSummaryId() != feedbackDetail.getInterviewSummaryId()) {
-      throw new ResourceNotFoundException("Input invalid interview summary id");
-    }
-
-    if (!new HashSet<>(interviewFeedbackDetailService.findDetailById(
-        interviewFeedbackDto.getInterviewFeedbackDetailId()).getSkillsIds())
+    if (!new HashSet<>(feedbackDetail.getSkillsIds())
         .equals(interviewFeedbackDto.getSkills().stream()
             .map(SkillFeedbackDto::getId)
             .collect(Collectors.toSet()))) {
@@ -755,8 +750,7 @@ public class UserService {
     }
 
     InterviewRequestRole reviewerRole = interviewSummaryService.addComment(
-        feedbackDetail.getInterviewSummaryId(), reviewerId,
-        interviewFeedbackDto.getComment());
+        feedbackDetail.getInterviewSummaryId(), reviewerId, interviewFeedbackDto.getComment());
 
     skillService.updateSkillMarksAfterGettingFeedback(interviewFeedbackDto.getSkills());
 
