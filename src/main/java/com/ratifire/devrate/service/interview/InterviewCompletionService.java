@@ -3,6 +3,8 @@ package com.ratifire.devrate.service.interview;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.service.specialization.SpecializationService;
 import com.ratifire.devrate.service.user.UserService;
+import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
+import com.ratifire.devrate.util.zoom.service.ZoomApiService;
 import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest.Payload.Meeting;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,7 @@ public class InterviewCompletionService {
   private final InterviewFeedbackDetailService interviewFeedbackDetailService;
   private final SpecializationService specializationService;
   private final UserService userService;
+  private final ZoomApiService zoomApiService;
 
   /**
    * Completes the interview process by performing the necessary operations after a meeting has
@@ -46,6 +49,12 @@ public class InterviewCompletionService {
     specializationService.updateUserInterviewCounts(interview);
     userService.refreshUserInterviewCounts(List.of(interview.getInterviewerRequest().getUser(),
         interview.getCandidateRequest().getUser()));
+    try {
+      zoomApiService.deleteMeeting(Long.parseLong(meeting.getId()));
+    } catch (ZoomApiException e) {
+      logger.error("Zoom API exception occurred while trying to delete the meeting "
+          + "with meetingId: {}. {}", meeting.getId(), e.getMessage());
+    }
     //TODO: add logic for sending notifications to users (candidate and interviewer)
     // about the interview feedback (need to transmit to front-end the next parameter:
     // interviewFeedbackDetailId)
