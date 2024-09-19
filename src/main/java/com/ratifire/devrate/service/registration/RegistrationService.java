@@ -2,9 +2,11 @@ package com.ratifire.devrate.service.registration;
 
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.dto.UserRegistrationDto;
+import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.UserSecurity;
+import com.ratifire.devrate.enums.ContactType;
 import com.ratifire.devrate.exception.MailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.MailConfirmationCodeRequestException;
 import com.ratifire.devrate.exception.UserSecurityAlreadyExistException;
@@ -114,6 +116,16 @@ public class RegistrationService {
         .getById(emailConfirmationCode.getUserSecurityId());
     userSecurity.setVerified(true);
     userSecurityService.save(userSecurity);
+
+    Contact contact = Contact
+        .builder()
+        .type(ContactType.EMAIL)
+        .value(userSecurity.getEmail())
+        .build();
+    userSecurity
+        .getUser()
+        .getContacts()
+        .add(contact);
 
     emailConfirmationCodeService.deleteConfirmedCode(emailConfirmationCode.getId());
 
