@@ -31,7 +31,8 @@ public class InterviewCleanUpScheduler {
    * Periodically cleans up expired interview requests. This method is scheduled to run at a fixed
    * interval to find and delete interview requests that have expired and are still active.
    */
-  @Scheduled(fixedRate = CLEANUP_INTERVAL, initialDelay = 86400000)
+  @Scheduled(fixedRate = CLEANUP_INTERVAL, initialDelay = 86400000)  //initialDelay parameter is
+  // only for development phase, before release it must be removed
   @Transactional
   public void deleteExpiredAndActiveInterviewRequestsTask() {
     ZonedDateTime currentDateTime = ZonedDateTime.now();
