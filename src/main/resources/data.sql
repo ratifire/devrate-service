@@ -90,13 +90,13 @@ WHERE NOT EXISTS (SELECT 1
 INSERT INTO contacts (type, value, user_id)
 SELECT * FROM (
 VALUES
-    ('EMAIL', 'user8881@example.com', 8881),
+    ('EMAIL', 'john.rate3@tutamail.com', 8881),
     ('PHONE_NUMBER', '+11234567890', 8881),
     ('TELEGRAM_LINK', 'https://t.me', 8881),
     ('LINKEDIN_LINK', 'https://www.linkedin.com/', 8881),
     ('GITHUB_LINK', 'https://github.com', 8881),
     ('BEHANCE_LINK', 'https://www.behance.net', 8881),
-    ('EMAIL', 'user8882@example.com', 8882),
+    ('EMAIL', 'dev.rate3@proton.me', 8882),
     ('PHONE_NUMBER', '+00987654321', 8882),
     ('TELEGRAM_LINK', 'https://t.me', 8882),
     ('LINKEDIN_LINK', 'https://www.linkedin.com/', 8882),
