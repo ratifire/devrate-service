@@ -39,12 +39,14 @@ get:
             type: "INTERVIEW"
             link: "string"
             host:
+              id: "integer"
               name: "string"
               surname: "string"
               status: "string"
               role: "INTERVIEWER"
             participants:
-              - name: "string"
+              - id: "integer"
+                name: "string"
                 surname: "string"
                 status: "string"
                 role: "CANDIDATE"

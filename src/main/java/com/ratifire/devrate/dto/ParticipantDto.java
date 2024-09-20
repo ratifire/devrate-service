@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ParticipantDto {
+  private long id;
   private String name;
   private String surname;
   private String status;
