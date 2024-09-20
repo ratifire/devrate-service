@@ -32,7 +32,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * Unit tests for the {@link NotificationService} class.
  */
 @ExtendWith(MockitoExtension.class)
-public class NotificationServiceTest {
+class NotificationServiceTest {
 
   @Mock
   private NotificationRepository notificationRepository;

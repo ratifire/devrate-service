@@ -24,7 +24,7 @@ import org.springframework.web.socket.WebSocketSession;
  * Unit tests for the {@link WebSocketHandler} class.
  */
 @ExtendWith(MockitoExtension.class)
-public class WebSocketHandlerTest {
+class WebSocketHandlerTest {
 
   @Mock
   private Principal principal;

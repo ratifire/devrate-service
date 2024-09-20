@@ -22,7 +22,7 @@ import org.springframework.web.socket.WebSocketSession;
  * Unit tests for the {@link WebSocketSender} class.
  */
 @ExtendWith(MockitoExtension.class)
-public class WebSocketSenderTest {
+class WebSocketSenderTest {
 
   @Mock
   private WebSocketSessionRegistry sessionRegistry;

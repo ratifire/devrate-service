@@ -39,7 +39,7 @@ public class InterviewCompletionService {
    */
   @Transactional
   public String completeInterviewProcess(Meeting meeting) {
-    logger.info("Zoom webhook triggered meeting.ended - {}", meeting.toString());
+    logger.info("Zoom webhook triggered meeting.ended - {}", meeting);
     Interview interview = interviewService.getInterviewByMeetingId(Long.parseLong(meeting.getId()));
     long interviewSummaryId = interviewSummaryService.createInterviewSummary(interview,
         meeting.getEndTime());

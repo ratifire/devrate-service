@@ -459,7 +459,7 @@ class UserServiceTest {
   }
 
   @Test
-  public void testGetSpecializationsByUserId() {
+  void testGetSpecializationsByUserId() {
     when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
     when(dataMapper.toDto(anyList())).thenReturn(specializationDtos);
 
@@ -468,7 +468,7 @@ class UserServiceTest {
   }
 
   @Test
-  public void testCreateSpecialization() {
+  void testCreateSpecialization() {
     when(userRepository.findById(userId)).thenReturn(Optional.ofNullable(testUser));
     when(dataMapper.toEntity(specializationDto)).thenReturn(specialization);
 

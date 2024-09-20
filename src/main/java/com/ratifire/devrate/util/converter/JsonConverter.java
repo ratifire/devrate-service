@@ -2,6 +2,7 @@ package com.ratifire.devrate.util.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ratifire.devrate.exception.JsonConverterException;
 
 /**
  * Utility class for converting instances to JSON strings.
@@ -20,7 +21,7 @@ public class JsonConverter {
     try {
       return objectMapper.writeValueAsString(object);
     } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
+      throw new JsonConverterException(e.getMessage(), e);
     }
   }
 
@@ -35,7 +36,11 @@ public class JsonConverter {
     try {
       return objectMapper.readValue(json, clazz);
     } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
+      throw new JsonConverterException(e.getMessage(), e);
     }
+  }
+
+  private JsonConverter() {
+    throw new IllegalStateException("Utility class");
   }
 }
