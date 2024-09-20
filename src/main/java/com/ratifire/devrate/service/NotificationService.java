@@ -30,6 +30,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class NotificationService {
 
+  private final static String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
+
   private final NotificationRepository notificationRepository;
   private final UserSecurityService userSecurityService;
   private final DataMapper<NotificationDto, Notification> mapper;
@@ -73,7 +75,7 @@ public class NotificationService {
       String rejectionUserFirstName, ZonedDateTime scheduleTime) {
     InterviewRejectedPayload rejectedPayload = InterviewRejectedPayload.builder()
         .rejectionName(rejectionUserFirstName)
-        .scheduledDateTime(scheduleTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+        .scheduledDateTime(scheduleTime.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)))
         .build();
 
     Notification notification = createNotification(NotificationType.INTERVIEW_REJECTED,
@@ -94,7 +96,7 @@ public class NotificationService {
     InterviewScheduledPayload scheduledPayload = InterviewScheduledPayload.builder()
         .role(role)
         .scheduledDateTime(
-            interviewDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+            interviewDateTime.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)))
         .build();
 
     Notification notification = createNotification(NotificationType.INTERVIEW_SCHEDULED,
@@ -132,7 +134,7 @@ public class NotificationService {
       User user) {
     return Notification.builder()
         .type(type)
-        .payload(JsonConverter.serialize(payload))
+        .payload(payload != null ? JsonConverter.serialize(payload) : null)
         .read(false)
         .createdAt(LocalDateTime.now())
         .user(user)
