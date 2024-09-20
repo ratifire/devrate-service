@@ -1,5 +1,6 @@
 package com.ratifire.devrate.service.interview;
 
+import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.specialization.SpecializationService;
@@ -41,20 +42,23 @@ public class InterviewCompletionService {
   public String completeInterviewProcess(Meeting meeting) {
     logger.info("Zoom webhook triggered meeting.ended - {}", meeting);
     Interview interview = interviewService.getInterviewByMeetingId(Long.parseLong(meeting.getId()));
+
     long interviewSummaryId = interviewSummaryService.createInterviewSummary(interview,
         meeting.getEndTime());
+
+    specializationService.updateUserInterviewCounts(interview);
+
+    User interviewer = interview.getInterviewerRequest().getUser();
+    User candidate = interview.getCandidateRequest().getUser();
+    userService.refreshUserInterviewCounts(List.of(interviewer, candidate));
+
     Map<String, Long> interviewFeedbackDetailId =
         interviewFeedbackDetailService.saveInterviewFeedbackDetail(interview, interviewSummaryId);
-    specializationService.updateUserInterviewCounts(interview);
-    userService.refreshUserInterviewCounts(List.of(interview.getInterviewerRequest().getUser(),
-        interview.getCandidateRequest().getUser()));
 
     Long candidateFeedbackDetailId = interviewFeedbackDetailId.get("candidateFeedbackId");
-    notificationService.addInterviewFeedbackDetail(interview.getCandidateRequest().getUser(),
-        candidateFeedbackDetailId);
+    notificationService.addInterviewFeedbackDetail(candidate, candidateFeedbackDetailId);
     Long interviewerFeedbackDetailId = interviewFeedbackDetailId.get("interviewerFeedbackId");
-    notificationService.addInterviewFeedbackDetail(interview.getInterviewerRequest().getUser(),
-        interviewerFeedbackDetailId);
+    notificationService.addInterviewFeedbackDetail(interviewer, interviewerFeedbackDetailId);
 
     interviewService.deleteInterview(interview.getId());
     interviewRequestService.deleteInterviewRequests(
