@@ -678,9 +678,9 @@ public class UserService {
    */
   private void notifyUsers(User recipient, User rejector,
       ZonedDateTime scheduledTime) {
-    notificationService.rejectInterview(recipient, rejector.getFirstName(),
+    notificationService.addRejectInterview(recipient, rejector.getFirstName(),
         scheduledTime);
-    notificationService.rejectInterview(rejector, recipient.getFirstName(),
+    notificationService.addRejectInterview(rejector, recipient.getFirstName(),
         scheduledTime);
 
     String recipientEmail = userSecurityService.findEmailByUserId(recipient.getId());

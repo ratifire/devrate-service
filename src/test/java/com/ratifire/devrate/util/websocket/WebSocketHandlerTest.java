@@ -7,8 +7,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.ratifire.devrate.dto.NotificationDto;
 import com.ratifire.devrate.exception.EmailNotFoundException;
+import com.ratifire.devrate.service.NotificationService;
 import java.security.Principal;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +24,7 @@ import org.springframework.web.socket.WebSocketSession;
  * Unit tests for the {@link WebSocketHandler} class.
  */
 @ExtendWith(MockitoExtension.class)
-public class WebSocketHandlerTest {
+class WebSocketHandlerTest {
 
   @Mock
   private Principal principal;
@@ -31,6 +34,8 @@ public class WebSocketHandlerTest {
   private WebSocketSession session;
   @Mock
   private WebSocketSender webSocketSender;
+  @Mock
+  private NotificationService notificationService;
   @InjectMocks
   private WebSocketHandler webSocketHandler;
 
@@ -38,6 +43,8 @@ public class WebSocketHandlerTest {
 
   @Test
   void afterConnectionEstablished_LoginFound_CallsRegisterSession() {
+    List<NotificationDto> notificationDtos = List.of(NotificationDto.builder().build());
+    when(notificationService.getAllByEmail(testLogin)).thenReturn(notificationDtos);
     when(session.getPrincipal()).thenReturn(principal);
     when(principal.getName()).thenReturn(testLogin);
     doNothing().when(sessionRegistry).registerSession(any(), any());

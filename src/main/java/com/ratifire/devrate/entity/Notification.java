@@ -1,5 +1,6 @@
 package com.ratifire.devrate.entity;
 
+import com.ratifire.devrate.enums.NotificationType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,6 +15,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * Entity class representing a notification.
@@ -30,8 +33,12 @@ public class Notification {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
+  @JdbcTypeCode(SqlTypes.JSON)
+  @Column(columnDefinition = "JSONB")
+  private String payload;
+
   @Column(nullable = false)
-  private String text;
+  private NotificationType type;
 
   @Column(name = "is_read", nullable = false)
   private boolean read;
