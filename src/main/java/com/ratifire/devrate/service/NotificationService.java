@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class NotificationService {
 
-  private final static String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
+  private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
 
   private final NotificationRepository notificationRepository;
   private final UserSecurityService userSecurityService;
