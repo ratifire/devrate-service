@@ -1,7 +1,10 @@
 package com.ratifire.devrate.util.websocket;
 
+import com.ratifire.devrate.dto.NotificationDto;
 import com.ratifire.devrate.exception.EmailNotFoundException;
+import com.ratifire.devrate.service.NotificationService;
 import java.security.Principal;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -18,12 +21,14 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
 
   private final WebSocketSessionRegistry sessionRegistry;
   private final WebSocketSender webSocketSender;
+  private final NotificationService notificationService;
 
   @Override
   public void afterConnectionEstablished(@NonNull WebSocketSession session) {
     String email = extractEmail(session);
     sessionRegistry.registerSession(email, session);
-    webSocketSender.sendNotificationsBySession(email, session);
+    List<NotificationDto> notifications = notificationService.getAllByEmail(email);
+    webSocketSender.sendNotificationsBySession(notifications, session);
   }
 
   @Override

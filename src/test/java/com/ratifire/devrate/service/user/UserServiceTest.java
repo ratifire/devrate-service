@@ -714,7 +714,7 @@ class UserServiceTest {
     when(interviewMatchingService.match(interviewRequest,
         List.of(interviewRequest.getUser()))).thenReturn(Optional.empty());
 
-    doNothing().when(notificationService).rejectInterview(any(), any(), any());
+    doNothing().when(notificationService).addRejectInterview(any(), any(), any());
     doNothing().when(emailService).sendInterviewRejectionMessage(any(), any(), any(), any());
     doNothing().when(interviewRequestService).handleRejectedInterview(any(), any());
 
@@ -723,7 +723,7 @@ class UserServiceTest {
     verify(userSecurityService, times(1))
         .findEmailByUserId(anyLong());
     verify(notificationService, times(2))
-        .rejectInterview(any(), any(), any());
+        .addRejectInterview(any(), any(), any());
     verify(notificationService, never())
         .addInterviewScheduled(any(), any(), any());
     verify(emailService, never())
@@ -741,7 +741,7 @@ class UserServiceTest {
 
     doNothing().when(emailService).sendInterviewRejectionMessage(any(), any(), any(), any());
     doNothing().when(interviewRequestService).handleRejectedInterview(any(), any());
-    doNothing().when(notificationService).rejectInterview(any(), any(), any());
+    doNothing().when(notificationService).addRejectInterview(any(), any(), any());
     doNothing().when(notificationService).addInterviewScheduled(any(), any(), any());
     doNothing().when(emailService).sendInterviewScheduledEmail(any(), any(), any(), any(), any());
 
@@ -750,7 +750,7 @@ class UserServiceTest {
     verify(userSecurityService, times(5))
         .findEmailByUserId(anyLong());
     verify(notificationService, times(2))
-        .rejectInterview(any(), any(), any());
+        .addRejectInterview(any(), any(), any());
     verify(notificationService, times(4))
         .addInterviewScheduled(any(), any(), any());
     verify(emailService, times(4))
@@ -770,7 +770,7 @@ class UserServiceTest {
 
     doNothing().when(emailService).sendInterviewRejectionMessage(any(), any(), any(), any());
     doNothing().when(interviewRequestService).handleRejectedInterview(any(), any());
-    doNothing().when(notificationService).rejectInterview(any(), any(), any());
+    doNothing().when(notificationService).addRejectInterview(any(), any(), any());
     doNothing().when(notificationService).addInterviewScheduled(any(), any(), any());
     doNothing().when(emailService).sendInterviewScheduledEmail(any(), any(), any(), any(), any());
 
@@ -779,7 +779,7 @@ class UserServiceTest {
     verify(userSecurityService, times(3))
         .findEmailByUserId(anyLong());
     verify(notificationService, times(2))
-        .rejectInterview(any(), any(), any());
+        .addRejectInterview(any(), any(), any());
     verify(notificationService, times(2))
         .addInterviewScheduled(any(), any(), any());
     verify(emailService, times(2))

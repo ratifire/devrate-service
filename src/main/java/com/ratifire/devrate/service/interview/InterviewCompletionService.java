@@ -1,6 +1,7 @@
 package com.ratifire.devrate.service.interview;
 
 import com.ratifire.devrate.entity.interview.Interview;
+import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.specialization.SpecializationService;
 import com.ratifire.devrate.service.user.UserService;
 import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest.Payload.Meeting;
@@ -27,6 +28,7 @@ public class InterviewCompletionService {
   private final InterviewFeedbackDetailService interviewFeedbackDetailService;
   private final SpecializationService specializationService;
   private final UserService userService;
+  private final NotificationService notificationService;
 
   /**
    * Completes the interview process by performing the necessary operations after a meeting has
@@ -46,9 +48,14 @@ public class InterviewCompletionService {
     specializationService.updateUserInterviewCounts(interview);
     userService.refreshUserInterviewCounts(List.of(interview.getInterviewerRequest().getUser(),
         interview.getCandidateRequest().getUser()));
-    //TODO: add logic for sending notifications to users (candidate and interviewer)
-    // about the interview feedback (need to transmit to front-end the next parameter:
-    // interviewFeedbackDetailId)
+
+    Long candidateFeedbackDetailId = interviewFeedbackDetailId.get("candidateFeedbackId");
+    notificationService.addInterviewFeedbackDetail(interview.getCandidateRequest().getUser(),
+        candidateFeedbackDetailId);
+    Long interviewerFeedbackDetailId = interviewFeedbackDetailId.get("interviewerFeedbackId");
+    notificationService.addInterviewFeedbackDetail(interview.getInterviewerRequest().getUser(),
+        interviewerFeedbackDetailId);
+
     interviewService.deleteInterview(interview.getId());
     interviewRequestService.deleteInterviewRequests(
         List.of(interview.getInterviewerRequest().getId(),
