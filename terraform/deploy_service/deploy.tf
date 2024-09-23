@@ -69,7 +69,7 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
     id      = aws_launch_template.ecs_back_launch.id
     version = aws_launch_template.ecs_back_launch.latest_version
   }
-  min_size                  = 1
+  min_size                  = 2
   max_size                  = 2
   desired_capacity          = 2
   health_check_type         = "EC2"
@@ -110,7 +110,7 @@ resource "aws_ecs_service" "back_services" {
   scheduling_strategy                = "REPLICA"
   desired_count                      = 2
   force_new_deployment               = true
-  deployment_minimum_healthy_percent = 100
+  deployment_minimum_healthy_percent = 50
   deployment_maximum_percent         = 200
   capacity_provider_strategy {
     capacity_provider = aws_ecs_capacity_provider.back_capacity_provider.name
