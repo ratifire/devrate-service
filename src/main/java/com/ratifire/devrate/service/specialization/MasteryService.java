@@ -127,6 +127,10 @@ public class MasteryService {
    * @return the created skill information as a DTO
    */
   public SkillDto createSkill(SkillDto skillDto, long masteryId) {
+    if (skillDto == null) {
+      throw new ResourceNotFoundException("The skill is a required param.");
+    }
+
     if (masteryRepository.existsByIdAndSkills_Name(masteryId, skillDto.getName())) {
       throw new ResourceAlreadyExistException(
           "Skill with name " + skillDto.getName() + " already exists");
