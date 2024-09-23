@@ -1,6 +1,7 @@
 package com.ratifire.devrate.configuration;
 
 import com.ratifire.devrate.service.authorization.ResourceOwnerVerifier;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,9 +90,10 @@ public class SecurityConfiguration {
   @Bean
   @ConditionalOnProperty(prefix = "cors", name = "enabled", havingValue = "false")
   public CorsConfigurationSource corsConfigurationSource(
-      @Value("${cors.allowed.origins}") List<String> allowedOrigins) {
+      @Value("${cors.allowed.origins}") String allowedOrigins) {
+    List<String> origins = Arrays.asList(allowedOrigins.split(","));
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(allowedOrigins);
+    configuration.setAllowedOrigins(origins);
     configuration.setAllowedMethods(List.of("*"));
     configuration.setAllowedHeaders(List.of("*"));
     configuration.setAllowCredentials(true);
