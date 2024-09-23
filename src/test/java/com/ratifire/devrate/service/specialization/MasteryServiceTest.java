@@ -2,6 +2,7 @@ package com.ratifire.devrate.service.specialization;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -15,6 +16,7 @@ import com.ratifire.devrate.dto.MasteryHistoryDto;
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Skill;
+import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.MasteryHistoryRepository;
 import com.ratifire.devrate.repository.MasteryRepository;
@@ -155,11 +157,19 @@ public class MasteryServiceTest {
   }
 
   @Test
+  void createSkillTestSkillAlreadyExistsThrowResourceAlreadyExistException() {
+    when(masteryRepository.existsByIdAndSkills_Name(anyLong(), anyString())).thenReturn(true);
+
+    assertThrows(ResourceAlreadyExistException.class,
+        () -> masteryService.createSkill(skillDto, 1L));
+  }
+
+  @Test
   public void createSkillsTest() {
     List<Skill> skills = List.of(skill);
 
     when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
-    when(dataMapper.toEntity(anyList())).thenReturn(skills);
+    when(dataMapper.toEntity(skillDto)).thenReturn(skill);
     when(masteryRepository.existsByIdAndSkills_Name(anyLong(), anyString())).thenReturn(false);
     when(dataMapper.toDto(skills)).thenReturn(skillDtos);
 
@@ -169,6 +179,15 @@ public class MasteryServiceTest {
     assertEquals(skillDtos, result);
     assertEquals(BigDecimal.valueOf(5), skillDto.getAverageMark());
     verify(masteryRepository).save(masteryMid);
+  }
+
+  @Test
+  void createSkillsTestSkillsEmptyReturnEmptySkillDtos() {
+    when(masteryRepository.existsByIdAndSkills_Name(anyLong(), anyString())).thenReturn(true);
+
+    List<SkillDto> result = masteryService.createSkills(skillDtos, 1L);
+
+    assertTrue(result.isEmpty());
   }
 
   @Test

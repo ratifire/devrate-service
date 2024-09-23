@@ -11,6 +11,7 @@ import com.ratifire.devrate.exception.SpecializationNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ public class SpecializationService {
   private final DataMapper<MasteryDto, Mastery> masteryMapper;
   private final MasteryService masteryService;
   private final Map<Integer, String> defaultMasteryLevels;
+  private final List<String> defaultSpecializationNames;
 
   /**
    * Retrieves specialization by ID.
@@ -55,7 +57,7 @@ public class SpecializationService {
       throw new ResourceNotFoundException(
           "Main mastery not found for specialization with id: " + id);
     }
-    return masteryMapper.toDto(findSpecializationById(id).getMainMastery());
+    return masteryMapper.toDto(mainMastery);
   }
 
   /**
@@ -94,22 +96,35 @@ public class SpecializationService {
   }
 
   /**
-   * Checks if the provided specialization DTO represents a main specialization level and if the
-   * specialization name already exists in the provided list of specialization DTOs.
+   * Validates the {@link SpecializationDto} object before creating a specialization for a user.
    *
-   * @param specializationDto the specialization DTO to check
-   * @param userId            ID of user
-   * @throws ResourceAlreadyExistException if a main specialization level already exists or if the
-   *                                       specialization name is already taken
+   * @param specializationDto the specialization data transfer object containing details for
+   *                          validation
+   * @param userId            the ID of the user for whom the specialization is being created
+   * @throws ResourceNotFoundException     if the specialization name or main mastery name is not
+   *                                       found
+   * @throws ResourceAlreadyExistException if the user already has a main specialization or a
+   *                                       specialization with the same name
    */
-  public void checkIsMainAndSpecializationNameAlreadyExist(SpecializationDto specializationDto,
+  public void validateBeforeCreate(SpecializationDto specializationDto,
       long userId) {
+    String specializationName = specializationDto.getName();
+    if (specializationName != null && !defaultSpecializationNames.contains(specializationName)) {
+      throw new ResourceNotFoundException(
+          "The specialization name \"" + specializationName + "\" not found.");
+    }
+
+    String masteryName = specializationDto.getMainMasteryName();
+    if (masteryName != null && !defaultMasteryLevels.containsValue(masteryName)) {
+      throw new ResourceNotFoundException("The mastery level \"" + masteryName + "\" not found.");
+    }
+
     if (specializationDto.isMain()
         && specializationRepository.existsSpecializationByUserIdAndMainTrue(userId)) {
       throw new ResourceAlreadyExistException("Main level is already exist.");
     }
-    if (specializationRepository.existsSpecializationByUserIdAndName(userId,
-        specializationDto.getName())) {
+
+    if (specializationRepository.existsSpecializationByUserIdAndName(userId, specializationName)) {
       throw new ResourceAlreadyExistException("Specialization name is already exist.");
     }
   }
@@ -163,12 +178,22 @@ public class SpecializationService {
    * Creates Masteries for specialization and softSkills for Masteries.
    */
   @Transactional
-  public void createMasteriesForSpecialization(long specializationId) {
-    Specialization specialization = findSpecializationById(specializationId);
-    List<Mastery> masteryList = createMasteryList(specialization);
-    specialization.setMasteries(masteryList);
+  public void createMasteriesForSpecialization(Specialization specialization,
+      @NotNull String mainMasteryName) {
+    if (mainMasteryName == null || mainMasteryName.isEmpty() || mainMasteryName.isBlank()) {
+      throw new ResourceNotFoundException("The main mastery name is required param.");
+    }
+
+    List<Mastery> masteries = createMasteryList(specialization);
+    masteries.stream()
+        .filter(mastery -> defaultMasteryLevels.get(mastery.getLevel())
+            .equalsIgnoreCase(mainMasteryName))
+        .findFirst()
+        .ifPresent(specialization::setMainMastery);
+
+    specialization.setMasteries(masteries);
     specializationRepository.save(specialization);
-    createSkillsForMasteries(masteryList);
+    createSkillsForMasteries(masteries);
   }
 
   /**

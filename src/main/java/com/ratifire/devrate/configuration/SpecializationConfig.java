@@ -30,6 +30,16 @@ public class SpecializationConfig {
   }
 
   /**
+   * Loads the default soft skills from a JSON file.
+   *
+   * @return List of default soft skills.
+   */
+  @Bean
+  public List<String> defaultSpecializationNames() {
+    return loadStringFromJson("/static/data/specialization/specialization-names.json");
+  }
+
+  /**
    * Loads the default mastery levels from a JSON file and populates a map with the levels.
    *
    * @return Map of masteryLevels where the key is the level number and the value is the levelName.
