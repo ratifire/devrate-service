@@ -1,19 +1,12 @@
 package com.ratifire.devrate.configuration;
 
 import com.ratifire.devrate.service.authorization.ResourceOwnerVerifier;
-import jakarta.servlet.Filter;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
-import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
@@ -95,11 +88,10 @@ public class SecurityConfiguration {
    */
   @Bean
   @ConditionalOnProperty(prefix = "cors", name = "enabled", havingValue = "false")
-  public CorsConfigurationSource corsConfigurationSource() {
+  public CorsConfigurationSource corsConfigurationSource(
+      @Value("${cors.allowed.origins}") List<String> allowedOrigins) {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(
-        List.of("http://localhost:3000", "https://devrate.org", "wss://devrate.org",
-            "ws://devrate.org", "wss://server.devrate.org", "ws://server.devrate.org"));
+    configuration.setAllowedOrigins(allowedOrigins);
     configuration.setAllowedMethods(List.of("*"));
     configuration.setAllowedHeaders(List.of("*"));
     configuration.setAllowCredentials(true);
@@ -120,10 +112,20 @@ public class SecurityConfiguration {
     return new HashMap<>();
   }
 
+  /**
+   * Configures a {@link org.springframework.boot.web.servlet.ServletContextInitializer} bean to set
+   * up session cookie settings for the application.
+   *
+   * @param domain The domain value for the session cookie, injected from the application
+   *               properties.
+   * @return A {@link ServletContextInitializer} to configure session cookie settings.
+   */
+
   @Bean
-  public ServletContextInitializer servletContextInitializer() {
+  public ServletContextInitializer servletContextInitializer(
+      @Value("${server.servlet.session.cookie.domain}") String domain) {
     return servletContext -> {
-      servletContext.getSessionCookieConfig().setDomain("devrate.org");
+      servletContext.getSessionCookieConfig().setDomain(domain);
       servletContext.getSessionCookieConfig().setPath("/");
     };
   }
