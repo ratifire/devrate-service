@@ -108,7 +108,7 @@ resource "aws_ecs_service" "back_services" {
   cluster                            = var.back_cluster_name
   task_definition                    = aws_ecs_task_definition.task_definition.arn
   scheduling_strategy                = "REPLICA"
-  desired_count                      = 1
+  desired_count                      = 2
   force_new_deployment               = true
   deployment_minimum_healthy_percent = 100
   deployment_maximum_percent         = 200
