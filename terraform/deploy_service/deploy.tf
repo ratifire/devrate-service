@@ -142,10 +142,10 @@ resource "aws_lb" "back_ecs_alb" {
 }
 
 resource "aws_lb_target_group" "http_ecs_back_tg" {
-  name     = "http-ecs-back-tg"
-  port     = var.back_port
-  protocol = "HTTP"
-  vpc_id   = data.aws_vpcs.all_vpcs.ids[0]
+  name                 = "http-ecs-back-tg"
+  port                 = var.back_port
+  protocol             = "HTTP"
+  vpc_id               = data.aws_vpcs.all_vpcs.ids[0]
   deregistration_delay = "120"
   health_check {
     healthy_threshold   = 1
