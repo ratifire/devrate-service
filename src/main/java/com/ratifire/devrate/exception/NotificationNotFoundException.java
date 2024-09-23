@@ -10,4 +10,8 @@ public class NotificationNotFoundException extends RuntimeException {
   public NotificationNotFoundException(long id) {
     super(String.format(MESSAGE_ID_NOT_FOUND, id));
   }
+
+  public NotificationNotFoundException(String message) {
+    super(message);
+  }
 }

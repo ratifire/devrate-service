@@ -3,9 +3,18 @@ package com.ratifire.devrate.service;
 import com.ratifire.devrate.dto.NotificationDto;
 import com.ratifire.devrate.entity.Notification;
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.entity.UserSecurity;
+import com.ratifire.devrate.entity.notification.payload.InterviewFeedbackPayload;
+import com.ratifire.devrate.entity.notification.payload.InterviewRejectedPayload;
+import com.ratifire.devrate.entity.notification.payload.InterviewRequestExpiredPayload;
+import com.ratifire.devrate.entity.notification.payload.InterviewScheduledPayload;
+import com.ratifire.devrate.entity.notification.payload.NotificationPayload;
+import com.ratifire.devrate.enums.NotificationType;
 import com.ratifire.devrate.exception.NotificationNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.NotificationRepository;
+import com.ratifire.devrate.util.converter.JsonConverter;
+import com.ratifire.devrate.util.websocket.WebSocketSender;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,26 +30,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class NotificationService {
 
+  private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
+
   private final NotificationRepository notificationRepository;
   private final UserSecurityService userSecurityService;
   private final DataMapper<NotificationDto, Notification> mapper;
-
-  /**
-   * Adds a notification for the given user with the specified text.
-   *
-   * @param text The text of the notification.
-   * @param user The user to add the notification for.
-   */
-  public void addNotification(String text, User user) {
-    Notification notification = Notification.builder()
-        .text(text)
-        .read(false)
-        .createdAt(LocalDateTime.now())
-        .user(user)
-        .build();
-
-    notificationRepository.save(notification);
-  }
+  private final WebSocketSender webSocketSender;
 
   /**
    * Adds a greeting notification for the given user.
@@ -48,19 +43,9 @@ public class NotificationService {
    * @param user The user to add the greeting notification for.
    */
   public void addGreetingNotification(User user) {
-    String text = """
-        Welcome aboard!
-        We're thrilled to have you join DevRate community.
-                
-        At DevRate, we're all about empowering developers like you to share your expertise,
-        learn from others, and build meaningful connections.
-                
-        Happy interviewing!
-                
-        Best regards,
-        DevRate""";
+    Notification notification = createNotification(NotificationType.GREETING, null, user);
 
-    addNotification(text, user);
+    addNotification(notification, user);
   }
 
   /**
@@ -69,49 +54,14 @@ public class NotificationService {
    * @param user The user to whom the expiration notification will be sent.
    */
   public void addInterviewRequestExpiryNotification(User user) {
-    String text = """
-        Dear {userFirstName},
+    InterviewRequestExpiredPayload expiredPayload = InterviewRequestExpiredPayload.builder()
+        .userFirstName(user.getFirstName())
+        .build();
 
-        Your interview request has expired.\s
-        Please submit a new request if you still wish to proceed.
+    Notification notification = createNotification(NotificationType.INTERVIEW_REQUEST_EXPIRED,
+        expiredPayload, user);
 
-        Best regards,
-        DevRate""";
-
-    addNotification(text.replace("{userFirstName}", user.getFirstName()), user);
-  }
-
-  /**
-   * Retrieves all notifications associated with a user's email.
-   *
-   * @param email The user's email.
-   * @return A list of NotificationDto objects.
-   */
-  public List<NotificationDto> getAllByEmail(String email) {
-    User user = userSecurityService.findByEmail(email).getUser();
-    return mapper.toDto(user.getNotifications());
-  }
-
-  /**
-   * Marks a notification as read by its ID.
-   *
-   * @param id The ID of the notification to mark as read.
-   */
-  public void markAsReadById(long id) {
-    Notification notification = notificationRepository.findById(id)
-        .orElseThrow(() -> new NotificationNotFoundException(id));
-
-    notification.setRead(true);
-    notificationRepository.save(notification);
-  }
-
-  /**
-   * Deletes a notification by its ID.
-   *
-   * @param id The ID of the notification to delete.
-   */
-  public void deleteById(long id) {
-    notificationRepository.deleteById(id);
+    addNotification(notification, user);
   }
 
   /**
@@ -121,14 +71,17 @@ public class NotificationService {
    * @param rejectionUserFirstName The first name of the user who rejected the interview.
    * @param scheduleTime The scheduled time of the interview.
    */
-  public void rejectInterview(User recipient,
+  public void addRejectInterview(User recipient,
       String rejectionUserFirstName, ZonedDateTime scheduleTime) {
-    String text = String.format("""
-        The interview with %s that was scheduled at %s has been canceled, but fret not!\s
-        We will arrange another one soon and keep you informed promptly.""",
-        rejectionUserFirstName, scheduleTime);
+    InterviewRejectedPayload rejectedPayload = InterviewRejectedPayload.builder()
+        .rejectionName(rejectionUserFirstName)
+        .scheduledDateTime(scheduleTime.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)))
+        .build();
 
-    addNotification(text, recipient);
+    Notification notification = createNotification(NotificationType.INTERVIEW_REJECTED,
+        rejectedPayload, recipient);
+
+    addNotification(notification, recipient);
   }
 
   /**
@@ -139,17 +92,123 @@ public class NotificationService {
    * @param role              The role of the recipient in the interview (e.g., 'Interviewer' or
    *                          'Candidate').
    */
-  public void addInterviewScheduled(User recipient, String role,
-      ZonedDateTime interviewDateTime) {
-    String formattedDateTime = interviewDateTime.format(
-        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+  public void addInterviewScheduled(User recipient, String role, ZonedDateTime interviewDateTime) {
+    InterviewScheduledPayload scheduledPayload = InterviewScheduledPayload.builder()
+        .role(role)
+        .scheduledDateTime(
+            interviewDateTime.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)))
+        .build();
 
-    String text = String.format("""
-            We are pleased to inform you that your interview in the role of %s has been \s
-            successfully scheduled for %s (UTC).
-            Please make sure to be prepared and available at the specified date and time.""",
-        role.toLowerCase(), formattedDateTime);
+    Notification notification = createNotification(NotificationType.INTERVIEW_SCHEDULED,
+        scheduledPayload, recipient);
 
-    addNotification(text, recipient);
+    addNotification(notification, recipient);
+  }
+
+  /**
+   * Adds an interview feedback notification for a specified user.
+   *
+   * @param recipient  The user who will receive the notification.
+   * @param feedbackId The ID of the feedback to include in the notification payload.
+   */
+  public void addInterviewFeedbackDetail(User recipient, long feedbackId) {
+    InterviewFeedbackPayload feedbackPayload = InterviewFeedbackPayload.builder()
+        .feedbackId(feedbackId)
+        .build();
+
+    Notification notification = createNotification(NotificationType.INTERVIEW_FEEDBACK,
+        feedbackPayload, recipient);
+
+    addNotification(notification, recipient);
+  }
+
+  /**
+   * Creates a notification with the given type, payload, and user.
+   *
+   * @param type    The type of notification.
+   * @param payload The payload to be serialized and added to the notification.
+   * @param user    The user to whom the notification will be associated.
+   * @return The built Notification object.
+   */
+  private Notification createNotification(NotificationType type, NotificationPayload payload,
+      User user) {
+    return Notification.builder()
+        .type(type)
+        .payload(payload != null ? JsonConverter.serialize(payload) : null)
+        .read(false)
+        .createdAt(LocalDateTime.now())
+        .user(user)
+        .build();
+  }
+
+  /**
+   * Adds a notification for the given user with the specified text and send updated notifications.
+   *
+   * @param notification The notification that will be saved.
+   * @param user         The user to add the notification for.
+   */
+  private void addNotification(Notification notification, User user) {
+    notificationRepository.save(notification);
+
+    sendUserNotifications(user.getId());
+  }
+
+  /**
+   * Deletes a notification by its ID and send updated notifications.
+   *
+   * @param userId         The ID of the user associated with the notification.
+   * @param notificationId The ID of the notification to delete.
+   */
+  public void deleteById(long userId, long notificationId) {
+    notificationRepository.deleteById(notificationId);
+
+    sendUserNotifications(userId);
+  }
+
+  /**
+   * Sends the notifications to the user via WebSocket.
+   *
+   * @param userId The ID of the user to send updated notifications for.
+   */
+  private void sendUserNotifications(long userId) {
+    UserSecurity userSecurity = userSecurityService.getByUserId(userId);
+    String email = userSecurity.getEmail();
+    List<NotificationDto> notifications = getAllByEmail(email);
+    webSocketSender.sendNotificationsByUserEmail(notifications, email);
+  }
+
+  /**
+   * Retrieves all notifications associated with a user's email.
+   *
+   * @param email The user's email.
+   * @return A list of NotificationDto objects.
+   */
+  public List<NotificationDto> getAllByEmail(String email) {
+    User user = userSecurityService.findByEmail(email).getUser();
+
+    // we could get notifications from user, but during the LAZY mode we can not retrieve it regard
+    // to closed DB session
+    // TODO: should be refactored to reduce DB invocations
+    List<Notification> notifications = notificationRepository.findNotificationsByUserId(
+        user.getId()).orElseThrow(() -> new NotificationNotFoundException(
+        "Can not find notifications by user id " + user.getId()));
+
+    return mapper.toDto(notifications);
+  }
+
+  /**
+   * Marks a notification as read by its ID and send updated notifications.
+   *
+   * @param userId         The ID of the user associated with the notification.
+   * @param notificationId The ID of the notification to mark as read.
+   */
+  public void markAsReadById(long userId, long notificationId) {
+    Notification notification = notificationRepository.findById(notificationId)
+        .orElseThrow(() -> new NotificationNotFoundException(notificationId));
+
+    notification.setRead(true);
+    notificationRepository.save(notification);
+
+    sendUserNotifications(userId);
   }
 }

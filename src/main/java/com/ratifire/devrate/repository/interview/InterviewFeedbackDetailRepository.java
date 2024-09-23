@@ -1,8 +1,10 @@
 package com.ratifire.devrate.repository.interview;
 
 import com.ratifire.devrate.entity.interview.InterviewFeedbackDetail;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -20,4 +22,7 @@ public interface InterviewFeedbackDetailRepository extends
       nativeQuery = true)
   Optional<Long> findUserIdByInterviewFeedbackDetailId(@Param("resourceId") long resourceId);
 
+  @Modifying
+  @Query("DELETE FROM InterviewFeedbackDetail i WHERE i.startTime <= :cutoffDate")
+  void deleteExpiredFeedbackDetails(@Param("cutoffDate") ZonedDateTime cutoffDate);
 }

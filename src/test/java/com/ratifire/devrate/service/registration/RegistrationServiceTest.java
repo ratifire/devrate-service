@@ -24,6 +24,7 @@ import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.email.EmailService;
 import com.ratifire.devrate.service.user.UserService;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,7 +39,7 @@ import org.springframework.test.context.TestPropertySource;
  */
 @ExtendWith(MockitoExtension.class)
 @TestPropertySource(locations = "classpath:application.properties")
-public class RegistrationServiceTest {
+class RegistrationServiceTest {
 
   @Mock
   private UserSecurityService userSecurityService;
@@ -65,7 +66,7 @@ public class RegistrationServiceTest {
   private RegistrationService registrationService;
 
   @Test
-  public void testRegisterUser_SuccessfulRegistration() {
+  void testRegisterUser_SuccessfulRegistration() {
     String testEmail = "test@gmail.com";
     String testPassword = "somepassword";
     String confirmationCode = "123456";
@@ -101,7 +102,7 @@ public class RegistrationServiceTest {
   }
 
   @Test
-  public void testRegisterUser_ThrowUserAlreadyExistException() {
+  void testRegisterUser_ThrowUserAlreadyExistException() {
     UserRegistrationDto testUserRegistrationDto = UserRegistrationDto.builder()
         .email("test@gmail.com")
         .build();
@@ -113,7 +114,7 @@ public class RegistrationServiceTest {
   }
 
   @Test
-  public void testConfirmRegistration_Success() {
+  void testConfirmRegistration_Success() {
     long userSecurityId = 1L;
     String code = "123456";
 
@@ -125,6 +126,7 @@ public class RegistrationServiceTest {
 
     User testUser = User.builder()
         .id(1L)
+        .contacts(new ArrayList<>())
         .build();
     UserSecurity userSecurity = UserSecurity.builder()
         .id(userSecurityId)
@@ -140,9 +142,11 @@ public class RegistrationServiceTest {
     doNothing().when(emailService).sendGreetingsEmail(any(), any());
 
     long actualUserId = registrationService.confirmRegistration(code);
+    int expectedSizeContact = 1;
 
     assertEquals(userSecurityId, actualUserId);
     assertTrue(userSecurity.isVerified());
+    assertEquals(expectedSizeContact, testUser.getContacts().size());
     verify(emailConfirmationCodeService).findEmailConfirmationCode(code);
     verify(userSecurityService).getById(userSecurityId);
     verify(userSecurityService).save(userSecurity);
@@ -150,7 +154,7 @@ public class RegistrationServiceTest {
   }
 
   @Test
-  public void testConfirmRegistration_RequestEmptyCode() {
+  void testConfirmRegistration_RequestEmptyCode() {
     assertThrows(MailConfirmationCodeRequestException.class,
         () -> registrationService.confirmRegistration(""));
   }

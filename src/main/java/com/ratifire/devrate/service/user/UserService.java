@@ -678,9 +678,9 @@ public class UserService {
    */
   private void notifyUsers(User recipient, User rejector,
       ZonedDateTime scheduledTime) {
-    notificationService.rejectInterview(recipient, rejector.getFirstName(),
+    notificationService.addRejectInterview(recipient, rejector.getFirstName(),
         scheduledTime);
-    notificationService.rejectInterview(rejector, recipient.getFirstName(),
+    notificationService.addRejectInterview(rejector, recipient.getFirstName(),
         scheduledTime);
 
     String recipientEmail = userSecurityService.findEmailByUserId(recipient.getId());
@@ -742,12 +742,7 @@ public class UserService {
     InterviewFeedbackDetail feedbackDetail = interviewFeedbackDetailService.findDetailById(
         interviewFeedbackDto.getInterviewFeedbackDetailId());
 
-    if (interviewFeedbackDto.getInterviewSummaryId() != feedbackDetail.getInterviewSummaryId()) {
-      throw new ResourceNotFoundException("Input invalid interview summary id");
-    }
-
-    if (!new HashSet<>(interviewFeedbackDetailService.findDetailById(
-        interviewFeedbackDto.getInterviewFeedbackDetailId()).getSkillsIds())
+    if (!new HashSet<>(feedbackDetail.getSkillsIds())
         .equals(interviewFeedbackDto.getSkills().stream()
             .map(SkillFeedbackDto::getId)
             .collect(Collectors.toSet()))) {
@@ -755,8 +750,7 @@ public class UserService {
     }
 
     InterviewRequestRole reviewerRole = interviewSummaryService.addComment(
-        feedbackDetail.getInterviewSummaryId(), reviewerId,
-        interviewFeedbackDto.getComment());
+        feedbackDetail.getInterviewSummaryId(), reviewerId, interviewFeedbackDto.getComment());
 
     skillService.updateSkillMarksAfterGettingFeedback(interviewFeedbackDto.getSkills());
 

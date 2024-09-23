@@ -1,6 +1,9 @@
 type: object
 description: The object representing the event participants
 properties:
+  id:
+    type: integer
+    description: Participant id
   name:
     type: string
     description: Participant name
