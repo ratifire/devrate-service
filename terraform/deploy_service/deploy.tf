@@ -73,7 +73,7 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
   max_size                  = 2
   desired_capacity          = 2
   health_check_type         = "EC2"
-  health_check_grace_period = 200
+  health_check_grace_period = 180
   vpc_zone_identifier       = data.aws_subnets.default_subnets.ids
   force_delete              = true
   termination_policies      = ["OldestInstance"]
@@ -146,9 +146,10 @@ resource "aws_lb_target_group" "http_ecs_back_tg" {
   port     = var.back_port
   protocol = "HTTP"
   vpc_id   = data.aws_vpcs.all_vpcs.ids[0]
+  deregistration_delay = "120"
   health_check {
-    healthy_threshold   = 4
-    unhealthy_threshold = 3
+    healthy_threshold   = 1
+    unhealthy_threshold = 2
     interval            = 60
     protocol            = "HTTP"
     path                = "/actuator/health"
