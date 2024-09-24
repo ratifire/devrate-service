@@ -100,7 +100,6 @@ public class SecurityConfiguration {
     return source;
   }
 
-
   @Autowired
   public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
     auth.userDetailsService(userDetailsService)
@@ -120,7 +119,6 @@ public class SecurityConfiguration {
    *               properties.
    * @return A {@link ServletContextInitializer} to configure session cookie settings.
    */
-
   @Bean
   public ServletContextInitializer servletContextInitializer(
       @Value("${server.servlet.session.cookie.domain}") String domain) {
