@@ -162,7 +162,7 @@ WHERE NOT EXISTS (SELECT 1
 INSERT INTO masteries (id, level, soft_skill_mark, hard_skill_mark, specialization_id)
 SELECT * FROM (
 VALUES
-    (10001, 1, 8.18, 5.75, 6661),
+    (10001, 1, 8.18, 6.35, 6661),
     (10002, 2, 7.66, 4.92, 6661),
     (10003, 3, 7.09, 6.02, 6661),
     (10004, 1, 7.25, 7.50, 6662),
@@ -190,6 +190,29 @@ FROM (VALUES  (100001, 'Communication', 'SOFT_SKILL', 5.31, 3, true, true, 10001
               (100006, 'Java Core', 'HARD_SKILL', 8.88, 9, true, true, 10001),
               (100007, 'Git Hub', 'HARD_SKILL', 8.38, 9, true, false, 10001),
               (100008, 'Hibernate', 'HARD_SKILL', 0, 0, false, true, 10001),
+
+                -- New skills required for front-end, testing search function
+              (100097, 'jazz', 'HARD_SKILL', 7.5, 5, true, true, 10001),
+              (100098, 'quick', 'HARD_SKILL', 6.0, 3, true, false, 10001),
+              (100099, 'brown', 'HARD_SKILL', 5.2, 4, true, false, 10001),
+              (100100, 'fox', 'HARD_SKILL', 8.0, 2, true, true, 10001),
+              (100101, 'jumps', 'HARD_SKILL', 7.0, 6, true, false, 10001),
+              (100102, 'over', 'HARD_SKILL', 4.5, 1, true, true, 10001),
+              (100103, 'lazy', 'HARD_SKILL', 6.8, 3, true, false, 10001),
+              (100104, 'dog', 'HARD_SKILL', 9.0, 8, true, true, 10001),
+              (100105, 'quiz', 'HARD_SKILL', 5.5, 2, true, true, 10001),
+              (100106, 'vex', 'HARD_SKILL', 6.3, 3, true, true, 10001),
+              (100107, 'whack', 'HARD_SKILL', 4.8, 1, true, true, 10001),
+              (100108, 'fjord', 'HARD_SKILL', 7.2, 6, true, false, 10001),
+              (100109, 'blitz', 'HARD_SKILL', 6.7, 5, true, true, 10001),
+              (100110, 'gaze', 'HARD_SKILL', 8.5, 7, true, true, 10001),
+              (100111, 'pique', 'HARD_SKILL', 5.0, 2, true, false, 10001),
+              (100112, 'zebra', 'HARD_SKILL', 7.3, 4, true, false, 10001),
+              (100113, 'jerk', 'HARD_SKILL', 5.8, 3, true, false, 10001),
+              (100114, 'knight', 'HARD_SKILL', 6.5, 2, true, true, 10001),
+              (100115, 'quiver', 'HARD_SKILL', 4.2, 1, true, false, 10001),
+              (100116, 'wax', 'HARD_SKILL', 7.0, 4, true, true, 10001),
+
               (100009, 'Communication', 'SOFT_SKILL', 4.41, 3, false, true, 10002),
               (100010, 'Problem-Solving', 'SOFT_SKILL', 7.62, 5, false, false, 10002),
               (100011, 'Adaptability', 'SOFT_SKILL', 8.33, 7, false, true, 10002),
