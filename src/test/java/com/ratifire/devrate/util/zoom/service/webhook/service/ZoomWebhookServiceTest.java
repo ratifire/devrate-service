@@ -12,11 +12,14 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.service.interview.InterviewCompletionService;
+import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.util.zoom.webhook.exception.ZoomWebhookException;
 import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest;
 import com.ratifire.devrate.util.zoom.webhook.service.ZoomWebhookAuthService;
 import com.ratifire.devrate.util.zoom.webhook.service.ZoomWebhookService;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +43,9 @@ public class ZoomWebhookServiceTest {
 
   @Mock
   private InterviewCompletionService interviewCompletionService;
+
+  @Mock
+  private InterviewService interviewService;
 
   @Mock
   private ObjectMapper objectMapper;
@@ -110,12 +116,13 @@ public class ZoomWebhookServiceTest {
   @Test
   void handleZoomWebhookMeetingEndedEventShouldCallInterviewCompletionService()
       throws JsonProcessingException, ZoomWebhookException {
-    requestBody = "{\"event\":\"meeting.ended\",\"payload\":{\"object\""
-        + ":{\"id\":\"abc123-def456-ghi789\"}}}";
+    requestBody = "{\"event\":\"meeting.ended\",\"payload\":{\"object\":{\"id\":\"89238931421\","
+        + "\"end_time\":\"2024-09-24T16:35:00Z\"}}}";
 
     WebHookRequest.Payload.Meeting expectedMeeting = WebHookRequest.Payload
         .Meeting.builder()
-        .id("abc123-def456-ghi789")
+        .id("89238931421")
+        .endTime("2024-09-24T16:35:00Z")
         .build();
 
     WebHookRequest payload = WebHookRequest.builder()
@@ -125,8 +132,13 @@ public class ZoomWebhookServiceTest {
             .build())
         .build();
 
+    Interview interview = new Interview();
+    interview.setStartTime(ZonedDateTime.now().minusMinutes(15));
+
     when(objectMapper.readValue(requestBody, WebHookRequest.class))
         .thenReturn(payload);
+    when(interviewService.getInterviewByMeetingId(Long.parseLong("89238931421")))
+        .thenReturn(interview);
 
     zoomWebhookService.handleZoomWebhook(requestBody, headers);
 
