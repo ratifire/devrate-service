@@ -1,0 +1,35 @@
+get:
+  tags:
+    - User Info
+  summary: Get all main mastery hard skills for a user.
+  description: Retrieve all main mastery hard skills, for the specified user.
+  operationId: getMainHardSkills
+  parameters:
+    - in: path
+      name: userId
+      description: The ID of the user.
+      required: true
+      schema:
+        type: integer
+  responses:
+    '200':
+      description: A list of the user main mastery hard skills.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../components/schemas/UserMainHardSkillsDto.yaml'
+    '400':
+      description: Bad request, e.g., missing or invalid user ID.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Unexpected error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+  
