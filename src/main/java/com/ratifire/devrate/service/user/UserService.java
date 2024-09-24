@@ -16,6 +16,7 @@ import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.SkillFeedbackDto;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.dto.UserMainHardSkillsDto;
 import com.ratifire.devrate.dto.UserMainMasterySkillDto;
 import com.ratifire.devrate.dto.UserPictureDto;
 import com.ratifire.devrate.entity.Achievement;
@@ -102,6 +103,7 @@ public class UserService {
   private final DataMapper<UserMainMasterySkillDto, Specialization> userMainMasterySkillMapper;
   private final DataMapper<InterviewRequestDto, InterviewRequest> interviewRequestMapper;
   private final DataMapper<EventDto, Event> eventMapper;
+  private final DataMapper<UserMainHardSkillsDto, Specialization> userMainHardSkillsMapper;
 
   @Autowired
   public void setUserRepository(@Lazy UserRepository userRepository) {
@@ -758,5 +760,17 @@ public class UserService {
         feedbackDetail.getEvaluatedMasteryId(), reviewerRole);
 
     interviewFeedbackDetailService.deleteById(feedbackDetail.getId());
+  }
+
+  /**
+   * Retrieves the main hard skills of a user.
+   *
+   * @param userId the ID of the user whose main hard skills are being retrieved
+   * @return a list of {@link UserMainHardSkillsDto} representing the user's main hard skills
+   * @throws UserNotFoundException if no user with the given ID is found
+   */
+  public List<UserMainHardSkillsDto> getMainHardSkills(long userId) {
+    User user = findUserById(userId);
+    return userMainHardSkillsMapper.toDto(user.getSpecializations());
   }
 }

@@ -13,6 +13,7 @@ import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.dto.UserMainHardSkillsDto;
 import com.ratifire.devrate.dto.UserMainMasterySkillDto;
 import com.ratifire.devrate.dto.UserPictureDto;
 import com.ratifire.devrate.service.user.UserService;
@@ -417,5 +418,10 @@ public class UserController {
   public void saveFeedback(@PathVariable long reviewerId,
       @Valid @RequestBody InterviewFeedbackDto interviewFeedbackDto) {
     userService.saveFeedback(reviewerId, interviewFeedbackDto);
+  }
+
+  @GetMapping("/{userId}/specializations/main-masteries/skills")
+  public List<UserMainHardSkillsDto> getMainHardSkills(@PathVariable long userId) {
+    return userService.getMainHardSkills(userId);
   }
 }
