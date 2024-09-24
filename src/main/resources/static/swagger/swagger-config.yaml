@@ -154,8 +154,8 @@ paths:
     $ref: './paths/users/users-id-feedbacks.yaml'
   /feedback-details/{id}:
     $ref: './paths/interviewFeedback/feedback-details-id.yaml'
-  /users/{userId}/specializations/main-masteries/skills:
-    $ref: './paths/users/users-id-specializations-main-masteries-skills.yaml'
+  /users/{userId}/specializations/main-mastery/skills:
+    $ref: './paths/users/users-id-specializations-main-mastery-skills.yaml'
 components:
   securitySchemes:
     basicAuth:

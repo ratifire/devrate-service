@@ -420,7 +420,7 @@ public class UserController {
     userService.saveFeedback(reviewerId, interviewFeedbackDto);
   }
 
-  @GetMapping("/{userId}/specializations/main-masteries/skills")
+  @GetMapping("/{userId}/specializations/main-mastery/skills")
   public List<UserMainHardSkillsDto> getMainHardSkills(@PathVariable long userId) {
     return userService.getMainHardSkills(userId);
   }
