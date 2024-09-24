@@ -29,6 +29,7 @@ import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.dto.SpecializationDto;
+import com.ratifire.devrate.dto.UserMainHardSkillsDto;
 import com.ratifire.devrate.dto.UserMainMasterySkillDto;
 import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.Bookmark;
@@ -784,5 +785,36 @@ class UserServiceTest {
         .addInterviewScheduled(any(), any(), any());
     verify(emailService, times(2))
         .sendInterviewScheduledEmail(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getMainHardSkillValidUserIdReturnsHardSkillsDto() {
+    User user = new User();
+    user.setId(1L);
+    List<Specialization> specializations = List.of(new Specialization(), new Specialization());
+    user.setSpecializations(specializations);
+
+    List<UserMainHardSkillsDto> hardSkillsDto = List.of(
+        UserMainHardSkillsDto.builder().build(),
+        UserMainHardSkillsDto.builder().build());
+
+    when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+    when(dataMapper.toDto(specializations)).thenReturn(hardSkillsDto);
+
+    List<UserMainHardSkillsDto> result = userService.getMainHardSkills(1L);
+
+    assertEquals(hardSkillsDto, result);
+    verify(userRepository, times(1)).findById(1L);
+    verify(dataMapper, times(1)).toDto(specializations);
+  }
+
+  @Test
+  void getMainHardSkillsUserNotFoundThrowsUserNotFoundException() {
+    when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+    assertThrows(UserNotFoundException.class, () -> userService.getMainHardSkills(1L));
+
+    verify(userRepository, times(1)).findById(1L);
+    verify(dataMapper, never()).toDto(anyList());
   }
 }
