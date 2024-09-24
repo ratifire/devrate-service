@@ -27,6 +27,7 @@ public class EducationDto {
   @NotBlank(message = "must not be null or empty")
   private String name;
 
+  @Size(min = 40)
   @NotBlank(message = "must not be null or empty")
   private String description;
 

@@ -1,6 +1,6 @@
 package com.ratifire.devrate.dto;
 
-import jakarta.validation.constraints.Size;
+import com.ratifire.devrate.enums.NotificationType;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -12,7 +12,7 @@ import lombok.Getter;
 public class NotificationDto {
 
   private long id;
-  @Size(max = 100)
-  private String text;
+  private String payload;
+  private NotificationType type;
   private boolean read;
 }

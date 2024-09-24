@@ -1,6 +1,8 @@
 package com.ratifire.devrate.service.interview;
 
+import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
+import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.specialization.SpecializationService;
 import com.ratifire.devrate.service.user.UserService;
 import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
@@ -29,6 +31,7 @@ public class InterviewCompletionService {
   private final InterviewFeedbackDetailService interviewFeedbackDetailService;
   private final SpecializationService specializationService;
   private final UserService userService;
+  private final NotificationService notificationService;
   private final ZoomApiService zoomApiService;
 
   /**
@@ -40,24 +43,32 @@ public class InterviewCompletionService {
    */
   @Transactional
   public String completeInterviewProcess(Meeting meeting) {
-    logger.info("Zoom webhook triggered meeting.ended - {}", meeting.toString());
+    logger.info("Zoom webhook triggered meeting.ended - {}", meeting);
     Interview interview = interviewService.getInterviewByMeetingId(Long.parseLong(meeting.getId()));
+
     long interviewSummaryId = interviewSummaryService.createInterviewSummary(interview,
         meeting.getEndTime());
+
+    specializationService.updateUserInterviewCounts(interview);
+
+    User interviewer = interview.getInterviewerRequest().getUser();
+    User candidate = interview.getCandidateRequest().getUser();
+    userService.refreshUserInterviewCounts(List.of(interviewer, candidate));
+
     Map<String, Long> interviewFeedbackDetailId =
         interviewFeedbackDetailService.saveInterviewFeedbackDetail(interview, interviewSummaryId);
-    specializationService.updateUserInterviewCounts(interview);
-    userService.refreshUserInterviewCounts(List.of(interview.getInterviewerRequest().getUser(),
-        interview.getCandidateRequest().getUser()));
+
+    Long candidateFeedbackDetailId = interviewFeedbackDetailId.get("candidateFeedbackId");
+    notificationService.addInterviewFeedbackDetail(candidate, candidateFeedbackDetailId);
+    Long interviewerFeedbackDetailId = interviewFeedbackDetailId.get("interviewerFeedbackId");
+    notificationService.addInterviewFeedbackDetail(interviewer, interviewerFeedbackDetailId);
+
     try {
       zoomApiService.deleteMeeting(Long.parseLong(meeting.getId()));
     } catch (ZoomApiException e) {
       logger.error("Zoom API exception occurred while trying to delete the meeting "
           + "with meetingId: {}. {}", meeting.getId(), e.getMessage());
     }
-    //TODO: add logic for sending notifications to users (candidate and interviewer)
-    // about the interview feedback (need to transmit to front-end the next parameter:
-    // interviewFeedbackDetailId)
     interviewService.deleteInterview(interview.getId());
     interviewRequestService.deleteInterviewRequests(
         List.of(interview.getInterviewerRequest().getId(),

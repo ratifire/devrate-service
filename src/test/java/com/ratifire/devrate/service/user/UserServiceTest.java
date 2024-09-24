@@ -29,6 +29,7 @@ import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.dto.SpecializationDto;
+import com.ratifire.devrate.dto.UserMainHardSkillsDto;
 import com.ratifire.devrate.dto.UserMainMasterySkillDto;
 import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.Bookmark;
@@ -459,7 +460,7 @@ class UserServiceTest {
   }
 
   @Test
-  public void testGetSpecializationsByUserId() {
+  void testGetSpecializationsByUserId() {
     when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
     when(dataMapper.toDto(anyList())).thenReturn(specializationDtos);
 
@@ -468,7 +469,7 @@ class UserServiceTest {
   }
 
   @Test
-  public void testCreateSpecialization() {
+  void testCreateSpecialization() {
     when(userRepository.findById(userId)).thenReturn(Optional.ofNullable(testUser));
     when(dataMapper.toEntity(specializationDto)).thenReturn(specialization);
 
@@ -714,7 +715,7 @@ class UserServiceTest {
     when(interviewMatchingService.match(interviewRequest,
         List.of(interviewRequest.getUser()))).thenReturn(Optional.empty());
 
-    doNothing().when(notificationService).rejectInterview(any(), any(), any());
+    doNothing().when(notificationService).addRejectInterview(any(), any(), any());
     doNothing().when(emailService).sendInterviewRejectionMessage(any(), any(), any(), any());
     doNothing().when(interviewRequestService).handleRejectedInterview(any(), any());
 
@@ -723,7 +724,7 @@ class UserServiceTest {
     verify(userSecurityService, times(1))
         .findEmailByUserId(anyLong());
     verify(notificationService, times(2))
-        .rejectInterview(any(), any(), any());
+        .addRejectInterview(any(), any(), any());
     verify(notificationService, never())
         .addInterviewScheduled(any(), any(), any());
     verify(emailService, never())
@@ -741,7 +742,7 @@ class UserServiceTest {
 
     doNothing().when(emailService).sendInterviewRejectionMessage(any(), any(), any(), any());
     doNothing().when(interviewRequestService).handleRejectedInterview(any(), any());
-    doNothing().when(notificationService).rejectInterview(any(), any(), any());
+    doNothing().when(notificationService).addRejectInterview(any(), any(), any());
     doNothing().when(notificationService).addInterviewScheduled(any(), any(), any());
     doNothing().when(emailService).sendInterviewScheduledEmail(any(), any(), any(), any(), any());
 
@@ -750,7 +751,7 @@ class UserServiceTest {
     verify(userSecurityService, times(5))
         .findEmailByUserId(anyLong());
     verify(notificationService, times(2))
-        .rejectInterview(any(), any(), any());
+        .addRejectInterview(any(), any(), any());
     verify(notificationService, times(4))
         .addInterviewScheduled(any(), any(), any());
     verify(emailService, times(4))
@@ -770,7 +771,7 @@ class UserServiceTest {
 
     doNothing().when(emailService).sendInterviewRejectionMessage(any(), any(), any(), any());
     doNothing().when(interviewRequestService).handleRejectedInterview(any(), any());
-    doNothing().when(notificationService).rejectInterview(any(), any(), any());
+    doNothing().when(notificationService).addRejectInterview(any(), any(), any());
     doNothing().when(notificationService).addInterviewScheduled(any(), any(), any());
     doNothing().when(emailService).sendInterviewScheduledEmail(any(), any(), any(), any(), any());
 
@@ -779,10 +780,41 @@ class UserServiceTest {
     verify(userSecurityService, times(3))
         .findEmailByUserId(anyLong());
     verify(notificationService, times(2))
-        .rejectInterview(any(), any(), any());
+        .addRejectInterview(any(), any(), any());
     verify(notificationService, times(2))
         .addInterviewScheduled(any(), any(), any());
     verify(emailService, times(2))
         .sendInterviewScheduledEmail(any(), any(), any(), any(), any());
+  }
+
+  @Test
+  void getMainHardSkillValidUserIdReturnsHardSkillsDto() {
+    User user = new User();
+    user.setId(1L);
+    List<Specialization> specializations = List.of(new Specialization(), new Specialization());
+    user.setSpecializations(specializations);
+
+    List<UserMainHardSkillsDto> hardSkillsDto = List.of(
+        UserMainHardSkillsDto.builder().build(),
+        UserMainHardSkillsDto.builder().build());
+
+    when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+    when(dataMapper.toDto(specializations)).thenReturn(hardSkillsDto);
+
+    List<UserMainHardSkillsDto> result = userService.getMainHardSkills(1L);
+
+    assertEquals(hardSkillsDto, result);
+    verify(userRepository, times(1)).findById(1L);
+    verify(dataMapper, times(1)).toDto(specializations);
+  }
+
+  @Test
+  void getMainHardSkillsUserNotFoundThrowsUserNotFoundException() {
+    when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+    assertThrows(UserNotFoundException.class, () -> userService.getMainHardSkills(1L));
+
+    verify(userRepository, times(1)).findById(1L);
+    verify(dataMapper, never()).toDto(anyList());
   }
 }
