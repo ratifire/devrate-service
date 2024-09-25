@@ -534,13 +534,14 @@ public class UserService {
   @Transactional
   public SpecializationDto createSpecialization(SpecializationDto specializationDto,
       long userId) {
-    specializationService.checkIsMainAndSpecializationNameAlreadyExist(specializationDto, userId);
+    specializationService.validateBeforeCreate(specializationDto, userId);
     User user = findUserById(userId);
     Specialization specialization = specializationDataMapper.toEntity(specializationDto);
     specialization.setUser(user);
     user.getSpecializations().add(specialization);
     updateUser(user);
-    specializationService.createMasteriesForSpecialization(specialization.getId());
+    specializationService.createMasteriesForSpecialization(specialization,
+        specializationDto.getMainMasteryName());
     return specializationDataMapper.toDto(specialization);
   }
 

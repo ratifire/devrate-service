@@ -208,9 +208,8 @@ public class SpecializationServiceTest {
   @Test
   @Transactional
   void createMasteriesForSpecialization_shouldCreateMasteries() {
-    when(specializationRepository.findById(specId)).thenReturn(Optional.of(specialization));
     when(specializationRepository.save(specialization)).thenReturn(specialization);
-    specializationService.createMasteriesForSpecialization(specId);
+    specializationService.createMasteriesForSpecialization(specialization, "JUNIOR");
     specialization.setMasteries(defaultMasteryLevels);
     assertNotNull(specialization.getMasteries());
     assertEquals(3, specialization.getMasteries().size());

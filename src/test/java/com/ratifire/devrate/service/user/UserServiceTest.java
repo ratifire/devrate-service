@@ -244,6 +244,7 @@ class UserServiceTest {
     specializationDto = SpecializationDto.builder()
         .id(6661L)
         .name("Frontend Developer")
+        .mainMasteryName("JUNIOR")
         .main(true)
         .build();
 

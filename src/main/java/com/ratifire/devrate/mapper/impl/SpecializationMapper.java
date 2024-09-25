@@ -30,4 +30,7 @@ public abstract class SpecializationMapper implements
   @Mapping(target = "user", ignore = true)
   public abstract Specialization updateEntity(SpecializationDto specializationDto,
       @MappingTarget Specialization specialization);
+
+  @Mapping(target = "mainMasteryName", ignore = true)
+  public abstract SpecializationDto toDto(Specialization specialization);
 }

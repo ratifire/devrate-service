@@ -8,6 +8,9 @@ properties:
   name:
     type: string
     description: The name of the specialization
+  mainMasteryName:
+    type: string
+    description: The main mastery name of the specialization
   main:
     type: boolean
     description: Whether the specialization is the main specialization

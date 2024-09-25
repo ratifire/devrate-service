@@ -127,8 +127,15 @@ public class MasteryService {
    * @return the created skill information as a DTO
    */
   public SkillDto createSkill(SkillDto skillDto, long masteryId) {
+    if (skillDto == null) {
+      throw new ResourceNotFoundException("The skill is a required param.");
+    }
+
+    if (masteryRepository.existsByIdAndSkills_Name(masteryId, skillDto.getName())) {
+      throw new ResourceAlreadyExistException(
+          "Skill with name " + skillDto.getName() + " already exists");
+    }
     Mastery mastery = getMasteryById(masteryId);
-    existSkillByName(masteryId, skillDto.getName());
     Skill skill = skillMapper.toEntity(skillDto);
     skill.setAverageMark(BigDecimal.ZERO);
     mastery.getSkills().add(skill);
@@ -145,12 +152,19 @@ public class MasteryService {
    * @return the created skill information as a DTO
    */
   public List<SkillDto> createSkills(List<SkillDto> skillDtos, long masteryId) {
+    List<Skill> skills = skillDtos.stream()
+        .filter(skill -> !masteryRepository.existsByIdAndSkills_Name(masteryId, skill.getName()))
+        .map(skillMapper::toEntity)
+        .peek(skill -> skill.setAverageMark(BigDecimal.ZERO))
+        .toList();
+
+    if (skills.isEmpty()) {
+      return skillMapper.toDto(skills);
+    }
+
     Mastery mastery = getMasteryById(masteryId);
-    skillDtos.forEach(dto -> existSkillByName(masteryId, dto.getName()));
-    List<Skill> skills = skillMapper.toEntity(skillDtos);
-    skills.forEach(skill -> skill.setAverageMark(BigDecimal.ZERO));
     mastery.getSkills().addAll(skills);
-    refreshMasteryAverageMark(mastery, skillDtos.get(0).getType());
+    refreshMasteryAverageMark(mastery, skillDtos.getFirst().getType());
     updateMastery(mastery);
     return skillMapper.toDto(skills);
   }
@@ -172,19 +186,6 @@ public class MasteryService {
       mastery.setSoftSkillMark(newAverageMark);
     } else {
       mastery.setHardSkillMark(newAverageMark);
-    }
-  }
-
-  /**
-   * Checks if a skill with the given name already exists in the specified mastery.
-   *
-   * @param id   the ID of the mastery to check
-   * @param name the name of the skill to check for uniqueness
-   * @throws ResourceAlreadyExistException if a skill with the given name already exists
-   */
-  private void existSkillByName(long id, String name) {
-    if (masteryRepository.existsByIdAndSkills_Name(id, name)) {
-      throw new ResourceAlreadyExistException("Skill with name " + name + " already exists");
     }
   }
 
