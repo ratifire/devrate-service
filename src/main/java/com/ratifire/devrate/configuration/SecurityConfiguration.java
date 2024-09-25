@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -86,9 +88,10 @@ public class SecurityConfiguration {
    */
   @Bean
   @ConditionalOnProperty(prefix = "cors", name = "enabled", havingValue = "false")
-  public CorsConfigurationSource corsConfigurationSource() {
+  public CorsConfigurationSource corsConfigurationSource(
+      @Value("${cors.allowed.origins}") List<String> allowedOrigins) {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+    configuration.setAllowedOrigins(allowedOrigins);
     configuration.setAllowedMethods(List.of("*"));
     configuration.setAllowedHeaders(List.of("*"));
     configuration.setAllowCredentials(true);
@@ -106,5 +109,22 @@ public class SecurityConfiguration {
   @Bean
   public Map<String, ResourceOwnerVerifier> resourceTypeToOwnerVerifier() {
     return new HashMap<>();
+  }
+
+  /**
+   * Configures a {@link org.springframework.boot.web.servlet.ServletContextInitializer} bean to set
+   * up session cookie settings for the application.
+   *
+   * @param domain The domain value for the session cookie, injected from the application
+   *               properties.
+   * @return A {@link ServletContextInitializer} to configure session cookie settings.
+   */
+  @Bean
+  public ServletContextInitializer servletContextInitializer(
+      @Value("${server.servlet.session.cookie.domain}") String domain) {
+    return servletContext -> {
+      servletContext.getSessionCookieConfig().setDomain(domain);
+      servletContext.getSessionCookieConfig().setPath("/");
+    };
   }
 }

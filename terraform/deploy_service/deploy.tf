@@ -58,7 +58,7 @@ resource "aws_ecs_cluster_capacity_providers" "back_cluster_capacity_provider" {
 
   default_capacity_provider_strategy {
     capacity_provider = aws_ecs_capacity_provider.back_capacity_provider.name
-    base              = 0
+    base              = 1
     weight            = 1
   }
 }
@@ -69,11 +69,11 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
     id      = aws_launch_template.ecs_back_launch.id
     version = aws_launch_template.ecs_back_launch.latest_version
   }
-  min_size                  = 1
+  min_size                  = 2
   max_size                  = 2
   desired_capacity          = 2
   health_check_type         = "EC2"
-  health_check_grace_period = 200
+  health_check_grace_period = 180
   vpc_zone_identifier       = data.aws_subnets.default_subnets.ids
   force_delete              = true
   termination_policies      = ["OldestInstance"]
@@ -108,9 +108,9 @@ resource "aws_ecs_service" "back_services" {
   cluster                            = var.back_cluster_name
   task_definition                    = aws_ecs_task_definition.task_definition.arn
   scheduling_strategy                = "REPLICA"
-  desired_count                      = 1
+  desired_count                      = 2
   force_new_deployment               = true
-  deployment_minimum_healthy_percent = 100
+  deployment_minimum_healthy_percent = 50
   deployment_maximum_percent         = 200
   capacity_provider_strategy {
     capacity_provider = aws_ecs_capacity_provider.back_capacity_provider.name
@@ -119,7 +119,7 @@ resource "aws_ecs_service" "back_services" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.ecs_tg.arn
+    target_group_arn = aws_lb_target_group.http_ecs_back_tg.arn
     container_name   = var.back_container_name
     container_port   = var.back_port
   }
@@ -133,7 +133,7 @@ resource "aws_ecs_service" "back_services" {
 }
 
 resource "aws_lb" "back_ecs_alb" {
-  name               = "ecs-alb"
+  name               = "ecs-back-alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [data.aws_security_group.vpc_backend_security_group.id]
@@ -141,27 +141,21 @@ resource "aws_lb" "back_ecs_alb" {
 
 }
 
-resource "aws_lb_target_group" "ecs_tg" {
-  name     = "ecs-tg"
-  port     = var.back_port
-  protocol = "HTTP"
-  vpc_id   = data.aws_vpcs.all_vpcs.ids[0]
+resource "aws_lb_target_group" "http_ecs_back_tg" {
+  name                 = "http-ecs-back-tg"
+  port                 = var.back_port
+  protocol             = "HTTP"
+  vpc_id               = data.aws_vpcs.all_vpcs.ids[0]
+  deregistration_delay = "120"
+  stickiness {
+    type            = "lb_cookie"
+    cookie_duration = "86400"
+  }
   health_check {
-    healthy_threshold   = 4
-    unhealthy_threshold = 3
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
     interval            = 60
     protocol            = "HTTP"
     path                = "/actuator/health"
-  }
-}
-
-resource "aws_lb_listener" "ecs_listener" {
-  load_balancer_arn = aws_lb.back_ecs_alb.arn
-  port              = var.back_port
-  protocol          = "HTTP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.ecs_tg.arn
   }
 }
