@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.mapstruct.Named;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
  * Configuration class for loading default soft skills and mastery levels from JSON files.
  */
 @Configuration
+@Named("SpecializationConfig")
 public class SpecializationConfig {
 
   private static final Map<Integer, String> BY_LEVEL = new HashMap<>();
@@ -106,6 +108,7 @@ public class SpecializationConfig {
    * @param level the level number.
    * @return the level name corresponding to the given level number, or null if not found.
    */
+  @Named("getByLevel")
   public static String getByLevel(int level) {
     return BY_LEVEL.get(level);
   }

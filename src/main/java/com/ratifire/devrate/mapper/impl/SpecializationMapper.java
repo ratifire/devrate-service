@@ -1,5 +1,6 @@
 package com.ratifire.devrate.mapper.impl;
 
+import com.ratifire.devrate.configuration.SpecializationConfig;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.mapper.DataMapper;
@@ -10,7 +11,7 @@ import org.mapstruct.MappingTarget;
 /**
  * Mapper interface for mapping between Specialization and SpecializationDto objects.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {SpecializationConfig.class})
 public abstract class SpecializationMapper implements
     DataMapper<SpecializationDto, Specialization> {
 
@@ -31,6 +32,7 @@ public abstract class SpecializationMapper implements
   public abstract Specialization updateEntity(SpecializationDto specializationDto,
       @MappingTarget Specialization specialization);
 
-  @Mapping(target = "mainMasteryName", ignore = true)
+  @Mapping(target = "mainMasteryName", source = "mainMastery.level",
+      qualifiedByName = {"SpecializationConfig", "getByLevel"})
   public abstract SpecializationDto toDto(Specialization specialization);
 }
