@@ -2,7 +2,6 @@ package com.ratifire.devrate.util.zoom.service.webhook.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.eq;
@@ -13,14 +12,11 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.service.interview.InterviewCompletionService;
-import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.util.zoom.webhook.exception.ZoomWebhookException;
 import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest;
 import com.ratifire.devrate.util.zoom.webhook.service.ZoomWebhookAuthService;
 import com.ratifire.devrate.util.zoom.webhook.service.ZoomWebhookService;
-import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,8 +43,6 @@ public class ZoomWebhookServiceTest {
 
   @Mock
   private ObjectMapper objectMapper;
-  @Mock
-  private InterviewService interviewService;
 
   private Map<String, String> headers;
   private String requestBody;
@@ -116,16 +110,12 @@ public class ZoomWebhookServiceTest {
   @Test
   void handleZoomWebhookMeetingEndedEventShouldCallInterviewCompletionService()
       throws JsonProcessingException, ZoomWebhookException {
-
-    String endTime = "2024-09-24T16:35:00Z";
-
-    requestBody = "{\"event\":\"meeting.ended\",\"payload\":{\"object\":{\"id\":\"89238931421\","
-        + "\"end_time\":\"" + endTime + "\"}}}";
+    requestBody = "{\"event\":\"meeting.ended\",\"payload\":{\"object\""
+        + ":{\"id\":\"89723154070\"}}}";
 
     WebHookRequest.Payload.Meeting expectedMeeting = WebHookRequest.Payload
         .Meeting.builder()
-        .id("89238931421")
-        .endTime(endTime)
+        .id("89723154070")
         .build();
 
     WebHookRequest payload = WebHookRequest.builder()
@@ -135,59 +125,21 @@ public class ZoomWebhookServiceTest {
             .build())
         .build();
 
-    ZonedDateTime startTime = ZonedDateTime.parse("2024-09-24T16:20:00Z");
-
-    Interview interview = new Interview();
-    interview.setStartTime(startTime);
-
-    when(objectMapper.readValue(requestBody, WebHookRequest.class)).thenReturn(payload);
-
-    when(interviewService.getInterviewByMeetingId(Long.parseLong("89238931421")))
-        .thenReturn(interview);
+    when(objectMapper.readValue(requestBody, WebHookRequest.class))
+        .thenReturn(payload);
 
     zoomWebhookService.handleZoomWebhook(requestBody, headers);
 
+    verify(zoomWebhookAuthService, times(1))
+        .validateSignature(anyString(), anyString(), anyString());
     verify(interviewCompletionService, times(1))
-        .completeInterviewProcess(any(WebHookRequest.Payload.Meeting.class));
-  }
-
-  @Test
-  void handleZoomWebhookMeetingEndedEventShouldNotCallCompletionIfTooEarly()
-      throws JsonProcessingException, ZoomWebhookException {
-
-    requestBody = "{\"event\":\"meeting.ended\",\"payload\":{\"object\":{\"id\":\"89238931421\","
-        + "\"end_time\":\"2024-09-24T16:05:00Z\"}}}";
-
-    WebHookRequest.Payload.Meeting expectedMeeting = WebHookRequest.Payload
-        .Meeting.builder()
-        .id("89238931421")
-        .endTime("2024-09-24T16:05:00Z")
-        .build();
-
-    WebHookRequest payload = WebHookRequest.builder()
-        .event("meeting.ended")
-        .payload(WebHookRequest.Payload.builder()
-            .meeting(expectedMeeting)
-            .build())
-        .build();
-
-    Interview interview = new Interview();
-    interview.setStartTime(ZonedDateTime.now().minusMinutes(5));
-
-    when(objectMapper.readValue(requestBody, WebHookRequest.class)).thenReturn(payload);
-    when(interviewService.getInterviewByMeetingId(Long.parseLong("89238931421")))
-        .thenReturn(interview);
-
-    zoomWebhookService.handleZoomWebhook(requestBody, headers);
-
-    verify(interviewCompletionService, times(0))
-        .completeInterviewProcess(expectedMeeting);
+        .validateMeetingEndTime(payload);
   }
 
   @Test
   void handleZoomWebhookInvalidSignatureShouldThrowException() throws ZoomWebhookException {
     requestBody = "{\"event\":\"meeting.ended\",\"payload\":{\"object\":"
-        + "{\"id\":\"abc123-def456-ghi789\"}}}";
+        + "{\"id\":\"89723154070\"}}}";
     headers.put("x-zm-signature", "invalid_signature");
 
     doThrow(new ZoomWebhookException("Unauthorized: Invalid signature."))

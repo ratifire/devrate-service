@@ -5,9 +5,13 @@ import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.specialization.SpecializationService;
 import com.ratifire.devrate.service.user.UserService;
+import com.ratifire.devrate.util.interview.DateTimeUtils;
 import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
 import com.ratifire.devrate.util.zoom.service.ZoomApiService;
+import com.ratifire.devrate.util.zoom.webhook.exception.ZoomWebhookException;
+import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest;
 import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest.Payload.Meeting;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -74,5 +78,31 @@ public class InterviewCompletionService {
         List.of(interview.getInterviewerRequest().getId(),
             interview.getCandidateRequest().getId()));
     return "Interview process completed successfully!";
+  }
+
+  /**
+   * Validates if the webhook is triggered at the right time.
+   *
+   * @param payload The event data containing information about the meeting.
+   * @return boolean indicating if the webhook can proceed with interview completion.
+   * @throws ZoomWebhookException If the data is invalid.
+   */
+  public boolean validateMeetingEndTime(WebHookRequest payload) throws ZoomWebhookException {
+    if (payload == null || payload.getPayload() == null || payload
+        .getPayload().getMeeting() == null) {
+      throw new ZoomWebhookException("Invalid webhook payload");
+    }
+
+    WebHookRequest.Payload.Meeting meeting = payload.getPayload().getMeeting();
+    long meetingId = Long.parseLong(meeting.getId());
+
+    Interview interview = interviewService.getInterviewByMeetingId(meetingId);
+    ZonedDateTime scheduledStartTime = interview.getStartTime();
+    ZonedDateTime currentDateTime = DateTimeUtils.convertToUtcTimeZone(ZonedDateTime.now());
+
+    if (currentDateTime.isBefore(scheduledStartTime.plusMinutes(10))) {
+      return false;
+    }
+    return true;
   }
 }
