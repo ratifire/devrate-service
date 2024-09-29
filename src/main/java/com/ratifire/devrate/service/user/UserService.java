@@ -549,7 +549,7 @@ public class UserService {
    * Creates an interview request for the specified user and attempts to match it with an existing
    * request.
    *
-   * @param userId     the ID of the user creating the interview request
+   * @param userId     the IDs of the user creating the interview request
    * @param requestDto the DTO containing the interview request details
    */
   @Transactional
