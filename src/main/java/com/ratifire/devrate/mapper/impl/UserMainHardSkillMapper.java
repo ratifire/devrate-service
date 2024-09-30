@@ -34,6 +34,7 @@ public abstract class UserMainHardSkillMapper implements
   }
 
   @Mapping(target = "specializationName", source = "specialization.name")
+  @Mapping(target = "isMainSpecialization", source = "specialization.main")
   @Mapping(target = "masteryName", source = "specialization.mainMastery.level",
       qualifiedByName = "getMainMasteryName")
   @Mapping(target = "hardSkills", source = "specialization.mainMastery.skills",
