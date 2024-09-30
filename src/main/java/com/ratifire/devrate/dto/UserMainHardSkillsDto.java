@@ -14,6 +14,7 @@ import lombok.Getter;
 public class UserMainHardSkillsDto {
 
   private String specializationName;
+  private boolean isMainSpecialization;
   private String masteryName;
   private List<SkillDto> hardSkills;
 }
