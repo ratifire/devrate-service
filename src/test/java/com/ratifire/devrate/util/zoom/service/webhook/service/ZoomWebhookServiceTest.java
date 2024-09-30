@@ -133,7 +133,7 @@ public class ZoomWebhookServiceTest {
     verify(zoomWebhookAuthService, times(1))
         .validateSignature(anyString(), anyString(), anyString());
     verify(interviewCompletionService, times(1))
-        .validateMeetingEndTime(payload);
+        .completeInterviewProcess(payload.getPayload().getMeeting());
   }
 
   @Test

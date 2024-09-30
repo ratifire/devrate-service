@@ -45,10 +45,8 @@ public class ZoomWebhookService {
       case "endpoint.url_validation":
         return zoomWebhookAuthService.handleUrlValidationEvent(payload);
       case "meeting.ended":
-        if (interviewCompletionService.validateMeetingEndTime(payload)) {
-          interviewCompletionService.completeInterviewProcess(payload.getPayload().getMeeting());
-        }
-        return "Meeting processed successfully";
+        return interviewCompletionService
+            .completeInterviewProcess(payload.getPayload().getMeeting());
       default:
         throw new ZoomWebhookException("Unknown event type");
     }

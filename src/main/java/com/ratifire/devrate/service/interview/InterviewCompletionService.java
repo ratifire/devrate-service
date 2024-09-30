@@ -9,7 +9,6 @@ import com.ratifire.devrate.util.interview.DateTimeUtils;
 import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
 import com.ratifire.devrate.util.zoom.service.ZoomApiService;
 import com.ratifire.devrate.util.zoom.webhook.exception.ZoomWebhookException;
-import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest;
 import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest.Payload.Meeting;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -28,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class InterviewCompletionService {
 
   private static final Logger logger = LoggerFactory.getLogger(InterviewCompletionService.class);
+  private static final int WEBHOOK_ACTIVATION_DELAY = 10;
 
   private final InterviewService interviewService;
   private final InterviewRequestService interviewRequestService;
@@ -46,9 +46,13 @@ public class InterviewCompletionService {
    * @return A success message indicating that the interview process was completed successfully.
    */
   @Transactional
-  public String completeInterviewProcess(Meeting meeting) {
+  public String completeInterviewProcess(Meeting meeting) throws ZoomWebhookException {
+    if (!validateMeetingEndTime(meeting)) {
+      return "Webhook ignored as it was triggered too early";
+    }
+    String meetingId = meeting.getId();
     logger.info("Zoom webhook triggered meeting.ended - {}", meeting);
-    Interview interview = interviewService.getInterviewByMeetingId(Long.parseLong(meeting.getId()));
+    Interview interview = interviewService.getInterviewByMeetingId(Long.parseLong(meetingId));
 
     long interviewSummaryId = interviewSummaryService.createInterviewSummary(interview,
         meeting.getEndTime());
@@ -68,10 +72,10 @@ public class InterviewCompletionService {
     notificationService.addInterviewFeedbackDetail(interviewer, interviewerFeedbackDetailId);
 
     try {
-      zoomApiService.deleteMeeting(Long.parseLong(meeting.getId()));
+      zoomApiService.deleteMeeting(Long.parseLong(meetingId));
     } catch (ZoomApiException e) {
       logger.error("Zoom API exception occurred while trying to delete the meeting "
-          + "with meetingId: {}. {}", meeting.getId(), e.getMessage());
+          + "with meetingId: {}. {}", meetingId, e.getMessage());
     }
     interviewService.deleteInterview(interview.getId());
     interviewRequestService.deleteInterviewRequests(
@@ -83,24 +87,22 @@ public class InterviewCompletionService {
   /**
    * Validates if the webhook is triggered at the right time.
    *
-   * @param payload The event data containing information about the meeting.
+   * @param meeting The meeting object containing details of the meeting that has ended.
    * @return boolean indicating if the webhook can proceed with interview completion.
    * @throws ZoomWebhookException If the data is invalid.
    */
-  public boolean validateMeetingEndTime(WebHookRequest payload) throws ZoomWebhookException {
-    if (payload == null || payload.getPayload() == null || payload
-        .getPayload().getMeeting() == null) {
-      throw new ZoomWebhookException("Invalid webhook payload");
+  public boolean validateMeetingEndTime(Meeting meeting) throws ZoomWebhookException {
+    if (meeting == null || meeting.getId() == null) {
+      throw new ZoomWebhookException("Invalid meeting data");
     }
 
-    WebHookRequest.Payload.Meeting meeting = payload.getPayload().getMeeting();
     long meetingId = Long.parseLong(meeting.getId());
 
     Interview interview = interviewService.getInterviewByMeetingId(meetingId);
     ZonedDateTime scheduledStartTime = interview.getStartTime();
     ZonedDateTime currentDateTime = DateTimeUtils.convertToUtcTimeZone(ZonedDateTime.now());
 
-    if (currentDateTime.isBefore(scheduledStartTime.plusMinutes(10))) {
+    if (currentDateTime.isBefore(scheduledStartTime.plusMinutes(WEBHOOK_ACTIVATION_DELAY))) {
       return false;
     }
     return true;
