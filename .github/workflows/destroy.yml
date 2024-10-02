@@ -2,7 +2,7 @@ name: Destroy
 
 on:
   schedule:
-    - cron: '00 21 * * *'
+    - cron: '00 01 * * *'
   workflow_dispatch:
 
 jobs:
