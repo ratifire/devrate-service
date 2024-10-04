@@ -81,6 +81,6 @@ data "aws_acm_certificate" "devrate_cert" {
   domain   = "devrate.org"
   statuses = ["ISSUED"]
   tags = {
-    devrate.org = "devrate.org"
+    "devrate.org" = "devrate.org"
   }
 }
