@@ -22,6 +22,9 @@ jobs:
         if: success()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{
-            "text": "GitHub Action test! Status: ${{ job.status }}."
+            "text": "GitHub Action: New image '${{ steps.build-image.outputs.image }}' is deploying! \
+            \nStatus: '${{ job.status }}' \
+            \nTriggered by: '${{ github.actor }}' \
+            \nBranch: '${{ github.ref }}'"
           }' ${{ secrets.SLACK_WEBHOOK_URL }}
 
