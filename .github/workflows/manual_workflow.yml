@@ -17,3 +17,11 @@ jobs:
           cache: maven
       - name: Test with Maven
         run: mvn clean install
+
+      - name: Send notification to Slack
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{
+            "text": "GitHub Action test! Status: ${{ job.status }}."
+          }' ${{ secrets.SLACK_WEBHOOK_URL }}
+
