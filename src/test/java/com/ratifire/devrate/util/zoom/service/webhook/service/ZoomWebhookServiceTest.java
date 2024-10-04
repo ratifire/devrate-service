@@ -111,11 +111,11 @@ public class ZoomWebhookServiceTest {
   void handleZoomWebhookMeetingEndedEventShouldCallInterviewCompletionService()
       throws JsonProcessingException, ZoomWebhookException {
     requestBody = "{\"event\":\"meeting.ended\",\"payload\":{\"object\""
-        + ":{\"id\":\"abc123-def456-ghi789\"}}}";
+        + ":{\"id\":\"89723154070\"}}}";
 
     WebHookRequest.Payload.Meeting expectedMeeting = WebHookRequest.Payload
         .Meeting.builder()
-        .id("abc123-def456-ghi789")
+        .id("89723154070")
         .build();
 
     WebHookRequest payload = WebHookRequest.builder()
@@ -133,13 +133,13 @@ public class ZoomWebhookServiceTest {
     verify(zoomWebhookAuthService, times(1))
         .validateSignature(anyString(), anyString(), anyString());
     verify(interviewCompletionService, times(1))
-        .completeInterviewProcess(expectedMeeting);
+        .completeInterviewProcess(payload.getPayload().getMeeting());
   }
 
   @Test
   void handleZoomWebhookInvalidSignatureShouldThrowException() throws ZoomWebhookException {
     requestBody = "{\"event\":\"meeting.ended\",\"payload\":{\"object\":"
-        + "{\"id\":\"abc123-def456-ghi789\"}}}";
+        + "{\"id\":\"89723154070\"}}}";
     headers.put("x-zm-signature", "invalid_signature");
 
     doThrow(new ZoomWebhookException("Unauthorized: Invalid signature."))

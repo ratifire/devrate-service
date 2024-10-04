@@ -36,17 +36,19 @@ public class ZoomWebhookService {
 
     String signature = headers.get("x-zm-signature");
     String timestamp = headers.get("x-zm-request-timestamp");
-
     zoomWebhookAuthService.validateSignature(signature, requestBody, timestamp);
 
     WebHookRequest payload = objectMapper.readValue(requestBody, WebHookRequest.class);
     String event = payload.getEvent();
 
-    return switch (event) {
-      case "endpoint.url_validation" -> zoomWebhookAuthService.handleUrlValidationEvent(payload);
-      case "meeting.ended" ->
-          interviewCompletionService.completeInterviewProcess(payload.getPayload().getMeeting());
-      default -> throw new ZoomWebhookException("Unknown event type");
-    };
+    switch (event) {
+      case "endpoint.url_validation":
+        return zoomWebhookAuthService.handleUrlValidationEvent(payload);
+      case "meeting.ended":
+        return interviewCompletionService
+            .completeInterviewProcess(payload.getPayload().getMeeting());
+      default:
+        throw new ZoomWebhookException("Unknown event type");
+    }
   }
 }
