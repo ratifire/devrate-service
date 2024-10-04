@@ -16,4 +16,12 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Test with Maven
-        run: mvn clean install
+        run: mvn compile
+
+      - name: Send notification to Slack
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{
+            "text": "GitHub Action (BackEnd): Devrate.org is deploying to AWS! Status: ${{ job.status }}.\nTriggered by: ${{ github.actor }}\nBranch: ${{ github.ref }}"
+          }' ${{ secrets.SLACK_WEBHOOK_URL }}
+

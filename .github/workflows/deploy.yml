@@ -68,3 +68,10 @@ jobs:
             echo "Waiting for workflow run $RUN_ID to complete..."
               gh run watch $RUN_ID --exit-status --interval 15
           fi 
+
+      - name: Send notification to Slack
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{
+            "text": "GitHub Action (BackEnd): Devrate.org is deploying to AWS! Status: ${{ job.status }}.\nTriggered by: ${{ github.actor }}\nBranch: ${{ github.ref }}"
+          }' ${{ secrets.SLACK_WEBHOOK_URL }}
