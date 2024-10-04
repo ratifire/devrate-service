@@ -80,4 +80,7 @@ data "aws_route53_zone" "dns_back_zone" {
 data "aws_acm_certificate" "devrate_cert" {
   domain   = "devrate.org"
   statuses = ["ISSUED"]
+  tags = {
+    Name = "devrate.org"
+  }
 }
