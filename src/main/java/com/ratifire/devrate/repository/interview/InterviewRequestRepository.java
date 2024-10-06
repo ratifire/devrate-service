@@ -2,8 +2,10 @@ package com.ratifire.devrate.repository.interview;
 
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
+import com.ratifire.devrate.enums.InterviewRequestRole;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -50,4 +52,6 @@ public interface InterviewRequestRepository extends JpaRepository<InterviewReque
       List<User> ignoreList);
 
   List<InterviewRequest> findByActiveTrueAndExpiredAtBefore(ZonedDateTime currentDateTime);
+
+  Optional<InterviewRequest> findByUserAndRole(User user, InterviewRequestRole role);
 }

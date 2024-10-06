@@ -560,6 +560,34 @@ public class UserService {
   }
 
   /**
+   * Retrieves the interview request for the specified user and role.
+   *
+   * @param userId the user's ID
+   * @param role   the role of the interview request
+   * @return the interview request as InterviewRequestDto
+   */
+  public InterviewRequestDto getInterviewRequest(long userId, InterviewRequestRole role) {
+    User user = findUserById(userId);
+    InterviewRequest interviewRequest = interviewRequestService.findByUserAndRole(user, role);
+    return interviewRequestMapper.toDto(interviewRequest);
+  }
+
+  /**
+   * Updates and matches the interview request for the specified user.
+   *
+   * @param userId     the user's ID
+   * @param requestDto the interview request details
+   */
+  @Transactional
+  public void updateAndMatchInterviewRequest(long userId, InterviewRequestDto requestDto) {
+    InterviewRequest interviewRequest = updateInterviewRequest(userId, requestDto);
+    if (interviewRequest.isActive()) {
+      Optional<Interview> interview = interviewMatchingService.match(interviewRequest);
+      interview.ifPresent(this::sendInterviewScheduledAlerts);
+    }
+  }
+
+  /**
    * Sends alerts to both the interviewer and the candidate about the scheduled interview.
    *
    * @param interview the interview whose participants are sent alerts
@@ -609,6 +637,21 @@ public class UserService {
     User user = findUserById(userId);
     InterviewRequest interviewRequest = interviewRequestMapper.toEntity(requestDto);
     interviewRequest.setUser(user);
+    return interviewRequestService.save(interviewRequest);
+  }
+
+  /**
+   * Updates the interview request for the specified user based on the provided request DTO.
+   *
+   * @param userId     the user's ID
+   * @param requestDto the interview request details
+   * @return the updated InterviewRequest entity
+   */
+  private InterviewRequest updateInterviewRequest(long userId, InterviewRequestDto requestDto) {
+    User user = findUserById(userId);
+    InterviewRequest interviewRequest = interviewRequestService.findByUserAndRole(user,
+        requestDto.getRole());
+    interviewRequestMapper.updateEntity(requestDto, interviewRequest);
     return interviewRequestService.save(interviewRequest);
   }
 
