@@ -23,7 +23,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -45,28 +44,22 @@ class InterviewFeedbackDetailServiceTest {
   @InjectMocks
   private InterviewFeedbackDetailService feedbackDetailService;
 
-  private InterviewFeedbackDetail feedbackDetail;
-  private InterviewFeedbackDetailDto feedbackDetailDto;
-
   private static final long FEEDBACK_ID = 1L;
   private static final List<Long> SKILL_IDS = List.of(101L, 102L);
 
-  @BeforeEach
-  void setUp() {
-    feedbackDetail = InterviewFeedbackDetail.builder()
+  @Test
+  void getInterviewFeedbackDetailWhenExistsThenReturnFeedbackDetailDto() {
+    InterviewFeedbackDetail feedbackDetail = InterviewFeedbackDetail.builder()
         .id(FEEDBACK_ID)
         .startTime(ZonedDateTime.now())
         .skillsIds(SKILL_IDS)
         .build();
 
-    feedbackDetailDto = InterviewFeedbackDetailDto.builder()
+    InterviewFeedbackDetailDto feedbackDetailDto = InterviewFeedbackDetailDto.builder()
         .interviewStartTime(feedbackDetail.getStartTime())
         .skills(List.of())
         .build();
-  }
 
-  @Test
-  void getInterviewFeedbackDetailWhenExistsThenReturnFeedbackDetailDto() {
     when(feedbackDetailRepository.findById(FEEDBACK_ID)).thenReturn(Optional.of(feedbackDetail));
     when(skillService.findAllById(SKILL_IDS)).thenReturn(List.of());
     when(feedbackDetailMapper.toDto(feedbackDetail, List.of())).thenReturn(feedbackDetailDto);
@@ -121,5 +114,12 @@ class InterviewFeedbackDetailServiceTest {
     assertEquals(FEEDBACK_ID, result.get("interviewerFeedbackId"));
 
     verify(feedbackDetailRepository, times(2)).save(any(InterviewFeedbackDetail.class));
+  }
+
+  @Test
+  void deleteInterviewFeedbackDetailById() {
+    feedbackDetailService.deleteById(FEEDBACK_ID);
+
+    verify(feedbackDetailRepository).deleteById(FEEDBACK_ID);
   }
 }
