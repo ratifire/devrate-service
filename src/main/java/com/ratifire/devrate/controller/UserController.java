@@ -378,7 +378,6 @@ public class UserController {
    * @param role   the role for which the interview request is being retrieved
    * @return the InterviewRequestDto containing the interview request details
    */
-  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userId)")
   @GetMapping("/{userId}/interview-requests")
   public InterviewRequestDto getInterviewRequest(@PathVariable long userId,
       @Valid @RequestParam InterviewRequestRole role) {
