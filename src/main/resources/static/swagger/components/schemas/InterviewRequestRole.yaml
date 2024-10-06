@@ -1,0 +1,5 @@
+type: string
+description: Enum representing the type of interview request role
+enum:
+  - CANDIDATE
+  - INTERVIEWER
