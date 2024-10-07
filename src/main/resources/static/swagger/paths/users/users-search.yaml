@@ -1,4 +1,4 @@
-put:
+get:
   tags:
     - User Info
   summary: Search users by name
