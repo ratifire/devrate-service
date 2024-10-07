@@ -1,6 +1,7 @@
 package com.ratifire.devrate.dto;
 
 import com.ratifire.devrate.enums.NotificationType;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,4 +16,5 @@ public class NotificationDto {
   private String payload;
   private NotificationType type;
   private boolean read;
+  private LocalDateTime createdAt;
 }
