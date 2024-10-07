@@ -1,0 +1,16 @@
+type: object
+description: Information about the found user
+properties:
+  id:
+    type: integer
+    format: int64
+    description: The unique identifier of the found user.
+    example: 1
+  firstName:
+    type: string
+    description: The first name of the found user.
+    example: "John"
+  lastName:
+    type: string
+    description: The last name of the found user.
+    example: "Doe"

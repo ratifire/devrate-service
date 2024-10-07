@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -31,6 +32,7 @@ import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.dto.UserMainHardSkillsDto;
 import com.ratifire.devrate.dto.UserMainMasterySkillDto;
+import com.ratifire.devrate.dto.UserNameSearchDto;
 import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.Bookmark;
 import com.ratifire.devrate.entity.Contact;
@@ -66,6 +68,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -817,5 +821,40 @@ class UserServiceTest {
 
     verify(userRepository, times(1)).findById(1L);
     verify(dataMapper, never()).toDto(anyList());
+  }
+
+  @ParameterizedTest
+  @NullAndEmptySource
+  void searchUsersShouldReturnEmptyListWhenQueryIsNullOrBlank(String query) {
+    List<UserNameSearchDto> result = userService.searchUsers(query);
+
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
+  void searchUsersShouldReturnMatchingUsersWhenOneNameIsProvided() {
+    String query = "John";
+    when(userRepository.findUsersByName(eq("John"), eq(""), eq(query))).thenReturn(
+        List.of(new UserNameSearchDto(1L, "John", "Doe"))
+    );
+
+    List<UserNameSearchDto> result = userService.searchUsers(query);
+
+    assertEquals(1, result.size());
+    assertEquals("John", result.getFirst().getFirstName());
+  }
+
+  @Test
+  void searchUsersShouldReturnMatchingUsersWhenFirstNameAndLastNameAreProvided() {
+    String query = "John Doe";
+    when(userRepository.findUsersByName(eq("John"), eq("Doe"), eq(query))).thenReturn(
+        List.of(new UserNameSearchDto(1L, "John", "Doe"))
+    );
+
+    List<UserNameSearchDto> result = userService.searchUsers(query);
+
+    assertEquals(1, result.size());
+    assertEquals("John", result.getFirst().getFirstName());
+    assertEquals("Doe", result.getFirst().getLastName());
   }
 }

@@ -18,6 +18,7 @@ import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.dto.UserMainHardSkillsDto;
 import com.ratifire.devrate.dto.UserMainMasterySkillDto;
+import com.ratifire.devrate.dto.UserNameSearchDto;
 import com.ratifire.devrate.dto.UserPictureDto;
 import com.ratifire.devrate.entity.Achievement;
 import com.ratifire.devrate.entity.Bookmark;
@@ -773,5 +774,25 @@ public class UserService {
   public List<UserMainHardSkillsDto> getMainHardSkills(long userId) {
     User user = findUserById(userId);
     return userMainHardSkillsMapper.toDto(user.getSpecializations());
+  }
+
+  /**
+   * Searches for users based on a provided query string. The query can contain either a first name,
+   * a last name, or both separated by a space. If both names are provided, the method attempts to
+   * find users that match both.
+   *
+   * @param query the search query containing the user's first name, last name, or both.
+   * @return a list of {@link UserNameSearchDto} containing the search results.
+   */
+  public List<UserNameSearchDto> searchUsers(String query) {
+    if (query == null || query.isBlank()) {
+      return List.of();
+    }
+
+    String[] parts = query.split("\\s+");
+    String firstName = parts[0];
+    String lastName = parts.length > 1 ? parts[1] : "";
+
+    return userRepository.findUsersByName(firstName, lastName, query);
   }
 }

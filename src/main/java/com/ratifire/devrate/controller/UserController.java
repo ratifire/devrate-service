@@ -15,6 +15,7 @@ import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.dto.UserMainHardSkillsDto;
 import com.ratifire.devrate.dto.UserMainMasterySkillDto;
+import com.ratifire.devrate.dto.UserNameSearchDto;
 import com.ratifire.devrate.dto.UserPictureDto;
 import com.ratifire.devrate.service.user.UserService;
 import jakarta.validation.Valid;
@@ -423,5 +424,10 @@ public class UserController {
   @GetMapping("/{userId}/specializations/main-mastery/skills")
   public List<UserMainHardSkillsDto> getMainHardSkills(@PathVariable long userId) {
     return userService.getMainHardSkills(userId);
+  }
+
+  @GetMapping("/search")
+  public List<UserNameSearchDto> searchUsers(@RequestParam String query) {
+    return userService.searchUsers(query);
   }
 }
