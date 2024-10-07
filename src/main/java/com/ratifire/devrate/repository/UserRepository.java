@@ -1,5 +1,6 @@
 package com.ratifire.devrate.repository;
 
+import com.ratifire.devrate.dto.UserNameSearchDto;
 import com.ratifire.devrate.entity.Event;
 import com.ratifire.devrate.entity.User;
 import java.util.List;
@@ -22,4 +23,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
   String findPictureByUserId(@Param("id") long id);
 
   List<User> findAllByEventsContaining(Event event);
+
+  @Query("SELECT new com.ratifire.devrate.dto.UserNameSearchDto(u.id, u.firstName, u.lastName) "
+      + "FROM User u "
+      + "WHERE "
+      + "(LOWER(u.firstName) LIKE LOWER(CONCAT('%', :firstParam, '%')) "
+      + "AND LOWER(u.lastName) LIKE LOWER(CONCAT('%', :secondParam, '%'))) "
+      + "OR (LOWER(u.lastName) LIKE LOWER(CONCAT('%', :firstParam, '%')) "
+      + "AND LOWER(u.firstName) LIKE LOWER(CONCAT('%', :secondParam, '%'))) "
+      + "OR LOWER(u.firstName) LIKE LOWER(CONCAT('%', :query, '%')) "
+      + "OR LOWER(u.lastName) LIKE LOWER(CONCAT('%', :query, '%'))")
+  List<UserNameSearchDto> findUsersByName(@Param("firstParam") String firstParam,
+      @Param("secondParam") String secondParam,
+      @Param("query") String query);
 }

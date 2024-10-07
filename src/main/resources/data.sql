@@ -716,3 +716,60 @@ VALUES
 WHERE NOT EXISTS (SELECT 1
                   FROM user_event
                   WHERE user_id = user_event.user_id AND event_id = user_event.event_id);
+
+-- Create 50 test user records with names in Ukrainian, English, and Ukrainian transliteration
+INSERT INTO users (id, first_name, last_name, status, country, city, is_subscribed, completed_interviews, conducted_interviews)
+SELECT * FROM (
+VALUES
+    (8933, 'Андрій', 'Шевченко', 'Java Developer', 'Ukraine', 'Kyiv', true, 8, 10),
+    (8934, 'Andrew', 'Shevchenko', 'Python Developer', 'USA', 'New York', false, 5, 7),
+    (8935, 'Andrii', 'Shevchenko', 'React Developer', 'Ukraine', 'Lviv', true, 12, 9),
+    (8936, 'Марія', 'Іванова', 'Data Scientist', 'Ukraine', 'Odessa', true, 10, 11),
+    (8937, 'Maria', 'Ivanova', 'Full Stack Developer', 'Canada', 'Toronto', false, 14, 8),
+    (8938, 'Mariya', 'Ivanova', 'UI/UX Designer', 'Ukraine', 'Dnipro', true, 9, 7),
+    (8939, 'Олексій', 'Коваленко', 'DevOps Engineer', 'Ukraine', 'Kharkiv', true, 7, 6),
+    (8940, 'Alex', 'Kovalenko', 'Security Engineer', 'USA', 'Los Angeles', false, 10, 12),
+    (8941, 'Oleksii', 'Kovalenko', 'Database Administrator', 'Ukraine', 'Vinnytsia', true, 6, 8),
+    (8942, 'Іван', 'Петренко', 'Cloud Architect', 'Ukraine', 'Zaporizhzhia', true, 13, 10),
+    (8943, 'Ivan', 'Petrenko', 'Backend Developer', 'USA', 'Chicago', true, 11, 9),
+    (8944, 'Iwan', 'Petrenko', 'System Administrator', 'Ukraine', 'Poltava', false, 8, 6),
+    (8945, 'Софія', 'Сидоренко', 'Machine Learning Engineer', 'Ukraine', 'Kyiv', true, 14, 13),
+    (8946, 'Sofia', 'Sydorenko', 'Frontend Developer', 'USA', 'San Francisco', true, 9, 10),
+    (8947, 'Sofiia', 'Sydorenko', 'DevOps Consultant', 'Ukraine', 'Chernihiv', false, 10, 7),
+    (8948, 'Дмитро', 'Мельник', 'Software Tester', 'Ukraine', 'Lutsk', true, 11, 8),
+    (8949, 'Dmytro', 'Melnyk', 'Scrum Master', 'USA', 'Austin', false, 13, 9),
+    (8950, 'Dmitriy', 'Melnyk', 'JavaScript Developer', 'Ukraine', 'Rivne', true, 10, 10),
+    (8951, 'Анастасія', 'Гончаренко', 'AI Specialist', 'Ukraine', 'Kherson', true, 12, 11),
+    (8952, 'Anastasia', 'Honcharenko', 'ReactJS Developer', 'Canada', 'Montreal', false, 14, 12),
+    (8953, 'Anastasiia', 'Honcharenko', 'Mobile Developer', 'Ukraine', 'Ivano-Frankivsk', true, 9, 8),
+    (8954, 'Олена', 'Бондар', 'Backend Engineer', 'Ukraine', 'Cherkasy', true, 10, 11),
+    (8955, 'Olena', 'Bondar', 'iOS Developer', 'USA', 'Boston', false, 8, 6),
+    (8956, 'Olha', 'Bondar', 'Android Developer', 'Ukraine', 'Sumy', true, 11, 9),
+    (8957, 'Віктор', 'Захарчук', 'Data Analyst', 'Ukraine', 'Ternopil', true, 13, 8),
+    (8958, 'Victor', 'Zakharchuk', 'System Analyst', 'USA', 'Seattle', false, 9, 10),
+    (8959, 'Viktor', 'Zakharchuk', 'Project Manager', 'Ukraine', 'Zhytomyr', true, 15, 12),
+    (8960, 'Катерина', 'Романюк', 'Python Engineer', 'Ukraine', 'Kyiv', true, 11, 8),
+    (8961, 'Katerina', 'Romaniuk', 'Java Developer', 'USA', 'Denver', false, 10, 7),
+    (8962, 'Kateryna', 'Romaniuk', 'DevOps Engineer', 'Ukraine', 'Lviv', true, 14, 9),
+    (8963, 'Юлія', 'Савчук', 'Data Scientist', 'Ukraine', 'Kyiv', true, 12, 10),
+    (8964, 'Julia', 'Savchuk', 'Cloud Engineer', 'Canada', 'Vancouver', false, 13, 11),
+    (8965, 'Yuliya', 'Savchuk', 'Full Stack Developer', 'Ukraine', 'Kharkiv', true, 8, 6),
+    (8966, 'Михайло', 'Олійник', 'Database Engineer', 'Ukraine', 'Khmelnytskyi', true, 9, 7),
+    (8967, 'Michael', 'Oliinyk', 'Machine Learning Engineer', 'USA', 'San Diego', false, 15, 14),
+    (8968, 'Mykhailo', 'Oliinyk', 'Big Data Developer', 'Ukraine', 'Chernivtsi', true, 12, 11),
+    (8969, 'Ірина', 'Григоренко', 'Software Engineer', 'Ukraine', 'Kyiv', true, 11, 9),
+    (8970, 'Iryna', 'Hryhorenko', 'Security Specialist', 'USA', 'New York', false, 10, 7),
+    (8971, 'Irena', 'Hryhorenko', 'Data Analyst', 'Ukraine', 'Mykolaiv', true, 8, 6),
+    (8972, 'Тарас', 'Кравченко', 'Software Developer', 'Ukraine', 'Kyiv', true, 14, 12),
+    (8973, 'Taras', 'Kravchenko', 'Cloud Consultant', 'USA', 'Chicago', false, 11, 10),
+    (8974, 'Taras', 'Kravchenko', 'Software Architect', 'Ukraine', 'Kharkiv', true, 13, 11),
+    (8975, 'Артем', 'Литвин', 'Front-End Developer', 'Ukraine', 'Kyiv', true, 10, 9),
+    (8976, 'Artem', 'Lytvyn', 'JavaScript Engineer', 'USA', 'San Francisco', false, 12, 8),
+    (8977, 'Artemiy', 'Lytvyn', 'Java Engineer', 'Ukraine', 'Dnipro', true, 14, 13),
+    (8978, 'Наталія', 'Мороз', 'UI/UX Designer', 'Ukraine', 'Kyiv', true, 9, 7),
+    (8979, 'Natalia', 'Moroz', 'Design Engineer', 'USA', 'Miami', false, 10, 8),
+    (8980, 'Nataliya', 'Moroz', 'Product Designer', 'Ukraine', 'Poltava', true, 12, 10)
+) AS new_users (id, first_name, last_name, status, country, city, is_subscribed, completed_interviews, conducted_interviews)
+WHERE NOT EXISTS (SELECT 1
+                  FROM users
+                  WHERE id = new_users.id);
