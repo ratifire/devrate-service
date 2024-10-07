@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
  * Data Transfer Object (DTO) representing the basic information of a user used for search results.
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 public class UserNameSearchDto {
   private long id;
   private String firstName;
