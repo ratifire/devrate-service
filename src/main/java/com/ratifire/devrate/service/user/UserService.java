@@ -790,9 +790,9 @@ public class UserService {
     }
 
     String[] parts = query.split("\\s+");
-    String firstName = parts[0];
-    String lastName = parts.length > 1 ? parts[1] : "";
+    String firstParam = parts[0];
+    String secondParam = parts.length > 1 ? parts[1] : "";
 
-    return userRepository.findUsersByName(firstName, lastName, query);
+    return userRepository.findUsersByName(firstParam, secondParam, query);
   }
 }
