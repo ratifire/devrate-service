@@ -63,10 +63,10 @@ public class InterviewFeedbackDetailService {
     ZonedDateTime interviewStartTime = interview.getStartTime();
     return Map.of(
         "candidateFeedbackId", interviewFeedbackDetailRepository.save(
-            createInterviewFeedbackDetail(interview.getCandidateRequest().getUser(),
+            createInterviewFeedbackDetail(interview.getInterviewerRequest().getUser(),
                 interviewSummaryId, interview.getInterviewerRequest(), interviewStartTime)).getId(),
         "interviewerFeedbackId", interviewFeedbackDetailRepository.save(
-            createInterviewFeedbackDetail(interview.getInterviewerRequest().getUser(),
+            createInterviewFeedbackDetail(interview.getCandidateRequest().getUser(),
                 interviewSummaryId, interview.getCandidateRequest(), interviewStartTime)).getId()
     );
   }
