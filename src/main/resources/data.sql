@@ -773,3 +773,30 @@ VALUES
 WHERE NOT EXISTS (SELECT 1
                   FROM users
                   WHERE id = new_users.id);
+
+-- Create test data for interview_feedback_details
+INSERT INTO interview_feedback_details (id, participant_role, start_time, interview_summary_id, evaluated_mastery_id, skill_id, user_id)
+SELECT * FROM (
+VALUES
+    (40001, 'INTERVIEWER', '2024-09-08T09:00:00Z'::timestamptz, 3001, 10001, ARRAY[100001, 100002, 100003, 100004, 100005]::bigint[], 8882),
+    (40002, 'CANDIDATE', '2024-09-08T09:00:00Z'::timestamptz, 3001, 10001, ARRAY[100001, 100002, 100003, 100004, 100005, 100006, 100007, 100008, 100078, 100079, 100080]::bigint[], 8881)
+) AS interview_feedback_details (id, participant_role, start_time, interview_summary_id, evaluated_mastery_id, skill_id, user_id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM interview_feedback_details
+                  WHERE id = interview_feedback_details.id);
+
+-- Create test data for interview_summaries
+INSERT INTO interview_summaries (id, date, duration, candidate_id, interviewer_id)
+VALUES (3001, '2024-09-08', 60, 8881, 8882);
+
+-- Create test data interview_summaries_users relation records
+INSERT INTO interview_summaries_users (user_id, interview_summary_id)
+SELECT * FROM (
+VALUES
+    (8881, 3001),
+    (8882, 3001)
+) AS interview_summaries_users (user_id, interview_summary_id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM interview_summaries_users
+                  WHERE user_id = interview_summaries_users.user_id
+                    AND interview_summary_id = interview_summaries_users.interview_summary_id);
