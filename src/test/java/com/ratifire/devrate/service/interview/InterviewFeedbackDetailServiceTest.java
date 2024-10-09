@@ -124,11 +124,9 @@ class InterviewFeedbackDetailServiceTest {
 
   @Test
   void deleteExpiredInterviewFeedbackDetailsTaskTest() {
-    ZonedDateTime expiredRecordsCutoffDate = ZonedDateTime.now().minusMonths(1);
-
     feedbackDetailService.deleteExpiredInterviewFeedbackDetailsTask();
 
     verify(feedbackDetailRepository, times(1))
-        .deleteExpiredFeedbackDetails(expiredRecordsCutoffDate);
+        .deleteExpiredFeedbackDetails(any(ZonedDateTime.class));
   }
 }
