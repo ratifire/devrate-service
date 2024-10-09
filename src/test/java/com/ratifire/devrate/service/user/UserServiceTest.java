@@ -835,20 +835,7 @@ class UserServiceTest {
   void searchUsersShouldReturnMatchingUsersWhenOneNameIsProvided() {
     String query = "John";
     when(userRepository.findUsersByName(eq("John"), eq(""), eq(query))).thenReturn(
-        List.of(new UserNameSearchDto(1L, "John", "Doe"))
-    );
-
-    List<UserNameSearchDto> result = userService.searchUsers(query);
-
-    assertEquals(1, result.size());
-    assertEquals("John", result.getFirst().getFirstName());
-  }
-
-  @Test
-  void searchUsersShouldReturnMatchingUsersWhenFirstNameAndLastNameAreProvided() {
-    String query = "John Doe";
-    when(userRepository.findUsersByName(eq("John"), eq("Doe"), eq(query))).thenReturn(
-        List.of(new UserNameSearchDto(1L, "John", "Doe"))
+        List.of(new UserNameSearchDto(1L, "John", "Doe", "Developer", "Picture"))
     );
 
     List<UserNameSearchDto> result = userService.searchUsers(query);
@@ -856,5 +843,23 @@ class UserServiceTest {
     assertEquals(1, result.size());
     assertEquals("John", result.getFirst().getFirstName());
     assertEquals("Doe", result.getFirst().getLastName());
+    assertEquals("Developer", result.getFirst().getStatus());
+    assertEquals("Picture", result.getFirst().getPicture());
+  }
+
+  @Test
+  void searchUsersShouldReturnMatchingUsersWhenFirstNameAndLastNameAreProvided() {
+    String query = "John Doe";
+    when(userRepository.findUsersByName(eq("John"), eq("Doe"), eq(query))).thenReturn(
+        List.of(new UserNameSearchDto(1L, "John", "Doe", "Developer", "Picture"))
+    );
+
+    List<UserNameSearchDto> result = userService.searchUsers(query);
+
+    assertEquals(1, result.size());
+    assertEquals("John", result.getFirst().getFirstName());
+    assertEquals("Doe", result.getFirst().getLastName());
+    assertEquals("Developer", result.getFirst().getStatus());
+    assertEquals("Picture", result.getFirst().getPicture());
   }
 }

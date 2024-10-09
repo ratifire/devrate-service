@@ -24,7 +24,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   List<User> findAllByEventsContaining(Event event);
 
-  @Query("SELECT new com.ratifire.devrate.dto.UserNameSearchDto(u.id, u.firstName, u.lastName) "
+  @Query("SELECT new com.ratifire.devrate.dto.UserNameSearchDto(u.id, u.firstName, u.lastName, "
+      + "u.status, u.picture) "
       + "FROM User u "
       + "WHERE "
       + "(LOWER(u.firstName) LIKE LOWER(CONCAT('%', :firstParam, '%')) "
