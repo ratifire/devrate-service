@@ -138,7 +138,7 @@ class RegistrationServiceTest {
     when(userSecurityService.getById(userSecurityId)).thenReturn(userSecurity);
     when(userSecurityService.save(userSecurity)).thenReturn(null);
     doNothing().when(emailConfirmationCodeService).deleteConfirmedCode(anyLong());
-    doNothing().when(notificationService).addGreetingNotification(any());
+    doNothing().when(notificationService).addGreetingNotification(any(), any());
     doNothing().when(emailService).sendGreetingsEmail(any(), any());
 
     long actualUserId = registrationService.confirmRegistration(code);

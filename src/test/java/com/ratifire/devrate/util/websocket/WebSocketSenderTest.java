@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.dto.NotificationDto;
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,25 +38,14 @@ class WebSocketSenderTest {
   private final String testMessage = "{test message}";
 
   @Test
-  void testSendNotificationsBySession() throws IOException {
-    List<NotificationDto> notifications = List.of(NotificationDto.builder().build());
-
-    when(objectMapper.writeValueAsString(any())).thenReturn(testMessage);
-
-    webSocketSender.sendNotificationsBySession(notifications, session);
-
-    verify(session, times(1)).sendMessage(any(TextMessage.class));
-  }
-
-  @Test
-  void testSendNotificationsByUserEmail() throws IOException {
-    List<NotificationDto> notifications = List.of(NotificationDto.builder().build());
+  void testSendNotificationByUserEmail() throws IOException {
+    NotificationDto notification = NotificationDto.builder().build();
 
     when(objectMapper.writeValueAsString(any())).thenReturn(testMessage);
     String login = "test@email.com";
     when(sessionRegistry.getUserSessions(login)).thenReturn(Set.of(session));
 
-    webSocketSender.sendNotificationsByUserEmail(notifications, login);
+    webSocketSender.sendNotificationByUserEmail(notification, login);
 
     verify(session, times(1)).sendMessage(any(TextMessage.class));
   }

@@ -55,7 +55,7 @@ public class InterviewCleanUpScheduler {
    * @param email The email address of the user.
    */
   private void sendInterviewRequestExpiryAlerts(User user, String email) {
-    notificationService.addInterviewRequestExpiryNotification(user);
+    notificationService.addInterviewRequestExpiryNotification(user, email);
     emailService.sendInterviewRequestExpiryEmail(user, email);
   }
 }
