@@ -23,3 +23,58 @@ post:
       description: Interview request created successfully
     '400':
       description: Bad Request. The request cannot be fulfilled due to bad syntax
+
+get:
+  tags:
+    - Interview Request
+  summary: Retrieve the interview request for a specific user and role
+  description: Retrieves the interview request for a specific user and role.
+  parameters:
+    - in: path
+      name: userId
+      description: ID of the user
+      required: true
+      schema:
+        type: integer
+        format: int64
+    - in: query
+      name: role
+      description: Role for which the interview request is being retrieved
+      required: true
+      schema:
+        $ref: '../../components/schemas/InterviewRequestRole.yaml'
+  responses:
+    '200':
+      description: Interview request retrieved successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/InterviewRequestDto.yaml'
+    '400':
+      description: Bad Request. The request cannot be fulfilled due to bad syntax
+
+put:
+  tags:
+    - Interview Request
+  summary: Update the interview request for a specific user
+  description: Updates the interview request for a specific user.
+  parameters:
+    - in: path
+      name: userId
+      description: ID of the user
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    description: Updated interview request data
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/InterviewRequestDto.yaml'
+  responses:
+    '200':
+      description: Interview request updated successfully
+    '400':
+      description: Bad Request. The request cannot be fulfilled due to bad syntax

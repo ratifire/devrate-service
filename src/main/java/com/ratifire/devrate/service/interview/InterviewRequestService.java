@@ -2,6 +2,7 @@ package com.ratifire.devrate.service.interview;
 
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
+import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.repository.interview.InterviewRequestRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,19 @@ public class InterviewRequestService {
    */
   public InterviewRequest save(InterviewRequest interviewRequest) {
     return interviewRequestRepository.save(interviewRequest);
+  }
+
+  /**
+   * Finds an interview request for the given user and role. If not found, returns a new empty
+   * InterviewRequest.
+   *
+   * @param user the user associated with the interview request
+   * @param role the role of the interview request
+   * @return the found InterviewRequest or an empty InterviewRequest if not found
+   */
+  public InterviewRequest findByUserAndRole(User user, InterviewRequestRole role) {
+    return interviewRequestRepository.findByUserAndRole(user, role)
+        .orElse(InterviewRequest.builder().build());
   }
 
   /**
