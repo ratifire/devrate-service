@@ -4,6 +4,7 @@ import com.ratifire.devrate.dto.UserNameSearchDto;
 import com.ratifire.devrate.entity.Event;
 import com.ratifire.devrate.entity.User;
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,7 +26,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
   List<User> findAllByEventsContaining(Event event);
 
   @Query("SELECT new com.ratifire.devrate.dto.UserNameSearchDto(u.id, u.firstName, u.lastName, "
-      + "u.status, u.picture) "
+      + "(SELECT s.name FROM Specialization s WHERE s.user = u AND s.main = true), u.picture) "
       + "FROM User u "
       + "WHERE "
       + "(LOWER(u.firstName) LIKE LOWER(CONCAT('%', :firstParam, '%')) "
@@ -35,6 +36,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
       + "OR LOWER(u.firstName) LIKE LOWER(CONCAT('%', :query, '%')) "
       + "OR LOWER(u.lastName) LIKE LOWER(CONCAT('%', :query, '%'))")
   List<UserNameSearchDto> findUsersByName(@Param("firstParam") String firstParam,
-      @Param("secondParam") String secondParam,
-      @Param("query") String query);
+      @Param("secondParam") String secondParam, @Param("query") String query, Pageable pageable);
 }

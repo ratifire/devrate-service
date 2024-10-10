@@ -5,12 +5,16 @@ get:
   description: Returns a list of users that match the provided query string.
   operationId: searchUsers
   parameters:
-    - in: path
+    - in: query
       name: query
       required: true
       schema:
         type: string
-      description: The search query containing the user's first name, last name, or both.
+        pattern: "^[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\s\\-']*[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\-']$"
+      description: |
+        The search query containing the user's first name, last name, or both.
+        The input must match the specified pattern, allowing only letters, spaces, hyphens, and apostrophes.
+        Examples of valid inputs: "John", "John Doe", "Олексій", "Андрій Шевченко".
   responses:
     '200':
       description: A list of users that match the search criteria.
