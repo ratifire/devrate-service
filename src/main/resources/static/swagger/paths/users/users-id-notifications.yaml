@@ -1,0 +1,35 @@
+get:
+  tags:
+    - User Info
+  summary: Get all notifications for a user by its id
+  operationId: getAllNotifications
+  description: Retrieves a list of all notifications for the specified user.
+  parameters:
+    - in: path
+      name: userId
+      required: true
+      schema:
+        type: integer
+        format: int64
+      description: The ID of the user whose notifications are to be retrieved.
+  responses:
+    '200':
+      description: A list of notifications for the specified user.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../components/schemas/NotificationDto.yaml'
+    '400':
+      description: Bad request, e.g., invalid user ID, notifications not found
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

@@ -11,6 +11,7 @@ import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
+import com.ratifire.devrate.dto.NotificationDto;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.dto.UserMainHardSkillsDto;
@@ -429,5 +430,27 @@ public class UserController {
   @GetMapping("/search")
   public List<UserNameSearchDto> searchUsers(@RequestParam String query) {
     return userService.searchUsers(query);
+  }
+
+  /**
+   * Retrieves a list of all notifications for a given user.
+   *
+   * @param userId the ID of the user whose notifications are to be retrieved
+   * @return a list of {@link NotificationDto} representing the user's notifications
+   */
+  @GetMapping("/{userId}/notifications")
+  public List<NotificationDto> getAllNotifications(@PathVariable long userId) {
+    return userService.getNotificationsByUserId(userId);
+  }
+
+  /**
+   * Sends a test notification to a specified user.
+   */
+  // TODO: ATTENTION!!! Remove this method after testing is completed.
+  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userId)")
+  @PostMapping("/{userId}/notification/send")
+  public void sendTestNotification(@PathVariable long userId,
+      @Valid @RequestBody NotificationDto notificationDto) {
+    userService.sendTestNotification(userId, notificationDto);
   }
 }

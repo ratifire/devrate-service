@@ -1,0 +1,24 @@
+post:
+  tags:
+    - Notification
+  summary: ONLY FOR TESTING WEBSOCKET NOTIFICATION.
+  description: Send notification to the websocket by user id
+  parameters:
+    - in: path
+      name: userId
+      description: ID of the user
+      required: true
+      schema:
+        type: integer
+  requestBody:
+    description: Notification
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/NotificationDto.yaml'
+  responses:
+    '200':
+      description: Notification sent
+    '400':
+      description: Bad Request. User not found, invalid notification data
