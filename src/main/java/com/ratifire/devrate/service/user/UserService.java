@@ -13,6 +13,7 @@ import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
+import com.ratifire.devrate.dto.NotificationDto;
 import com.ratifire.devrate.dto.SkillFeedbackDto;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.dto.UserDto;
@@ -28,6 +29,7 @@ import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.Event;
 import com.ratifire.devrate.entity.InterviewSummary;
 import com.ratifire.devrate.entity.LanguageProficiency;
+import com.ratifire.devrate.entity.Notification;
 import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
@@ -819,5 +821,32 @@ public class UserService {
    */
   private boolean isNameInvalid(String name) {
     return !NAME_REGEX.matcher(name).matches();
+  }
+
+  /**
+   * Retrieves a list of all notifications for a given user.
+   *
+   * @param userId the ID of the user whose notifications are to be retrieved
+   * @return a list of {@link NotificationDto} representing the user's notifications
+   */
+  public List<NotificationDto> getNotificationsByUserId(long userId) {
+    return notificationService.getAllByUserId(userId);
+  }
+
+  /**
+   * Sends a test notification to a user.
+   */
+  // TODO: ATTENTION!!! Remove this method after testing is completed.
+  public void sendTestNotification(long userId, NotificationDto notificationDto) {
+    String userEmail = userSecurityService.findEmailByUserId(userId);
+    User user = findUserById(userId);
+    Notification notification = Notification.builder()
+        .user(user)
+        .read(notificationDto.isRead())
+        .payload(notificationDto.getPayload())
+        .type(notificationDto.getType())
+        .createdAt(notificationDto.getCreatedAt())
+        .build();
+    notificationService.sendTestNotification(userEmail, notification);
   }
 }

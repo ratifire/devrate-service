@@ -158,6 +158,8 @@ paths:
     $ref: './paths/users/users-id-specializations-main-mastery-skills.yaml'
   /users/search:
     $ref: './paths/users/users-search.yaml'
+  /users/{userId}/notifications:
+    $ref: './paths/users/users-id-notifications.yaml'
 components:
   securitySchemes:
     basicAuth:

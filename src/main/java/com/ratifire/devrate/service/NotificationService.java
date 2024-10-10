@@ -205,4 +205,12 @@ public class NotificationService {
     notification.setRead(true);
     notificationRepository.save(notification);
   }
+
+  /**
+   * Sends a test notification to a specified user.
+   */
+  // TODO: ATTENTION!!! Remove this method after testing is completed.
+  public void sendTestNotification(String userEmail, Notification notification) {
+    addNotification(notification, userEmail);
+  }
 }
