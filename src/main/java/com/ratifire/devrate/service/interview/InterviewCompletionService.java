@@ -3,6 +3,7 @@ package com.ratifire.devrate.service.interview;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.service.NotificationService;
+import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.specialization.SpecializationService;
 import com.ratifire.devrate.service.user.UserService;
 import com.ratifire.devrate.util.interview.DateTimeUtils;
@@ -37,6 +38,7 @@ public class InterviewCompletionService {
   private final UserService userService;
   private final NotificationService notificationService;
   private final ZoomApiService zoomApiService;
+  private final UserSecurityService userSecurityService;
 
   /**
    * Completes the interview process by performing the necessary operations after a meeting has
@@ -67,9 +69,13 @@ public class InterviewCompletionService {
         interviewFeedbackDetailService.saveInterviewFeedbackDetail(interview, interviewSummaryId);
 
     Long candidateFeedbackDetailId = interviewFeedbackDetailId.get("candidateFeedbackId");
-    notificationService.addInterviewFeedbackDetail(candidate, candidateFeedbackDetailId);
+    String candidateEmail = userSecurityService.findEmailByUserId(candidate.getId());
+    notificationService.addInterviewFeedbackDetail(candidate, candidateFeedbackDetailId,
+        candidateEmail);
     Long interviewerFeedbackDetailId = interviewFeedbackDetailId.get("interviewerFeedbackId");
-    notificationService.addInterviewFeedbackDetail(interviewer, interviewerFeedbackDetailId);
+    String interviewerEmail = userSecurityService.findEmailByUserId(interviewer.getId());
+    notificationService.addInterviewFeedbackDetail(interviewer, interviewerFeedbackDetailId,
+        interviewerEmail);
 
     try {
       zoomApiService.deleteMeeting(Long.parseLong(meetingId));

@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
@@ -688,14 +689,14 @@ class UserServiceTest {
     when(interviewMatchingService.match(any(InterviewRequest.class))).thenReturn(
         Optional.of(interview));
 
-    doNothing().when(notificationService).addInterviewScheduled(any(), any(), any());
+    doNothing().when(notificationService).addInterviewScheduled(any(), any(), any(), anyString());
     doNothing().when(emailService).sendInterviewScheduledEmail(any(), any(), any(), any(), any());
 
     userService.createAndMatchInterviewRequest(userId, interviewRequestDto);
 
     verify(userSecurityService, times(2)).findEmailByUserId(anyLong());
     verify(notificationService, times(2))
-        .addInterviewScheduled(any(), any(), any());
+        .addInterviewScheduled(any(), any(), any(), anyString());
     verify(emailService, times(2))
         .sendInterviewScheduledEmail(any(), any(), any(), any(), any());
   }
@@ -711,7 +712,7 @@ class UserServiceTest {
     userService.createAndMatchInterviewRequest(userId, interviewRequestDto);
 
     verify(userSecurityService, never()).findEmailByUserId(anyLong());
-    verify(notificationService, never()).addInterviewScheduled(any(), any(), any());
+    verify(notificationService, never()).addInterviewScheduled(any(), any(), any(), anyString());
     verify(emailService, never()).sendInterviewScheduledEmail(any(), any(), any(), any(), any());
   }
 
@@ -724,18 +725,18 @@ class UserServiceTest {
     when(interviewMatchingService.match(interviewRequest,
         List.of(interviewRequest.getUser()))).thenReturn(Optional.empty());
 
-    doNothing().when(notificationService).addRejectInterview(any(), any(), any());
+    doNothing().when(notificationService).addRejectInterview(any(), any(), any(), anyString());
     doNothing().when(emailService).sendInterviewRejectionMessage(any(), any(), any(), any());
     doNothing().when(interviewRequestService).handleRejectedInterview(any(), any());
 
     userService.deleteRejectedInterview(userId, userId);
 
-    verify(userSecurityService, times(1))
+    verify(userSecurityService, times(2))
         .findEmailByUserId(anyLong());
     verify(notificationService, times(2))
-        .addRejectInterview(any(), any(), any());
+        .addRejectInterview(any(), any(), any(), anyString());
     verify(notificationService, never())
-        .addInterviewScheduled(any(), any(), any());
+        .addInterviewScheduled(any(), any(), any(), anyString());
     verify(emailService, never())
         .sendInterviewScheduledEmail(any(), any(), any(), any(), any());
   }
@@ -751,18 +752,18 @@ class UserServiceTest {
 
     doNothing().when(emailService).sendInterviewRejectionMessage(any(), any(), any(), any());
     doNothing().when(interviewRequestService).handleRejectedInterview(any(), any());
-    doNothing().when(notificationService).addRejectInterview(any(), any(), any());
-    doNothing().when(notificationService).addInterviewScheduled(any(), any(), any());
+    doNothing().when(notificationService).addRejectInterview(any(), any(), any(), anyString());
+    doNothing().when(notificationService).addInterviewScheduled(any(), any(), any(), anyString());
     doNothing().when(emailService).sendInterviewScheduledEmail(any(), any(), any(), any(), any());
 
     userService.deleteRejectedInterview(userId, userId);
 
-    verify(userSecurityService, times(5))
+    verify(userSecurityService, times(6))
         .findEmailByUserId(anyLong());
     verify(notificationService, times(2))
-        .addRejectInterview(any(), any(), any());
+        .addRejectInterview(any(), any(), any(), anyString());
     verify(notificationService, times(4))
-        .addInterviewScheduled(any(), any(), any());
+        .addInterviewScheduled(any(), any(), any(), anyString());
     verify(emailService, times(4))
         .sendInterviewScheduledEmail(any(), any(), any(), any(), any());
 
@@ -780,18 +781,18 @@ class UserServiceTest {
 
     doNothing().when(emailService).sendInterviewRejectionMessage(any(), any(), any(), any());
     doNothing().when(interviewRequestService).handleRejectedInterview(any(), any());
-    doNothing().when(notificationService).addRejectInterview(any(), any(), any());
-    doNothing().when(notificationService).addInterviewScheduled(any(), any(), any());
+    doNothing().when(notificationService).addRejectInterview(any(), any(), any(), anyString());
+    doNothing().when(notificationService).addInterviewScheduled(any(), any(), any(), anyString());
     doNothing().when(emailService).sendInterviewScheduledEmail(any(), any(), any(), any(), any());
 
     userService.deleteRejectedInterview(userId, userId);
 
-    verify(userSecurityService, times(3))
+    verify(userSecurityService, times(4))
         .findEmailByUserId(anyLong());
     verify(notificationService, times(2))
-        .addRejectInterview(any(), any(), any());
+        .addRejectInterview(any(), any(), any(), anyString());
     verify(notificationService, times(2))
-        .addInterviewScheduled(any(), any(), any());
+        .addInterviewScheduled(any(), any(), any(), anyString());
     verify(emailService, times(2))
         .sendInterviewScheduledEmail(any(), any(), any(), any(), any());
   }

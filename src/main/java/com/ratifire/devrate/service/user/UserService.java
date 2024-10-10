@@ -601,7 +601,7 @@ public class UserService {
     String role = String.valueOf(recipientRequest.getRole());
 
     notificationService.addInterviewScheduled(recipient, role,
-        interviewStartTimeInUtc);
+        interviewStartTimeInUtc, recipientEmail);
 
     emailService.sendInterviewScheduledEmail(recipient, recipientEmail,
         interviewStartTimeInUtc, secondParticipantRequest, zoomJoinUrl);
@@ -690,12 +690,13 @@ public class UserService {
    */
   private void notifyUsers(User recipient, User rejector,
       ZonedDateTime scheduledTime) {
-    notificationService.addRejectInterview(recipient, rejector.getFirstName(),
-        scheduledTime);
-    notificationService.addRejectInterview(rejector, recipient.getFirstName(),
-        scheduledTime);
-
     String recipientEmail = userSecurityService.findEmailByUserId(recipient.getId());
+    notificationService.addRejectInterview(recipient, rejector.getFirstName(),
+        scheduledTime, recipientEmail);
+    String rejectorEmail = userSecurityService.findEmailByUserId(rejector.getId());
+    notificationService.addRejectInterview(rejector, recipient.getFirstName(),
+        scheduledTime, rejectorEmail);
+
     emailService.sendInterviewRejectionMessage(recipient, rejector, scheduledTime, recipientEmail);
   }
 

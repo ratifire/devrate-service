@@ -14,7 +14,6 @@ import static org.mockito.Mockito.when;
 import com.ratifire.devrate.dto.NotificationDto;
 import com.ratifire.devrate.entity.Notification;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.entity.UserSecurity;
 import com.ratifire.devrate.exception.NotificationNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.NotificationRepository;
@@ -36,8 +35,6 @@ class NotificationServiceTest {
 
   @Mock
   private NotificationRepository notificationRepository;
-  @Mock
-  private UserSecurityService userSecurityService;
   @Mock
   private DataMapper<NotificationDto, Notification> mapper;
   @Mock
@@ -113,32 +110,23 @@ class NotificationServiceTest {
         .build();
     NotificationDto expectedNotifications = NotificationDto.builder().build();
 
-    setupSendUserNotificationMock(Notification.builder().build(), user, expectedNotifications);
+    setupSendUserNotificationMock(Notification.builder().build(), expectedNotifications);
 
-    notificationService.addGreetingNotification(user);
-    notificationService.addInterviewRequestExpiryNotification(user);
-    notificationService.addRejectInterview(user, "rejectionUserFirstName", ZonedDateTime.now());
-    notificationService.addInterviewScheduled(user, "role", ZonedDateTime.now());
-    notificationService.addInterviewFeedbackDetail(user, 1L);
+    notificationService.addGreetingNotification(user, anyString());
+    notificationService.addInterviewRequestExpiryNotification(user, anyString());
+    notificationService.addRejectInterview(user, "rejectionUserFirstName", ZonedDateTime.now(),
+        anyString());
+    notificationService.addInterviewScheduled(user, "role", ZonedDateTime.now(), anyString());
+    notificationService.addInterviewFeedbackDetail(user, 1L, anyString());
 
     verify(notificationRepository, times(5)).save(any());
     verify(webSocketSender, times(5)).sendNotificationByUserEmail(any(), anyString());
   }
 
-  private void setupSendUserNotificationMock(Notification notification, User user,
+  private void setupSendUserNotificationMock(Notification notification,
       NotificationDto expectedNotification) {
     when(notificationRepository.save(any(Notification.class))).thenReturn(any());
     when(mapper.toDto(notification)).thenReturn(expectedNotification);
-    UserSecurity userSecurity = createTestUserSecurity(user);
-    when(userSecurityService.getByUserId(user.getId())).thenReturn(userSecurity);
     doNothing().when(webSocketSender).sendNotificationByUserEmail(any(), anyString());
-  }
-
-  private UserSecurity createTestUserSecurity(User user) {
-    String email = "test@email.com";
-    return UserSecurity.builder()
-        .user(user)
-        .email(email)
-        .build();
   }
 }

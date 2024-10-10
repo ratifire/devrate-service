@@ -140,7 +140,7 @@ public class RegistrationService {
    * @param email The email address of the user.
    */
   private void sendGreetings(User user, String email) {
-    notificationService.addGreetingNotification(user);
+    notificationService.addGreetingNotification(user, email);
     emailService.sendGreetingsEmail(user, email);
   }
 }
