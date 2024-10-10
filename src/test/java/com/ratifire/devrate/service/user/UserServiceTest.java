@@ -47,6 +47,7 @@ import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.exception.InterviewSummaryNotFoundException;
 import com.ratifire.devrate.exception.UserNotFoundException;
+import com.ratifire.devrate.exception.UserSearchInvalidInputException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.InterviewSummaryRepository;
 import com.ratifire.devrate.repository.UserRepository;
@@ -70,9 +71,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Unit tests for the UserService class.
@@ -831,10 +835,17 @@ class UserServiceTest {
     assertTrue(result.isEmpty());
   }
 
+  @ParameterizedTest
+  @ValueSource(strings = {"J@hn", "John D0e", "J@hn D0e"})
+  void searchUsersShouldThrowExceptionWhenQueryIsInvalid(String query) {
+    assertThrows(UserSearchInvalidInputException.class, () -> userService.searchUsers(query));
+  }
+
   @Test
   void searchUsersShouldReturnMatchingUsersWhenOneNameIsProvided() {
     String query = "John";
-    when(userRepository.findUsersByName(eq("John"), eq(""), eq(query))).thenReturn(
+    Pageable pageable = PageRequest.of(0, 10);
+    when(userRepository.findUsersByName(eq("John"), eq(""), eq(query), eq(pageable))).thenReturn(
         List.of(new UserNameSearchDto(1L, "John", "Doe", "Developer", "Picture"))
     );
 
@@ -843,14 +854,15 @@ class UserServiceTest {
     assertEquals(1, result.size());
     assertEquals("John", result.getFirst().getFirstName());
     assertEquals("Doe", result.getFirst().getLastName());
-    assertEquals("Developer", result.getFirst().getStatus());
+    assertEquals("Developer", result.getFirst().getMainSpecializationName());
     assertEquals("Picture", result.getFirst().getPicture());
   }
 
   @Test
   void searchUsersShouldReturnMatchingUsersWhenFirstNameAndLastNameAreProvided() {
     String query = "John Doe";
-    when(userRepository.findUsersByName(eq("John"), eq("Doe"), eq(query))).thenReturn(
+    Pageable pageable = PageRequest.of(0, 10);
+    when(userRepository.findUsersByName(eq("John"), eq("Doe"), eq(query), eq(pageable))).thenReturn(
         List.of(new UserNameSearchDto(1L, "John", "Doe", "Developer", "Picture"))
     );
 
@@ -859,7 +871,7 @@ class UserServiceTest {
     assertEquals(1, result.size());
     assertEquals("John", result.getFirst().getFirstName());
     assertEquals("Doe", result.getFirst().getLastName());
-    assertEquals("Developer", result.getFirst().getStatus());
+    assertEquals("Developer", result.getFirst().getMainSpecializationName());
     assertEquals("Picture", result.getFirst().getPicture());
   }
 }

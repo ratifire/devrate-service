@@ -38,6 +38,7 @@ import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.exception.InterviewSummaryNotFoundException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.exception.UserNotFoundException;
+import com.ratifire.devrate.exception.UserSearchInvalidInputException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.InterviewSummaryRepository;
 import com.ratifire.devrate.repository.SpecializationRepository;
@@ -64,10 +65,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,6 +81,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
+  private static final String NAME_PATTERN =
+      "^[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\s\\-']*[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\-']$";
+  private static final Pattern NAME_REGEX = Pattern.compile(NAME_PATTERN);
 
   private UserRepository userRepository;
   private final SpecializationRepository specializationRepository;
@@ -789,10 +797,26 @@ public class UserService {
       return List.of();
     }
 
-    String[] parts = query.split("\\s+");
+    String[] parts = query.trim().split("\\s+");
     String firstParam = parts[0];
     String secondParam = parts.length > 1 ? parts[1] : "";
 
-    return userRepository.findUsersByName(firstParam, secondParam, query);
+    if (isNameInvalid(firstParam) || (!secondParam.isBlank() && isNameInvalid(secondParam))) {
+      throw new UserSearchInvalidInputException("Please enter a valid first/last name using only "
+          + "letters, spaces, hyphens, or apostrophes.");
+    }
+
+    Pageable pageable = PageRequest.of(0, 10);
+    return userRepository.findUsersByName(firstParam, secondParam, query, pageable);
+  }
+
+  /**
+   * Checks if a given name is invalid based on the predefined regex pattern.
+   *
+   * @param name the name to validate.
+   * @return true if the name does not match the pattern, false otherwise.
+   */
+  private boolean isNameInvalid(String name) {
+    return !NAME_REGEX.matcher(name).matches();
   }
 }
