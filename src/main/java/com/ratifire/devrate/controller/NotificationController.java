@@ -30,7 +30,7 @@ public class NotificationController {
       + " #notificationId)")
   @PatchMapping
   public void markAsRead(@RequestParam long userId, @RequestParam long notificationId) {
-    notificationService.markAsReadById(userId, notificationId);
+    notificationService.markAsReadById(notificationId);
   }
 
   /**
@@ -44,6 +44,6 @@ public class NotificationController {
       + " #notificationId)")
   @DeleteMapping
   public void delete(@RequestParam long userId, @RequestParam long notificationId) {
-    notificationService.deleteById(userId, notificationId);
+    notificationService.deleteById(notificationId);
   }
 }

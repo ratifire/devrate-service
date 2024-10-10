@@ -45,123 +45,64 @@ class NotificationServiceTest {
   @InjectMocks
   private NotificationService notificationService;
 
-  private final String email = "test@email.com";
-
   @Test
-  void testGetAllByUserLogin() {
+  void testGetAllByUserId() {
     List<Notification> notifications = List.of(
         Notification.builder().build(),
         Notification.builder().build());
-    User user = User.builder()
-        .notifications(notifications)
-        .build();
-    UserSecurity testUserSecurity = UserSecurity.builder()
-        .user(user)
-        .build();
 
     List<NotificationDto> expectedNotifications = List.of(
         NotificationDto.builder().build(),
         NotificationDto.builder().build());
 
-    when(userSecurityService.findByEmail(any())).thenReturn(testUserSecurity);
     when(notificationRepository.findNotificationsByUserId(anyLong())).thenReturn(
         Optional.of(notifications));
     when(mapper.toDto(notifications)).thenReturn(expectedNotifications);
 
-    List<NotificationDto> actualNotifications = notificationService.getAllByEmail(any());
+    List<NotificationDto> actualNotifications = notificationService.getAllByUserId(anyLong());
 
     assertEquals(expectedNotifications, actualNotifications);
   }
 
   @Test
-  void testGetAllByUserLogin_NotFoundNotifications() {
-    List<Notification> notifications = List.of(
-        Notification.builder().build(),
-        Notification.builder().build());
-    User user = User.builder()
-        .notifications(notifications)
-        .build();
-    UserSecurity testUserSecurity = UserSecurity.builder()
-        .user(user)
-        .build();
-
-    when(userSecurityService.findByEmail(any())).thenReturn(testUserSecurity);
+  void testGetAllByUserId_NotFoundNotifications() {
     when(notificationRepository.findNotificationsByUserId(anyLong())).thenReturn(
         Optional.empty());
 
     assertThrows(NotificationNotFoundException.class,
-        () -> notificationService.getAllByEmail(any()));
+        () -> notificationService.getAllByUserId(anyLong()));
   }
 
   @Test
   void testDeleteById() {
-    long testUserId = 1L;
-    List<Notification> notifications = List.of(
-        Notification.builder().build(),
-        Notification.builder().build());
-    User user = User.builder()
-        .id(testUserId)
-        .notifications(notifications)
-        .build();
-    UserSecurity userSecurity  = UserSecurity.builder()
-        .user(user)
-        .email(email)
-        .build();
+    notificationService.deleteById(anyLong());
 
-    List<NotificationDto> expectedNotifications = List.of(
-        NotificationDto.builder().build(),
-        NotificationDto.builder().build());
-    when(userSecurityService.getByUserId(user.getId())).thenReturn(userSecurity);
-    when(userSecurityService.findByEmail(userSecurity.getEmail())).thenReturn(userSecurity);
-    when(notificationRepository.findNotificationsByUserId(anyLong()))
-        .thenReturn(Optional.of(notifications));
-    when(mapper.toDto(notifications)).thenReturn(expectedNotifications);
-    doNothing().when(webSocketSender).sendNotificationsByUserEmail(any(), anyString());
-
-    notificationService.deleteById(user.getId(), 1L);
-
-    verify(notificationRepository, times(1)).deleteById(user.getId());
-    verify(webSocketSender, times(1)).sendNotificationsByUserEmail(expectedNotifications,
-        email);
+    verify(notificationRepository, times(1)).deleteById(anyLong());
   }
 
   @Test
   void testReadNotificationById() {
-    long testUserId = 1L;
-    List<Notification> notifications = List.of(
-        Notification.builder().build(),
-        Notification.builder().build());
-    User user = User.builder()
-        .id(testUserId)
-        .notifications(notifications)
-        .build();
-    List<NotificationDto> expectedNotifications = List.of(
-        NotificationDto.builder().build(),
-        NotificationDto.builder().build());
-
-    setupSendUserNotificationsMock(notifications, user, expectedNotifications);
+    long testNotificationId = 1L;
     Notification notification = Notification.builder().build();
-    when(notificationRepository.findById(any())).thenReturn(Optional.of(notification));
+    when(notificationRepository.save(notification)).thenReturn(any());
+    when(notificationRepository.findById(testNotificationId)).thenReturn(Optional.of(notification));
 
-    notificationService.markAsReadById(user.getId(), 1L);
+    notificationService.markAsReadById(testNotificationId);
 
     assertTrue(notification.isRead());
     verify(notificationRepository, times(1)).save(notification);
-    verify(webSocketSender, times(1)).sendNotificationsByUserEmail(expectedNotifications,
-        email);
   }
 
   @Test
   void testReadNotificationById_NotFound() {
-    long testUserId = 1L;
-    when(notificationRepository.findById(any())).thenReturn(Optional.empty());
+    when(notificationRepository.findById(anyLong())).thenReturn(Optional.empty());
 
     assertThrows(NotificationNotFoundException.class,
-        () -> notificationService.markAsReadById(testUserId, 1L));
+        () -> notificationService.markAsReadById(anyLong()));
   }
 
   @Test
-  void testAddGreetingNotification() {
+  void testSendNotification() {
     long testUserId = 1L;
     List<Notification> notifications = List.of(
         Notification.builder().build(),
@@ -170,11 +111,9 @@ class NotificationServiceTest {
         .id(testUserId)
         .notifications(notifications)
         .build();
-    List<NotificationDto> expectedNotifications = List.of(
-        NotificationDto.builder().build(),
-        NotificationDto.builder().build());
+    NotificationDto expectedNotifications = NotificationDto.builder().build();
 
-    setupSendUserNotificationsMock(notifications, user, expectedNotifications);
+    setupSendUserNotificationMock(Notification.builder().build(), user, expectedNotifications);
 
     notificationService.addGreetingNotification(user);
     notificationService.addInterviewRequestExpiryNotification(user);
@@ -183,22 +122,20 @@ class NotificationServiceTest {
     notificationService.addInterviewFeedbackDetail(user, 1L);
 
     verify(notificationRepository, times(5)).save(any());
-    verify(webSocketSender, times(5)).sendNotificationsByUserEmail(any(), anyString());
+    verify(webSocketSender, times(5)).sendNotificationByUserEmail(any(), anyString());
   }
 
-  private void setupSendUserNotificationsMock(List<Notification> notifications, User user,
-      List<NotificationDto> expectedNotifications) {
+  private void setupSendUserNotificationMock(Notification notification, User user,
+      NotificationDto expectedNotification) {
     when(notificationRepository.save(any(Notification.class))).thenReturn(any());
+    when(mapper.toDto(notification)).thenReturn(expectedNotification);
     UserSecurity userSecurity = createTestUserSecurity(user);
     when(userSecurityService.getByUserId(user.getId())).thenReturn(userSecurity);
-    when(userSecurityService.findByEmail(userSecurity.getEmail())).thenReturn(userSecurity);
-    when(notificationRepository.findNotificationsByUserId(anyLong()))
-        .thenReturn(Optional.of(notifications));
-    when(mapper.toDto(notifications)).thenReturn(expectedNotifications);
-    doNothing().when(webSocketSender).sendNotificationsByUserEmail(any(), anyString());
+    doNothing().when(webSocketSender).sendNotificationByUserEmail(any(), anyString());
   }
 
   private UserSecurity createTestUserSecurity(User user) {
+    String email = "test@email.com";
     return UserSecurity.builder()
         .user(user)
         .email(email)

@@ -150,48 +150,43 @@ public class NotificationService {
   private void addNotification(Notification notification, User user) {
     notificationRepository.save(notification);
 
-    sendUserNotifications(user.getId());
+    sendUserNotification(user.getId(), mapper.toDto(notification));
   }
 
   /**
    * Deletes a notification by its ID and send updated notifications.
    *
-   * @param userId         The ID of the user associated with the notification.
    * @param notificationId The ID of the notification to delete.
    */
-  public void deleteById(long userId, long notificationId) {
+  public void deleteById(long notificationId) {
     notificationRepository.deleteById(notificationId);
-
-    sendUserNotifications(userId);
   }
 
   /**
-   * Sends the notifications to the user via WebSocket.
+   * Sends a notification to the specified user via WebSocket.
    *
-   * @param userId The ID of the user to send updated notifications for.
+   * @param userId       The ID of the user to send fresh notification for.
+   * @param notification The notification data to be sent.
    */
-  private void sendUserNotifications(long userId) {
+  private void sendUserNotification(long userId, NotificationDto notification) {
     UserSecurity userSecurity = userSecurityService.getByUserId(userId);
     String email = userSecurity.getEmail();
-    List<NotificationDto> notifications = getAllByEmail(email);
-    webSocketSender.sendNotificationsByUserEmail(notifications, email);
+    webSocketSender.sendNotificationByUserEmail(notification, email);
   }
 
   /**
-   * Retrieves all notifications associated with a user's email.
+   * Retrieves all notifications associated with a user's id.
    *
-   * @param email The user's email.
+   * @param userId The user's id.
    * @return A list of NotificationDto objects.
    */
-  public List<NotificationDto> getAllByEmail(String email) {
-    User user = userSecurityService.findByEmail(email).getUser();
-
+  public List<NotificationDto> getAllByUserId(long userId) {
     // we could get notifications from user, but during the LAZY mode we can not retrieve it regard
     // to closed DB session
     // TODO: should be refactored to reduce DB invocations
-    List<Notification> notifications = notificationRepository.findNotificationsByUserId(
-        user.getId()).orElseThrow(() -> new NotificationNotFoundException(
-        "Can not find notifications by user id " + user.getId()));
+    List<Notification> notifications = notificationRepository.findNotificationsByUserId(userId)
+        .orElseThrow(() -> new NotificationNotFoundException(
+            "Can not find notifications by user id " + userId));
 
     return mapper.toDto(notifications);
   }
@@ -199,16 +194,13 @@ public class NotificationService {
   /**
    * Marks a notification as read by its ID and send updated notifications.
    *
-   * @param userId         The ID of the user associated with the notification.
    * @param notificationId The ID of the notification to mark as read.
    */
-  public void markAsReadById(long userId, long notificationId) {
+  public void markAsReadById(long notificationId) {
     Notification notification = notificationRepository.findById(notificationId)
         .orElseThrow(() -> new NotificationNotFoundException(notificationId));
 
     notification.setRead(true);
     notificationRepository.save(notification);
-
-    sendUserNotifications(userId);
   }
 }
