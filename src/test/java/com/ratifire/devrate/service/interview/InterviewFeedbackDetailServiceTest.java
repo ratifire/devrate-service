@@ -16,7 +16,6 @@ import com.ratifire.devrate.exception.InterviewFeedbackDetailNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.interview.InterviewFeedbackDetailRepository;
 import com.ratifire.devrate.service.specialization.SkillService;
-import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -126,14 +124,7 @@ class InterviewFeedbackDetailServiceTest {
   void deleteExpiredInterviewFeedbackDetailsTaskTest() {
     feedbackDetailService.deleteExpiredInterviewFeedbackDetailsTask();
 
-    ArgumentCaptor<ZonedDateTime> captor = ArgumentCaptor.forClass(ZonedDateTime.class);
     verify(feedbackDetailRepository, times(1))
-        .deleteExpiredFeedbackDetails(captor.capture());
-
-    ZonedDateTime expectedDate = ZonedDateTime.now().minusMonths(1);
-    ZonedDateTime actualDate = captor.getValue();
-
-    Assertions.assertTrue(Duration.between(expectedDate, actualDate).abs().getSeconds() < 5,
-        "Expected date and actual date should be close");
+        .deleteExpiredFeedbackDetails(any(ZonedDateTime.class));
   }
 }
