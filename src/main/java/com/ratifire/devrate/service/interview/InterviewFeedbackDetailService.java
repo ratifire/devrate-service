@@ -36,8 +36,6 @@ public class InterviewFeedbackDetailService {
   private final DataMapper<InterviewFeedbackDetailDto, InterviewFeedbackDetail>
       interviewFeedbackDetailMapper;
   private final SkillService skillService;
-  private static final Logger logger = LoggerFactory.getLogger(ZoomApiService.class);
-
 
   /**
    * Retrieves feedback details by the given feedback detail ID.
@@ -141,8 +139,6 @@ public class InterviewFeedbackDetailService {
   public void deleteExpiredInterviewFeedbackDetailsTask() {
     ZonedDateTime expiredRecordsCutoffDate = ZonedDateTime.now()
         .minusMonths(RECORD_RETENTION_PERIOD_IN_MONTHS);
-    // Добавьте логирование для проверки времени
-    logger.info("Удаление записей старше даты: {}", expiredRecordsCutoffDate);
     interviewFeedbackDetailRepository.deleteExpiredFeedbackDetails(expiredRecordsCutoffDate);
   }
 }

@@ -1,8 +1,5 @@
 package com.ratifire.devrate.service.interview;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -19,12 +16,15 @@ import com.ratifire.devrate.exception.InterviewFeedbackDetailNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.interview.InterviewFeedbackDetailRepository;
 import com.ratifire.devrate.service.specialization.SkillService;
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -67,8 +67,8 @@ class InterviewFeedbackDetailServiceTest {
     InterviewFeedbackDetailDto result = feedbackDetailService
         .getInterviewFeedbackDetail(FEEDBACK_ID);
 
-    assertNotNull(result);
-    assertEquals(feedbackDetailDto, result);
+    Assertions.assertNotNull(result);
+    Assertions.assertEquals(feedbackDetailDto, result);
     verify(feedbackDetailRepository).findById(FEEDBACK_ID);
     verify(skillService).findAllById(SKILL_IDS);
     verify(feedbackDetailMapper).toDto(feedbackDetail, List.of());
@@ -78,8 +78,8 @@ class InterviewFeedbackDetailServiceTest {
   void getInterviewFeedbackDetailWhenNotFoundThenThrowException() {
     when(feedbackDetailRepository.findById(FEEDBACK_ID)).thenReturn(Optional.empty());
 
-    assertThrows(InterviewFeedbackDetailNotFoundException.class, () -> feedbackDetailService
-        .getInterviewFeedbackDetail(FEEDBACK_ID));
+    Assertions.assertThrows(InterviewFeedbackDetailNotFoundException.class,
+        () -> feedbackDetailService.getInterviewFeedbackDetail(FEEDBACK_ID));
 
     verify(feedbackDetailRepository).findById(FEEDBACK_ID);
   }
@@ -110,8 +110,8 @@ class InterviewFeedbackDetailServiceTest {
 
     Map<String, Long> result = feedbackDetailService.saveInterviewFeedbackDetail(interview, 100L);
 
-    assertEquals(FEEDBACK_ID, result.get("candidateFeedbackId"));
-    assertEquals(FEEDBACK_ID, result.get("interviewerFeedbackId"));
+    Assertions.assertEquals(FEEDBACK_ID, result.get("candidateFeedbackId"));
+    Assertions.assertEquals(FEEDBACK_ID, result.get("interviewerFeedbackId"));
 
     verify(feedbackDetailRepository, times(2)).save(any(InterviewFeedbackDetail.class));
   }
@@ -126,7 +126,14 @@ class InterviewFeedbackDetailServiceTest {
   void deleteExpiredInterviewFeedbackDetailsTaskTest() {
     feedbackDetailService.deleteExpiredInterviewFeedbackDetailsTask();
 
+    ArgumentCaptor<ZonedDateTime> captor = ArgumentCaptor.forClass(ZonedDateTime.class);
     verify(feedbackDetailRepository, times(1))
-        .deleteExpiredFeedbackDetails(any(ZonedDateTime.class));
+        .deleteExpiredFeedbackDetails(captor.capture());
+
+    ZonedDateTime expectedDate = ZonedDateTime.now().minusMonths(1);
+    ZonedDateTime actualDate = captor.getValue();
+
+    Assertions.assertTrue(Duration.between(expectedDate, actualDate).abs().getSeconds() < 5,
+        "Expected date and actual date should be close");
   }
 }
