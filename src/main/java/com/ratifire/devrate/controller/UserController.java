@@ -398,6 +398,19 @@ public class UserController {
   }
 
   /**
+   * Deletes an interview request for the specified user and request ID.
+   *
+   * @param userId    the user's ID
+   * @param requestId the ID of the interview request to be deleted
+   */
+  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userId)")
+  @DeleteMapping("/{userId}/interview-requests/{requestId}")
+  public void deleteInterviewRequest(@PathVariable long userId,
+      @PathVariable long requestId) {
+    userService.deleteInterviewRequest(requestId);
+  }
+
+  /**
    * Delete an interview for the specified user.
    *
    * @param userId the ID of the user who rejected the interview

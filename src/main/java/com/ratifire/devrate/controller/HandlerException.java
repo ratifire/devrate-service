@@ -1,6 +1,7 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.exception.AuthenticationException;
+import com.ratifire.devrate.exception.InterviewRequestDoesntExistException;
 import com.ratifire.devrate.exception.MailException;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
@@ -56,6 +57,14 @@ public class HandlerException {
     log.error("Handling Exception: {}", ex.getMessage(), ex);
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Oops! Something went wrong:( We're working to fix it! Please try again later:)");
+  }
+
+  /**
+   * Handles InterviewRequestDoesntExistException by returning an HTTP status 204 (No content).
+   */
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ExceptionHandler(InterviewRequestDoesntExistException.class)
+  public void handleInterviewRequestDoesntExistException() {
   }
 
   /**

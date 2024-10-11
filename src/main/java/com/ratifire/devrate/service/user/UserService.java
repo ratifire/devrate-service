@@ -567,8 +567,7 @@ public class UserService {
    * @return the interview request as InterviewRequestDto
    */
   public InterviewRequestDto getInterviewRequest(long userId, InterviewRequestRole role) {
-    User user = findUserById(userId);
-    InterviewRequest interviewRequest = interviewRequestService.findByUserAndRole(user, role);
+    InterviewRequest interviewRequest = interviewRequestService.findByUserIdAndRole(userId, role);
     return interviewRequestMapper.toDto(interviewRequest);
   }
 
@@ -585,6 +584,15 @@ public class UserService {
       Optional<Interview> interview = interviewMatchingService.match(interviewRequest);
       interview.ifPresent(this::sendInterviewScheduledAlerts);
     }
+  }
+
+  /**
+   * Deletes an interview request by its ID.
+   *
+   * @param requestId the ID of the interview request to be deleted
+   */
+  public void deleteInterviewRequest(long requestId) {
+    interviewRequestService.deleteInterviewRequestById(requestId);
   }
 
   /**
@@ -648,8 +656,7 @@ public class UserService {
    * @return the updated InterviewRequest entity
    */
   private InterviewRequest updateInterviewRequest(long userId, InterviewRequestDto requestDto) {
-    User user = findUserById(userId);
-    InterviewRequest interviewRequest = interviewRequestService.findByUserAndRole(user,
+    InterviewRequest interviewRequest = interviewRequestService.findByUserIdAndRole(userId,
         requestDto.getRole());
     interviewRequestMapper.updateEntity(requestDto, interviewRequest);
     return interviewRequestService.save(interviewRequest);

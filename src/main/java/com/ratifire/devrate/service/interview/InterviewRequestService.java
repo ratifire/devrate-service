@@ -3,6 +3,8 @@ package com.ratifire.devrate.service.interview;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.InterviewRequestRole;
+import com.ratifire.devrate.exception.InterviewRequestDoesntExistException;
+import com.ratifire.devrate.exception.InterviewRequestNotFoundException;
 import com.ratifire.devrate.repository.interview.InterviewRequestRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,16 +30,15 @@ public class InterviewRequestService {
   }
 
   /**
-   * Finds an interview request for the given user and role. If not found, returns a new empty
-   * InterviewRequest.
+   * Finds an interview request for the given userId and role. Throw error if not found.
    *
-   * @param user the user associated with the interview request
-   * @param role the role of the interview request
+   * @param userId the ID of the user associated with the interview request
+   * @param role   the role of the interview request
    * @return the found InterviewRequest or an empty InterviewRequest if not found
    */
-  public InterviewRequest findByUserAndRole(User user, InterviewRequestRole role) {
-    return interviewRequestRepository.findByUserAndRole(user, role)
-        .orElse(InterviewRequest.builder().build());
+  public InterviewRequest findByUserIdAndRole(long userId, InterviewRequestRole role) {
+    return interviewRequestRepository.findByUserIdAndRole(userId, role)
+        .orElseThrow(() -> new InterviewRequestDoesntExistException(userId, role.name()));
   }
 
   /**
@@ -93,5 +94,29 @@ public class InterviewRequestService {
    */
   public void deleteInterviewRequests(List<Long> ids) {
     interviewRequestRepository.deleteAllById(ids);
+  }
+
+  /**
+   * Deletes an interview request by its ID if the request is active.
+   *
+   * @param id the ID of the interview request to be deleted
+   */
+  public void deleteInterviewRequestById(long id) {
+    InterviewRequest interviewRequest = findById(id);
+    if (interviewRequest.isActive()) {
+      interviewRequestRepository.delete(interviewRequest);
+    }
+  }
+
+  /**
+   * Finds an interview request by its ID. Throws an exception if not found.
+   *
+   * @param id the ID of the interview request
+   * @return the found InterviewRequest
+   * @throws InterviewRequestNotFoundException if no interview request is found with the given ID
+   */
+  private InterviewRequest findById(long id) {
+    return interviewRequestRepository.findById(id)
+        .orElseThrow(() -> new InterviewRequestNotFoundException(id));
   }
 }
