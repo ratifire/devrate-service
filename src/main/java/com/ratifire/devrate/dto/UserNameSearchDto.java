@@ -12,6 +12,6 @@ public class UserNameSearchDto {
   private long id;
   private String firstName;
   private String lastName;
-  private String status;
+  private String mainSpecializationName;
   private String picture;
 }

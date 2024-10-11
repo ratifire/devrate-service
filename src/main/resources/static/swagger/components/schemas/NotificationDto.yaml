@@ -2,14 +2,21 @@ type: object
 properties:
   id:
     type: integer
-    description: ID of the notification
-  text:
+    description: ID of the notification.
+  payload:
     type: string
-    maxLength: 100
-    description: Text content of the notification
+    description: The content of the notification.
+    example: "{\"role\":\"INTERVIEWER\",\"scheduledDateTime\":\"2024-10-07 10:00\"}"
+  type:
+    type: string
+    description: Type of the notification (GREETING, INTERVIEW_REQUEST_EXPIRED, INTERVIEW_REJECTED, INTERVIEW_SCHEDULED, INTERVIEW_FEEDBACK).
+    example: "INTERVIEW_SCHEDULED"
   read:
     type: boolean
-    description: Indicates whether the notification has been read
-  userId:
-    type: integer
-    description: ID of the user to whom the notification belongs
+    description: Indicates whether the notification has been read.
+    example: false
+  createdAt:
+    type: string
+    format: date-time
+    description: The timestamp when the notification was created.
+    example: "2024-10-10T23:09:00.0000000"

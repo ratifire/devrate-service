@@ -13,6 +13,7 @@ import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
+import com.ratifire.devrate.dto.NotificationDto;
 import com.ratifire.devrate.dto.SkillFeedbackDto;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.dto.UserDto;
@@ -28,6 +29,7 @@ import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.Event;
 import com.ratifire.devrate.entity.InterviewSummary;
 import com.ratifire.devrate.entity.LanguageProficiency;
+import com.ratifire.devrate.entity.Notification;
 import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
@@ -38,6 +40,7 @@ import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.exception.InterviewSummaryNotFoundException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.exception.UserNotFoundException;
+import com.ratifire.devrate.exception.UserSearchInvalidInputException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.InterviewSummaryRepository;
 import com.ratifire.devrate.repository.SpecializationRepository;
@@ -64,10 +67,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,6 +83,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
+  private static final String NAME_PATTERN =
+      "^[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\s\\-']*[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\-']$";
+  private static final Pattern NAME_REGEX = Pattern.compile(NAME_PATTERN);
 
   private UserRepository userRepository;
   private final SpecializationRepository specializationRepository;
@@ -593,7 +603,7 @@ public class UserService {
     String role = String.valueOf(recipientRequest.getRole());
 
     notificationService.addInterviewScheduled(recipient, role,
-        interviewStartTimeInUtc);
+        interviewStartTimeInUtc, recipientEmail);
 
     emailService.sendInterviewScheduledEmail(recipient, recipientEmail,
         interviewStartTimeInUtc, secondParticipantRequest, zoomJoinUrl);
@@ -682,12 +692,13 @@ public class UserService {
    */
   private void notifyUsers(User recipient, User rejector,
       ZonedDateTime scheduledTime) {
-    notificationService.addRejectInterview(recipient, rejector.getFirstName(),
-        scheduledTime);
-    notificationService.addRejectInterview(rejector, recipient.getFirstName(),
-        scheduledTime);
-
     String recipientEmail = userSecurityService.findEmailByUserId(recipient.getId());
+    notificationService.addRejectInterview(recipient, rejector.getFirstName(),
+        scheduledTime, recipientEmail);
+    String rejectorEmail = userSecurityService.findEmailByUserId(rejector.getId());
+    notificationService.addRejectInterview(rejector, recipient.getFirstName(),
+        scheduledTime, rejectorEmail);
+
     emailService.sendInterviewRejectionMessage(recipient, rejector, scheduledTime, recipientEmail);
   }
 
@@ -789,10 +800,53 @@ public class UserService {
       return List.of();
     }
 
-    String[] parts = query.split("\\s+");
+    String[] parts = query.trim().split("\\s+");
     String firstParam = parts[0];
     String secondParam = parts.length > 1 ? parts[1] : "";
 
-    return userRepository.findUsersByName(firstParam, secondParam, query);
+    if (isNameInvalid(firstParam) || (!secondParam.isBlank() && isNameInvalid(secondParam))) {
+      throw new UserSearchInvalidInputException("Please enter a valid first/last name using only "
+          + "letters, spaces, hyphens, or apostrophes.");
+    }
+
+    Pageable pageable = PageRequest.of(0, 10);
+    return userRepository.findUsersByName(firstParam, secondParam, query, pageable);
+  }
+
+  /**
+   * Checks if a given name is invalid based on the predefined regex pattern.
+   *
+   * @param name the name to validate.
+   * @return true if the name does not match the pattern, false otherwise.
+   */
+  private boolean isNameInvalid(String name) {
+    return !NAME_REGEX.matcher(name).matches();
+  }
+
+  /**
+   * Retrieves a list of all notifications for a given user.
+   *
+   * @param userId the ID of the user whose notifications are to be retrieved
+   * @return a list of {@link NotificationDto} representing the user's notifications
+   */
+  public List<NotificationDto> getNotificationsByUserId(long userId) {
+    return notificationService.getAllByUserId(userId);
+  }
+
+  /**
+   * Sends a test notification to a user.
+   */
+  // TODO: ATTENTION!!! Remove this method after testing is completed.
+  public void sendTestNotification(long userId, NotificationDto notificationDto) {
+    String userEmail = userSecurityService.findEmailByUserId(userId);
+    User user = findUserById(userId);
+    Notification notification = Notification.builder()
+        .user(user)
+        .read(notificationDto.isRead())
+        .payload(notificationDto.getPayload())
+        .type(notificationDto.getType())
+        .createdAt(notificationDto.getCreatedAt())
+        .build();
+    notificationService.sendTestNotification(userEmail, notification);
   }
 }

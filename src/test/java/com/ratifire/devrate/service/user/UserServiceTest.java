@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
@@ -47,6 +48,7 @@ import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.exception.InterviewSummaryNotFoundException;
 import com.ratifire.devrate.exception.UserNotFoundException;
+import com.ratifire.devrate.exception.UserSearchInvalidInputException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.InterviewSummaryRepository;
 import com.ratifire.devrate.repository.UserRepository;
@@ -70,9 +72,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Unit tests for the UserService class.
@@ -684,14 +689,14 @@ class UserServiceTest {
     when(interviewMatchingService.match(any(InterviewRequest.class))).thenReturn(
         Optional.of(interview));
 
-    doNothing().when(notificationService).addInterviewScheduled(any(), any(), any());
+    doNothing().when(notificationService).addInterviewScheduled(any(), any(), any(), anyString());
     doNothing().when(emailService).sendInterviewScheduledEmail(any(), any(), any(), any(), any());
 
     userService.createAndMatchInterviewRequest(userId, interviewRequestDto);
 
     verify(userSecurityService, times(2)).findEmailByUserId(anyLong());
     verify(notificationService, times(2))
-        .addInterviewScheduled(any(), any(), any());
+        .addInterviewScheduled(any(), any(), any(), anyString());
     verify(emailService, times(2))
         .sendInterviewScheduledEmail(any(), any(), any(), any(), any());
   }
@@ -707,7 +712,7 @@ class UserServiceTest {
     userService.createAndMatchInterviewRequest(userId, interviewRequestDto);
 
     verify(userSecurityService, never()).findEmailByUserId(anyLong());
-    verify(notificationService, never()).addInterviewScheduled(any(), any(), any());
+    verify(notificationService, never()).addInterviewScheduled(any(), any(), any(), anyString());
     verify(emailService, never()).sendInterviewScheduledEmail(any(), any(), any(), any(), any());
   }
 
@@ -720,18 +725,18 @@ class UserServiceTest {
     when(interviewMatchingService.match(interviewRequest,
         List.of(interviewRequest.getUser()))).thenReturn(Optional.empty());
 
-    doNothing().when(notificationService).addRejectInterview(any(), any(), any());
+    doNothing().when(notificationService).addRejectInterview(any(), any(), any(), anyString());
     doNothing().when(emailService).sendInterviewRejectionMessage(any(), any(), any(), any());
     doNothing().when(interviewRequestService).handleRejectedInterview(any(), any());
 
     userService.deleteRejectedInterview(userId, userId);
 
-    verify(userSecurityService, times(1))
+    verify(userSecurityService, times(2))
         .findEmailByUserId(anyLong());
     verify(notificationService, times(2))
-        .addRejectInterview(any(), any(), any());
+        .addRejectInterview(any(), any(), any(), anyString());
     verify(notificationService, never())
-        .addInterviewScheduled(any(), any(), any());
+        .addInterviewScheduled(any(), any(), any(), anyString());
     verify(emailService, never())
         .sendInterviewScheduledEmail(any(), any(), any(), any(), any());
   }
@@ -747,18 +752,18 @@ class UserServiceTest {
 
     doNothing().when(emailService).sendInterviewRejectionMessage(any(), any(), any(), any());
     doNothing().when(interviewRequestService).handleRejectedInterview(any(), any());
-    doNothing().when(notificationService).addRejectInterview(any(), any(), any());
-    doNothing().when(notificationService).addInterviewScheduled(any(), any(), any());
+    doNothing().when(notificationService).addRejectInterview(any(), any(), any(), anyString());
+    doNothing().when(notificationService).addInterviewScheduled(any(), any(), any(), anyString());
     doNothing().when(emailService).sendInterviewScheduledEmail(any(), any(), any(), any(), any());
 
     userService.deleteRejectedInterview(userId, userId);
 
-    verify(userSecurityService, times(5))
+    verify(userSecurityService, times(6))
         .findEmailByUserId(anyLong());
     verify(notificationService, times(2))
-        .addRejectInterview(any(), any(), any());
+        .addRejectInterview(any(), any(), any(), anyString());
     verify(notificationService, times(4))
-        .addInterviewScheduled(any(), any(), any());
+        .addInterviewScheduled(any(), any(), any(), anyString());
     verify(emailService, times(4))
         .sendInterviewScheduledEmail(any(), any(), any(), any(), any());
 
@@ -776,18 +781,18 @@ class UserServiceTest {
 
     doNothing().when(emailService).sendInterviewRejectionMessage(any(), any(), any(), any());
     doNothing().when(interviewRequestService).handleRejectedInterview(any(), any());
-    doNothing().when(notificationService).addRejectInterview(any(), any(), any());
-    doNothing().when(notificationService).addInterviewScheduled(any(), any(), any());
+    doNothing().when(notificationService).addRejectInterview(any(), any(), any(), anyString());
+    doNothing().when(notificationService).addInterviewScheduled(any(), any(), any(), anyString());
     doNothing().when(emailService).sendInterviewScheduledEmail(any(), any(), any(), any(), any());
 
     userService.deleteRejectedInterview(userId, userId);
 
-    verify(userSecurityService, times(3))
+    verify(userSecurityService, times(4))
         .findEmailByUserId(anyLong());
     verify(notificationService, times(2))
-        .addRejectInterview(any(), any(), any());
+        .addRejectInterview(any(), any(), any(), anyString());
     verify(notificationService, times(2))
-        .addInterviewScheduled(any(), any(), any());
+        .addInterviewScheduled(any(), any(), any(), anyString());
     verify(emailService, times(2))
         .sendInterviewScheduledEmail(any(), any(), any(), any(), any());
   }
@@ -831,10 +836,17 @@ class UserServiceTest {
     assertTrue(result.isEmpty());
   }
 
+  @ParameterizedTest
+  @ValueSource(strings = {"J@hn", "John D0e", "J@hn D0e"})
+  void searchUsersShouldThrowExceptionWhenQueryIsInvalid(String query) {
+    assertThrows(UserSearchInvalidInputException.class, () -> userService.searchUsers(query));
+  }
+
   @Test
   void searchUsersShouldReturnMatchingUsersWhenOneNameIsProvided() {
     String query = "John";
-    when(userRepository.findUsersByName(eq("John"), eq(""), eq(query))).thenReturn(
+    Pageable pageable = PageRequest.of(0, 10);
+    when(userRepository.findUsersByName(eq("John"), eq(""), eq(query), eq(pageable))).thenReturn(
         List.of(new UserNameSearchDto(1L, "John", "Doe", "Developer", "Picture"))
     );
 
@@ -843,14 +855,15 @@ class UserServiceTest {
     assertEquals(1, result.size());
     assertEquals("John", result.getFirst().getFirstName());
     assertEquals("Doe", result.getFirst().getLastName());
-    assertEquals("Developer", result.getFirst().getStatus());
+    assertEquals("Developer", result.getFirst().getMainSpecializationName());
     assertEquals("Picture", result.getFirst().getPicture());
   }
 
   @Test
   void searchUsersShouldReturnMatchingUsersWhenFirstNameAndLastNameAreProvided() {
     String query = "John Doe";
-    when(userRepository.findUsersByName(eq("John"), eq("Doe"), eq(query))).thenReturn(
+    Pageable pageable = PageRequest.of(0, 10);
+    when(userRepository.findUsersByName(eq("John"), eq("Doe"), eq(query), eq(pageable))).thenReturn(
         List.of(new UserNameSearchDto(1L, "John", "Doe", "Developer", "Picture"))
     );
 
@@ -859,7 +872,7 @@ class UserServiceTest {
     assertEquals(1, result.size());
     assertEquals("John", result.getFirst().getFirstName());
     assertEquals("Doe", result.getFirst().getLastName());
-    assertEquals("Developer", result.getFirst().getStatus());
+    assertEquals("Developer", result.getFirst().getMainSpecializationName());
     assertEquals("Picture", result.getFirst().getPicture());
   }
 }

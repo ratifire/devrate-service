@@ -4,6 +4,7 @@ import com.ratifire.devrate.exception.AuthenticationException;
 import com.ratifire.devrate.exception.MailException;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
+import com.ratifire.devrate.exception.UserSearchInvalidInputException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
@@ -131,5 +132,14 @@ public class HandlerException {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(HandlerMethodValidationException.class)
   public void handleHandlerMethodValidationException(HandlerMethodValidationException e) {
+  }
+
+  /**
+   * Handles {@link UserSearchInvalidInputException} and returns a 400 Bad Request response.
+   */
+  @ExceptionHandler(UserSearchInvalidInputException.class)
+  public ResponseEntity<String> handleUserSearchInvalidInputException(
+      UserSearchInvalidInputException ex) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
   }
 }
