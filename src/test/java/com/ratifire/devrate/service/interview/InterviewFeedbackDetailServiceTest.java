@@ -1,5 +1,8 @@
 package com.ratifire.devrate.service.interview;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -20,7 +23,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -65,8 +67,8 @@ class InterviewFeedbackDetailServiceTest {
     InterviewFeedbackDetailDto result = feedbackDetailService
         .getInterviewFeedbackDetail(FEEDBACK_ID);
 
-    Assertions.assertNotNull(result);
-    Assertions.assertEquals(feedbackDetailDto, result);
+    assertNotNull(result);
+    assertEquals(feedbackDetailDto, result);
     verify(feedbackDetailRepository).findById(FEEDBACK_ID);
     verify(skillService).findAllById(SKILL_IDS);
     verify(feedbackDetailMapper).toDto(feedbackDetail, List.of());
@@ -76,7 +78,7 @@ class InterviewFeedbackDetailServiceTest {
   void getInterviewFeedbackDetailWhenNotFoundThenThrowException() {
     when(feedbackDetailRepository.findById(FEEDBACK_ID)).thenReturn(Optional.empty());
 
-    Assertions.assertThrows(InterviewFeedbackDetailNotFoundException.class,
+    assertThrows(InterviewFeedbackDetailNotFoundException.class,
         () -> feedbackDetailService.getInterviewFeedbackDetail(FEEDBACK_ID));
 
     verify(feedbackDetailRepository).findById(FEEDBACK_ID);
@@ -108,8 +110,8 @@ class InterviewFeedbackDetailServiceTest {
 
     Map<String, Long> result = feedbackDetailService.saveInterviewFeedbackDetail(interview, 100L);
 
-    Assertions.assertEquals(FEEDBACK_ID, result.get("candidateFeedbackId"));
-    Assertions.assertEquals(FEEDBACK_ID, result.get("interviewerFeedbackId"));
+    assertEquals(FEEDBACK_ID, result.get("candidateFeedbackId"));
+    assertEquals(FEEDBACK_ID, result.get("interviewerFeedbackId"));
 
     verify(feedbackDetailRepository, times(2)).save(any(InterviewFeedbackDetail.class));
   }
