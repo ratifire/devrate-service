@@ -78,8 +78,8 @@ class InterviewFeedbackDetailServiceTest {
   void getInterviewFeedbackDetailWhenNotFoundThenThrowException() {
     when(feedbackDetailRepository.findById(FEEDBACK_ID)).thenReturn(Optional.empty());
 
-    assertThrows(InterviewFeedbackDetailNotFoundException.class, () -> feedbackDetailService
-        .getInterviewFeedbackDetail(FEEDBACK_ID));
+    assertThrows(InterviewFeedbackDetailNotFoundException.class,
+        () -> feedbackDetailService.getInterviewFeedbackDetail(FEEDBACK_ID));
 
     verify(feedbackDetailRepository).findById(FEEDBACK_ID);
   }
@@ -119,20 +119,14 @@ class InterviewFeedbackDetailServiceTest {
   @Test
   void deleteInterviewFeedbackDetailById() {
     feedbackDetailService.deleteById(FEEDBACK_ID);
-
     verify(feedbackDetailRepository).deleteById(FEEDBACK_ID);
   }
 
   @Test
   void deleteExpiredInterviewFeedbackDetailsTaskTest() {
-    int recordRetentionPeriodInMonths = 1;
-    ZonedDateTime expiredRecordsCutoffDate = ZonedDateTime.now()
-        .minusMonths(recordRetentionPeriodInMonths);
-
     feedbackDetailService.deleteExpiredInterviewFeedbackDetailsTask();
 
     verify(feedbackDetailRepository, times(1))
         .deleteExpiredFeedbackDetails(any(ZonedDateTime.class));
   }
-
 }
