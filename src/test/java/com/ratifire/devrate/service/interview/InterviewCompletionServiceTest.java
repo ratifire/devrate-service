@@ -14,6 +14,7 @@ import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.service.NotificationService;
+import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.specialization.SpecializationService;
 import com.ratifire.devrate.service.user.UserService;
 import com.ratifire.devrate.util.interview.DateTimeUtils;
@@ -60,6 +61,9 @@ class InterviewCompletionServiceTest {
 
   @Mock
   private ZoomApiService zoomApiService;
+  @Mock
+  private UserSecurityService userSecurityService;
+
 
   @InjectMocks
   private InterviewCompletionService interviewCompletionService;
@@ -98,23 +102,28 @@ class InterviewCompletionServiceTest {
   @Test
   void completeInterviewProcessWithValidMeetingShouldReturnSuccess()
       throws ZoomWebhookException, ZoomApiException {
+
+    when(userSecurityService.findEmailByUserId(interviewer.getId())).thenReturn("interviewer@example.com");
+    when(userSecurityService.findEmailByUserId(candidate.getId())).thenReturn("candidate@example.com");
+
     when(interviewService.getInterviewByMeetingId(MEETING_ID)).thenReturn(interview);
     when(interviewSummaryService.createInterviewSummary(any(Interview.class), any()))
         .thenReturn(6L);
-    when(interviewFeedbackDetailService.saveInterviewFeedbackDetail(any(Interview.class),
-        anyLong()))
+    when(interviewFeedbackDetailService.saveInterviewFeedbackDetail(any(Interview.class), anyLong()))
         .thenReturn(Map.of("candidateFeedbackId", 7L, "interviewerFeedbackId", 8L));
 
     String result = interviewCompletionService.completeInterviewProcess(meeting);
 
     assertEquals("Interview process completed successfully!", result);
+
     verify(interviewSummaryService).createInterviewSummary(interview, meeting.getEndTime());
     verify(specializationService).updateUserInterviewCounts(interview);
     verify(userService).refreshUserInterviewCounts(List.of(interviewer, candidate));
-    verify(interviewFeedbackDetailService).saveInterviewFeedbackDetail(interview,
-        6L);
-    verify(notificationService).addInterviewFeedbackDetail(candidate, 7L);
-    verify(notificationService).addInterviewFeedbackDetail(interviewer, 8L);
+    verify(interviewFeedbackDetailService).saveInterviewFeedbackDetail(interview, 6L);
+
+    verify(notificationService).addInterviewFeedbackDetail(candidate, 7L, "candidate@example.com");
+    verify(notificationService).addInterviewFeedbackDetail(interviewer, 8L, "interviewer@example.com");
+
     verify(zoomApiService).deleteMeeting(MEETING_ID);
     verify(interviewService).deleteInterview(interview.getId());
     verify(interviewRequestService).deleteInterviewRequests(List.of(4L, 5L));
@@ -126,10 +135,8 @@ class InterviewCompletionServiceTest {
     when(interviewService.getInterviewByMeetingId(MEETING_ID)).thenReturn(interview);
     when(interviewSummaryService.createInterviewSummary(any(Interview.class), any()))
         .thenReturn(6L);
-    when(interviewFeedbackDetailService.saveInterviewFeedbackDetail(any(Interview.class),
-        anyLong()))
-        .thenReturn(Map.of("candidateFeedbackId", 7L, "interviewerFeedbackId",
-            8L));
+    when(interviewFeedbackDetailService.saveInterviewFeedbackDetail(any(Interview.class), anyLong()))
+        .thenReturn(Map.of("candidateFeedbackId", 7L, "interviewerFeedbackId", 8L));
     doThrow(new ZoomApiException("Zoom API error", new Throwable())).when(zoomApiService)
         .deleteMeeting(MEETING_ID);
 
