@@ -103,14 +103,16 @@ class InterviewCompletionServiceTest {
   void completeInterviewProcessWithValidMeetingShouldReturnSuccess()
       throws ZoomWebhookException, ZoomApiException {
 
-    when(userSecurityService.findEmailByUserId(interviewer.getId())).thenReturn("interviewer@example.com");
-    when(userSecurityService.findEmailByUserId(candidate.getId())).thenReturn("candidate@example.com");
+    when(userSecurityService.findEmailByUserId(interviewer.getId()))
+        .thenReturn("interviewer@example.com");
+    when(userSecurityService.findEmailByUserId(candidate.getId()))
+        .thenReturn("candidate@example.com");
 
     when(interviewService.getInterviewByMeetingId(MEETING_ID)).thenReturn(interview);
-    when(interviewSummaryService.createInterviewSummary(any(Interview.class), any()))
-        .thenReturn(6L);
-    when(interviewFeedbackDetailService.saveInterviewFeedbackDetail(any(Interview.class), anyLong()))
-        .thenReturn(Map.of("candidateFeedbackId", 7L, "interviewerFeedbackId", 8L));
+    when(interviewSummaryService.createInterviewSummary(any(Interview.class),
+        any())).thenReturn(6L);
+    when(interviewFeedbackDetailService.saveInterviewFeedbackDetail(any(Interview.class),
+        anyLong())).thenReturn(Map.of("candidateFeedbackId", 7L, "interviewerFeedbackId", 8L));
 
     String result = interviewCompletionService.completeInterviewProcess(meeting);
 
@@ -121,8 +123,10 @@ class InterviewCompletionServiceTest {
     verify(userService).refreshUserInterviewCounts(List.of(interviewer, candidate));
     verify(interviewFeedbackDetailService).saveInterviewFeedbackDetail(interview, 6L);
 
-    verify(notificationService).addInterviewFeedbackDetail(candidate, 7L, "candidate@example.com");
-    verify(notificationService).addInterviewFeedbackDetail(interviewer, 8L, "interviewer@example.com");
+    verify(notificationService).addInterviewFeedbackDetail(candidate,
+        7L, "candidate@example.com");
+    verify(notificationService).addInterviewFeedbackDetail(interviewer,
+        8L, "interviewer@example.com");
 
     verify(zoomApiService).deleteMeeting(MEETING_ID);
     verify(interviewService).deleteInterview(interview.getId());
@@ -135,8 +139,8 @@ class InterviewCompletionServiceTest {
     when(interviewService.getInterviewByMeetingId(MEETING_ID)).thenReturn(interview);
     when(interviewSummaryService.createInterviewSummary(any(Interview.class), any()))
         .thenReturn(6L);
-    when(interviewFeedbackDetailService.saveInterviewFeedbackDetail(any(Interview.class), anyLong()))
-        .thenReturn(Map.of("candidateFeedbackId", 7L, "interviewerFeedbackId", 8L));
+    when(interviewFeedbackDetailService.saveInterviewFeedbackDetail(any(Interview.class),
+        anyLong())).thenReturn(Map.of("candidateFeedbackId", 7L, "interviewerFeedbackId", 8L));
     doThrow(new ZoomApiException("Zoom API error", new Throwable())).when(zoomApiService)
         .deleteMeeting(MEETING_ID);
 
