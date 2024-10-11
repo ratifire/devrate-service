@@ -12,14 +12,11 @@ import com.ratifire.devrate.exception.InterviewFeedbackDetailNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.interview.InterviewFeedbackDetailRepository;
 import com.ratifire.devrate.service.specialization.SkillService;
-import com.ratifire.devrate.util.zoom.service.ZoomApiService;
 import jakarta.transaction.Transactional;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +33,7 @@ public class InterviewFeedbackDetailService {
   private final DataMapper<InterviewFeedbackDetailDto, InterviewFeedbackDetail>
       interviewFeedbackDetailMapper;
   private final SkillService skillService;
+
 
   /**
    * Retrieves feedback details by the given feedback detail ID.
