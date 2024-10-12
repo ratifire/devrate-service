@@ -70,6 +70,7 @@ public class User {
   private List<Contact> contacts;
 
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @OrderBy("startYear DESC,endYear DESC, id ASC")
   @JoinColumn(name = "user_id", nullable = false)
   private List<Education> educations;
 
@@ -83,6 +84,7 @@ public class User {
   private List<Notification> notifications;
 
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @OrderBy("startYear DESC,endYear DESC, id ASC")
   @JoinColumn(name = "user_id", nullable = false)
   private List<EmploymentRecord> employmentRecords;
 
