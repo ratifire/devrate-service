@@ -18,6 +18,7 @@ import com.ratifire.devrate.dto.UserMainHardSkillsDto;
 import com.ratifire.devrate.dto.UserMainMasterySkillDto;
 import com.ratifire.devrate.dto.UserNameSearchDto;
 import com.ratifire.devrate.dto.UserPictureDto;
+import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.service.user.UserService;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
@@ -370,6 +371,45 @@ public class UserController {
   public void createInterviewRequest(@PathVariable long userId,
       @Valid @RequestBody InterviewRequestDto interviewRequest) {
     userService.createAndMatchInterviewRequest(userId, interviewRequest);
+  }
+
+  /**
+   * Retrieves the interview request for a specific user and role.
+   *
+   * @param userId the ID of the user
+   * @param role   the role for which the interview request is being retrieved
+   * @return the InterviewRequestDto containing the interview request details
+   */
+  @GetMapping("/{userId}/interview-requests")
+  public InterviewRequestDto getInterviewRequest(@PathVariable long userId,
+      @Valid @RequestParam InterviewRequestRole role) {
+    return userService.getInterviewRequest(userId, role);
+  }
+
+  /**
+   * Updates the interview request for a specific user.
+   *
+   * @param userId           the ID of the user
+   * @param interviewRequest the InterviewRequestDto containing the updated interview request
+   */
+  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userId)")
+  @PutMapping("/{userId}/interview-requests")
+  public void updateInterviewRequest(@PathVariable long userId,
+      @Valid @RequestBody InterviewRequestDto interviewRequest) {
+    userService.updateAndMatchInterviewRequest(userId, interviewRequest);
+  }
+
+  /**
+   * Deletes an interview request for the specified user and request ID.
+   *
+   * @param userId    the user's ID
+   * @param requestId the ID of the interview request to be deleted
+   */
+  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userId)")
+  @DeleteMapping("/{userId}/interview-requests/{requestId}")
+  public void deleteInterviewRequest(@PathVariable long userId,
+      @PathVariable long requestId) {
+    userService.deleteInterviewRequest(requestId);
   }
 
   /**
