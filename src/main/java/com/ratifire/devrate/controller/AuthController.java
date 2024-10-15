@@ -4,14 +4,18 @@ import com.ratifire.devrate.dto.LoginDto;
 import com.ratifire.devrate.dto.PasswordResetDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.dto.UserRegistrationDto;
+import com.ratifire.devrate.jwt.service.JwtService;
+import com.ratifire.devrate.jwt.service.RefreshTokenService;
 import com.ratifire.devrate.service.AuthenticationService;
 import com.ratifire.devrate.service.registration.RegistrationService;
 import com.ratifire.devrate.service.resetpassword.PasswordResetService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -31,6 +35,8 @@ public class AuthController {
   private final AuthenticationService authenticationService;
   private final RegistrationService registrationService;
   private final PasswordResetService passwordResetService;
+  private final RefreshTokenService refreshTokenService;
+  private final JwtService jwtService;
 
   /**
    * Endpoint for user login.
@@ -39,8 +45,8 @@ public class AuthController {
    * @return A UserDto object representing the authenticated user.
    */
   @PostMapping("/signin")
-  public UserDto login(@RequestBody LoginDto loginDto, HttpServletRequest request) {
-    return authenticationService.login(loginDto, request);
+  public UserDto login(@RequestBody LoginDto loginDto, HttpServletResponse response) {
+    return authenticationService.login(loginDto, response);
   }
 
   /**
@@ -50,8 +56,22 @@ public class AuthController {
    * @return ResponseEntity representing the result of the logout operation.
    */
   @PostMapping("/logout")
-  public ResponseEntity<String> logout(HttpServletRequest request) {
-    return authenticationService.logout(request);
+  public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+    return authenticationService.logout(request, response);
+  }
+
+  /**
+   * test.
+   */
+  @PostMapping("/refresh-token")
+  public void refreshToken(@CookieValue("Refresh-Token") String refreshToken,
+      HttpServletResponse response) {
+    if (!refreshTokenService.validate(refreshToken)) {
+      response.setStatus(HttpStatus.UNAUTHORIZED.value());
+      return;
+    }
+    String newAccessToken = jwtService.generateAccessTokenFromRefreshToken(refreshToken);
+    response.setHeader("Authorization", "Bearer " + newAccessToken);
   }
 
   /**
