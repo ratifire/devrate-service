@@ -21,7 +21,7 @@ public class ContactValueValidator implements
       "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$");
   private static final Pattern PHONE_PATTERN = Pattern.compile("^\\+\\d{10,15}$");
   private static final String TELEGRAM_BASE_URL = "https://t.me/";
-  private static final String LINKEDIN_BASE_URL = "https://www.linkedin.com/in/";
+  private static final String LINKEDIN_BASE_URL = "https://www.linkedin.com/";
   private static final String GITHUB_BASE_URL = "https://github.com/";
   private static final String BEHANCE_BASE_URL = "https://www.behance.net/";
   private final Map<ContactType, Predicate<String>> validatorsByContactType;
