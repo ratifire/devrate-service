@@ -60,29 +60,38 @@ public class InterviewFeedbackDetailService {
    */
   public Map<String, Long> saveInterviewFeedbackDetail(Interview interview,
       long interviewSummaryId) {
-    ZonedDateTime interviewStartTime = interview.getStartTime();
+    ZonedDateTime startTime = interview.getStartTime();
+    User candidate = interview.getCandidateRequest().getUser();
+    User interviewer = interview.getInterviewerRequest().getUser();
+    InterviewFeedbackDetail candidateFeedbackDetail = createInterviewFeedbackDetail(
+        candidate.getId(), interviewer, interviewSummaryId, interview.getInterviewerRequest(),
+        startTime);
+    InterviewFeedbackDetail interviewerFeedbackDetail = createInterviewFeedbackDetail(
+        interviewer.getId(), candidate, interviewSummaryId, interview.getCandidateRequest(),
+        startTime);
+
     return Map.of(
-        "candidateFeedbackId", interviewFeedbackDetailRepository.save(
-            createInterviewFeedbackDetail(interview.getInterviewerRequest().getUser(),
-                interviewSummaryId, interview.getInterviewerRequest(), interviewStartTime)).getId(),
-        "interviewerFeedbackId", interviewFeedbackDetailRepository.save(
-            createInterviewFeedbackDetail(interview.getCandidateRequest().getUser(),
-                interviewSummaryId, interview.getCandidateRequest(), interviewStartTime)).getId()
+        "candidateFeedbackId",
+        interviewFeedbackDetailRepository.save(candidateFeedbackDetail).getId(),
+        "interviewerFeedbackId",
+        interviewFeedbackDetailRepository.save(interviewerFeedbackDetail).getId()
     );
   }
 
   /**
    * Creates an InterviewFeedbackDetail object for either the interviewer or candidate.
    *
-   * @param user               the user entity containing information about the participant
+   * @param ownerId            the host feedback detail user id
+   * @param participant        the user entity containing information about the participant
    * @param interviewSummaryId the ID of the interview summary to associate the feedback with
    * @param request            the interview request containing information about the role and
    *                           skills of the participant
    * @param startTime          the start time of the interview
    * @return the created InterviewFeedbackDetail entity
    */
-  private InterviewFeedbackDetail createInterviewFeedbackDetail(User user, long interviewSummaryId,
-      InterviewRequest request, ZonedDateTime startTime) {
+  private InterviewFeedbackDetail createInterviewFeedbackDetail(long ownerId,
+      User participant, long interviewSummaryId, InterviewRequest request,
+      ZonedDateTime startTime) {
     List<Long> skillsIds = request.getRole() == InterviewRequestRole.INTERVIEWER
         ? request.getMastery().getSkills().stream()
         .filter(s -> s.getType() == SkillType.SOFT_SKILL)
@@ -93,12 +102,13 @@ public class InterviewFeedbackDetailService {
             .toList();
 
     return InterviewFeedbackDetail.builder()
-        .user(user)
+        .participant(participant)
         .participantRole(request.getRole())
         .startTime(startTime)
         .interviewSummaryId(interviewSummaryId)
         .evaluatedMasteryId(request.getMastery().getId())
         .skillsIds(skillsIds)
+        .ownerId(ownerId)
         .build();
   }
 

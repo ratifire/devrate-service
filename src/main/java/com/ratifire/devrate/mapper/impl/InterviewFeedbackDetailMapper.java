@@ -32,9 +32,10 @@ public abstract class InterviewFeedbackDetailMapper implements
 
   @Override
   @Mapping(source = "detail.startTime", target = "interviewStartTime")
-  @Mapping(target = "participant", expression = "java(participantMapper.toDto(detail.getUser(), "
-      + "detail.getParticipantRole()))")
+  @Mapping(target = "participant", expression = "java(participantMapper.toDto("
+      + "detail.getParticipant(), detail.getParticipantRole()))")
   @Mapping(target = "skills", expression = "java(skillMapper.toSkillShortDtos(skills))")
+  @Mapping(target = "detail.hostFeedbackId", ignore = true)
   public abstract InterviewFeedbackDetailDto toDto(InterviewFeedbackDetail detail,
       List<Skill> skills);
 }
