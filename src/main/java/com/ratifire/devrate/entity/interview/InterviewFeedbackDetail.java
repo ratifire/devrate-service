@@ -35,10 +35,6 @@ public class InterviewFeedbackDetail {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @Enumerated(EnumType.STRING)
-  @Column(name = "participant_role", nullable = false)
-  private InterviewRequestRole participantRole;
-
   @Column(name = "start_time", nullable = false)
   private ZonedDateTime startTime;
 
@@ -51,8 +47,15 @@ public class InterviewFeedbackDetail {
   @Column(name = "skill_id", columnDefinition = "bigint[]", nullable = false)
   private List<Long> skillsIds;
 
+  @Enumerated(EnumType.STRING)
+  @Column(name = "participant_role", nullable = false)
+  private InterviewRequestRole participantRole;
+
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", nullable = false)
-  private User user;
+  @JoinColumn(name = "participant_id", nullable = false)
+  private User participant;
+
+  @Column(name = "host_feedback_id", nullable = false)
+  private long hostFeedbackId;
 
 }
