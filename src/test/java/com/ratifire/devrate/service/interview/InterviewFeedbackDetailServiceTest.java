@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import com.ratifire.devrate.dto.InterviewFeedbackDetailDto;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Skill;
+import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewFeedbackDetail;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
@@ -91,6 +92,14 @@ class InterviewFeedbackDetailServiceTest {
     InterviewRequest interviewerRequest = mock(InterviewRequest.class);
     Mastery candidateMastery = mock(Mastery.class);
     Mastery interviewerMastery = mock(Mastery.class);
+    User candidate = mock(User.class);
+    User interviewer = mock(User.class);
+
+    when(candidateRequest.getUser()).thenReturn(candidate);
+    when(interviewerRequest.getUser()).thenReturn(interviewer);
+
+    when(candidate.getId()).thenReturn(8881L);
+    when(interviewer.getId()).thenReturn(8882L);
 
     when(candidateRequest.getMastery()).thenReturn(candidateMastery);
     when(interviewerRequest.getMastery()).thenReturn(interviewerMastery);
