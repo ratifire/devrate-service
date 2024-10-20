@@ -81,7 +81,7 @@ public class InterviewFeedbackDetailService {
   /**
    * Creates an InterviewFeedbackDetail object for either the interviewer or candidate.
    *
-   * @param hostId             the host feedback detail user id
+   * @param ownerId            the host feedback detail user id
    * @param participant        the user entity containing information about the participant
    * @param interviewSummaryId the ID of the interview summary to associate the feedback with
    * @param request            the interview request containing information about the role and
@@ -89,7 +89,7 @@ public class InterviewFeedbackDetailService {
    * @param startTime          the start time of the interview
    * @return the created InterviewFeedbackDetail entity
    */
-  private InterviewFeedbackDetail createInterviewFeedbackDetail(long hostId,
+  private InterviewFeedbackDetail createInterviewFeedbackDetail(long ownerId,
       User participant, long interviewSummaryId, InterviewRequest request,
       ZonedDateTime startTime) {
     List<Long> skillsIds = request.getRole() == InterviewRequestRole.INTERVIEWER
@@ -108,7 +108,7 @@ public class InterviewFeedbackDetailService {
         .interviewSummaryId(interviewSummaryId)
         .evaluatedMasteryId(request.getMastery().getId())
         .skillsIds(skillsIds)
-        .hostFeedbackId(hostId)
+        .ownerId(ownerId)
         .build();
   }
 

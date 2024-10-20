@@ -18,9 +18,9 @@ import org.springframework.stereotype.Repository;
 public interface InterviewFeedbackDetailRepository extends
     JpaRepository<InterviewFeedbackDetail, Long> {
 
-  @Query(value = "SELECT host_feedback_id FROM interview_feedback_details WHERE id = :resourceId",
+  @Query(value = "SELECT owner_id FROM interview_feedback_details WHERE id = :resourceId",
       nativeQuery = true)
-  Optional<Long> findHostFeedbackIdByInterviewFeedbackDetailId(@Param("resourceId")
+  Optional<Long> findOwnerIdByInterviewFeedbackDetailId(@Param("resourceId")
         long resourceId);
 
   @Modifying

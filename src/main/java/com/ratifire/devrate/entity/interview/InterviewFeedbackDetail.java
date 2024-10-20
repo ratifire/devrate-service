@@ -55,7 +55,7 @@ public class InterviewFeedbackDetail {
   @JoinColumn(name = "participant_id", nullable = false)
   private User participant;
 
-  @Column(name = "host_feedback_id", nullable = false)
-  private long hostFeedbackId;
+  @Column(name = "owner_id", nullable = false)
+  private long ownerId;
 
 }
