@@ -18,9 +18,10 @@ import org.springframework.stereotype.Repository;
 public interface InterviewFeedbackDetailRepository extends
     JpaRepository<InterviewFeedbackDetail, Long> {
 
-  @Query(value = "SELECT user_id FROM interview_feedback_details WHERE id = :resourceId",
+  @Query(value = "SELECT host_feedback_id FROM interview_feedback_details WHERE id = :resourceId",
       nativeQuery = true)
-  Optional<Long> findUserIdByInterviewFeedbackDetailId(@Param("resourceId") long resourceId);
+  Optional<Long> findHostFeedbackIdByInterviewFeedbackDetailId(@Param("resourceId")
+        long resourceId);
 
   @Modifying
   @Query("DELETE FROM InterviewFeedbackDetail i WHERE i.startTime <= :cutoffDate")
