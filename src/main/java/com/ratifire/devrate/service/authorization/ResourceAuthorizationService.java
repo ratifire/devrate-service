@@ -147,7 +147,7 @@ public class ResourceAuthorizationService {
   private boolean isInterviewFeedbackDetailOwnedByUser(long interviewFeedbackDetailId,
       long loggedUserId) {
     Optional<Long> ownerUserId =
-        interviewFeedbackDetailRepository.findUserIdByInterviewFeedbackDetailId(
+        interviewFeedbackDetailRepository.findHostFeedbackIdByInterviewFeedbackDetailId(
             interviewFeedbackDetailId);
     return ownerUserId.isPresent() && ownerUserId.get().equals(loggedUserId);
   }
