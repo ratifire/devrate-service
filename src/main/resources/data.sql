@@ -815,12 +815,12 @@ VALUES
     (6712, 'Product Designer', 12, 10, true, 8980);
 
 -- Create test data for interview_feedback_details
-INSERT INTO interview_feedback_details (id, participant_role, start_time, interview_summary_id, evaluated_mastery_id, skill_id, user_id)
+INSERT INTO interview_feedback_details (id, participant_role, start_time, interview_summary_id, evaluated_mastery_id, skill_id, participant_id, host_feedback_id)
 SELECT * FROM (
 VALUES
-    (40001, 'INTERVIEWER', '2024-09-08T09:00:00Z'::timestamptz, 3001, 10001, ARRAY[100001, 100002, 100003, 100004, 100005]::bigint[], 8882),
-    (40002, 'CANDIDATE', '2024-09-08T09:00:00Z'::timestamptz, 3001, 10001, ARRAY[100001, 100002, 100003, 100004, 100005, 100006, 100007, 100008, 100078, 100079, 100080]::bigint[], 8881)
-) AS interview_feedback_details (id, participant_role, start_time, interview_summary_id, evaluated_mastery_id, skill_id, user_id)
+    (40001, 'INTERVIEWER', '2024-09-08T09:00:00Z'::timestamptz, 3001, 10001, ARRAY[100001, 100002, 100003, 100004, 100005]::bigint[], 8882, 8881),
+    (40002, 'CANDIDATE', '2024-09-08T09:00:00Z'::timestamptz, 3001, 10001, ARRAY[100001, 100002, 100003, 100004, 100005, 100006, 100007, 100008, 100078, 100079, 100080]::bigint[], 8881, 8882)
+) AS interview_feedback_details (id, participant_role, start_time, interview_summary_id, evaluated_mastery_id, skill_id, participant_id, host_feedback_id)
 WHERE NOT EXISTS (SELECT 1
                   FROM interview_feedback_details
                   WHERE id = interview_feedback_details.id);
