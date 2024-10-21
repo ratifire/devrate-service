@@ -20,10 +20,14 @@ public class ContactValueValidator implements
   private static final Pattern EMAIL_PATTERN = Pattern.compile(
       "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$");
   private static final Pattern PHONE_PATTERN = Pattern.compile("^\\+\\d{10,15}$");
-  private static final String TELEGRAM_BASE_URL = "https://t.me/";
-  private static final String LINKEDIN_BASE_URL = "https://www.linkedin.com/";
-  private static final String GITHUB_BASE_URL = "https://github.com/";
-  private static final String BEHANCE_BASE_URL = "https://www.behance.net/";
+  private static final Pattern TELEGRAM_PATTERN = Pattern.compile(
+      "https://t\\.me/[a-zA-Z0-9_]+/?$");
+  private static final Pattern LINKEDIN_PATTERN = Pattern.compile(
+      "https://www\\.linkedin\\.com/in/[a-zA-Z0-9-]+/?$");
+  private static final Pattern GITHUB_PATTERN = Pattern.compile(
+      "https://github\\.com/[a-zA-Z0-9-]+/?$");
+  private static final Pattern BEHANCE_PATTERN = Pattern.compile(
+      "https://www\\.behance\\.net/[a-zA-Z0-9-]+/?$");
   private final Map<ContactType, Predicate<String>> validatorsByContactType;
 
   public ContactValueValidator() {
@@ -54,10 +58,10 @@ public class ContactValueValidator implements
     Map<ContactType, Predicate<String>> map = new EnumMap<>(ContactType.class);
     map.put(ContactType.EMAIL, value -> EMAIL_PATTERN.matcher(value).matches());
     map.put(ContactType.PHONE_NUMBER, value -> PHONE_PATTERN.matcher(value).matches());
-    map.put(ContactType.TELEGRAM_LINK, value -> value.startsWith(TELEGRAM_BASE_URL));
-    map.put(ContactType.LINKEDIN_LINK, value -> value.startsWith(LINKEDIN_BASE_URL));
-    map.put(ContactType.GITHUB_LINK, value -> value.startsWith(GITHUB_BASE_URL));
-    map.put(ContactType.BEHANCE_LINK, value -> value.startsWith(BEHANCE_BASE_URL));
+    map.put(ContactType.TELEGRAM_LINK, value -> TELEGRAM_PATTERN.matcher(value).matches());
+    map.put(ContactType.LINKEDIN_LINK, value -> LINKEDIN_PATTERN.matcher(value).matches());
+    map.put(ContactType.GITHUB_LINK, value -> GITHUB_PATTERN.matcher(value).matches());
+    map.put(ContactType.BEHANCE_LINK, value -> BEHANCE_PATTERN.matcher(value).matches());
     return map;
   }
 }
