@@ -92,16 +92,16 @@ SELECT * FROM (
 VALUES
     ('EMAIL', 'john.rate3@tutamail.com', 8881),
     ('PHONE_NUMBER', '+11234567890', 8881),
-    ('TELEGRAM_LINK', 'https://t.me', 8881),
-    ('LINKEDIN_LINK', 'https://www.linkedin.com/', 8881),
-    ('GITHUB_LINK', 'https://github.com', 8881),
-    ('BEHANCE_LINK', 'https://www.behance.net', 8881),
+    ('TELEGRAM_LINK', 'https://t.me/johnRate', 8881),
+    ('LINKEDIN_LINK', 'https://www.linkedin.com/in/john-rate', 8881),
+    ('GITHUB_LINK', 'https://github.com/john-rate', 8881),
+    ('BEHANCE_LINK', 'https://www.behance.net/john-rate', 8881),
     ('EMAIL', 'dev.rate3@proton.me', 8882),
-    ('PHONE_NUMBER', '+00987654321', 8882),
-    ('TELEGRAM_LINK', 'https://t.me', 8882),
-    ('LINKEDIN_LINK', 'https://www.linkedin.com/', 8882),
-    ('GITHUB_LINK', 'https://github.com', 8882),
-    ('BEHANCE_LINK', 'https://www.behance.net', 8882)
+    ('PHONE_NUMBER', '+11234565874', 8882),
+    ('TELEGRAM_LINK', 'https://t.me/devRate', 8882),
+    ('LINKEDIN_LINK', 'https://www.linkedin.com/in/dev-rate', 8882),
+    ('GITHUB_LINK', 'https://github.com/dev-rate', 8882),
+    ('BEHANCE_LINK', 'https://www.behance.net/dev-rate', 8882)
 ) AS contacts (type, value, user_id)
 WHERE NOT EXISTS (SELECT 1
                   FROM contacts
