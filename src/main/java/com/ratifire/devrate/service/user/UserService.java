@@ -8,6 +8,7 @@ import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.EventDto;
+import com.ratifire.devrate.dto.FeedbackDto;
 import com.ratifire.devrate.dto.InterviewFeedbackDto;
 import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
@@ -27,6 +28,7 @@ import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.Event;
+import com.ratifire.devrate.entity.Feedback;
 import com.ratifire.devrate.entity.InterviewSummary;
 import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.Notification;
@@ -37,6 +39,7 @@ import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewFeedbackDetail;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.InterviewRequestRole;
+import com.ratifire.devrate.exception.FeedbackFrequencyLimitReached;
 import com.ratifire.devrate.exception.InterviewSummaryNotFoundException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.exception.UserNotFoundException;
@@ -45,6 +48,7 @@ import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.InterviewSummaryRepository;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
+import com.ratifire.devrate.service.FeedbackService;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.email.EmailService;
@@ -102,6 +106,7 @@ public class UserService {
   private final UserSecurityService userSecurityService;
   private final EmailService emailService;
   private final NotificationService notificationService;
+  private final FeedbackService feedbackService;
   private final DataMapper<UserDto, User> userMapper;
   private final DataMapper<ContactDto, Contact> contactMapper;
   private final DataMapper<EducationDto, Education> educationMapper;
@@ -114,6 +119,7 @@ public class UserService {
   private final DataMapper<UserMainMasterySkillDto, Specialization> userMainMasterySkillMapper;
   private final DataMapper<InterviewRequestDto, InterviewRequest> interviewRequestMapper;
   private final DataMapper<EventDto, Event> eventMapper;
+  private final DataMapper<FeedbackDto, Feedback> feedbackMapper;
   private final DataMapper<UserMainHardSkillsDto, Specialization> userMainHardSkillsMapper;
 
   @Autowired
@@ -898,5 +904,22 @@ public class UserService {
         .createdAt(notificationDto.getCreatedAt())
         .build();
     notificationService.sendTestNotification(userEmail, notification);
+  }
+
+  /**
+   * Adds feedback for a user if they are eligible, otherwise throws exception.
+   *
+   * @param userId      the ID of the user
+   * @param feedbackDto the feedback details to add
+   */
+  public void addFeedback(long userId, FeedbackDto feedbackDto) {
+    User user = findUserById(userId);
+    if (feedbackService.isUserAbleToSendFeedback(user)) {
+      Feedback entity = feedbackMapper.toEntity(feedbackDto);
+      entity.setUser(user);
+      feedbackService.save(entity);
+    } else {
+      throw new FeedbackFrequencyLimitReached(user.getId());
+    }
   }
 }

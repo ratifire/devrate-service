@@ -6,6 +6,7 @@ import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.EventDto;
+import com.ratifire.devrate.dto.FeedbackDto;
 import com.ratifire.devrate.dto.InterviewFeedbackDto;
 import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
@@ -492,5 +493,11 @@ public class UserController {
   public void sendTestNotification(@PathVariable long userId,
       @Valid @RequestBody NotificationDto notificationDto) {
     userService.sendTestNotification(userId, notificationDto);
+  }
+
+  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userId)")
+  @PostMapping("/{userId}/platform-feedbacks")
+  public void addFeedback(@PathVariable long userId, @Valid @RequestBody FeedbackDto feedbackDto) {
+    userService.addFeedback(userId, feedbackDto);
   }
 }

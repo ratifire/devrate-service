@@ -162,6 +162,8 @@ paths:
     $ref: './paths/users/users-id-notifications.yaml'
   /users/{userId}/notification/send:
     $ref: './paths/users/users-id-notification-send.yaml'
+  /users/{userId}/platform-feedbacks:
+    $ref: './paths/users/users-id-platform-feedbacks.yaml'
 components:
   securitySchemes:
     basicAuth:

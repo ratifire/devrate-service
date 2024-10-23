@@ -1,6 +1,7 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.exception.AuthenticationException;
+import com.ratifire.devrate.exception.FeedbackFrequencyLimitReached;
 import com.ratifire.devrate.exception.InterviewRequestDoesntExistException;
 import com.ratifire.devrate.exception.MailException;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
@@ -150,5 +151,13 @@ public class HandlerException {
   public ResponseEntity<String> handleUserSearchInvalidInputException(
       UserSearchInvalidInputException ex) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+  }
+
+  /**
+   * Handles FeedbackFrequencyLimitReached by returning an HTTP status 429.
+   */
+  @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+  @ExceptionHandler(FeedbackFrequencyLimitReached.class)
+  public void handleFeedbackFrequencyLimitReached(FeedbackFrequencyLimitReached e) {
   }
 }
