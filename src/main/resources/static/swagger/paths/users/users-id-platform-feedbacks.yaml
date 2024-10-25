@@ -1,0 +1,38 @@
+post:
+  tags:
+    - User Info
+  summary: Add feedback
+  description: Add feedback of the specified users
+  operationId: addFeedback
+  parameters:
+    - in: path
+      name: userId
+      description: The ID of the user to associate the contacts with
+      required: true
+      schema:
+        type: integer
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/FeedbackDto.yaml'
+  responses:
+    '200':
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: boolean
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '429':
+      description: Too many requests. Limit 1 feedback per month
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

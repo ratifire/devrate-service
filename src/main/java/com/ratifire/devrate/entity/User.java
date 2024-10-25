@@ -119,4 +119,8 @@ public class User {
       inverseJoinColumns = @JoinColumn(name = "event_id")
   )
   private List<Event> events;
+
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
+      orphanRemoval = true)
+  private List<Feedback> feedbacks;
 }

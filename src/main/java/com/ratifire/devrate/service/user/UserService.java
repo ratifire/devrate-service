@@ -253,7 +253,7 @@ public class UserService {
    * @return the user entity
    * @throws UserNotFoundException if the user with the specified ID is not found
    */
-  private User findUserById(long id) {
+  public User findUserById(long id) {
     return userRepository.findById(id)
         .orElseThrow(() -> new UserNotFoundException("The user not found with id " + id));
   }
@@ -449,14 +449,14 @@ public class UserService {
   }
 
   /**
-   * Counts the number of conducted and passed interviews for the specified
-   * user within a given date range.
+   * Counts the number of conducted and passed interviews for the specified user within a given date
+   * range.
    *
    * @param userId the ID of the user
-   * @param from the start date of the date range (inclusive)
-   * @param to the end date of the date range (inclusive)
-   * @return a list of InterviewConductedPassedDto objects with the count
-   *         of conducted and passed interviews per date
+   * @param from   the start date of the date range (inclusive)
+   * @param to     the end date of the date range (inclusive)
+   * @return a list of InterviewConductedPassedDto objects with the count of conducted and passed
+   *         interviews per date
    */
   public List<InterviewStatsConductedPassedByDateDto> getInterviewStatConductedPassedByDate(
       long userId, LocalDate from, LocalDate to) {

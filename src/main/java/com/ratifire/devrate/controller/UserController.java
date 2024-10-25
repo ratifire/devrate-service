@@ -163,8 +163,8 @@ public class UserController {
    * Retrieves the picture associated with a user by their user ID.
    *
    * @param userId the ID of the user whose picture is to be retrieved
-   * @return a ResponseEntity containing a UserPictureDto with the user's picture
-   *     as a base64-encoded string if present; otherwise, returns no content status
+   * @return a ResponseEntity containing a UserPictureDto with the user's picture as a
+   *         base64-encoded string if present; otherwise, returns no content status
    */
   @GetMapping("/{userId}/pictures")
   public ResponseEntity<UserPictureDto> getUserPicture(@PathVariable long userId) {
