@@ -1,6 +1,5 @@
 package com.ratifire.devrate.dto;
 
-import com.ratifire.devrate.validation.annotations.ValidFeedbackType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -14,7 +13,6 @@ import lombok.Getter;
 public class FeedbackDto {
 
   @NotNull
-  @ValidFeedbackType
   private String type;
 
   @NotNull
