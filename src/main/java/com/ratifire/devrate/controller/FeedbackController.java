@@ -6,10 +6,10 @@ import com.ratifire.devrate.service.FeedbackService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -29,8 +29,8 @@ public class FeedbackController {
    * @param feedbackDto the feedback details to add
    */
   @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userId)")
-  @PostMapping("/{userId}")
-  public void addFeedback(@PathVariable long userId, @Valid @RequestBody FeedbackDto feedbackDto) {
+  @PostMapping
+  public void addFeedback(@RequestParam long userId, @Valid @RequestBody FeedbackDto feedbackDto) {
     if (feedbackService.isUserAbleToSendFeedback(userId)) {
       feedbackService.addFeedback(userId, feedbackDto);
     } else {
