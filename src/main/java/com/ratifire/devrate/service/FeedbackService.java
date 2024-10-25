@@ -1,8 +1,11 @@
 package com.ratifire.devrate.service;
 
+import com.ratifire.devrate.dto.FeedbackDto;
 import com.ratifire.devrate.entity.Feedback;
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.FeedbackRepository;
+import com.ratifire.devrate.service.user.UserService;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,21 +17,35 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class FeedbackService {
 
+  private final UserService userService;
   private final FeedbackRepository feedbackRepository;
+  private final DataMapper<FeedbackDto, Feedback> feedbackMapper;
 
   /**
    * Checks if a user can send feedback based on the latest feedback's date.
    *
-   * @param user the user to check
+   * @param userId the ID of the user to check
    * @return true if the user can send feedback, false otherwise
    */
-  public boolean isUserAbleToSendFeedback(User user) {
-    return feedbackRepository.findLatestFeedbackByUser(user)
-        .map(feedback -> feedback.getCreatedAt().isBefore(LocalDateTime.now().minusMonths(1)))
-        .orElse(true);
+  public boolean isUserAbleToSendFeedback(long userId) {
+    return feedbackRepository.existsFeedbackWithinLastMonth(userId,
+        LocalDateTime.now().minusMonths(1));
   }
 
-  public void save(Feedback feedback) {
+  /**
+   * Adds feedback for a user if they are eligible, otherwise throws exception.
+   *
+   * @param userId      the ID of the user
+   * @param feedbackDto the feedback details to add
+   */
+  public void addFeedback(long userId, FeedbackDto feedbackDto) {
+    User user = userService.findUserById(userId);
+    Feedback entity = feedbackMapper.toEntity(feedbackDto);
+    entity.setUser(user);
+    save(entity);
+  }
+
+  private void save(Feedback feedback) {
     feedbackRepository.save(feedback);
   }
 }

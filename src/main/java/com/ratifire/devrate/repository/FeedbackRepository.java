@@ -1,8 +1,7 @@
 package com.ratifire.devrate.repository;
 
 import com.ratifire.devrate.entity.Feedback;
-import com.ratifire.devrate.entity.User;
-import java.util.Optional;
+import java.time.LocalDateTime;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Repository;
 @RepositoryRestResource(exported = false)
 public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
 
-  @Query("SELECT f FROM Feedback f WHERE f.user = :user ORDER BY f.createdAt DESC LIMIT 1")
-  Optional<Feedback> findLatestFeedbackByUser(@Param("user") User user);
+  @Query("SELECT COUNT(f) > 0 FROM Feedback f WHERE f.user.id = :userId AND f.createdAt > :oneMonthAgo")
+  boolean existsFeedbackWithinLastMonth(@Param("userId") long userId,
+      @Param("oneMonthAgo") LocalDateTime oneMonthAgo);
 }

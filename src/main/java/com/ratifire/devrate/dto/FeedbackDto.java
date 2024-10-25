@@ -18,6 +18,6 @@ public class FeedbackDto {
   private String type;
 
   @NotNull
-  @Size(max = 100)
+  @Size(max = 300)
   private String text;
 }

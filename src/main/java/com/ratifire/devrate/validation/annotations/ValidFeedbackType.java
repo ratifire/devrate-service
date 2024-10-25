@@ -21,8 +21,7 @@ public @interface ValidFeedbackType {
    *
    * @return the default message
    */
-  String message() default "Invalid feedback type. "
-      + "It can be only 'PROPOSITION', 'ISSUE', or 'FEEDBACK'.";
+  String message() default "Invalid feedback type.";
 
   /**
    * Grouping constraints.

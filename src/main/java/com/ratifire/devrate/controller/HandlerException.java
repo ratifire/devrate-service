@@ -1,7 +1,7 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.exception.AuthenticationException;
-import com.ratifire.devrate.exception.FeedbackFrequencyLimitReached;
+import com.ratifire.devrate.exception.FeedbackSubmissionLimitException;
 import com.ratifire.devrate.exception.InterviewRequestDoesntExistException;
 import com.ratifire.devrate.exception.MailException;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
@@ -157,7 +157,7 @@ public class HandlerException {
    * Handles FeedbackFrequencyLimitReached by returning an HTTP status 429.
    */
   @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
-  @ExceptionHandler(FeedbackFrequencyLimitReached.class)
-  public void handleFeedbackFrequencyLimitReached(FeedbackFrequencyLimitReached e) {
+  @ExceptionHandler(FeedbackSubmissionLimitException.class)
+  public void handleFeedbackFrequencyLimitReached(FeedbackSubmissionLimitException e) {
   }
 }
