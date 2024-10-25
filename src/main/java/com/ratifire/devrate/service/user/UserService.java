@@ -456,7 +456,7 @@ public class UserService {
    * @param from   the start date of the date range (inclusive)
    * @param to     the end date of the date range (inclusive)
    * @return a list of InterviewConductedPassedDto objects with the count of conducted and passed
-   * interviews per date
+   *         interviews per date
    */
   public List<InterviewStatsConductedPassedByDateDto> getInterviewStatConductedPassedByDate(
       long userId, LocalDate from, LocalDate to) {

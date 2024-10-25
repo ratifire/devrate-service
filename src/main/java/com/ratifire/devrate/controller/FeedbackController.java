@@ -22,6 +22,12 @@ public class FeedbackController {
 
   private final FeedbackService feedbackService;
 
+  /**
+   * Adds feedback for a user if eligible, otherwise throws a FeedbackSubmissionLimitException.
+   *
+   * @param userId      the user's ID
+   * @param feedbackDto the feedback details to add
+   */
   @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userId)")
   @PostMapping("/{userId}")
   public void addFeedback(@PathVariable long userId, @Valid @RequestBody FeedbackDto feedbackDto) {

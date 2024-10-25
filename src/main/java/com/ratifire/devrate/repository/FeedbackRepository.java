@@ -15,7 +15,8 @@ import org.springframework.stereotype.Repository;
 @RepositoryRestResource(exported = false)
 public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
 
-  @Query("SELECT COUNT(f) > 0 FROM Feedback f WHERE f.user.id = :userId AND f.createdAt > :oneMonthAgo")
+  @Query("SELECT COUNT(f) > 0 FROM Feedback f WHERE f.user.id = :userId "
+      + "AND f.createdAt > :oneMonthAgo")
   boolean existsFeedbackWithinLastMonth(@Param("userId") long userId,
       @Param("oneMonthAgo") LocalDateTime oneMonthAgo);
 }
