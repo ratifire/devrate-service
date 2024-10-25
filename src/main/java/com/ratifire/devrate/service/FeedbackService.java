@@ -42,10 +42,6 @@ public class FeedbackService {
     User user = userService.findUserById(userId);
     Feedback entity = feedbackMapper.toEntity(feedbackDto);
     entity.setUser(user);
-    save(entity);
-  }
-
-  private void save(Feedback feedback) {
-    feedbackRepository.save(feedback);
+    feedbackRepository.save(entity);
   }
 }
