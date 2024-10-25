@@ -28,7 +28,7 @@ public class FeedbackService {
    * @return true if the user can send feedback, false otherwise
    */
   public boolean isUserAbleToSendFeedback(long userId) {
-    return feedbackRepository.existsFeedbackWithinLastMonth(userId,
+    return !feedbackRepository.existsFeedbackWithinLastMonth(userId,
         LocalDateTime.now().minusMonths(1));
   }
 
