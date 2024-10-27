@@ -108,7 +108,9 @@ public class InterviewCompletionService {
     ZonedDateTime scheduledStartTime = interview.getStartTime();
     ZonedDateTime currentDateTime = DateTimeUtils.convertToUtcTimeZone(ZonedDateTime.now());
 
-    if (currentDateTime.isBefore(scheduledStartTime.plusMinutes(WEBHOOK_ACTIVATION_DELAY))) {
+    // TODO: nee change to for prod
+    //  if (currentDateTime.isBefore(scheduledStartTime.plusMinutes(WEBHOOK_ACTIVATION_DELAY))) {
+    if (currentDateTime.isBefore(scheduledStartTime.plusSeconds(WEBHOOK_ACTIVATION_DELAY))) {
       return false;
     }
     return true;

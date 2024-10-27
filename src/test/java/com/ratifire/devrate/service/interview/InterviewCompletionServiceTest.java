@@ -164,7 +164,7 @@ class InterviewCompletionServiceTest {
       throws ZoomWebhookException {
     when(interviewService.getInterviewByMeetingId(MEETING_ID)).thenReturn(interview);
 
-    ZonedDateTime currentDateTime = interview.getStartTime().plusMinutes(9);
+    ZonedDateTime currentDateTime = interview.getStartTime().plusSeconds(9);
 
     try (MockedStatic<DateTimeUtils> mockedStatic = mockStatic(DateTimeUtils.class)) {
       mockedStatic.when(() -> DateTimeUtils.convertToUtcTimeZone(any(ZonedDateTime.class)))
