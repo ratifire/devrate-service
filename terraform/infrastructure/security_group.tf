@@ -44,3 +44,10 @@ resource "aws_default_subnet" "default_az3" {
     Name = "Default subnet for ${data.aws_availability_zones.availability_zones.names[2]}"
   }
 }
+
+resource "aws_subnet" "private_subnet_db" {
+  vpc_id                  = aws_default_vpc.default_vpc.id
+  cidr_block              = "0.0.0.0/0"
+  availability_zone       = "eu-north-1a"
+  map_public_ip_on_launch = false
+}
