@@ -25,7 +25,7 @@ variable "list_of_ports" {
 
 variable "cidr_blocks" {
   description = "The list of cidrs to use for each other"
-  default     = ["0.0.0.0/0"]
+  default     = ["10.0.0.0/24"]
 }
 
 variable "back_port" {
