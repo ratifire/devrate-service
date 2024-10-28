@@ -7,7 +7,7 @@ resource "aws_db_instance" "pg_db_backend" {
   db_name             = var.db_name
   username            = "backend"
   password            = "backenddb"
-  publicly_accessible = true
+  publicly_accessible = false
   skip_final_snapshot = true
   identifier          = var.db_instance_identifier
 
