@@ -48,46 +48,56 @@ public class InterviewCompletionService {
    * @return A success message indicating that the interview process was completed successfully.
    */
   @Transactional
-  public String completeInterviewProcess(Meeting meeting) throws ZoomWebhookException {
-    if (!validateMeetingEndTime(meeting)) {
-      return "Webhook ignored as it was triggered too early";
-    }
-    String meetingId = meeting.getId();
-    logger.info("Zoom webhook triggered meeting.ended - {}", meeting);
-    Interview interview = interviewService.getInterviewByMeetingId(Long.parseLong(meetingId));
-
-    long interviewSummaryId = interviewSummaryService.createInterviewSummary(interview,
-        meeting.getEndTime());
-
-    specializationService.updateUserInterviewCounts(interview);
-
-    User interviewer = interview.getInterviewerRequest().getUser();
-    User candidate = interview.getCandidateRequest().getUser();
-    userService.refreshUserInterviewCounts(List.of(interviewer, candidate));
-
-    Map<String, Long> interviewFeedbackDetailId =
-        interviewFeedbackDetailService.saveInterviewFeedbackDetail(interview, interviewSummaryId);
-
-    Long candidateFeedbackDetailId = interviewFeedbackDetailId.get("candidateFeedbackId");
-    String candidateEmail = userSecurityService.findEmailByUserId(candidate.getId());
-    notificationService.addInterviewFeedbackDetail(candidate, candidateFeedbackDetailId,
-        candidateEmail);
-    Long interviewerFeedbackDetailId = interviewFeedbackDetailId.get("interviewerFeedbackId");
-    String interviewerEmail = userSecurityService.findEmailByUserId(interviewer.getId());
-    notificationService.addInterviewFeedbackDetail(interviewer, interviewerFeedbackDetailId,
-        interviewerEmail);
-
+  public String completeInterviewProcess(Meeting meeting) {
     try {
-      zoomApiService.deleteMeeting(Long.parseLong(meetingId));
-    } catch (ZoomApiException e) {
-      logger.error("Zoom API exception occurred while trying to delete the meeting "
-          + "with meetingId: {}. {}", meetingId, e.getMessage());
+      if (!validateMeetingEndTime(meeting)) {
+        String message = "Webhook ignored as it was triggered too early.";
+        logger.warn(message);
+        return message;
+      }
+
+      String meetingId = meeting.getId();
+      logger.info("Zoom webhook triggered meeting.ended - {}", meeting);
+      Interview interview = interviewService.getInterviewByMeetingId(Long.parseLong(meetingId));
+
+      long interviewSummaryId = interviewSummaryService.createInterviewSummary(interview,
+          meeting.getEndTime());
+
+      specializationService.updateUserInterviewCounts(interview);
+
+      User interviewer = interview.getInterviewerRequest().getUser();
+      User candidate = interview.getCandidateRequest().getUser();
+      userService.refreshUserInterviewCounts(List.of(interviewer, candidate));
+
+      Map<String, Long> interviewFeedbackDetailId =
+          interviewFeedbackDetailService.saveInterviewFeedbackDetail(interview, interviewSummaryId);
+
+      Long candidateFeedbackDetailId = interviewFeedbackDetailId.get("candidateFeedbackId");
+      String candidateEmail = userSecurityService.findEmailByUserId(candidate.getId());
+      notificationService.addInterviewFeedbackDetail(candidate, candidateFeedbackDetailId,
+          candidateEmail);
+      Long interviewerFeedbackDetailId = interviewFeedbackDetailId.get("interviewerFeedbackId");
+      String interviewerEmail = userSecurityService.findEmailByUserId(interviewer.getId());
+      notificationService.addInterviewFeedbackDetail(interviewer, interviewerFeedbackDetailId,
+          interviewerEmail);
+
+      try {
+        zoomApiService.deleteMeeting(Long.parseLong(meetingId));
+      } catch (ZoomApiException e) {
+        logger.error("Zoom API exception occurred while trying to delete the meeting "
+            + "with meetingId: {}. {}", meetingId, e.getMessage());
+      }
+      interviewService.deleteInterview(interview.getId());
+      interviewRequestService.deleteInterviewRequests(
+          List.of(interview.getInterviewerRequest().getId(),
+              interview.getCandidateRequest().getId()));
+
+      logger.warn("Interview with meeting id {} completed successfully!", meetingId);
+      return "Interview process completed successfully!";
+    } catch (Exception ex) {
+      logger.error("The triggered webhook is invalid due to {}", ex.getMessage(), ex);
+      return "Webhook ignored due to internal requirements.";
     }
-    interviewService.deleteInterview(interview.getId());
-    interviewRequestService.deleteInterviewRequests(
-        List.of(interview.getInterviewerRequest().getId(),
-            interview.getCandidateRequest().getId()));
-    return "Interview process completed successfully!";
   }
 
   /**

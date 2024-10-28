@@ -100,9 +100,7 @@ class InterviewCompletionServiceTest {
   }
 
   @Test
-  void completeInterviewProcessWithValidMeetingShouldReturnSuccess()
-      throws ZoomWebhookException, ZoomApiException {
-
+  void completeInterviewProcessWithValidMeetingShouldReturnSuccess() throws ZoomApiException {
     when(userSecurityService.findEmailByUserId(interviewer.getId()))
         .thenReturn("interviewer@example.com");
     when(userSecurityService.findEmailByUserId(candidate.getId()))
@@ -134,8 +132,7 @@ class InterviewCompletionServiceTest {
   }
 
   @Test
-  void completeInterviewProcessWhenZoomApiExceptionOccursShouldLogError()
-      throws ZoomWebhookException, ZoomApiException {
+  void completeInterviewProcessWhenZoomApiExceptionOccursShouldLogError() throws ZoomApiException {
     when(interviewService.getInterviewByMeetingId(MEETING_ID)).thenReturn(interview);
     when(interviewSummaryService.createInterviewSummary(any(Interview.class), any()))
         .thenReturn(6L);
