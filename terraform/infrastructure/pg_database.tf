@@ -17,8 +17,11 @@ resource "aws_db_instance" "pg_db_backend" {
 }
 
 resource "aws_db_subnet_group" "private_db_subnet_group" {
-  name       = "private-db-subnet-group"
-  subnet_ids = [aws_subnet.private_subnet_db.id]
+  name = "private-db-subnet-group"
+  subnet_ids = [
+    aws_subnet.private_subnet_1.id,
+    aws_subnet.private_subnet_2.id,
+  ]
 
   tags = {
     Name = "Private DB Subnet Group"
