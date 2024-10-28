@@ -54,7 +54,7 @@ resource "aws_subnet" "private_subnet_1" {
 
 resource "aws_subnet" "private_subnet_2" {
   vpc_id                  = aws_default_vpc.default_vpc.id
-  cidr_block              = "172.31.64.0/20"
+  cidr_block              = "172.31.48.0/20"
   availability_zone       = "eu-north-1b"
   map_public_ip_on_launch = false
 }
