@@ -58,7 +58,7 @@ public class InterviewFeedbackDetailService {
    * @return a map containing the IDs of the saved feedback details for the interviewer and
    *     candidate
    */
-  public Map<String, Long> saveInterviewFeedbackDetail(Interview interview,
+  public Map<InterviewRequestRole, Long> saveInterviewFeedbackDetail(Interview interview,
       long interviewSummaryId) {
     ZonedDateTime startTime = interview.getStartTime();
     User candidate = interview.getCandidateRequest().getUser();
@@ -71,9 +71,9 @@ public class InterviewFeedbackDetailService {
         startTime);
 
     return Map.of(
-        "candidateFeedbackId",
+        InterviewRequestRole.CANDIDATE,
         interviewFeedbackDetailRepository.save(candidateFeedbackDetail).getId(),
-        "interviewerFeedbackId",
+        InterviewRequestRole.INTERVIEWER,
         interviewFeedbackDetailRepository.save(interviewerFeedbackDetail).getId()
     );
   }
