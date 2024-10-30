@@ -3,6 +3,7 @@ package com.ratifire.devrate.service;
 import com.ratifire.devrate.dto.FeedbackDto;
 import com.ratifire.devrate.entity.Feedback;
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.enums.FeedbackType;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.FeedbackRepository;
 import com.ratifire.devrate.service.user.UserService;
@@ -29,6 +30,7 @@ public class FeedbackService {
    */
   public boolean isUserAbleToSendFeedback(long userId) {
     return !feedbackRepository.existsFeedbackWithinLastMonth(userId,
+        FeedbackType.FEEDBACK,
         LocalDateTime.now().minusMonths(1));
   }
 
