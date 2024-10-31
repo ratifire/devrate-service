@@ -19,10 +19,8 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class UserDto {
 
-  private static final String NAME_PATTERN = "^[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\s\\-']*"
-      + "[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\-']$";
-  private static final String CITY_PATTERN = "^[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\s\\-']*"
-      + "[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\-']$";
+  private static final String NAME_PATTERN = "^[\\p{L}\\s\\-']+$";
+  private static final String CITY_PATTERN = "^[\\p{L}\\s\\-']+$";
 
   @NotNull
   private long id;
