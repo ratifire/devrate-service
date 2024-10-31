@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.service.interview.InterviewCompletionService;
+import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
 import com.ratifire.devrate.util.zoom.webhook.exception.ZoomWebhookException;
 import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest;
 import com.ratifire.devrate.util.zoom.webhook.service.ZoomWebhookAuthService;
@@ -75,7 +76,7 @@ public class ZoomWebhookServiceTest {
     when(zoomWebhookAuthService.handleUrlValidationEvent(payload))
         .thenReturn("encrypted_token");
 
-    String result = zoomWebhookService.handleZoomWebhook(requestBody, headers);
+    String result = zoomWebhookService.handleZoomWebhook(requestBody, headers).getBody();
 
     assertEquals("encrypted_token", result);
     verify(zoomWebhookAuthService, times(1))
@@ -109,7 +110,7 @@ public class ZoomWebhookServiceTest {
 
   @Test
   void handleZoomWebhookMeetingEndedEventShouldCallInterviewCompletionService()
-      throws JsonProcessingException, ZoomWebhookException {
+      throws JsonProcessingException, ZoomWebhookException, ZoomApiException {
     requestBody = "{\"event\":\"meeting.ended\",\"payload\":{\"object\""
         + ":{\"id\":\"89723154070\"}}}";
 
@@ -133,7 +134,7 @@ public class ZoomWebhookServiceTest {
     verify(zoomWebhookAuthService, times(1))
         .validateSignature(anyString(), anyString(), anyString());
     verify(interviewCompletionService, times(1))
-        .completeInterviewProcess(payload.getPayload().getMeeting());
+        .finalizeInterviewProcess(payload.getPayload().getMeeting());
   }
 
   @Test
