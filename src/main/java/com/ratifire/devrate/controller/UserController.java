@@ -415,14 +415,14 @@ public class UserController {
   /**
    * Delete an interview for the specified user.
    *
-   * @param userId the ID of the user who rejected the interview
-   * @param id     the rejected interview ID
+   * @param userId      the ID of the user who rejected the interview
+   * @param eventTypeId the rejected interview ID
    */
   @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userId) && "
-      + "@resourceAuthorizationService.isResourceOwnedByLoggedUser('interviews' , #id)")
-  @DeleteMapping("/{userId}/interviews/{id}")
-  public void deleteRejectedInterview(@PathVariable long userId, @PathVariable long id) {
-    userService.deleteRejectedInterview(userId, id);
+      + "@resourceAuthorizationService.isResourceOwnedByLoggedUser('interviews' , #eventTypeId)")
+  @DeleteMapping("/{userId}/interviews/{eventTypeId}")
+  public void deleteRejectedInterview(@PathVariable long userId, @PathVariable long eventTypeId) {
+    userService.deleteRejectedInterview(userId, eventTypeId);
   }
 
   /**
