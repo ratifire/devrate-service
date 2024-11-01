@@ -1,6 +1,5 @@
 package com.ratifire.devrate.service.interview;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
@@ -13,6 +12,7 @@ import static org.mockito.Mockito.when;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
+import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.specialization.SpecializationService;
@@ -100,9 +100,8 @@ class InterviewCompletionServiceTest {
   }
 
   @Test
-  void completeInterviewProcessWithValidMeetingShouldReturnSuccess()
-      throws ZoomWebhookException, ZoomApiException {
-
+  void finalizeInterviewProcessWithValidMeetingShouldReturnSuccess()
+      throws ZoomApiException, ZoomWebhookException {
     when(userSecurityService.findEmailByUserId(interviewer.getId()))
         .thenReturn("interviewer@example.com");
     when(userSecurityService.findEmailByUserId(candidate.getId()))
@@ -112,11 +111,10 @@ class InterviewCompletionServiceTest {
     when(interviewSummaryService.createInterviewSummary(any(Interview.class),
         any())).thenReturn(6L);
     when(interviewFeedbackDetailService.saveInterviewFeedbackDetail(any(Interview.class),
-        anyLong())).thenReturn(Map.of("candidateFeedbackId", 7L, "interviewerFeedbackId", 8L));
+        anyLong())).thenReturn(
+        Map.of(InterviewRequestRole.CANDIDATE, 7L, InterviewRequestRole.INTERVIEWER, 8L));
 
-    String result = interviewCompletionService.completeInterviewProcess(meeting);
-
-    assertEquals("Interview process completed successfully!", result);
+    interviewCompletionService.finalizeInterviewProcess(meeting);
 
     verify(interviewSummaryService).createInterviewSummary(interview, meeting.getEndTime());
     verify(specializationService).updateUserInterviewCounts(interview);
@@ -134,21 +132,18 @@ class InterviewCompletionServiceTest {
   }
 
   @Test
-  void completeInterviewProcessWhenZoomApiExceptionOccursShouldLogError()
-      throws ZoomWebhookException, ZoomApiException {
+  void finalizeInterviewProcessWhenZoomApiExceptionOccursShouldLogError() throws ZoomApiException {
     when(interviewService.getInterviewByMeetingId(MEETING_ID)).thenReturn(interview);
     when(interviewSummaryService.createInterviewSummary(any(Interview.class), any()))
         .thenReturn(6L);
     when(interviewFeedbackDetailService.saveInterviewFeedbackDetail(any(Interview.class),
-        anyLong())).thenReturn(Map.of("candidateFeedbackId", 7L, "interviewerFeedbackId", 8L));
+        anyLong())).thenReturn(
+        Map.of(InterviewRequestRole.CANDIDATE, 7L, InterviewRequestRole.INTERVIEWER, 8L));
     doThrow(new ZoomApiException("Zoom API error", new Throwable())).when(zoomApiService)
         .deleteMeeting(MEETING_ID);
 
-    String result = interviewCompletionService.completeInterviewProcess(meeting);
-
-    assertEquals("Interview process completed successfully!", result);
-    verify(zoomApiService).deleteMeeting(MEETING_ID);
-    verify(interviewService).deleteInterview(interview.getId());
+    assertThrows(ZoomApiException.class,
+        () -> interviewCompletionService.finalizeInterviewProcess(meeting));
   }
 
   @Test
@@ -164,7 +159,7 @@ class InterviewCompletionServiceTest {
       throws ZoomWebhookException {
     when(interviewService.getInterviewByMeetingId(MEETING_ID)).thenReturn(interview);
 
-    ZonedDateTime currentDateTime = interview.getStartTime().plusMinutes(9);
+    ZonedDateTime currentDateTime = interview.getStartTime().plusSeconds(9);
 
     try (MockedStatic<DateTimeUtils> mockedStatic = mockStatic(DateTimeUtils.class)) {
       mockedStatic.when(() -> DateTimeUtils.convertToUtcTimeZone(any(ZonedDateTime.class)))
