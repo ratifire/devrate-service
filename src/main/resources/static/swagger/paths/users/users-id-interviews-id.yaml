@@ -13,7 +13,7 @@ delete:
         type: integer
         format: int64
     - in: path
-      name: id
+      name: eventTypeId
       description: The ID of the interview that will be rejected.
       required: true
       schema:

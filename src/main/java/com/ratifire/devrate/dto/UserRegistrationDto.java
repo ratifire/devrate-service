@@ -14,8 +14,7 @@ import lombok.Getter;
 @Getter
 public class UserRegistrationDto {
 
-  private static final String NAME_PATTERN = "^[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\s\\-']*"
-      + "[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\-']$";
+  private static final String NAME_PATTERN = "^[\\p{L}\\s\\-']+$";
   private static final String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)"
       + "(?=.*[!@#$&*])[A-Za-z\\d!@#$&*]{8,}$";
 

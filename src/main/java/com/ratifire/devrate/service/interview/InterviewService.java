@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for handling Interview operations.
@@ -98,6 +99,7 @@ public class InterviewService {
    * @return the deleted Interview object
    * @throws InterviewNotFoundException if no interview with the specified ID is found
    */
+  @Transactional
   public Interview deleteRejectedInterview(long interviewId) {
     Interview rejected = interviewRepository.findById(interviewId)
         .orElseThrow(() -> new InterviewNotFoundException(interviewId));

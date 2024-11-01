@@ -16,6 +16,7 @@ import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewFeedbackDetail;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
+import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.exception.InterviewFeedbackDetailNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.interview.InterviewFeedbackDetailRepository;
@@ -117,10 +118,11 @@ class InterviewFeedbackDetailServiceTest {
       return savedDetail;
     });
 
-    Map<String, Long> result = feedbackDetailService.saveInterviewFeedbackDetail(interview, 100L);
+    Map<InterviewRequestRole, Long> result = feedbackDetailService.saveInterviewFeedbackDetail(
+        interview, 100L);
 
-    assertEquals(FEEDBACK_ID, result.get("candidateFeedbackId"));
-    assertEquals(FEEDBACK_ID, result.get("interviewerFeedbackId"));
+    assertEquals(FEEDBACK_ID, result.get(InterviewRequestRole.CANDIDATE));
+    assertEquals(FEEDBACK_ID, result.get(InterviewRequestRole.INTERVIEWER));
 
     verify(feedbackDetailRepository, times(2)).save(any(InterviewFeedbackDetail.class));
   }

@@ -148,7 +148,7 @@ paths:
     $ref: './paths/users/users-id-events.yaml'
   /users/{userId}/events/closest:
     $ref: './paths/users/users-id-events-closest.yaml'
-  /users/{userId}/interviews/{id}:
+  /users/{userId}/interviews/{eventTypeId}:
     $ref: './paths/users/users-id-interviews-id.yaml'
   /users/{reviewerId}/feedbacks:
     $ref: './paths/users/users-id-feedbacks.yaml'

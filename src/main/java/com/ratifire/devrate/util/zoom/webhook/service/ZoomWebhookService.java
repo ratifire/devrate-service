@@ -7,6 +7,8 @@ import com.ratifire.devrate.util.zoom.webhook.exception.ZoomWebhookException;
 import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 /**
@@ -31,7 +33,7 @@ public class ZoomWebhookService {
    * @throws ZoomWebhookException    If the event type is unknown or an error occurs during
    *                                 processing.
    */
-  public String handleZoomWebhook(String requestBody, Map<String, String> headers)
+  public ResponseEntity<String> handleZoomWebhook(String requestBody, Map<String, String> headers)
       throws JsonProcessingException, ZoomWebhookException {
 
     String signature = headers.get("x-zm-signature");
@@ -43,10 +45,15 @@ public class ZoomWebhookService {
 
     switch (event) {
       case "endpoint.url_validation":
-        return zoomWebhookAuthService.handleUrlValidationEvent(payload);
+        return new ResponseEntity<>(zoomWebhookAuthService.handleUrlValidationEvent(payload),
+            HttpStatus.OK);
       case "meeting.ended":
-        return interviewCompletionService
-            .completeInterviewProcess(payload.getPayload().getMeeting());
+        try {
+          interviewCompletionService.finalizeInterviewProcess(payload.getPayload().getMeeting());
+          return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception ex) {
+          return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
       default:
         throw new ZoomWebhookException("Unknown event type");
     }

@@ -84,8 +84,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserService {
 
-  private static final String NAME_PATTERN =
-      "^[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\s\\-']*[a-zA-Zа-щА-ЩґҐєЄіІїЇьЬ\\-']$";
+  private static final String NAME_PATTERN = "^[\\p{L}\\s\\-']+$";
   private static final Pattern NAME_REGEX = Pattern.compile(NAME_PATTERN);
 
   private UserRepository userRepository;
