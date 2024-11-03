@@ -22,10 +22,10 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class CognitoApiClientConfig {
 
-  private static final long CACHE_TIME_TO_LIVE = 1200000L;   // 20 minutes
-  private static final long REFRESH_AHEAD_TIME = 120000L;    // 2 minutes before cache expiration
-  private static final long CACHE_REFRESH_TIMEOUT = 300000L; // 5 minutes for cache refresh timeout
-  private static final long RATE_LIMIT_MIN_INTERVAL = 30000L;// 30 seconds rate limit interval
+  private static final long CACHE_TIME_TO_LIVE = 1200000L;    // 20 minutes
+  private static final long REFRESH_AHEAD_TIME = 120000L;     // 2 minutes before cache expiration
+  private static final long CACHE_REFRESH_TIMEOUT = 300000L;  // 5 minutes for cache refresh timeout
+  private static final long RATE_LIMIT_MIN_INTERVAL = 30000L; // 30 seconds rate limit interval
   private final AwsProperties awsProperties;
 
   /**
