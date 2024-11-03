@@ -33,7 +33,7 @@ public abstract class InterviewRequestMapper implements
       qualifiedByName = {"MasteryService", "getMasteryById"})
   @Mapping(target = "expiredAt", source = "dto.availableDates",
       qualifiedByName = "expiredAtFromAvailableDates")
-  @Mapping(target = "active", constant = "true")
+  @Mapping(target = "active", ignore = true)
   @Mapping(target = "user", ignore = true)
   public abstract InterviewRequest updateEntity(InterviewRequestDto dto,
       @MappingTarget InterviewRequest entity);
