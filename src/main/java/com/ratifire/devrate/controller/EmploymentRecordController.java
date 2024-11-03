@@ -4,7 +4,6 @@ import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.service.employmentrecord.EmploymentRecordService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,8 +40,6 @@ public class EmploymentRecordController {
    * @param employmentRecordDto the updated user's EmploymentRecord information as a DTO
    * @return the updated user EmploymentRecord information as a DTO
    */
-  @PreAuthorize("@resourceAuthorizationService.isResourceOwnedByLoggedUser('employment-records', "
-      + "#id)")
   @PutMapping("/{id}")
   public EmploymentRecordDto update(@PathVariable long id,
       @RequestBody @Valid EmploymentRecordDto employmentRecordDto) {
@@ -54,8 +51,6 @@ public class EmploymentRecordController {
    *
    * @param id the ID of EmploymentRecord
    */
-  @PreAuthorize("@resourceAuthorizationService.isResourceOwnedByLoggedUser('employment-records', "
-      + "#id)")
   @DeleteMapping("/{id}")
   public void deleteById(@PathVariable long id) {
     employmentRecordService.deleteById(id);
