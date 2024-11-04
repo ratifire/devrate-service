@@ -4,7 +4,6 @@ import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.service.AchievementService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,7 +41,6 @@ public class AchievementController {
    *                       achievement.
    * @return The AchievementDto object representing the updated achievement.
    */
-  @PreAuthorize("@resourceAuthorizationService.isResourceOwnedByLoggedUser('achievements', #id)")
   @PutMapping("/{id}")
   public AchievementDto update(@PathVariable long id,
       @RequestBody @Valid AchievementDto achievementDto) {
@@ -54,7 +52,6 @@ public class AchievementController {
    *
    * @param id The ID of the achievement to delete.
    */
-  @PreAuthorize("@resourceAuthorizationService.isResourceOwnedByLoggedUser('achievements', #id)")
   @DeleteMapping("/{id}")
   public void delete(@PathVariable long id) {
     achievementService.delete(id);

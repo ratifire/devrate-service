@@ -5,7 +5,6 @@ import com.ratifire.devrate.exception.FeedbackSubmissionLimitException;
 import com.ratifire.devrate.service.FeedbackService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,7 +27,6 @@ public class FeedbackController {
    * @param userId      the user's ID
    * @param feedbackDto the feedback details to add
    */
-  @PreAuthorize("@resourceAuthorizationService.isPathUserIdMatchingLoggedUser(#userId)")
   @PostMapping
   public void addFeedback(@PathVariable long userId, @Valid @RequestBody FeedbackDto feedbackDto) {
     if (feedbackService.isUserAbleToSendFeedback(userId)) {

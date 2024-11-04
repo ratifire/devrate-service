@@ -1,9 +1,6 @@
 package com.ratifire.devrate.configuration;
 
-import com.ratifire.devrate.service.authorization.ResourceOwnerVerifier;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -104,11 +101,6 @@ public class SecurityConfiguration {
   public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
     auth.userDetailsService(userDetailsService)
         .passwordEncoder(passwordEncoder());
-  }
-
-  @Bean
-  public Map<String, ResourceOwnerVerifier> resourceTypeToOwnerVerifier() {
-    return new HashMap<>();
   }
 
   /**
