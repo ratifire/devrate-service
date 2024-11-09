@@ -28,10 +28,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CognitoApiClientService {
 
+  private static final String USERNAME = "USERNAME";
+  private static final String REFRESH_TOKEN = "REFRESH_TOKEN";
+  private static final String PASSWORD = "PASSWORD";
+  private static final String SECRET_HASH = "SECRET_HASH";
   private final AWSCognitoIdentityProvider cognitoClient;
   private final CognitoAuthenticationHelper cognitoAuthHelper;
   private final CognitoRegistrationProperties cognitoConfig;
-
 
   /**
    * Registers a new user in Cognito with the provided email, password, user ID, and role.
@@ -84,9 +87,9 @@ public class CognitoApiClientService {
         .withClientId(cognitoConfig.getClientId())
         .withAuthFlow(USER_PASSWORD_AUTH)
         .withAuthParameters(Map.of(
-            "USERNAME", email,
-            "PASSWORD", password,
-            "SECRET_HASH", secretHash));
+            USERNAME, email,
+            PASSWORD, password,
+            SECRET_HASH, secretHash));
     return cognitoClient.initiateAuth(authRequest).getAuthenticationResult();
   }
 
@@ -148,9 +151,9 @@ public class CognitoApiClientService {
           .withClientId(cognitoConfig.getClientId())
           .withAuthFlow(REFRESH_TOKEN_AUTH)
           .withAuthParameters(Map.of(
-              "REFRESH_TOKEN", refreshToken,
-              "USERNAME", email,
-              "SECRET_HASH", secretHash
+              REFRESH_TOKEN, refreshToken,
+              USERNAME, email,
+              SECRET_HASH, secretHash
           ));
       return cognitoClient.initiateAuth(authRequest).getAuthenticationResult();
     } catch (NotAuthorizedException e) {
