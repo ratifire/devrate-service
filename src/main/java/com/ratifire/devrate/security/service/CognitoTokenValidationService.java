@@ -27,7 +27,6 @@ public class CognitoTokenValidationService {
   private final JWKSource<SecurityContext> jwkSource;
   private final Map<CognitoTypeToken, TokenClaimsValidator> claimValidators;
 
-
   /**
    * Constructs a CognitoTokenValidationService with the specified JWK source and list of claim
    * validators.
