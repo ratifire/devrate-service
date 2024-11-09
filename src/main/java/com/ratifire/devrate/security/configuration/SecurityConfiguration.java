@@ -1,8 +1,9 @@
-package com.ratifire.devrate.configuration;
+package com.ratifire.devrate.security.configuration;
 
+
+import com.ratifire.devrate.security.filter.CognitoAuthenticationFilter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
@@ -10,16 +11,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -33,7 +34,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
-  private final UserDetailsService userDetailsService;
+  private final CognitoAuthenticationFilter cognitoAuthenticationFilter;
 
   private static final String[] WHITELIST = {
       // -- health-check
@@ -51,11 +52,6 @@ public class SecurityConfiguration {
       "/zoom/webhook/events"
   };
 
-  @Bean
-  public static PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
-
   /**
    * Configures security filters.
    *
@@ -68,13 +64,15 @@ public class SecurityConfiguration {
     return http
         .csrf(AbstractHttpConfigurer::disable)
         .cors(Customizer.withDefaults())
-        .authorizeHttpRequests((authorize) -> authorize
+        .sessionManagement(session -> session
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(authorize -> authorize
             .requestMatchers(WHITELIST).permitAll()
             .anyRequest().authenticated()
         )
-        .httpBasic(Customizer.withDefaults())
-        .exceptionHandling(
-            e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+        .addFilterBefore(cognitoAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+        .exceptionHandling(e -> e
+            .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
         .build();
   }
 
@@ -97,12 +95,6 @@ public class SecurityConfiguration {
     return source;
   }
 
-  @Autowired
-  public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-    auth.userDetailsService(userDetailsService)
-        .passwordEncoder(passwordEncoder());
-  }
-
   /**
    * Configures a {@link org.springframework.boot.web.servlet.ServletContextInitializer} bean to set
    * up session cookie settings for the application.
@@ -118,5 +110,13 @@ public class SecurityConfiguration {
       servletContext.getSessionCookieConfig().setDomain(domain);
       servletContext.getSessionCookieConfig().setPath("/");
     };
+  }
+
+  /**
+   * Provides a PasswordEncoder bean that uses BCrypt hashing algorithm.
+   */
+  @Bean
+  public static PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
   }
 }
