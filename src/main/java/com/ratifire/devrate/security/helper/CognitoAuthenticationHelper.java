@@ -27,15 +27,15 @@ public class CognitoAuthenticationHelper {
   /**
    * Generates a secret hash using the user's username and client credentials.
    *
-   * @param username The user's username (email).
+   * @param userEmail The user's username (email).
    * @return A Base64-encoded secret hash string.
    * @throws SecretHashGenerationException if the secret hash generation fails.
    */
-  public String generateSecretHash(String username) {
+  public String generateSecretHash(String userEmail) {
     try {
       byte[] clientSecret = cognitoRegistrationProperties.getClientSecret().getBytes(UTF_8);
       byte[] clientId = cognitoRegistrationProperties.getClientId().getBytes(UTF_8);
-      byte[] email = username.getBytes(UTF_8);
+      byte[] email = userEmail.getBytes(UTF_8);
 
       Key signingKey = new SecretKeySpec(clientSecret, HMAC_SHA256_ALGORITHM);
       Mac mac = Mac.getInstance(HMAC_SHA256_ALGORITHM);
