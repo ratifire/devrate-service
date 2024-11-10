@@ -27,8 +27,8 @@ post:
 get:
   tags:
     - Interview Request
-  summary: Retrieve the interview request for a specific user and role
-  description: Retrieves the interview request for a specific user and role.
+  summary: Retrieve the interview request for a specific user, role and mastery id.
+  description: Retrieves the interview request for a specific user, role and mastery id.
   parameters:
     - in: path
       name: userId
@@ -43,6 +43,13 @@ get:
       required: true
       schema:
         $ref: '../../components/schemas/InterviewRequestRole.yaml'
+    - in: query
+      name: masteryId
+      description: ID of the mastery
+      required: true
+      schema:
+        type: integer
+        format: int64
   responses:
     '200':
       description: Interview request retrieved successfully
@@ -50,6 +57,8 @@ get:
         application/json:
           schema:
             $ref: '../../components/schemas/InterviewRequestDto.yaml'
+    '204':
+      description: Cannot locate the specific interview request for the user ID due to incorrect or valid user id or role or mastery id.
     '400':
       description: Bad Request. The request cannot be fulfilled due to bad syntax
 
@@ -76,5 +85,7 @@ put:
   responses:
     '200':
       description: Interview request updated successfully
+    '204':
+      description: Cannot locate the specific interview request for the user ID due to incorrect or valid user id or role or mastery id.
     '400':
       description: Bad Request. The request cannot be fulfilled due to bad syntax
