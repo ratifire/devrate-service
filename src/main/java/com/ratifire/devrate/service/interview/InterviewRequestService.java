@@ -30,15 +30,18 @@ public class InterviewRequestService {
   }
 
   /**
-   * Finds an interview request for the given userId and role. Throw error if not found.
+   * Finds an interview request for the given userId, role and mastery. Throw error if not found.
    *
-   * @param userId the ID of the user associated with the interview request
-   * @param role   the role of the interview request
+   * @param userId    the ID of the user associated with the interview request
+   * @param role      the role of the interview request
+   * @param masteryId the mastery id of the interview request
    * @return the found InterviewRequest or an empty InterviewRequest if not found
    */
-  public InterviewRequest findByUserIdAndRole(long userId, InterviewRequestRole role) {
-    return interviewRequestRepository.findByUserIdAndRole(userId, role)
-        .orElseThrow(() -> new InterviewRequestDoesntExistException(userId, role.name()));
+  public InterviewRequest findByUserIdRoleMasteryId(long userId, InterviewRequestRole role,
+      long masteryId) {
+    return interviewRequestRepository.findByUserIdAndRoleAndMastery_Id(userId, role, masteryId)
+        .orElseThrow(
+            () -> new InterviewRequestDoesntExistException(userId, role.name(), masteryId));
   }
 
   /**

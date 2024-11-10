@@ -570,14 +570,17 @@ public class UserService {
   }
 
   /**
-   * Retrieves the interview request for the specified user and role.
+   * Retrieves the interview request for the specified user, role and mastery id.
    *
-   * @param userId the user's ID
-   * @param role   the role of the interview request
+   * @param userId    the user's ID
+   * @param role      the role of the interview request
+   * @param masteryId the mastery id of the interview request
    * @return the interview request as InterviewRequestDto
    */
-  public InterviewRequestDto getInterviewRequest(long userId, InterviewRequestRole role) {
-    InterviewRequest interviewRequest = interviewRequestService.findByUserIdAndRole(userId, role);
+  public InterviewRequestDto getInterviewRequest(long userId, InterviewRequestRole role,
+      long masteryId) {
+    InterviewRequest interviewRequest =
+        interviewRequestService.findByUserIdRoleMasteryId(userId, role, masteryId);
     return interviewRequestMapper.toDto(interviewRequest);
   }
 
@@ -666,8 +669,8 @@ public class UserService {
    * @return the updated InterviewRequest entity
    */
   private InterviewRequest updateInterviewRequest(long userId, InterviewRequestDto requestDto) {
-    InterviewRequest interviewRequest = interviewRequestService.findByUserIdAndRole(userId,
-        requestDto.getRole());
+    InterviewRequest interviewRequest = interviewRequestService.findByUserIdRoleMasteryId(
+        userId, requestDto.getRole(), requestDto.getMasteryId());
     interviewRequestMapper.updateEntity(requestDto, interviewRequest);
     return interviewRequestService.save(interviewRequest);
   }

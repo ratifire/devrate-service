@@ -53,5 +53,6 @@ public interface InterviewRequestRepository extends JpaRepository<InterviewReque
 
   List<InterviewRequest> findByActiveTrueAndExpiredAtBefore(ZonedDateTime currentDateTime);
 
-  Optional<InterviewRequest> findByUserIdAndRole(long userId, InterviewRequestRole role);
+  Optional<InterviewRequest> findByUserIdAndRoleAndMastery_Id(long userId,
+      InterviewRequestRole role, long masteryId);
 }
