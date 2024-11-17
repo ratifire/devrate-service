@@ -121,18 +121,19 @@ public class CognitoApiClientRequestHelper {
   /**
    * Builds a request to refresh authentication tokens using a refresh token.
    *
-   * @param email        the email of the user (username).
+   * @param sub          the unique identifier (subject) of the user whose tokens are being
+   *                     refreshed.
    * @param refreshToken the refresh token issued during initial authentication.
    * @return an {@link InitiateAuthRequest} object configured with the provided details.
    */
-  public InitiateAuthRequest buildRefreshAuthRequest(String email, String refreshToken) {
+  public InitiateAuthRequest buildRefreshAuthRequest(String sub, String refreshToken) {
     return new InitiateAuthRequest()
         .withClientId(cognitoConfig.getClientId())
         .withAuthFlow(REFRESH_TOKEN_AUTH)
         .withAuthParameters(Map.of(
             REFRESH_TOKEN, refreshToken,
-            USERNAME, email,
-            SECRET_HASH, cognitoAuthHelper.generateSecretHash(email)
+            USERNAME, sub,
+            SECRET_HASH, cognitoAuthHelper.generateSecretHash(sub)
         ));
   }
 
