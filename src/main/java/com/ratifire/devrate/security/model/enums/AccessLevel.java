@@ -1,4 +1,4 @@
-package com.ratifire.devrate.enums;
+package com.ratifire.devrate.security.model.enums;
 
 /**
  * Enum representing different access levels in the system.

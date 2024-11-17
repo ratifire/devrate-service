@@ -1,7 +1,7 @@
-package com.ratifire.devrate.security.validation.validator;
+package com.ratifire.devrate.security.validation.token.validator;
 
 import com.nimbusds.jwt.JWTClaimsSet;
-import com.ratifire.devrate.security.model.CognitoTypeToken;
+import com.ratifire.devrate.security.model.enums.CognitoTypeToken;
 
 /**
  * Interface for validating JWT token claims.

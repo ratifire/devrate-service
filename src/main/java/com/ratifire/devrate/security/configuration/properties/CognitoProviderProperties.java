@@ -1,4 +1,4 @@
-package com.ratifire.devrate.security.configuration;
+package com.ratifire.devrate.security.configuration.properties;
 
 import lombok.Getter;
 import lombok.Setter;

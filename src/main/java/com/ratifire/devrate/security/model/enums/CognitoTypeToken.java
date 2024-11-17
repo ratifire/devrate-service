@@ -1,4 +1,4 @@
-package com.ratifire.devrate.security.model;
+package com.ratifire.devrate.security.model.enums;
 
 /**
  * Enumeration representing different types of tokens used in AWS Cognito.
