@@ -2,7 +2,7 @@ package com.ratifire.devrate.security.helper;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import com.ratifire.devrate.security.configuration.CognitoRegistrationProperties;
+import com.ratifire.devrate.security.configuration.properties.CognitoRegistrationProperties;
 import com.ratifire.devrate.security.exception.SecretHashGenerationException;
 import java.security.Key;
 import java.util.Base64;
@@ -25,17 +25,17 @@ public class CognitoAuthenticationHelper {
   private final CognitoRegistrationProperties cognitoRegistrationProperties;
 
   /**
-   * Generates a secret hash using the user's username and client credentials.
+   * Generates a secret hash using the user's identifier (email or sub) and client credentials.
    *
-   * @param userEmail The user's username (email).
+   * @param identifier The user's identifier, which can be either an email or sub.
    * @return A Base64-encoded secret hash string.
    * @throws SecretHashGenerationException if the secret hash generation fails.
    */
-  public String generateSecretHash(String userEmail) {
+  public String generateSecretHash(String identifier) {
     try {
       byte[] clientSecret = cognitoRegistrationProperties.getClientSecret().getBytes(UTF_8);
       byte[] clientId = cognitoRegistrationProperties.getClientId().getBytes(UTF_8);
-      byte[] email = userEmail.getBytes(UTF_8);
+      byte[] email = identifier.getBytes(UTF_8);
 
       Key signingKey = new SecretKeySpec(clientSecret, HMAC_SHA256_ALGORITHM);
       Mac mac = Mac.getInstance(HMAC_SHA256_ALGORITHM);
