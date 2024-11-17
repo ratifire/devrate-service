@@ -1,8 +1,8 @@
-package com.ratifire.devrate.security.validation.validator;
+package com.ratifire.devrate.security.validation.token.validator;
 
 import com.nimbusds.jwt.JWTClaimsSet;
-import com.ratifire.devrate.security.configuration.CognitoProviderProperties;
-import com.ratifire.devrate.security.configuration.CognitoRegistrationProperties;
+import com.ratifire.devrate.security.configuration.properties.CognitoProviderProperties;
+import com.ratifire.devrate.security.configuration.properties.CognitoRegistrationProperties;
 import com.ratifire.devrate.security.util.TokenUtil;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
