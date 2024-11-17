@@ -8,6 +8,8 @@ import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.jwk.source.JWKSourceBuilder;
 import com.nimbusds.jose.proc.SecurityContext;
+import com.ratifire.devrate.security.configuration.properties.AwsProperties;
+import com.ratifire.devrate.security.configuration.properties.CognitoProviderProperties;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -20,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @RequiredArgsConstructor
-public class CognitoApiClientConfig {
+public class CognitoApiClientConfiguration {
 
   private static final long CACHE_TIME_TO_LIVE = 1200000L;    // 20 minutes
   private static final long REFRESH_AHEAD_TIME = 120000L;     // 2 minutes before cache expiration
