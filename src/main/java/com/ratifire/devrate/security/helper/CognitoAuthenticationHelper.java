@@ -35,13 +35,13 @@ public class CognitoAuthenticationHelper {
     try {
       byte[] clientSecret = cognitoRegistrationProperties.getClientSecret().getBytes(UTF_8);
       byte[] clientId = cognitoRegistrationProperties.getClientId().getBytes(UTF_8);
-      byte[] email = identifier.getBytes(UTF_8);
+      byte[] identifierBytes = identifier.getBytes(UTF_8);
 
       Key signingKey = new SecretKeySpec(clientSecret, HMAC_SHA256_ALGORITHM);
       Mac mac = Mac.getInstance(HMAC_SHA256_ALGORITHM);
       mac.init(signingKey);
 
-      mac.update(email);
+      mac.update(identifierBytes);
       mac.update(clientId);
 
       byte[] hashBytes = mac.doFinal();
