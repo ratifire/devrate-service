@@ -1,7 +1,7 @@
 package com.ratifire.devrate.security.filter;
 
-import static com.ratifire.devrate.security.model.CognitoTypeToken.ACCESS_TOKEN;
-import static com.ratifire.devrate.security.model.CognitoTypeToken.ID_TOKEN;
+import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.ACCESS_TOKEN;
+import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.ID_TOKEN;
 
 import com.ratifire.devrate.security.exception.TokenValidationException;
 import com.ratifire.devrate.security.service.CognitoTokenValidationService;
@@ -42,18 +42,19 @@ public class CognitoAuthenticationFilter extends OncePerRequestFilter {
 
     if (cognitoTokenValidationService.validateToken(accessToken, ACCESS_TOKEN)
         && cognitoTokenValidationService.validateToken(idToken, ID_TOKEN)) {
-
-      long userId = TokenUtil.getUserIdFromIdToken(idToken);
-      List<SimpleGrantedAuthority> authorities = TokenUtil.getAuthoritiesFromIdToken(idToken);
-
-      UsernamePasswordAuthenticationToken authentication =
-          new UsernamePasswordAuthenticationToken(userId, null, authorities);
-      SecurityContextHolder.getContext().setAuthentication(authentication);
-
+      setUpAuthenticationContext(idToken);
     } else {
       throw new TokenValidationException("Token validation failed");
     }
 
     filterChain.doFilter(request, response);
+  }
+
+  private void setUpAuthenticationContext(String idToken) {
+    long userId = TokenUtil.getUserIdFromIdToken(idToken);
+    List<SimpleGrantedAuthority> authorities = TokenUtil.getAuthoritiesFromIdToken(idToken);
+    UsernamePasswordAuthenticationToken authentication =
+        new UsernamePasswordAuthenticationToken(userId, null, authorities);
+    SecurityContextHolder.getContext().setAuthentication(authentication);
   }
 }
