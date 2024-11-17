@@ -1,12 +1,12 @@
 package com.ratifire.devrate.controller;
 
-import com.ratifire.devrate.exception.AuthenticationException;
 import com.ratifire.devrate.exception.FeedbackSubmissionLimitException;
 import com.ratifire.devrate.exception.InterviewRequestDoesntExistException;
 import com.ratifire.devrate.exception.MailException;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.exception.UserSearchInvalidInputException;
+import com.ratifire.devrate.security.exception.AuthenticationException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
