@@ -1,9 +1,9 @@
-package com.ratifire.devrate.security.validation.validator;
+package com.ratifire.devrate.security.validation.token.validator;
 
 import com.nimbusds.jwt.JWTClaimsSet;
-import com.ratifire.devrate.security.configuration.CognitoProviderProperties;
-import com.ratifire.devrate.security.configuration.CognitoRegistrationProperties;
-import com.ratifire.devrate.security.model.CognitoTypeToken;
+import com.ratifire.devrate.security.configuration.properties.CognitoProviderProperties;
+import com.ratifire.devrate.security.configuration.properties.CognitoRegistrationProperties;
+import com.ratifire.devrate.security.model.enums.CognitoTypeToken;
 import com.ratifire.devrate.security.util.TokenUtil;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +27,8 @@ public class IdTokenClaimsValidator extends BaseTokenClaimsValidator {
   @Override
   public boolean validate(JWTClaimsSet claimsSet) {
     return validateCommonClaims(claimsSet, EXPECTED_TOKEN_USE)
-        && isAudienceValid(claimsSet);
+        && isAudienceValid(claimsSet)
+        && isEmailVerified(claimsSet);
   }
 
   @Override
@@ -36,8 +37,13 @@ public class IdTokenClaimsValidator extends BaseTokenClaimsValidator {
   }
 
   private boolean isAudienceValid(JWTClaimsSet claimsSet) {
-    return TokenUtil.extractStringClaim(claimsSet, "aud")
-        .map(audience -> audience.equals(cognitoRegistrationProperties.getClientId()))
-        .orElse(false);
+    String audience = TokenUtil.extractArrayClaim(claimsSet, "aud")
+        .flatMap(audList -> audList.stream().findFirst())
+        .orElse(null);
+    return cognitoRegistrationProperties.getClientId().equals(audience);
+  }
+
+  private boolean isEmailVerified(JWTClaimsSet claimsSet) {
+    return TokenUtil.extractBooleanClaim(claimsSet, "email_verified").orElse(false);
   }
 }
