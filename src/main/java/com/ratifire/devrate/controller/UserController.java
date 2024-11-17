@@ -361,14 +361,15 @@ public class UserController {
   /**
    * Retrieves the interview request for a specific user and role.
    *
-   * @param userId the ID of the user
-   * @param role   the role for which the interview request is being retrieved
+   * @param userId    the ID of the user
+   * @param role      the role for which the interview request is being retrieved
+   * @param masteryId the mastery id for which the interview request is being retrieved
    * @return the InterviewRequestDto containing the interview request details
    */
   @GetMapping("/{userId}/interview-requests")
   public InterviewRequestDto getInterviewRequest(@PathVariable long userId,
-      @Valid @RequestParam InterviewRequestRole role) {
-    return userService.getInterviewRequest(userId, role);
+      @Valid @RequestParam InterviewRequestRole role, @Valid @RequestParam long masteryId) {
+    return userService.getInterviewRequest(userId, role, masteryId);
   }
 
   /**
