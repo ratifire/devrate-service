@@ -1,5 +1,6 @@
-package com.ratifire.devrate.dto;
+package com.ratifire.devrate.security.model.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,6 +11,9 @@ import lombok.Getter;
 @Getter
 public class LoginDto {
 
+  @NotBlank(message = "Email cannot be blank")
   private String email;
+
+  @NotBlank(message = "Password cannot be blank")
   private String password;
 }
