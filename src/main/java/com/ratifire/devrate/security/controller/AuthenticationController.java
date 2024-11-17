@@ -1,18 +1,20 @@
-package com.ratifire.devrate.controller;
+package com.ratifire.devrate.security.controller;
 
-import com.ratifire.devrate.dto.LoginDto;
-import com.ratifire.devrate.dto.PasswordResetDto;
 import com.ratifire.devrate.dto.UserDto;
-import com.ratifire.devrate.dto.UserRegistrationDto;
-import com.ratifire.devrate.service.AuthenticationService;
-import com.ratifire.devrate.service.registration.RegistrationService;
-import com.ratifire.devrate.service.resetpassword.PasswordResetService;
+import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
+import com.ratifire.devrate.security.model.dto.LoginDto;
+import com.ratifire.devrate.security.model.dto.PasswordResetDto;
+import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
+import com.ratifire.devrate.security.service.AuthenticationService;
+import com.ratifire.devrate.security.service.PasswordResetService;
+import com.ratifire.devrate.security.service.RefreshTokenService;
+import com.ratifire.devrate.security.service.RegistrationService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,11 +28,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-public class AuthController {
+public class AuthenticationController {
 
   private final AuthenticationService authenticationService;
   private final RegistrationService registrationService;
   private final PasswordResetService passwordResetService;
+  private final RefreshTokenService refreshTokenService;
 
   /**
    * Endpoint for user login.
@@ -39,8 +42,8 @@ public class AuthController {
    * @return A UserDto object representing the authenticated user.
    */
   @PostMapping("/signin")
-  public UserDto login(@RequestBody LoginDto loginDto, HttpServletRequest request) {
-    return authenticationService.login(loginDto, request);
+  public UserDto login(@RequestBody LoginDto loginDto, HttpServletResponse response) {
+    return authenticationService.login(loginDto, response);
   }
 
   /**
@@ -50,8 +53,9 @@ public class AuthController {
    * @return ResponseEntity representing the result of the logout operation.
    */
   @PostMapping("/logout")
-  public ResponseEntity<String> logout(HttpServletRequest request) {
-    return authenticationService.logout(request);
+  public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+    String result = authenticationService.logout(request, response);
+    return ResponseEntity.status(HttpStatus.OK).body(result);
   }
 
   /**
@@ -67,12 +71,13 @@ public class AuthController {
   /**
    * Endpoint to confirm the email using the provided confirmation code.
    *
-   * @param code Unique code used for confirming user registration.
+   * @param confirmRegistrationDto DTO containing the confirmation code and email of the user.
    * @return ResponseEntity with the user ID.
    */
-  @PutMapping("/signup/{code}")
-  public ResponseEntity<Long> confirm(@PathVariable String code) {
-    long userId = registrationService.confirmRegistration(code);
+  @PutMapping("/signup/confirm")
+  public ResponseEntity<Long> confirm(@RequestBody @Valid ConfirmRegistrationDto
+      confirmRegistrationDto) {
+    long userId = registrationService.confirmRegistration(confirmRegistrationDto);
     return ResponseEntity.status(HttpStatus.CREATED).body(userId);
   }
 
@@ -82,9 +87,9 @@ public class AuthController {
    * @param email The email for the user account needing a password reset.
    * @return ResponseEntity with status OK if successful.
    */
-  @PostMapping ("/request-password-reset")
-  public ResponseEntity<Void> requestPasswordReset(@RequestParam String email) {
-    passwordResetService.requestPasswordReset(email);
+  @PostMapping("/request-password-reset")
+  public ResponseEntity<Void> resetPassword(@RequestParam String email) {
+    passwordResetService.resetPassword(email);
     return ResponseEntity.ok().build();
   }
 
@@ -95,8 +100,21 @@ public class AuthController {
    * @return ResponseEntity with status OK if successful.
    */
   @PostMapping("/password-reset")
-  public ResponseEntity<Void> resetPassword(@RequestBody PasswordResetDto passwordResetDto) {
-    passwordResetService.resetPassword(passwordResetDto);
+  public ResponseEntity<Void> confirmResetPassword(@RequestBody PasswordResetDto passwordResetDto) {
+    passwordResetService.confirmResetPassword(passwordResetDto);
+    return ResponseEntity.ok().build();
+  }
+
+  /**
+   * Handles the refresh token operation.
+   *
+   * @return a ResponseEntity with an HTTP 200 status indicating that the token was successfully
+   *     refreshed.
+   */
+  @PostMapping("/refresh-token")
+  public ResponseEntity<Void> refreshToken(HttpServletRequest request,
+      HttpServletResponse response) {
+    refreshTokenService.refreshAuthTokens(request, response);
     return ResponseEntity.ok().build();
   }
 }
