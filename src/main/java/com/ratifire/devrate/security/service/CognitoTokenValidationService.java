@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CognitoTokenValidationService {
 
+  private static final Logger log = LoggerFactory.getLogger(CognitoTokenValidationService.class);
   private final JWKSource<SecurityContext> jwkSource;
   private final Map<CognitoTypeToken, TokenClaimsValidator> claimValidators;
 
@@ -52,7 +55,8 @@ public class CognitoTokenValidationService {
       TokenClaimsValidator validator = claimValidators.get(type);
       return validator.validate(claimsSet);
     } catch (Exception e) {
-      throw new TokenValidationException("Failed to validate token");
+      log.error("Token validation process was failed: {}", e.getMessage(), e);
+      throw new TokenValidationException("Token validation process was failed");
     }
   }
 
