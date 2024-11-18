@@ -7,6 +7,12 @@ import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.exception.UserSearchInvalidInputException;
 import com.ratifire.devrate.security.exception.AuthenticationException;
+import com.ratifire.devrate.security.exception.LogoutException;
+import com.ratifire.devrate.security.exception.PasswordResetException;
+import com.ratifire.devrate.security.exception.RefreshTokenException;
+import com.ratifire.devrate.security.exception.RefreshTokenExpiredException;
+import com.ratifire.devrate.security.exception.UserAlreadyExistsException;
+import com.ratifire.devrate.security.exception.UserRegistrationException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
@@ -99,6 +105,54 @@ public class HandlerException {
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
   @ExceptionHandler({AuthenticationException.class})
   public void handleAuthenticationExceptions() {
+  }
+
+  /**
+   * Handles the logout exceptions by returning an HTTP status 401.
+   */
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  @ExceptionHandler({LogoutException.class})
+  public void handleLogoutExceptions() {
+  }
+
+  /**
+   * Handles the RefreshTokenExpired exceptions by returning an HTTP status 401.
+   */
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  @ExceptionHandler({RefreshTokenExpiredException.class})
+  public void handleRefreshTokenExpiredExceptions() {
+  }
+
+  /**
+   * Handles the PasswordReset exceptions by returning an HTTP status 400.
+   */
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler({PasswordResetException.class})
+  public void handlePasswordResetExceptionExceptions() {
+  }
+
+  /**
+   * Handles the RefreshToken exceptions by returning an HTTP status 400.
+   */
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler({RefreshTokenException.class})
+  public void handleRefreshTokenExceptions() {
+  }
+
+  /**
+   * Handles the UserRegistration exceptions by returning an HTTP status 400.
+   */
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler({UserRegistrationException.class})
+  public void handleUserRegistrationExceptions() {
+  }
+
+  /**
+   * Handles the UserAlreadyExistsException by returning an HTTP status 409.
+   */
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ExceptionHandler(UserAlreadyExistsException.class)
+  public void handleUserAlreadyExistsExceptionExceptions() {
   }
 
   /**
