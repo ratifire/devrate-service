@@ -3,12 +3,15 @@ package com.ratifire.devrate.security.util;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.ratifire.devrate.security.exception.InvalidTokenException;
+import com.ratifire.devrate.security.exception.RefreshTokenException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.util.function.ThrowingFunction;
 
@@ -17,6 +20,7 @@ import org.springframework.util.function.ThrowingFunction;
  */
 public class TokenUtil {
 
+  private static final Logger log = LoggerFactory.getLogger(TokenUtil.class);
   private static final String AUTHORIZATION_HEADER = "Authorization";
   private static final String ID_TOKEN_HEADER = "ID-Token";
   private static final String REFRESH_TOKEN_COOKIE_NAME = "Refresh-Token";
@@ -75,7 +79,8 @@ public class TokenUtil {
         }
       }
     }
-    return null;
+    log.warn("No refresh token provided in the request.");
+    throw new RefreshTokenException("No refresh token provided.");
   }
 
   /**
@@ -114,7 +119,7 @@ public class TokenUtil {
       SignedJWT signedJwt = SignedJWT.parse(token);
       return signedJwt.getJWTClaimsSet();
     } catch (Exception e) {
-      throw new InvalidTokenException("Failed to parse token");
+      throw new InvalidTokenException("Parse token process was failed");
     }
   }
 
