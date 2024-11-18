@@ -48,8 +48,8 @@ public class CognitoAuthenticationHelper {
       return Base64.getEncoder().encodeToString(hashBytes);
 
     } catch (Exception e) {
-      logger.error("Failed to generate secret hash for cognito");
-      throw new SecretHashGenerationException("Failed to generate secret hash for cognito");
+      logger.error("Failed to generate secret hash for cognito for user: {}", identifier);
+      throw new SecretHashGenerationException("Failed to generate secret hash");
     }
   }
 }
