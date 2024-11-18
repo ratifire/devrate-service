@@ -20,6 +20,8 @@ import org.springframework.stereotype.Repository;
 @RepositoryRestResource(exported = false)
 public interface UserRepository extends JpaRepository<User, Long> {
 
+  boolean existsByEmail(String email);
+
   User findByEmail(String email);
 
   @Query("SELECT u.email FROM User u WHERE u.id = :id")
