@@ -10,9 +10,10 @@ import com.ratifire.devrate.security.exception.AuthenticationException;
 import com.ratifire.devrate.security.exception.LogoutException;
 import com.ratifire.devrate.security.exception.PasswordResetException;
 import com.ratifire.devrate.security.exception.RefreshTokenException;
-import com.ratifire.devrate.security.exception.RefreshTokenExpiredException;
+import com.ratifire.devrate.security.exception.TokenExpiredException;
 import com.ratifire.devrate.security.exception.UserAlreadyExistsException;
 import com.ratifire.devrate.security.exception.UserRegistrationException;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
@@ -36,6 +37,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 public class HandlerException {
 
   private static final Logger log = LogManager.getLogger(HandlerException.class);
+  private static final int EXPIRED_TOKEN_HTTP_STATUS = 498;
 
   /**
    * Handles MethodArgumentNotValidException by returning a map of field errors with their
@@ -116,11 +118,11 @@ public class HandlerException {
   }
 
   /**
-   * Handles the RefreshTokenExpired exceptions by returning an HTTP status 401.
+   * Handles the TokenExpired exceptions by returning an HTTP status 419.
    */
-  @ResponseStatus(HttpStatus.UNAUTHORIZED)
-  @ExceptionHandler({RefreshTokenExpiredException.class})
-  public void handleRefreshTokenExpiredExceptions() {
+  @ExceptionHandler(TokenExpiredException.class)
+  public void handleTokenExpiredException(HttpServletResponse response) {
+    response.setStatus(EXPIRED_TOKEN_HTTP_STATUS);
   }
 
   /**
