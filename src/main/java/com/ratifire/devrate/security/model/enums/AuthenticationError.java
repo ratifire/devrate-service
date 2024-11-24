@@ -3,6 +3,9 @@ package com.ratifire.devrate.security.model.enums;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+/**
+ * Enum representing various authentication errors and their associated HTTP statuses.
+ */
 @Getter
 public enum AuthenticationError {
 
