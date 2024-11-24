@@ -3,6 +3,7 @@ package com.ratifire.devrate.security.validation.token.validator;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.ratifire.devrate.security.configuration.properties.CognitoProviderProperties;
 import com.ratifire.devrate.security.configuration.properties.CognitoRegistrationProperties;
+import com.ratifire.devrate.security.exception.TokenExpiredException;
 import com.ratifire.devrate.security.util.TokenUtil;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,7 @@ public abstract class BaseTokenClaimsValidator implements TokenClaimsValidator {
    */
   private boolean isExpirationTimeValid(JWTClaimsSet claimsSet) {
     return TokenUtil.extractDateClaim(claimsSet, "exp")
-        .map(expiration -> new Date().before(expiration))
+        .map(this::verifyTokenExpiration)
         .orElse(false);
   }
 
@@ -50,5 +51,12 @@ public abstract class BaseTokenClaimsValidator implements TokenClaimsValidator {
     return TokenUtil.extractStringClaim(claimsSet, "token_use")
         .map(expectedTokenUse::equals)
         .orElse(false);
+  }
+
+  private boolean verifyTokenExpiration(Date exp) {
+    if (new Date().after(exp)) {
+      throw new TokenExpiredException("Token has expired.");
+    }
+    return true;
   }
 }
