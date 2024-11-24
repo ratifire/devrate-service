@@ -27,7 +27,7 @@ public class TokenUtil {
   private static final String BEARER_PREFIX = "Bearer ";
   public static final String CLAIM_USER_ID = "custom:userId";
   public static final String CLAIM_USER_ROLE = "custom:role";
-  public static final String CLAIM_SUB = "sub";
+  public static final String CLAIM_SUBJECT = "sub";
 
   private TokenUtil() {
   }
@@ -85,15 +85,15 @@ public class TokenUtil {
   }
 
   /**
-   * Retrieves the "sub" (subject) claim from the specified access token.
+   * Retrieves the "subject" claim from the specified access token.
    *
    * @param accessToken the JWT access token containing user claims
    * @return the "sub" claim as a String, representing the subject of the token
    * @throws InvalidTokenException if the "sub" claim is missing or cannot be parsed
    */
-  public static String getSubFromAccessToken(String accessToken) {
+  public static String getSubjectFromAccessToken(String accessToken) {
     JWTClaimsSet claimsSet = TokenUtil.parseToken(accessToken);
-    return TokenUtil.extractStringClaim(claimsSet, CLAIM_SUB)
+    return TokenUtil.extractStringClaim(claimsSet, CLAIM_SUBJECT)
         .orElseThrow(() -> new InvalidTokenException("Sub claim is missing"));
   }
 
