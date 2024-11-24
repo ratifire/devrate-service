@@ -33,10 +33,10 @@ public class RefreshTokenService {
     try {
       String refreshToken = TokenUtil.extractRefreshTokenFromRequest(request);
       String accessToken = TokenUtil.extractAccessTokenFromRequest(request);
-      String sub = TokenUtil.getSubFromAccessToken(accessToken);
+      String subject = TokenUtil.getSubFromAccessToken(accessToken);
 
       AuthenticationResultType result = cognitoApiClientService
-          .refreshAuthTokens(sub, refreshToken);
+          .refreshAuthTokens(subject, refreshToken);
 
       String newAccessToken = result.getAccessToken();
       String newIdToken = result.getIdToken();
