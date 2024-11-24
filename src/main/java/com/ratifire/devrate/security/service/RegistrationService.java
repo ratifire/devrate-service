@@ -56,10 +56,8 @@ public class RegistrationService {
     }
 
     try {
-      User user = userService.create(userDto, email, " ");
+      User user = userService.create(userDto, email, passwordEncoder.encode(password));
       cognitoApiClientService.register(email, password, user.getId(), AccessLevel.getDefaultRole());
-      user.setPassword(passwordEncoder.encode(password));
-      userService.updateUser(user);
     } catch (Exception e) {
       log.error("Initiate registration process was failed for email {}: {}",
           userRegistrationDto.getEmail(), e.getMessage(), e);
