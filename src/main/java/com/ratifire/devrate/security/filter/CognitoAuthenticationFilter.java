@@ -1,6 +1,7 @@
 package com.ratifire.devrate.security.filter;
 
-import static com.ratifire.devrate.security.model.enums.AuthenticationError.*;
+import static com.ratifire.devrate.security.model.enums.AuthenticationError.TOKEN_EXPIRED;
+import static com.ratifire.devrate.security.model.enums.AuthenticationError.UNAUTHORIZED;
 import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.ACCESS_TOKEN;
 import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.ID_TOKEN;
 
