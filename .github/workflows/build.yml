@@ -24,7 +24,7 @@ jobs:
   build-and-push:
     name: Build and Push
     runs-on: ubuntu-latest
-    environment: dev
+    environment: ${{ inputs.environment}}
 
     steps:
       - name: Checkout
