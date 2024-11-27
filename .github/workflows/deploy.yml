@@ -7,8 +7,13 @@ on:
     inputs:
       environment:
         description: 'Select environment to deploy (prod, dev, dev_new)'
-        required: false
+        required: true
         default: 'dev'
+        type: choice
+        options:
+          - dev
+          - prod
+          - dev_new
 
 jobs:
   deploy:
