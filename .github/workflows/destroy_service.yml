@@ -8,8 +8,14 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Select the environment to deploy (prod, dev, dev_new)'
+        description: 'Select environment to deploy (prod, dev, dev_new)'
         required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - prod
+          - dev_new
 
 permissions:
   id-token: write
