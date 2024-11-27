@@ -4,6 +4,10 @@ on:
   schedule:
     - cron: '00 01 * * *'
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select the environment to deploy (prod, dev, dev_new)'
+        required: true
 
 jobs:
   destroy:
