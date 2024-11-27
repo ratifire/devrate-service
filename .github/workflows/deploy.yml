@@ -45,7 +45,7 @@ jobs:
       - name: Run create-infrastructure workflow
         id: create_infrastructure
         run: |
-          gh workflow run Terraform_deploy --ref ${{ env.BRANCH_NAME }} --inputs environment=${{ env.ENVIRONMENT }}
+          gh workflow run Terraform_deploy --ref ${{ env.BRANCH_NAME }} -F environment=${{ env.ENVIRONMENT }}
           echo "Waiting for Terraform_deploy to complete..."
           sleep 10
           RUN_ID=$(gh run list --workflow=Terraform_deploy --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
@@ -60,7 +60,7 @@ jobs:
         id: build_and_push_image
         if: steps.create_infrastructure.conclusion == 'success'
         run: |
-          gh workflow run Build --ref ${{ env.BRANCH_NAME }} --inputs environment=${{ env.ENVIRONMENT }}
+          gh workflow run Build --ref ${{ env.BRANCH_NAME }} -F environment=${{ env.ENVIRONMENT }}
           echo "Waiting for Build to complete..."
           sleep 10
           RUN_ID=$(gh run list --workflow=Build --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
@@ -74,7 +74,7 @@ jobs:
       - name: Run deploy-application workflow
         if: steps.build_and_push_image.conclusion == 'success'
         run: |
-          gh workflow run Deploy_Service_to_AWS --ref ${{ env.BRANCH_NAME }} --inputs environment=${{ env.ENVIRONMENT }}
+          gh workflow run Deploy_Service_to_AWS --ref ${{ env.BRANCH_NAME }} -F environment=${{ env.ENVIRONMENT }}
           echo "Waiting for Deploy_Service_to_AWS to complete..."
           sleep 10
           RUN_ID=$(gh run list --workflow=Deploy_Service_to_AWS --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
