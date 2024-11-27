@@ -22,8 +22,6 @@ env:
   ECS_CLUSTER: backend-cluster                # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION: backend_td             # set this to the path to your Amazon ECS task definition file
   CONTAINER_NAME: back-container              # set this to the name of the container in the containerDefinitions section of your task definition
-  AWS_SES_ACCESS_KEY_ID: ${{ secrets.AWS_SES_ACCESS_KEY_ID }}
-  AWS_SES_SECRET_ACCESS_KEY: ${{ secrets.AWS_SES_SECRET_ACCESS_KEY }}
   ZOOM_CLIENT_ID: ${{secrets.ZOOM_CLIENT_ID}}
   ZOOM_CLIENT_SECRET: ${{secrets.ZOOM_CLIENT_SECRET}}
   ZOOM_ACCOUNT_ID: ${{secrets.ZOOM_ACCOUNT_ID}}
@@ -49,8 +47,8 @@ jobs:
 
       - name: Update application-dev.properties with environment variables
         run: |
-          sed -i 's|<AWS_SES_ACCESS_KEY_ID>|'${{ env.AWS_SES_ACCESS_KEY_ID }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<AWS_SES_SECRET_ACCESS_KEY>|'${{ env.AWS_SES_SECRET_ACCESS_KEY }}'|g' src/main/resources/application-dev.properties
+          sed -i 's|<AWS_SES_ACCESS_KEY_ID>|'${{ secrets.AWS_SES_ACCESS_KEY_ID }}'|g' src/main/resources/application-dev.properties
+          sed -i 's|<AWS_SES_SECRET_ACCESS_KEY>|'${{ secrets.AWS_SES_SECRET_ACCESS_KEY }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<ZOOM_CLIENT_ID>|'${{ env.ZOOM_CLIENT_ID }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<ZOOM_CLIENT_SECRET>|'${{ env.ZOOM_CLIENT_SECRET }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<ZOOM_ACCOUNT_ID>|'${{ env.ZOOM_ACCOUNT_ID }}'|g' src/main/resources/application-dev.properties
