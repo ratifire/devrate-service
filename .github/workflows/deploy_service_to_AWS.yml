@@ -1,7 +1,6 @@
 name: Deploy_Service_to_AWS
 
 env:
-  AWS_REGION: 'eu-north-1'
   IMAGE_TAG: ${{ github.sha }}
   AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
   AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
@@ -32,7 +31,7 @@ jobs:
         with:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ${{ vars.AWS_REGION }}
 
       - name: Checkout
         uses: actions/checkout@v4
