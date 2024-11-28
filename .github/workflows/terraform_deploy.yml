@@ -2,6 +2,16 @@ name: Terraform_deploy
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select environment to deploy (prod, dev, dev_new)'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - prod
+          - dev_new
 
 permissions:
   id-token: write
@@ -11,7 +21,7 @@ jobs:
   terraform:
     name: Terraform deploy infrastructure
     runs-on: ubuntu-latest
-    environment: production
+    environment: ${{ github.event.inputs.environment }}
     env:
       working-directory: terraform/infrastructure
     defaults:

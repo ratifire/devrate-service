@@ -4,6 +4,16 @@ on:
   schedule:
     - cron: '00 05 * * *'
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select environment to deploy (prod, dev, dev_new)'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - prod
+          - dev_new
 
 jobs:
   deploy:
@@ -12,6 +22,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Determine environment
+        id: determine_env
+        run: |
+          if [ -z "${{ github.event.inputs.environment }}" ]; then
+            ENVIRONMENT="dev"  # Default value for scheduled runs
+          else
+            ENVIRONMENT="${{ github.event.inputs.environment }}"
+          fi
+          echo "Selected environment: $ENVIRONMENT"
+          echo "ENVIRONMENT=$ENVIRONMENT" >> $GITHUB_ENV
 
       - name: Get current branch name
         id: get_branch_name
@@ -29,7 +50,7 @@ jobs:
       - name: Run create-infrastructure workflow
         id: create_infrastructure
         run: |
-          gh workflow run Terraform_deploy --ref ${{ env.BRANCH_NAME }}
+          gh workflow run Terraform_deploy --ref ${{ env.BRANCH_NAME }} -F environment=${{ env.ENVIRONMENT }}
           echo "Waiting for Terraform_deploy to complete..."
           sleep 10
           RUN_ID=$(gh run list --workflow=Terraform_deploy --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
@@ -44,7 +65,7 @@ jobs:
         id: build_and_push_image
         if: steps.create_infrastructure.conclusion == 'success'
         run: |
-          gh workflow run Build --ref ${{ env.BRANCH_NAME }}
+          gh workflow run Build --ref ${{ env.BRANCH_NAME }} -F environment=${{ env.ENVIRONMENT }}
           echo "Waiting for Build to complete..."
           sleep 10
           RUN_ID=$(gh run list --workflow=Build --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
@@ -58,7 +79,7 @@ jobs:
       - name: Run deploy-application workflow
         if: steps.build_and_push_image.conclusion == 'success'
         run: |
-          gh workflow run Deploy_Service_to_AWS --ref ${{ env.BRANCH_NAME }}
+          gh workflow run Deploy_Service_to_AWS --ref ${{ env.BRANCH_NAME }} -F environment=${{ env.ENVIRONMENT }}
           echo "Waiting for Deploy_Service_to_AWS to complete..."
           sleep 10
           RUN_ID=$(gh run list --workflow=Deploy_Service_to_AWS --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
@@ -73,5 +94,5 @@ jobs:
         if: success()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{
-            "text": "GitHub Action (BackEnd): Devrate.org is deploying to AWS! Status: ${{ job.status }}.\nTriggered by: ${{ github.actor }}\nBranch: ${{ github.ref }}"
+            "text": "GitHub Action (BackEnd): Devrate.org is deploying to AWS! Status: ${{ job.status }}.\nEnvironment: ${{ env.ENVIRONMENT }}\nTriggered by: ${{ github.actor }}\nBranch: ${{ github.ref }}"
           }' ${{ secrets.SLACK_WEBHOOK_URL }}
