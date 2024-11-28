@@ -1,4 +1,4 @@
-name: Terraform_deploy
+name: Up_infrastructure
 
 env:
   AWS_REGION: 'eu-north-1'
