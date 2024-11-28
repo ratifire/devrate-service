@@ -1,5 +1,6 @@
 package com.ratifire.devrate.entity;
 
+import com.ratifire.devrate.entity.interview.InterviewRequest;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -54,4 +55,8 @@ public class Mastery {
 
   @OneToMany(mappedBy = "mastery", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<MasteryHistory> masteryHistories;
+
+  @OneToMany(mappedBy = "mastery", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<InterviewRequest> interviewRequests;
+
 }
