@@ -15,10 +15,11 @@ on:
           - dev
           - prod
           - dev_new
+  push:
+    branches:
+      - main
 
 env:
-  AWS_SES_ACCESS_KEY_ID: ${{ secrets.AWS_SES_ACCESS_KEY_ID }}
-  AWS_SES_SECRET_ACCESS_KEY: ${{ secrets.AWS_SES_SECRET_ACCESS_KEY }}
   ZOOM_CLIENT_ID: ${{secrets.ZOOM_CLIENT_ID}}
   ZOOM_CLIENT_SECRET: ${{secrets.ZOOM_CLIENT_SECRET}}
   ZOOM_ACCOUNT_ID: ${{secrets.ZOOM_ACCOUNT_ID}}
