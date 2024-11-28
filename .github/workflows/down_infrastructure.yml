@@ -1,4 +1,4 @@
-name: Terraform_destroy
+name: Down_infrastructure
 
 env:
   AWS_REGION: 'eu-north-1'
