@@ -43,12 +43,18 @@ jobs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
 
-    - name: List files in the working directory
+    - name: Select backend configuration
       run: |
-        echo "Listing files in the directory: /home/runner/work/devrate-service/devrate-service/${{ env.working-directory }}"
-        ls -l /home/runner/work/devrate-service/devrate-service/${{ env.working-directory }}
+        echo "Selecting backend configuration for environment: ${{ github.event.inputs.environment }}"
+        BACKEND_FILE="/home/runner/work/devrate-service/devrate-service/${{ env.working-directory }}/${{ github.event.inputs.environment }}.backend"
+        if [[ ! -f "$BACKEND_FILE" ]]; then
+          echo "Error: Backend file $BACKEND_FILE does not exist."
+          exit 1
+        fi
+        echo "Using backend configuration: $BACKEND_FILE"
       env:
         working-directory: terraform/infrastructure
+
 
     - name: Select .tfvars file based on environment
       run: |  

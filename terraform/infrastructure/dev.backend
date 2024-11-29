@@ -1,0 +1,4 @@
+    bucket  = "devrate-bucket-back-1"
+    encrypt = true
+    key     = "AWS/build-test-backend-infrastructure-tstates/terraform.tfstate"
+    region  = "eu-north-1"
