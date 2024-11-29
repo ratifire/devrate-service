@@ -17,11 +17,6 @@ on:
           - dev_new
 
 env:
-  ECR_REPOSITORY: backend-service             # set this to your Amazon ECR repository name
-  ECS_SERVICE: back-service                   # set this to your Amazon ECS service name
-  ECS_CLUSTER: backend-cluster                # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION: backend_td             # set this to the path to your Amazon ECS task definition file
-  CONTAINER_NAME: back-container              # set this to the name of the container in the containerDefinitions section of your task definition
   ZOOM_CLIENT_ID: ${{secrets.ZOOM_CLIENT_ID}}
   ZOOM_CLIENT_SECRET: ${{secrets.ZOOM_CLIENT_SECRET}}
   ZOOM_ACCOUNT_ID: ${{secrets.ZOOM_ACCOUNT_ID}}
@@ -75,6 +70,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
           # Build a docker container and
@@ -86,6 +82,8 @@ jobs:
 
       - name: Get current Task Definition
         id: get-task-def
+        env:
+          ECS_TASK_DEFINITION: ${{ vars.ECS_TASK_DEFINITION }}
         run: |
           aws ecs describe-task-definition \
           --task-definition ${{ env.ECS_TASK_DEFINITION }} \
@@ -94,6 +92,8 @@ jobs:
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
+        env:
+          CONTAINER_NAME: ${{ vars.CONTAINER_NAME }}
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-def.json
@@ -101,6 +101,9 @@ jobs:
           image: ${{ steps.build-image.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
+        env:
+          ECS_SERVICE: ${{ vars.ECS_SERVICE }}
+          ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
