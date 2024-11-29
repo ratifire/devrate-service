@@ -53,8 +53,8 @@ jobs:
     - name: Select .tfvars file based on environment
       run: |  
         echo "Selecting .tfvars file for environment: ${{ github.event.inputs.environment }}"
-        if [[ ! -f "${{ /home/runner/work/devrate-service/devrate-service/env.working-directory }}/${{ github.event.inputs.environment }}.tfvars" ]]; then
-          echo "Error: File ${{ github.event.inputs.environment }}.tfvars does not exist in ${{ /home/runner/work/devrate-service/devrate-service/env.working-directory }}."
+        if [[ ! -f "/home/runner/work/devrate-service/devrate-service/${{ env.working-directory }}/${{ github.event.inputs.environment }}.tfvars" ]]; then
+          echo "Error: File ${{ github.event.inputs.environment }}.tfvars does not exist in /home/runner/work/devrate-service/devrate-service/${{ env.working-directory }}."
           exit 1
         fi
 
