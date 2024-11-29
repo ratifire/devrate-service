@@ -1,8 +1,3 @@
-variable "region" {
-  description = "AWS region to host your infrastructure"
-  default     = "eu-north-1"
-}
-
 variable "back_cluster_name" {
   description = "Back cluster name."
   default     = "backend-cluster"
@@ -32,12 +27,3 @@ variable "back_port" {
   default     = 8080
 }
 
-variable "subdomain_name" {
-  description = "Subdomain name"
-  default     = "server.devrate.org"
-}
-
-variable "domain_name" {
-  description = "Domain name"
-  default     = "devrate.org"
-}
