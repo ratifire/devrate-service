@@ -63,7 +63,8 @@ jobs:
         fi
 
     - name: Terraform Init
-      run: terraform init
+      run: |
+        terraform init -backend-config="/home/runner/work/devrate-service/devrate-service/${{ env.working-directory }}/${{ github.event.inputs.environment }}.backend" -reconfigure
 
     - name: Terraform Format
       run: terraform fmt -check
