@@ -46,14 +46,33 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
+      - name: Select backend configuration
+        run: |
+          echo "Selecting backend configuration for environment: ${{ github.event.inputs.environment }}"
+          BACKEND_FILE="/home/runner/work/devrate-service/devrate-service/${{ env.working-directory }}/${{ github.event.inputs.environment }}.backend"
+          if [[ ! -f "$BACKEND_FILE" ]]; then
+            echo "Error: Backend file $BACKEND_FILE does not exist."
+            exit 1
+          fi
+          echo "Using backend configuration: $BACKEND_FILE"
+
+      - name: Select .tfvars file based on environment
+        run: |
+          echo "Selecting .tfvars file for environment: ${{ github.event.inputs.environment }}"
+          if [[ ! -f "/home/runner/work/devrate-service/devrate-service/${{ env.working-directory }}/${{ github.event.inputs.environment }}.tfvars" ]]; then
+            echo "Error: File ${{ github.event.inputs.environment }}.tfvars does not exist in /home/runner/work/devrate-service/devrate-service/${{ env.working-directory }}."
+            exit 1
+          fi
+
       - name: Terraform Init
-        run: terraform init
+        run: |
+          terraform init -backend-config="/home/runner/work/devrate-service/devrate-service/${{ env.working-directory }}/${{ github.event.inputs.environment }}.backend" -reconfigure
 
       - name: Terraform Format
         run: terraform fmt -check
 
       - name: Terraform Plan
-        run: terraform plan -input=false
+        run: terraform plan -input=false -var-file=${{ github.event.inputs.environment }}.tfvars
 
       - name: Terraform apply
-        run: terraform apply -var="image_tag=${{ env.IMAGE_TAG }}" -auto-approve -input=false
+        run: terraform apply -var="image_tag=${{ env.IMAGE_TAG }}" -var-file="${{ github.workspace }}/${{ env.working-directory }}/${{ github.event.inputs.environment }}.tfvars" -auto-approve -input=false
