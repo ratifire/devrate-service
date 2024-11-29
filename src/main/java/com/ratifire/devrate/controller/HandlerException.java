@@ -5,6 +5,7 @@ import com.ratifire.devrate.exception.InterviewRequestDoesntExistException;
 import com.ratifire.devrate.exception.MailException;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
+import com.ratifire.devrate.exception.SpecializationLinkedToInterviewException;
 import com.ratifire.devrate.exception.UserSearchInvalidInputException;
 import com.ratifire.devrate.security.exception.AuthenticationException;
 import com.ratifire.devrate.security.exception.LogoutException;
@@ -169,7 +170,8 @@ public class HandlerException {
    * Handles exceptions that extend ResourceAlreadyExistException by returning an HTTP status 409.
    */
   @ResponseStatus(HttpStatus.CONFLICT)
-  @ExceptionHandler(ResourceAlreadyExistException.class)
+  @ExceptionHandler({ResourceAlreadyExistException.class,
+      SpecializationLinkedToInterviewException.class})
   public void handleAlreadyExistExceptions() {
   }
 
