@@ -4,6 +4,7 @@ package com.ratifire.devrate.entity.interview;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.enums.InterviewRequestRole;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -43,7 +44,7 @@ public class InterviewRequest {
   @Enumerated(EnumType.STRING)
   private InterviewRequestRole role;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
   @JoinColumn(name = "mastery_id", nullable = false)
   private Mastery mastery;
 
