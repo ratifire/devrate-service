@@ -52,8 +52,6 @@ jobs:
           exit 1
         fi
         echo "Using backend configuration: $BACKEND_FILE"
-      env:
-        working-directory: terraform/infrastructure
 
 
     - name: Select .tfvars file based on environment
