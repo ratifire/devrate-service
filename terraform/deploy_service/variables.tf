@@ -27,3 +27,17 @@ variable "back_port" {
   default     = 8080
 }
 
+variable "subdomain_name" {
+  description = "Subdomain name"
+  default     = "server.devrate.org"
+}
+
+variable "domain_name" {
+  description = "Domain name"
+  default     = "devrate.org"
+}
+
+variable "region" {
+  description = "AWS region to host your infrastructure"
+  type        = string
+}
