@@ -66,7 +66,7 @@ jobs:
       run: |
         terraform init -backend-config="$BACKEND_FILE" -reconfigure
       env:
-        working-directory: terraform/infrastructure
+        working-directory: /home/runner/work/devrate-service/devrate-service/${{ env.working-directory }}
 
     - name: Terraform Format
       run: terraform fmt -check
