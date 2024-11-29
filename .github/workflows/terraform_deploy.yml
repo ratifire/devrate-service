@@ -43,8 +43,15 @@ jobs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
 
-    - name: Select .tfvars file based on environment
+    - name: List files in the working directory
       run: |
+        echo "Listing files in the directory: ${{ env.working-directory }}"
+        ls -l ${{ env.working-directory }}
+      env:
+        working-directory: terraform/infrastructure
+
+    - name: Select .tfvars file based on environment
+      run: |  
         echo "Selecting .tfvars file for environment: ${{ github.event.inputs.environment }}"
         if [[ ! -f "${{ env.working-directory }}/${{ github.event.inputs.environment }}.tfvars" ]]; then
           echo "Error: File ${{ github.event.inputs.environment }}.tfvars does not exist in ${{ env.working-directory }}."
