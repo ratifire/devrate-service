@@ -9,18 +9,12 @@ import com.ratifire.devrate.security.service.AuthenticationService;
 import com.ratifire.devrate.security.service.PasswordResetService;
 import com.ratifire.devrate.security.service.RefreshTokenService;
 import com.ratifire.devrate.security.service.RegistrationService;
-import com.ratifire.devrate.security.service.SsoService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import java.io.IOException;
-import java.util.Map;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,7 +34,6 @@ public class AuthenticationController {
   private final RegistrationService registrationService;
   private final PasswordResetService passwordResetService;
   private final RefreshTokenService refreshTokenService;
-  private final SsoService ssoService;
 
   /**
    * Endpoint for user login.
@@ -124,26 +117,4 @@ public class AuthenticationController {
     refreshTokenService.refreshAuthTokens(request, response);
     return ResponseEntity.ok().build();
   }
-
-  @GetMapping("/callback")
-  public Map<String, String> handleCallback(@RequestParam("code") String code,
-      @RequestParam("state") String state) {
-    return ssoService.handleCallback(code);
-  }
-
-  @GetMapping("/linkedin")
-  public void redirectToCognito(HttpServletResponse response, HttpSession session)
-      throws IOException {
-    String state = UUID.randomUUID().toString();
-    session.setAttribute("oauth2State", state);
-
-    String cognitoAuthUrl = "https://www.linkedin.com/oauth/v2/authorization"
-        + "?response_type=code"
-        + "&client_id=77qshbjd30np9t"  // from linkedin
-        + "&redirect_uri=" + "http://localhost:8080/auth/callback"
-        + "&scope=openid%20profile%20email"
-        + "&state=" + state; // was added for testing purposes
-    response.sendRedirect(cognitoAuthUrl);
-  }
-
 }
