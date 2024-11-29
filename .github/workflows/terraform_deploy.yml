@@ -46,7 +46,7 @@ jobs:
     - name: List files in the working directory
       run: |
         echo "Listing files in the directory: /home/runner/work/devrate-service/devrate-service/${{ env.working-directory }}"
-        ls -l ${{ /home/runner/work/devrate-service/devrate-service/env.working-directory }}
+        ls -l /home/runner/work/devrate-service/devrate-service/${{ env.working-directory }}
       env:
         working-directory: terraform/infrastructure
 
