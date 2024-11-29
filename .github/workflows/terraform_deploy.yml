@@ -45,16 +45,16 @@ jobs:
 
     - name: List files in the working directory
       run: |
-        echo "Listing files in the directory: ${{ env.working-directory }}"
-        ls -l ${{ env.working-directory }}
+        echo "Listing files in the directory: /home/runner/work/devrate-service/devrate-service/${{ env.working-directory }}"
+        ls -l ${{ /home/runner/work/devrate-service/devrate-service/env.working-directory }}
       env:
         working-directory: terraform/infrastructure
 
     - name: Select .tfvars file based on environment
       run: |  
         echo "Selecting .tfvars file for environment: ${{ github.event.inputs.environment }}"
-        if [[ ! -f "${{ env.working-directory }}/${{ github.event.inputs.environment }}.tfvars" ]]; then
-          echo "Error: File ${{ github.event.inputs.environment }}.tfvars does not exist in ${{ env.working-directory }}."
+        if [[ ! -f "${{ /home/runner/work/devrate-service/devrate-service/env.working-directory }}/${{ github.event.inputs.environment }}.tfvars" ]]; then
+          echo "Error: File ${{ github.event.inputs.environment }}.tfvars does not exist in ${{ /home/runner/work/devrate-service/devrate-service/env.working-directory }}."
           exit 1
         fi
 
