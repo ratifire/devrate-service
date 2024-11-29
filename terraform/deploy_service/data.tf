@@ -74,13 +74,13 @@ data "aws_lb" "lb" {
 }
 
 data "aws_route53_zone" "dns_back_zone" {
-  name = "devrate.org"
+  name = var.domain_name
 }
 
 data "aws_acm_certificate" "devrate_cert" {
-  domain   = "devrate.org"
+  domain   = var.domain_name
   statuses = ["ISSUED"]
   tags = {
-    "Name" = "devrate.org"
+    "Name" = var.domain_name
   }
 }
