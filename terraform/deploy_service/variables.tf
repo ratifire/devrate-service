@@ -41,3 +41,7 @@ variable "region" {
   description = "AWS region to host your infrastructure"
   type        = string
 }
+
+variable "vpc" {
+  default = "vpc-0032e90317069a534"
+}

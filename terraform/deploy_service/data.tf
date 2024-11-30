@@ -26,7 +26,7 @@ data "aws_db_instance" "db_host" {
 data "aws_subnets" "default_subnets" {
   filter {
     name   = "vpc-id"
-    values = ["vpc-0032e90317069a534"]
+    values = [var.vpc]
   }
 
 
