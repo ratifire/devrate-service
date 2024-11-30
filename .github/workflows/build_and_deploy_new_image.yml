@@ -48,6 +48,7 @@ jobs:
           sed -i 's|<ZOOM_CLIENT_SECRET>|'${{ env.ZOOM_CLIENT_SECRET }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<ZOOM_ACCOUNT_ID>|'${{ env.ZOOM_ACCOUNT_ID }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<ZOOM_SECRET>|'${{ env.ZOOM_SECRET }}'|g' src/main/resources/application-dev.properties
+          sed -i 's|<DOMAIN>|'${{ vars.DOMAIN }}'|g' src/main/resources/application-dev.properties
 
       - name: Run tests
         run: mvn test
