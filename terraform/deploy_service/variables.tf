@@ -45,3 +45,7 @@ variable "region" {
 variable "vpc" {
   default = "vpc-0032e90317069a534"
 }
+
+variable "target_group_name" {
+  default = "http-ecs-back-tg"
+}
