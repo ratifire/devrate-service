@@ -26,7 +26,7 @@ data "aws_db_instance" "db_host" {
 data "aws_subnets" "default_subnets" {
   filter {
     name   = "vpc-id"
-    values = ["vpc-00b9e5046c1050334"]
+    values = [data.aws_vpc.default_vpc]
   }
 
 
@@ -38,6 +38,10 @@ data "aws_subnets" "default_subnets" {
     ]
   }
 
+}
+
+data "aws_vpc" "default_vpc" {
+  default = true
 }
 
 data "aws_iam_role" "ecs_task_execution_role_arn" {
