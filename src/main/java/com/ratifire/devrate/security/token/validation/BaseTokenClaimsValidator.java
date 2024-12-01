@@ -1,4 +1,4 @@
-package com.ratifire.devrate.security.validation.token.validator;
+package com.ratifire.devrate.security.token.validation;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.ratifire.devrate.security.configuration.properties.CognitoProviderProperties;

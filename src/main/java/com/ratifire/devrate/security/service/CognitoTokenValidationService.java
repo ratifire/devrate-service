@@ -12,7 +12,7 @@ import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import com.ratifire.devrate.security.exception.TokenExpiredException;
 import com.ratifire.devrate.security.exception.TokenValidationException;
 import com.ratifire.devrate.security.model.enums.CognitoTypeToken;
-import com.ratifire.devrate.security.validation.token.validator.TokenClaimsValidator;
+import com.ratifire.devrate.security.token.validation.TokenClaimsValidator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
