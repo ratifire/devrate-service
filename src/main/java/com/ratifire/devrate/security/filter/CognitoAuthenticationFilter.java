@@ -40,6 +40,7 @@ public class CognitoAuthenticationFilter extends OncePerRequestFilter {
     String idToken = TokenUtil.extractIdTokenFromRequest(request);
 
     if (accessToken == null || idToken == null) {
+      request.setAttribute(AUTHENTICATION_ERROR_ATTRIBUTE, UNAUTHORIZED);
       filterChain.doFilter(request, response);
       return;
     }
