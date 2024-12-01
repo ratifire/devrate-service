@@ -4,6 +4,9 @@ post:
   summary: Add feedback
   description: Add feedback of the specified users
   operationId: addFeedback
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId

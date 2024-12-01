@@ -1,5 +1,8 @@
 put:
   summary: Calculate average mark and update skill information
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   tags:
     - Skill
   parameters:

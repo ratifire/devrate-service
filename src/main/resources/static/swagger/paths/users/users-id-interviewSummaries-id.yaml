@@ -4,6 +4,9 @@ delete:
   summary: Delete interview summary By ID
   description: Deletes the association between a user and an interview summary.
   operationId: deleteInterviewSummary
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId

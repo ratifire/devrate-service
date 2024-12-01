@@ -1,5 +1,8 @@
 get:
   summary: Retrieve Mastery by ID
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   tags:
     - Mastery
   parameters:

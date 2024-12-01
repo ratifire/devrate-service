@@ -1,44 +1,22 @@
--- Create roles records
-INSERT INTO roles (id, name, description)
-SELECT * FROM (
-    VALUES
-    (1, 'Admin', 'Admin role'),
-    (2, 'User', 'User role')
-) AS new_roles (id, name, description)
-WHERE NOT EXISTS (SELECT 1
-                  FROM roles
-                  WHERE name IN ('Admin', 'User'));
-
 --  Create user_security records
 INSERT INTO users (id, first_name, last_name, status, country, city, is_subscribed, description,
-                   completed_interviews, conducted_interviews)
+                   completed_interviews, conducted_interviews, email, password)
 SELECT * FROM (
     VALUES
     (8881, 'John', 'Rate', 'Java Back-End', 'Ukraine', 'Dnipro', true,
      'Dedicated and results-driven professional with extensive experience in software development and ' ||
      'project management. Proven track record in designing, implementing, and optimizing complex systems, ' ||
-     'and leading cross-functional teams to achieve project goals.', 16, 18),
+     'and leading cross-functional teams to achieve project goals.', 16, 18, 'john.rate3@tutamail.com', '$2a$12$jjNu2RoOrBhC3JNHyaO0yuNZX7Uqjrd8SprH4FAvCrqX8yDXfG1Wi'),
     (8882, 'Ratifire', 'First', 'ReactJS', 'Ukraine', 'Bila Tserkva', true,
      'Accomplished technology specialist with a robust background in software engineering and system architecture. ' ||
      'Expertise in developing scalable applications and integrating advanced technologies to drive ' ||
      'innovation and efficiency. Strong analytical and troubleshooting skills, with a history of successful ' ||
-     'project delivery and client satisfaction.', 25, 9)
+     'project delivery and client satisfaction.', 25, 9, 'dev.rate3@proton.me', '$2a$12$WFWGCRxsMF7rVSyTmzVRaeDdTvc3NKbH7xVNUxRvSUZpwvBHkWvmi')
 ) AS new_users (id, first_name, last_name, status, country, city, is_subscribed, description,
-                completed_interviews, conducted_interviews)
+                completed_interviews, conducted_interviews, email, password)
 WHERE NOT EXISTS (SELECT 1
                   FROM users
                   WHERE id = new_users.id);
-
---  Create users records
-INSERT INTO user_security (id, email, is_verified, created_at, password, role_id, user_id)
-SELECT * FROM (
-    VALUES
-    (7771, 'john.rate3@tutamail.com', true, CURRENT_TIMESTAMP, '$2a$12$jjNu2RoOrBhC3JNHyaO0yuNZX7Uqjrd8SprH4FAvCrqX8yDXfG1Wi', 2, 8881),
-    (7772, 'dev.rate3@proton.me', true, CURRENT_TIMESTAMP, '$2a$12$WFWGCRxsMF7rVSyTmzVRaeDdTvc3NKbH7xVNUxRvSUZpwvBHkWvmi', 2, 8882)
-) AS new_user_security (id, email, is_verified, created_at, password, role_id, user_id)
-WHERE NOT EXISTS (SELECT 1
-                  FROM user_security
-                  WHERE id = new_user_security.id OR email = new_user_security.email);
 
 --  Create bookmarks records
 INSERT INTO bookmarks (name, link, user_id)
@@ -718,58 +696,58 @@ WHERE NOT EXISTS (SELECT 1
                   WHERE user_id = user_event.user_id AND event_id = user_event.event_id);
 
 -- Create 50 test user records with names in Ukrainian, English, and Ukrainian transliteration
-INSERT INTO users (id, first_name, last_name, country, city, is_subscribed, picture, completed_interviews, conducted_interviews)
+INSERT INTO users (id, first_name, last_name, country, city, is_subscribed, picture, completed_interviews, conducted_interviews, email, password)
 SELECT * FROM (
 VALUES
-    (8933, 'Андрій', 'Шевченко', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 8, 10),
-    (8934, 'Andrew', 'Shevchenko', 'USA', 'New York', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 5, 7),
-    (8935, 'Andrii', 'Shevchenko', 'Ukraine', 'Lviv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 12, 9),
-    (8936, 'Марія', 'Іванова', 'Ukraine', 'Odessa', true, '', 10, 11),
-    (8937, 'Maria', 'Ivanova', 'Canada', 'Toronto', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 14, 8),
-    (8938, 'Mariya', 'Ivanova', 'Ukraine', 'Dnipro', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 9, 7),
-    (8939, 'Олексій', 'Коваленко', 'Ukraine', 'Kharkiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 7, 6),
-    (8940, 'Alex', 'Kovalenko', 'USA', 'Los Angeles', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 12),
-    (8941, 'Oleksii', 'Kovalenko', 'Ukraine', 'Vinnytsia', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 6, 8),
-    (8942, 'Іван', 'Петренко', 'Ukraine', 'Zaporizhzhia', true, '', 13, 10),
-    (8943, 'Ivan', 'Petrenko', 'USA', 'Chicago', true, '', 11, 9),
-    (8944, 'Iwan', 'Petrenko', 'Ukraine', 'Poltava', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 8, 6),
-    (8945, 'Софія', 'Сидоренко', 'Ukraine', 'Kyiv', true, '', 14, 13),
-    (8946, 'Sofia', 'Sydorenko', 'USA', 'San Francisco', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 9, 10),
-    (8947, 'Sofiia', 'Sydorenko', 'Ukraine', 'Chernihiv', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 7),
-    (8948, 'Дмитро', 'Мельник', 'Ukraine', 'Lutsk', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 11, 8),
-    (8949, 'Dmytro', 'Melnyk', 'USA', 'Austin', false, '', 13, 9),
-    (8950, 'Dmitriy', 'Melnyk', 'Ukraine', 'Rivne', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 10),
-    (8951, 'Анастасія', 'Гончаренко', 'Ukraine', 'Kherson', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 12, 11),
-    (8952, 'Anastasia', 'Honcharenko', 'Canada', 'Montreal', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 14, 12),
-    (8953, 'Anastasiia', 'Honcharenko', 'Ukraine', 'Ivano-Frankivsk', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 9, 8),
-    (8954, 'Олена', 'Бондар', 'Ukraine', 'Cherkasy', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 11),
-    (8955, 'Olena', 'Bondar', 'USA', 'Boston', false, '', 8, 6),
-    (8956, 'Olha', 'Bondar', 'Ukraine', 'Sumy', true, '', 11, 9),
-    (8957, 'Віктор', 'Захарчук', 'Ukraine', 'Ternopil', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 13, 8),
-    (8958, 'Victor', 'Zakharchuk', 'USA', 'Seattle', false, '', 9, 10),
-    (8959, 'Viktor', 'Zakharchuk', 'Ukraine', 'Zhytomyr', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 15, 12),
-    (8960, 'Катерина', 'Романюк', 'Ukraine', 'Kyiv', true, '', 11, 8),
-    (8961, 'Katerina', 'Romaniuk', 'USA', 'Denver', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 7),
-    (8962, 'Kateryna', 'Romaniuk', 'Ukraine', 'Lviv', true, '', 14, 9),
-    (8963, 'Юлія', 'Савчук', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 12, 10),
-    (8964, 'Julia', 'Savchuk', 'Canada', 'Vancouver', false, '', 13, 11),
-    (8965, 'Yuliya', 'Savchuk', 'Ukraine', 'Kharkiv', true, '', 8, 6),
-    (8966, 'Михайло', 'Олійник', 'Ukraine', 'Khmelnytskyi', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 9, 7),
-    (8967, 'Michael', 'Oliinyk', 'USA', 'San Diego', false, '', 15, 14),
-    (8968, 'Mykhailo', 'Oliinyk', 'Ukraine', 'Chernivtsi', true, '', 12, 11),
-    (8969, 'Ірина', 'Григоренко', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 11, 9),
-    (8970, 'Iryna', 'Hryhorenko', 'USA', 'New York', false, '', 10, 7),
-    (8971, 'Irena', 'Hryhorenko', 'Ukraine', 'Mykolaiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 8, 6),
-    (8972, 'Тарас', 'Кравченко', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 14, 12),
-    (8973, 'Taras', 'Kravchenko', 'USA', 'Chicago', false, '', 11, 10),
-    (8974, 'Taras', 'Kravchenko', 'Ukraine', 'Kharkiv', true, '', 13, 11),
-    (8975, 'Артем', 'Литвин', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 9),
-    (8976, 'Artem', 'Lytvyn', 'USA', 'San Francisco', false, '', 12, 8),
-    (8977, 'Artemiy', 'Lytvyn', 'Ukraine', 'Dnipro', true, '', 14, 13),
-    (8978, 'Наталія', 'Мороз', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 9, 7),
-    (8979, 'Natalia', 'Moroz', 'USA', 'Miami', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 8),
-    (8980, 'Nataliya', 'Moroz', 'Ukraine', 'Poltava', true, '', 12, 10)
-) AS new_users (id, first_name, last_name, country, city, is_subscribed, picture, completed_interviews, conducted_interviews)
+    (8933, 'Андрій', 'Шевченко', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 8, 10, 'andrii.shevchenko1@example.com', 'password8933'),
+    (8934, 'Andrew', 'Shevchenko', 'USA', 'New York', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 5, 7, 'andrew.shevchenko@example.com', 'password8934'),
+    (8935, 'Andrii', 'Shevchenko', 'Ukraine', 'Lviv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 12, 9, 'andrii.shevchenko@example.com', 'password8935'),
+    (8936, 'Марія', 'Іванова', 'Ukraine', 'Odessa', true, '', 10, 11, 'maria.ivanova1@example.com', 'password8936'),
+    (8937, 'Maria', 'Ivanova', 'Canada', 'Toronto', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 14, 8, 'maria.ivanova@example.com', 'password8937'),
+    (8938, 'Mariya', 'Ivanova', 'Ukraine', 'Dnipro', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 9, 7, 'mariya.ivanova@example.com', 'password8938'),
+    (8939, 'Олексій', 'Коваленко', 'Ukraine', 'Kharkiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 7, 6, 'oleksii.kovalenko1@example.com', 'password8939'),
+    (8940, 'Alex', 'Kovalenko', 'USA', 'Los Angeles', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 12, 'alex.kovalenko@example.com', 'password8940'),
+    (8941, 'Oleksii', 'Kovalenko', 'Ukraine', 'Vinnytsia', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 6, 8, 'oleksii.kovalenko@example.com', 'password8941'),
+    (8942, 'Іван', 'Петренко', 'Ukraine', 'Zaporizhzhia', true, '', 13, 10, 'ivan.petrenko1@example.com', 'password8942'),
+    (8943, 'Ivan', 'Petrenko', 'USA', 'Chicago', true, '', 11, 9, 'ivan.petrenko@example.com', 'password8943'),
+    (8944, 'Iwan', 'Petrenko', 'Ukraine', 'Poltava', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 8, 6, 'iwan.petrenko@example.com', 'password8944'),
+    (8945, 'Софія', 'Сидоренко', 'Ukraine', 'Kyiv', true, '', 14, 13, 'sofia.sydorenko@example.com', 'password8945'),
+    (8946, 'Sofia', 'Sydorenko', 'USA', 'San Francisco', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 9, 10, 'sofia.sydorenko1@example.com', 'password8946'),
+    (8947, 'Sofiia', 'Sydorenko', 'Ukraine', 'Chernihiv', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 7, 'sofiia.sydorenko@example.com', 'password8947'),
+    (8948, 'Дмитро', 'Мельник', 'Ukraine', 'Lutsk', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 11, 8, 'dmytro.melnyk1@example.com', 'password8948'),
+    (8949, 'Dmytro', 'Melnyk', 'USA', 'Austin', false, '', 13, 9, 'dmytro.melnyk@example.com', 'password8949'),
+    (8950, 'Dmitriy', 'Melnyk', 'Ukraine', 'Rivne', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 10, 'dmitriy.melnyk@example.com', 'password8950'),
+    (8951, 'Анастасія', 'Гончаренко', 'Ukraine', 'Kherson', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 12, 11, 'anastasiia.honcharenko1@example.com', 'password8951'),
+    (8952, 'Anastasia', 'Honcharenko', 'Canada', 'Montreal', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 14, 12, 'anastasia.honcharenko@example.com', 'password8952'),
+    (8953, 'Anastasiia', 'Honcharenko', 'Ukraine', 'Ivano-Frankivsk', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 9, 8, 'anastasiia.honcharenko@example.com', 'password8953'),
+    (8954, 'Олена', 'Бондар', 'Ukraine', 'Cherkasy', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 11, 'olena.bondar@example.com', 'password8954'),
+    (8955, 'Olena', 'Bondar', 'USA', 'Boston', false, '', 8, 6, 'olena.bondar1@example.com', 'password8955'),
+    (8956, 'Olha', 'Bondar', 'Ukraine', 'Sumy', true, '', 11, 9, 'olha.bondar@example.com', 'password8956'),
+    (8957, 'Віктор', 'Захарчук', 'Ukraine', 'Ternopil', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 13, 8, 'viktor.zakharchuk@example.com', 'password8957'),
+    (8958, 'Victor', 'Zakharchuk', 'USA', 'Seattle', false, '', 9, 10, 'victor.zakharchuk@example.com', 'password8958'),
+    (8959, 'Viktor', 'Zakharchuk', 'Ukraine', 'Zhytomyr', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 15, 12, 'viktor.zakharchuk1@example.com', 'password8959'),
+    (8960, 'Катерина', 'Романюк', 'Ukraine', 'Kyiv', true, '', 11, 8, 'katerina.romaniuk@example.com', 'password8960'),
+    (8961, 'Katerina', 'Romaniuk', 'USA', 'Denver', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 7, 'katerina.romaniuk1@example.com', 'password8961'),
+    (8962, 'Kateryna', 'Romaniuk', 'Ukraine', 'Lviv', true, '', 14, 9, 'kateryna.romaniuk@example.com', 'password8962'),
+    (8963, 'Юлія', 'Савчук', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 12, 10, 'yuliya.savchuk1@example.com', 'password8963'),
+    (8964, 'Julia', 'Savchuk', 'Canada', 'Vancouver', false, '', 13, 11, 'julia.savchuk@example.com', 'password8964'),
+    (8965, 'Yuliya', 'Savchuk', 'Ukraine', 'Kharkiv', true, '', 8, 6, 'yuliya.savchuk@example.com', 'password8965'),
+    (8966, 'Михайло', 'Олійник', 'Ukraine', 'Khmelnytskyi', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 9, 7, 'mykhailo.oliinyk1@example.com', 'password8966'),
+    (8967, 'Michael', 'Oliinyk', 'USA', 'San Diego', false, '', 15, 14, 'michael.oliinyk@example.com', 'password8967'),
+    (8968, 'Mykhailo', 'Oliinyk', 'Ukraine', 'Chernivtsi', true, '', 12, 11, 'mykhailo.oliinyk@example.com', 'password8968'),
+    (8969, 'Ірина', 'Григоренко', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 11, 9, 'iryna.hryhorenko1@example.com', 'password8969'),
+    (8970, 'Iryna', 'Hryhorenko', 'USA', 'New York', false, '', 10, 7, 'iryna.hryhorenko@example.com', 'password8970'),
+    (8971, 'Irena', 'Hryhorenko', 'Ukraine', 'Mykolaiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 8, 6, 'irena.hryhorenko@example.com', 'password8971'),
+    (8972, 'Тарас', 'Кравченко', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 14, 12, 'taras.kravchenko1@example.com', 'password8972'),
+    (8973, 'Taras', 'Kravchenko', 'USA', 'Chicago', false, '', 11, 10, 'taras.kravchenko2@example.com', 'password8973'),
+    (8974, 'Taras', 'Kravchenko', 'Ukraine', 'Kharkiv', true, '', 13, 11, 'taras.kravchenko@example.com', 'password8974'),
+    (8975, 'Артем', 'Литвин', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 9, 'artem.lytvyn@example.com', 'password8975'),
+    (8976, 'Artem', 'Lytvyn', 'USA', 'San Francisco', false, '', 12, 8, 'artem.lytvyn1@example.com', 'password8976'),
+    (8977, 'Artemiy', 'Lytvyn', 'Ukraine', 'Dnipro', true, '', 14, 13, 'artemiy.lytvyn@example.com', 'password8977'),
+    (8978, 'Наталія', 'Мороз', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 9, 7, 'natalia.moroz1@example.com', 'password8978'),
+    (8979, 'Natalia', 'Moroz', 'USA', 'Miami', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 8, 'natalia.moroz@example.com', 'password8979'),
+    (8980, 'Nataliya', 'Moroz', 'Ukraine', 'Poltava', true, '', 12, 10, 'nataliya.moroz@example.com', 'password8980')
+) AS new_users (id, first_name, last_name, country, city, is_subscribed, picture, completed_interviews, conducted_interviews, email, password)
 WHERE NOT EXISTS (SELECT 1
                   FROM users
                   WHERE id = new_users.id);

@@ -1,5 +1,8 @@
 get:
   summary: Retrieve list of hardSkills by Mastery ID
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   tags:
     - Mastery
   parameters:

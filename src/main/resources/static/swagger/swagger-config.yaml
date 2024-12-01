@@ -25,6 +25,8 @@ tags:
     description: Endpoints for user authentication
   - name: Password-Reset
     description: Endpoints for password reset functionality
+  - name: Refresh-Token
+    description: Endpoints for refresh token functionality
   - name: User Info
     description: Endpoints for user personal info functionality
   - name: Employment Records
@@ -52,7 +54,7 @@ tags:
 paths:
   /auth/signup:
     $ref: './paths/auth/signup.yaml'
-  /auth/signup/{code}:
+  /auth/signup/confirm:
     $ref: './paths/auth/signup-code.yaml'
   /auth/request-password-reset:
     $ref: './paths/auth/request-password-reset.yaml'
@@ -62,6 +64,8 @@ paths:
     $ref: './paths/auth/signin.yaml'
   /auth/logout:
     $ref: './paths/auth/logout.yaml'
+  /auth/refresh-token:
+    $ref: './paths/auth/refresh-token.yaml'
   /notifications:
     $ref: './paths/notifications/notifications.yaml'
   /ws/notifications:
@@ -166,8 +170,22 @@ paths:
     $ref: './paths/users/users-id-platform-feedbacks.yaml'
 components:
   securitySchemes:
-    basicAuth:
+    accessToken:
       type: http
-      scheme: basic
+      scheme: bearer
+      bearerFormat: JWT
+      description: Access token used for authorizing API requests. Sent in the `Authorization` header.
+    idToken:
+      type: apiKey
+      in: header
+      name: ID-Token
+      description: ID token used for retrieving user identity information. Sent in the `ID-Token` header.
+    refreshToken:
+      type: apiKey
+      in: cookie
+      name: Refresh-Token
+      description: Refresh token used to obtain a new access and ID tokens. Sent as an HTTP cookie with the name `Refresh-Token`.
 security:
-  - basicAuth: [ ]
+  - accessToken: []
+  - idToken: []
+  - refreshToken: []

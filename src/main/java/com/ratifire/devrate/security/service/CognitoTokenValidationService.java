@@ -9,13 +9,16 @@ import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
+import com.ratifire.devrate.security.exception.TokenExpiredException;
 import com.ratifire.devrate.security.exception.TokenValidationException;
-import com.ratifire.devrate.security.model.CognitoTypeToken;
-import com.ratifire.devrate.security.validation.validator.TokenClaimsValidator;
+import com.ratifire.devrate.security.model.enums.CognitoTypeToken;
+import com.ratifire.devrate.security.token.validation.TokenClaimsValidator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,6 +27,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CognitoTokenValidationService {
 
+  private static final Logger log = LoggerFactory.getLogger(CognitoTokenValidationService.class);
   private final JWKSource<SecurityContext> jwkSource;
   private final Map<CognitoTypeToken, TokenClaimsValidator> claimValidators;
 
@@ -47,12 +51,17 @@ public class CognitoTokenValidationService {
    */
   public boolean validateToken(String token, CognitoTypeToken type) {
     try {
+
       SignedJWT signedJwt = SignedJWT.parse(token);
       JWTClaimsSet claimsSet = createJwtProcessor().process(signedJwt, null);
       TokenClaimsValidator validator = claimValidators.get(type);
       return validator.validate(claimsSet);
+
+    } catch (TokenExpiredException e) {
+      throw e;
     } catch (Exception e) {
-      throw new TokenValidationException("Failed to validate token");
+      log.error("Token validation process was failed: {}", e.getMessage(), e);
+      throw new TokenValidationException("Token validation process was failed");
     }
   }
 
@@ -66,6 +75,7 @@ public class CognitoTokenValidationService {
     JWSKeySelector<SecurityContext> selector = new JWSVerificationKeySelector<>(RS256, jwkSource);
     DefaultJWTProcessor<SecurityContext> jwtProcessor = new DefaultJWTProcessor<>();
     jwtProcessor.setJWSKeySelector(selector);
+    jwtProcessor.setJWTClaimsSetVerifier(null);
     return jwtProcessor;
   }
 

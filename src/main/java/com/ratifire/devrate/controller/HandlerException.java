@@ -1,6 +1,5 @@
 package com.ratifire.devrate.controller;
 
-import com.ratifire.devrate.exception.AuthenticationException;
 import com.ratifire.devrate.exception.FeedbackSubmissionLimitException;
 import com.ratifire.devrate.exception.InterviewRequestDoesntExistException;
 import com.ratifire.devrate.exception.MailException;
@@ -8,6 +7,14 @@ import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.exception.SpecializationLinkedToInterviewException;
 import com.ratifire.devrate.exception.UserSearchInvalidInputException;
+import com.ratifire.devrate.security.exception.AuthenticationException;
+import com.ratifire.devrate.security.exception.LogoutException;
+import com.ratifire.devrate.security.exception.PasswordResetException;
+import com.ratifire.devrate.security.exception.RefreshTokenException;
+import com.ratifire.devrate.security.exception.TokenExpiredException;
+import com.ratifire.devrate.security.exception.UserAlreadyExistsException;
+import com.ratifire.devrate.security.exception.UserRegistrationException;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
@@ -31,6 +38,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 public class HandlerException {
 
   private static final Logger log = LogManager.getLogger(HandlerException.class);
+  private static final int EXPIRED_TOKEN_HTTP_STATUS = 498;
 
   /**
    * Handles MethodArgumentNotValidException by returning a map of field errors with their
@@ -100,6 +108,43 @@ public class HandlerException {
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
   @ExceptionHandler({AuthenticationException.class})
   public void handleAuthenticationExceptions() {
+  }
+
+  /**
+   * Handles the logout exceptions by returning an HTTP status 401.
+   */
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  @ExceptionHandler({LogoutException.class})
+  public void handleLogoutExceptions() {
+  }
+
+  /**
+   * Handles the TokenExpired exceptions by returning an HTTP status 498.
+   */
+  @ExceptionHandler(TokenExpiredException.class)
+  public void handleTokenExpiredException(HttpServletResponse response) {
+    response.setStatus(EXPIRED_TOKEN_HTTP_STATUS);
+  }
+
+  /**
+   * Handles exceptions related to user registration, password reset, and token refresh.
+   * This method returns an HTTP 400 (Bad Request) status code for the specified exceptions.
+   */
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler({
+      UserRegistrationException.class,
+      RefreshTokenException.class,
+      PasswordResetException.class
+  })
+  public void handleBadRequestAuthenticationExceptions() {
+  }
+
+  /**
+   * Handles the UserAlreadyExistsException by returning an HTTP status 409.
+   */
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ExceptionHandler(UserAlreadyExistsException.class)
+  public void handleUserAlreadyExistsExceptionExceptions() {
   }
 
   /**

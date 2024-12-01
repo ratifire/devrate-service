@@ -1,5 +1,8 @@
 get:
   summary: Retrieve list of masteries by Specialization ID
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   tags:
     - Specialization
   parameters:

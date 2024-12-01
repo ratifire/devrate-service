@@ -4,6 +4,9 @@ get:
   summary: Search users by name
   description: Returns a list of users that match the provided query string.
   operationId: searchUsers
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: query
       name: query

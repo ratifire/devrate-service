@@ -4,6 +4,9 @@ get:
   summary: Get Achievement By ID
   description: Retrieves achievement based on the provided ID.
   operationId: getAchievementById
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: id
@@ -37,6 +40,9 @@ put:
   summary: Update Achievement By ID
   description: Updates an existing achievement identified by the provided ID.
   operationId: updateAchievement
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: id
@@ -76,6 +82,9 @@ delete:
   summary: Delete Achievement By ID
   description: Deletes achievement identified by the provided ID.
   operationId: deleteAchievement
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: id

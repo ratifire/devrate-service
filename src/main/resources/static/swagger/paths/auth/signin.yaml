@@ -4,7 +4,7 @@ post:
   summary: Authenticate user
   description: Authenticates a user based on the provided login credentials.
   security: [ ]
-  operationId: authenticateUser
+  operationId: login
   requestBody:
     required: true
     content:
@@ -14,6 +14,12 @@ post:
   responses:
     '200':
       description: Successful authentication
+      headers:
+        Set-Cookie:
+          description: Sets the refresh token cookie with the token value and appropriate security attributes.
+          schema:
+            type: string
+            example: Refresh-Token=eyJhbGciOiJIUzI1NiIsInR...; Path=/; HttpOnly; Secure
       content:
         application/json:
           schema:

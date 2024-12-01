@@ -3,6 +3,9 @@ get:
     - Specialization
   summary: Get specializations by user ID
   description: Returns a list of specializations for the specified user.
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId
@@ -26,6 +29,9 @@ post:
     - Specialization
   summary: Create specialization for user
   description: Creates a new specialization and associates it with the specified user.
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId

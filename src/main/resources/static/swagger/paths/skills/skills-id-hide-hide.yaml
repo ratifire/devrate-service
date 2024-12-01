@@ -1,5 +1,8 @@
 patch:
   summary: Update hide skill information
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   tags:
     - Skill
   parameters:
