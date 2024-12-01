@@ -119,7 +119,7 @@ public class HandlerException {
   }
 
   /**
-   * Handles the TokenExpired exceptions by returning an HTTP status 419.
+   * Handles the TokenExpired exceptions by returning an HTTP status 498.
    */
   @ExceptionHandler(TokenExpiredException.class)
   public void handleTokenExpiredException(HttpServletResponse response) {
@@ -127,27 +127,16 @@ public class HandlerException {
   }
 
   /**
-   * Handles the PasswordReset exceptions by returning an HTTP status 400.
+   * Handles exceptions related to user registration, password reset, and token refresh.
+   * This method returns an HTTP 400 (Bad Request) status code for the specified exceptions.
    */
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  @ExceptionHandler({PasswordResetException.class})
-  public void handlePasswordResetExceptionExceptions() {
-  }
-
-  /**
-   * Handles the RefreshToken exceptions by returning an HTTP status 400.
-   */
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
-  @ExceptionHandler({RefreshTokenException.class})
-  public void handleRefreshTokenExceptions() {
-  }
-
-  /**
-   * Handles the UserRegistration exceptions by returning an HTTP status 400.
-   */
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
-  @ExceptionHandler({UserRegistrationException.class})
-  public void handleUserRegistrationExceptions() {
+  @ExceptionHandler({
+      UserRegistrationException.class,
+      RefreshTokenException.class,
+      PasswordResetException.class
+  })
+  public void handleBadRequestAuthenticationExceptions() {
   }
 
   /**
