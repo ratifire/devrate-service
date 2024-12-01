@@ -4,6 +4,9 @@ post:
   summary: Save contacts
   description: Save contacts of the specified users
   operationId: saveContacts
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId
@@ -46,6 +49,9 @@ get:
   summary: Get all contacts by user ID
   description: Retrieve all contacts of the specified user
   operationId: findAllContactsByUserId
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId

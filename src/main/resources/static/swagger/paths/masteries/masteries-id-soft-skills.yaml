@@ -1,5 +1,8 @@
 get:
   summary: Retrieve list of softSkills by Mastery ID
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   tags:
     - Mastery
   parameters:

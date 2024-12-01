@@ -1,5 +1,8 @@
 post:
   summary: Create a skills and associate it with the specified Mastery by ID
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   tags:
     - Mastery
   parameters:

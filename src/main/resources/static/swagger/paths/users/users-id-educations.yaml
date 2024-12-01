@@ -4,6 +4,9 @@ post:
   summary: Create New Education
   description: Creates a new education record for a specified user.
   operationId: createEducation
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId
@@ -42,6 +45,9 @@ get:
   summary: Get all educations by user ID
   description: Retrieve all educations of the specified user
   operationId: getEducationsByUserId
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId

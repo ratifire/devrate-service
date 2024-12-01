@@ -4,6 +4,9 @@ get:
   summary: Get Employment record By ID
   description: Retrieves all user`s employment records based on the provided ID.
   operationId: findEmploymentRecordById
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: id
@@ -37,6 +40,9 @@ put:
   summary: Update employment-record By ID
   description: Updates an existing employment-record identified by the provided ID.
   operationId: updateEmploymentRecord
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: id
@@ -76,6 +82,9 @@ delete:
   summary: Delete Employment Record By ID
   description: Deletes an employment record identified by the provided ID.
   operationId: deleteEmploymentRecord
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: id

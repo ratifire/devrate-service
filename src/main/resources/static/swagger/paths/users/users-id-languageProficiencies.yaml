@@ -4,6 +4,9 @@ post:
   summary: Save language proficiencies
   description: Save language proficiencies of the specified user
   operationId: saveLanguageProficiencies
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId
@@ -46,6 +49,9 @@ get:
   summary: Get all language proficiencies by user ID
   description: Retrieve all language proficiencies of the specified user
   operationId: findAllLanguageProficienciesByUserId
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId

@@ -4,6 +4,9 @@ get:
   summary: Get Employment record By UserId
   description: Retrieves all user`s employment records based on the provided UserId.
   operationId: findByUserId
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId
@@ -37,6 +40,9 @@ post:
   summary: Create New Employment Records
   description: Creates a new employment record for a specified user.
   operationId: createEmploymentRecord
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId

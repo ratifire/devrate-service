@@ -4,6 +4,9 @@ get:
   summary: Get User Picture
   description: Retrieves the picture associated with the user by their user ID.
   operationId: getUserPicture
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId
@@ -48,6 +51,9 @@ post:
   summary: Add or Update User Picture
   description: Adds or updates the picture for the user by their user ID.
   operationId: addUserPicture
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId
@@ -89,6 +95,9 @@ delete:
   summary: Remove User Picture
   description: Removes the picture for the user by their user ID.
   operationId: removeUserPicture
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId
