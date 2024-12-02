@@ -48,10 +48,6 @@ jobs:
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
 
-      - name: Debug DOMAIN variable
-        run: |
-          echo "Domain from vars: '${{ vars.DOMAIN }}'"
-
       - name: Run destroy_service workflow
         id: destroy_service
         run: |
