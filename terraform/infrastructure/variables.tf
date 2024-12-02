@@ -5,7 +5,7 @@ variable "max_untagged_images" {
 
 variable "region" {
   description = "AWS region to host your infrastructure"
-  default     = "eu-north-1"
+  type        = string
 }
 
 variable "instance_type" {
@@ -41,4 +41,9 @@ variable "db_instance_identifier" {
 variable "db_name" {
   description = "Name of database"
   default     = "backend"
+}
+
+variable "s3_bucket_name" {
+  description = "Name of the S3 bucket for the backend"
+  type        = string
 }

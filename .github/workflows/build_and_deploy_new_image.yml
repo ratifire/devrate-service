@@ -5,10 +5,18 @@ name: Build_and_Deploy_new_Image
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select environment to deploy (prod, dev, dev_new)'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - prod
+          - dev_new
 
 env:
-  AWS_SES_ACCESS_KEY_ID: ${{ secrets.AWS_SES_ACCESS_KEY_ID }}
-  AWS_SES_SECRET_ACCESS_KEY: ${{ secrets.AWS_SES_SECRET_ACCESS_KEY }}
   ZOOM_CLIENT_ID: ${{secrets.ZOOM_CLIENT_ID}}
   ZOOM_CLIENT_SECRET: ${{secrets.ZOOM_CLIENT_SECRET}}
   ZOOM_ACCOUNT_ID: ${{secrets.ZOOM_ACCOUNT_ID}}
@@ -21,7 +29,7 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    environment: dev
+    environment: ${{ github.event.inputs.environment }}
 
     steps:
       - uses: actions/checkout@v4
@@ -34,12 +42,13 @@ jobs:
 
       - name: Update application-dev.properties with environment variables
         run: |
-          sed -i 's|<AWS_SES_ACCESS_KEY_ID>|'${{ env.AWS_SES_ACCESS_KEY_ID }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<AWS_SES_SECRET_ACCESS_KEY>|'${{ env.AWS_SES_SECRET_ACCESS_KEY }}'|g' src/main/resources/application-dev.properties
+          sed -i 's|<AWS_SES_ACCESS_KEY_ID>|'${{ secrets.AWS_SES_ACCESS_KEY_ID }}'|g' src/main/resources/application-dev.properties
+          sed -i 's|<AWS_SES_SECRET_ACCESS_KEY>|'${{ secrets.AWS_SES_SECRET_ACCESS_KEY }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<ZOOM_CLIENT_ID>|'${{ env.ZOOM_CLIENT_ID }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<ZOOM_CLIENT_SECRET>|'${{ env.ZOOM_CLIENT_SECRET }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<ZOOM_ACCOUNT_ID>|'${{ env.ZOOM_ACCOUNT_ID }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<ZOOM_SECRET>|'${{ env.ZOOM_SECRET }}'|g' src/main/resources/application-dev.properties
+          sed -i 's|<DOMAIN>|'${{ vars.DOMAIN }}'|g' src/main/resources/application-dev.properties
 
       - name: Run tests
         run: mvn test
@@ -62,6 +71,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
           # Build a docker container and
@@ -73,26 +83,33 @@ jobs:
 
       - name: Get current Task Definition
         id: get-task-def
+        env:
+          ECS_TASK_DEFINITION: ${{ vars.ECS_TASK_DEFINITION }}
         run: |
           aws ecs describe-task-definition \
-          --task-definition ${{ vars.ECS_TASK_DEFINITION }} \
+          --task-definition ${{ env.ECS_TASK_DEFINITION }} \
           --query 'taskDefinition' \
           --output json > task-def.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
+        env:
+          CONTAINER_NAME: ${{ vars.CONTAINER_NAME }}
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-def.json
-          container-name: ${{ vars.CONTAINER_NAME }}
+          container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
+        env:
+          ECS_SERVICE: ${{ vars.ECS_SERVICE }}
+          ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ${{ vars.ECS_SERVICE }}
-          cluster: ${{ vars.ECS_CLUSTER }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
 
       - name: Send notification to Slack
