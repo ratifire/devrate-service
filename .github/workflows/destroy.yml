@@ -49,7 +49,7 @@ jobs:
 
       - name: Debug DOMAIN variable
         run: |
-          echo "Domain ${{ vars.DOMAIN }}"
+          echo "Domain from vars: '${{ vars.DOMAIN }}'"
 
       - name: Run destroy_service workflow
         id: destroy_service
