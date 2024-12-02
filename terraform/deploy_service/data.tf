@@ -77,7 +77,7 @@ data "aws_route53_zone" "dns_back_zone" {
   name = var.domain_name
 }
 
-data "aws_acm_certificate" "devrate_cert" {
+data "aws_acm_certificate" "domain_cert" {
   domain   = var.domain_name
   statuses = ["ISSUED"]
   tags = {

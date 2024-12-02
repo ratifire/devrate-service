@@ -116,6 +116,6 @@ jobs:
         if: success()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{
-            "text": "GitHub Action (BackEnd): New brunch is deploying to AWS! Status: ${{ job.status }}.\nTriggered by: ${{ github.actor }}\nBranch: ${{ github.ref }}"
+            "text": "GitHub Action (BackEnd. dev.skillzzy.com): New brunch is deploying to AWS! Status: ${{ job.status }}.\nTriggered by: ${{ github.actor }}\nBranch: ${{ github.ref }}"
           }' ${{ secrets.SLACK_WEBHOOK_URL }}
 
