@@ -47,6 +47,10 @@ jobs:
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
 
+      - name: Debug DOMAIN variable
+        run: |
+          echo "Domain ${{ vars.DOMAIN }}"
+
       - name: Run destroy_service workflow
         id: destroy_service
         run: |
@@ -76,10 +80,6 @@ jobs:
               gh run watch $RUN_ID --exit-status --interval 15
           fi 
 
-      - name: Debug DOMAIN variable
-        run: |
-          echo "Domain ${{ vars.DOMAIN }}"
-
       - name: Send notification to Slack
         if: success()
         run: |
@@ -87,9 +87,3 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{
             "text": "GitHub Action (BackEnd): $DOMAIN stopped! Status: ${{ job.status }}.\nEnvironment: ${{ env.ENVIRONMENT }}\nTriggered by: ${{ github.actor }}"
           }' ${{ secrets.SLACK_WEBHOOK_URL }}
-
-      - name: Debug DOMAIN variable
-        run: |
-         echo "Domain ${{ vars.DOMAIN }}"
-
-
