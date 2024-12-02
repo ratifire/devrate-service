@@ -66,9 +66,7 @@ jobs:
         id: down_infrastructure
         if: steps.destroy_service.conclusion == 'success'
         run: |
-          gh workflow run Terraform_destroy --ref ${{ env.BRANCH_NAME }} -F environment=${{ env.ENVIRONMENT }}
-          echo "Waiting for Terraform_destroy to complete..."
-          gh workflow run Down_infrastructure --ref ${{ env.BRANCH_NAME }}
+          gh workflow run Down_infrastructure --ref ${{ env.BRANCH_NAME }} -F environment=${{ env.ENVIRONMENT }}
           echo "Waiting for Down_infrastructure to complete..."
           sleep 10
           RUN_ID=$(gh run list --workflow=Down_infrastructure --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
