@@ -26,7 +26,7 @@ data "aws_db_instance" "db_host" {
 data "aws_subnets" "default_subnets" {
   filter {
     name   = "vpc-id"
-    values = ["vpc-00b9e5046c1050334"]
+    values = [var.vpc]
   }
 
 
@@ -74,13 +74,13 @@ data "aws_lb" "lb" {
 }
 
 data "aws_route53_zone" "dns_back_zone" {
-  name = "devrate.org"
+  name = var.domain_name
 }
 
-data "aws_acm_certificate" "devrate_cert" {
-  domain   = "devrate.org"
+data "aws_acm_certificate" "domain_cert" {
+  domain   = var.domain_name
   statuses = ["ISSUED"]
   tags = {
-    "Name" = "devrate.org"
+    "Name" = var.domain_name
   }
 }
