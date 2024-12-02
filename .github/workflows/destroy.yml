@@ -78,10 +78,9 @@ jobs:
 
       - name: Send notification to Slack
         if: success()
-        env:
-          DOMAIN: ${{ vars.DOMAIN }}
         run: |
+          DOMAIN: ${{ vars.DOMAIN }}
           curl -X POST -H 'Content-type: application/json' --data '{
-            "text": "GitHub Action (BackEnd): ${{ env.DOMAIN }} stopped! Status: ${{ job.status }}.\nEnvironment: ${{ env.ENVIRONMENT }}\nTriggered by: ${{ github.actor }}"
+            "text": "GitHub Action (BackEnd): $DOMAIN stopped! Status: ${{ job.status }}.\nEnvironment: ${{ env.ENVIRONMENT }}\nTriggered by: ${{ github.actor }}"
           }' ${{ secrets.SLACK_WEBHOOK_URL }}
 
