@@ -7,9 +7,11 @@ import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
+import com.ratifire.devrate.exception.SpecializationLinkedToInterviewException;
 import com.ratifire.devrate.exception.SpecializationNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SpecializationRepository;
+import com.ratifire.devrate.repository.interview.InterviewRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Service;
 public class SpecializationService {
 
   private final SpecializationRepository specializationRepository;
+  private final InterviewRepository interviewRepository;
   private final DataMapper<SpecializationDto, Specialization> specializationMapper;
   private final DataMapper<MasteryDto, Mastery> masteryMapper;
   private final MasteryService masteryService;
@@ -158,8 +161,14 @@ public class SpecializationService {
    * Deletes specialization by specialization ID.
    *
    * @param id the ID of the specialization whose is to be deleted
+   * @throws SpecializationLinkedToInterviewException if specialization stills linked to interview
    */
+  @Transactional
   public void deleteById(long id) {
+    Long linkedInterviewId = interviewRepository.findFirstBySpecializationId(id);
+    if (linkedInterviewId != null) {
+      throw new SpecializationLinkedToInterviewException(id, linkedInterviewId);
+    }
     specializationRepository.deleteById(id);
   }
 

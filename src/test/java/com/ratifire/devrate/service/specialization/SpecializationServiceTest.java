@@ -20,8 +20,10 @@ import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
+import com.ratifire.devrate.exception.SpecializationLinkedToInterviewException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SpecializationRepository;
+import com.ratifire.devrate.repository.interview.InterviewRepository;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -47,6 +49,8 @@ public class SpecializationServiceTest {
 
   @Mock
   private SpecializationRepository specializationRepository;
+  @Mock
+  private InterviewRepository interviewRepository;
   @Mock
   private DataMapper dataMapper;
   @Mock
@@ -184,9 +188,18 @@ public class SpecializationServiceTest {
   @Test
   void deleteById_shouldCallRepositoryDelete() {
     doNothing().when(specializationRepository).deleteById(specId);
+    when(interviewRepository.findFirstBySpecializationId(specId)).thenReturn(null);
     specializationService.deleteById(specId);
 
     verify(specializationRepository).deleteById(specId);
+  }
+
+  @Test
+  void deleteById_linkedInterview_shouldThrowSpecializationLinkedToInterviewException() {
+    when(interviewRepository.findFirstBySpecializationId(specId)).thenReturn(anyLong());
+
+    assertThrows(SpecializationLinkedToInterviewException.class,
+        () -> specializationService.deleteById(specId));
   }
 
   @Test
