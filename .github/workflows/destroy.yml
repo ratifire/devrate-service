@@ -80,6 +80,6 @@ jobs:
         if: success()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{
-            "text": "GitHub Action (BackEnd): dev.skillzzy.com stopped! Status: ${{ job.status }}.\nEnvironment: ${{ env.ENVIRONMENT }}\nTriggered by: ${{ github.actor }}"
+            "text": "GitHub Action (BackEnd): ${{ vars.DOMAIN }} stopped! Status: ${{ job.status }}.\nEnvironment: ${{ env.ENVIRONMENT }}\nTriggered by: ${{ github.actor }}"
           }' ${{ secrets.SLACK_WEBHOOK_URL }}
 
