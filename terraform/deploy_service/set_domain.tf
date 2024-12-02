@@ -3,7 +3,7 @@ resource "aws_lb_listener" "https_ecs_back_listener" {
   port              = 443
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
-  certificate_arn   = data.aws_acm_certificate.devrate_cert.arn
+  certificate_arn   = data.aws_acm_certificate.domain_cert.arn
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.http_ecs_back_tg.arn

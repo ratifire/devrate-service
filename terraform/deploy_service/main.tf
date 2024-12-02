@@ -1,10 +1,5 @@
 terraform {
-  backend "s3" {
-    bucket  = "devrate-bucket-back-1"
-    encrypt = true
-    key     = "AWS/build-test-backend-deploy-tstates/terraform.tfstate"
-    region  = "eu-north-1"
-  }
+  backend "s3" {}
 }
 
 provider "aws" {}

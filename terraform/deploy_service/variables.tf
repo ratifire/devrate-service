@@ -1,8 +1,3 @@
-variable "region" {
-  description = "AWS region to host your infrastructure"
-  default     = "eu-north-1"
-}
-
 variable "back_cluster_name" {
   description = "Back cluster name."
   default     = "backend-cluster"
@@ -40,4 +35,17 @@ variable "subdomain_name" {
 variable "domain_name" {
   description = "Domain name"
   default     = "devrate.org"
+}
+
+variable "region" {
+  description = "AWS region to host your infrastructure"
+  type        = string
+}
+
+variable "vpc" {
+  default = "vpc-0032e90317069a534"
+}
+
+variable "target_group_name" {
+  default = "http-ecs-back-tg"
 }
