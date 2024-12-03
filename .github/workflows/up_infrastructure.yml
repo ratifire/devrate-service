@@ -1,4 +1,4 @@
-name: Terraform_destroy
+name: Up_infrastructure
 
 on:
   workflow_dispatch:
@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   terraform:
-    name: Terraform destroy infrastructure
+    name: Terraform deploy infrastructure
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment }}
     env:
@@ -54,7 +54,7 @@ jobs:
         echo "Using backend configuration: $BACKEND_FILE"
 
     - name: Select .tfvars file based on environment
-      run: |
+      run: |  
         echo "Selecting .tfvars file for environment: ${{ github.event.inputs.environment }}"
         if [[ ! -f "/home/runner/work/devrate-service/devrate-service/${{ env.working-directory }}/${{ github.event.inputs.environment }}.tfvars" ]]; then
           echo "Error: File ${{ github.event.inputs.environment }}.tfvars does not exist in /home/runner/work/devrate-service/devrate-service/${{ env.working-directory }}."
@@ -68,5 +68,8 @@ jobs:
     - name: Terraform Format
       run: terraform fmt -check
 
-    - name: Terraform destroy
-      run: terraform destroy -auto-approve -input=false -var-file=${{ github.event.inputs.environment }}.tfvars
+    - name: Terraform Plan
+      run: terraform plan -input=false -var-file=${{ github.event.inputs.environment }}.tfvars
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve -input=false -var-file=${{ github.event.inputs.environment }}.tfvars
