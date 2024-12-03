@@ -83,33 +83,26 @@ jobs:
 
       - name: Get current Task Definition
         id: get-task-def
-        env:
-          ECS_TASK_DEFINITION: ${{ vars.ECS_TASK_DEFINITION }}
         run: |
           aws ecs describe-task-definition \
-          --task-definition ${{ env.ECS_TASK_DEFINITION }} \
+          --task-definition ${{ vars.ECS_TASK_DEFINITION }} \
           --query 'taskDefinition' \
           --output json > task-def.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
-        env:
-          CONTAINER_NAME: ${{ vars.CONTAINER_NAME }}
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-def.json
-          container-name: ${{ env.CONTAINER_NAME }}
+          container-name: ${{ vars.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
-        env:
-          ECS_SERVICE: ${{ vars.ECS_SERVICE }}
-          ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ${{ env.ECS_SERVICE }}
-          cluster: ${{ env.ECS_CLUSTER }}
+          service: ${{ vars.ECS_SERVICE }}
+          cluster: ${{ vars.ECS_CLUSTER }}
           wait-for-service-stability: true
 
       - name: Send notification to Slack
@@ -118,4 +111,3 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{
             "text": "GitHub Action (BackEnd): New brunch is deploying to AWS! Status: ${{ job.status }}.\nTriggered by: ${{ github.actor }}\nBranch: ${{ github.ref }}"
           }' ${{ secrets.SLACK_WEBHOOK_URL }}
-
