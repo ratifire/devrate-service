@@ -83,11 +83,9 @@ jobs:
 
       - name: Get current Task Definition
         id: get-task-def
-        env:
-          ECS_TASK_DEFINITION: ${{ vars.ECS_TASK_DEFINITION }}
         run: |
           aws ecs describe-task-definition \
-          --task-definition ${{ env.ECS_TASK_DEFINITION }} \
+          --task-definition ${{ vars.ECS_TASK_DEFINITION }} \
           --query 'taskDefinition' \
           --output json > task-def.json
 
@@ -113,4 +111,3 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{
             "text": "GitHub Action (BackEnd): New brunch is deploying to AWS! Status: ${{ job.status }}.\nTriggered by: ${{ github.actor }}\nBranch: ${{ github.ref }}"
           }' ${{ secrets.SLACK_WEBHOOK_URL }}
-
