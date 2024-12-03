@@ -15,6 +15,9 @@ on:
           - dev
           - prod
           - dev_new
+  push:
+    branches:
+      - main
 
 env:
   ZOOM_CLIENT_ID: ${{secrets.ZOOM_CLIENT_ID}}
