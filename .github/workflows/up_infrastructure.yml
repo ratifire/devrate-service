@@ -1,0 +1,75 @@
+name: Up_infrastructure
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select environment to deploy (prod, dev, dev_new)'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - prod
+          - dev_new
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform:
+    name: Terraform deploy infrastructure
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    env:
+      working-directory: terraform/infrastructure
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ env.working-directory }}
+
+    steps:
+    - name: Configure aws credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ vars.AWS_REGION }}
+
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+
+    - name: Select backend configuration
+      run: |
+        echo "Selecting backend configuration for environment: ${{ github.event.inputs.environment }}"
+        BACKEND_FILE="/home/runner/work/devrate-service/devrate-service/${{ env.working-directory }}/${{ github.event.inputs.environment }}.backend"
+        if [[ ! -f "$BACKEND_FILE" ]]; then
+          echo "Error: Backend file $BACKEND_FILE does not exist."
+          exit 1
+        fi
+        echo "Using backend configuration: $BACKEND_FILE"
+
+    - name: Select .tfvars file based on environment
+      run: |  
+        echo "Selecting .tfvars file for environment: ${{ github.event.inputs.environment }}"
+        if [[ ! -f "/home/runner/work/devrate-service/devrate-service/${{ env.working-directory }}/${{ github.event.inputs.environment }}.tfvars" ]]; then
+          echo "Error: File ${{ github.event.inputs.environment }}.tfvars does not exist in /home/runner/work/devrate-service/devrate-service/${{ env.working-directory }}."
+          exit 1
+        fi
+
+    - name: Terraform Init
+      run: |
+        terraform init -backend-config="/home/runner/work/devrate-service/devrate-service/${{ env.working-directory }}/${{ github.event.inputs.environment }}.backend" -reconfigure
+
+    - name: Terraform Format
+      run: terraform fmt -check
+
+    - name: Terraform Plan
+      run: terraform plan -input=false -var-file=${{ github.event.inputs.environment }}.tfvars
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve -input=false -var-file=${{ github.event.inputs.environment }}.tfvars
