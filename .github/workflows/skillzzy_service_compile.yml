@@ -6,7 +6,7 @@
 # separ  ate terms of  service,privacy policy, and support
 # documentation.
 
-name: devrate-service build
+name: Skillzzy_service_compile
 
 on:
   push:
