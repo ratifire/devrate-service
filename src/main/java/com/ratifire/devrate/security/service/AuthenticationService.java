@@ -7,7 +7,7 @@ import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.security.exception.AuthenticationException;
 import com.ratifire.devrate.security.exception.LogoutException;
-import com.ratifire.devrate.security.exception.TokenExpiredException;
+import com.ratifire.devrate.security.exception.AuthTokenExpiredException;
 import com.ratifire.devrate.security.helper.RefreshTokenCookieHelper;
 import com.ratifire.devrate.security.model.dto.LoginDto;
 import com.ratifire.devrate.security.util.TokenUtil;
@@ -68,7 +68,7 @@ public class AuthenticationService {
       return "Logout process was successfully completed.";
     } catch (NotAuthorizedException e) {
       log.error("Access token has expired: {}", e.getMessage(), e);
-      throw new TokenExpiredException("Access token has expired.");
+      throw new AuthTokenExpiredException("Access token has expired.");
     } catch (Exception e) {
       log.error("Logout process was failed: {}", e.getMessage(), e);
       throw new LogoutException("Logout process was failed.");

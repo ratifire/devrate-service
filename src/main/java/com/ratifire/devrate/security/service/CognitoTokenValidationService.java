@@ -9,7 +9,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
-import com.ratifire.devrate.security.exception.TokenExpiredException;
+import com.ratifire.devrate.security.exception.AuthTokenExpiredException;
 import com.ratifire.devrate.security.exception.TokenValidationException;
 import com.ratifire.devrate.security.model.enums.CognitoTypeToken;
 import com.ratifire.devrate.security.token.validation.TokenClaimsValidator;
@@ -57,7 +57,7 @@ public class CognitoTokenValidationService {
       TokenClaimsValidator validator = claimValidators.get(type);
       return validator.validate(claimsSet);
 
-    } catch (TokenExpiredException e) {
+    } catch (AuthTokenExpiredException e) {
       throw e;
     } catch (Exception e) {
       log.error("Token validation process was failed: {}", e.getMessage(), e);

@@ -3,7 +3,7 @@ package com.ratifire.devrate.security.token.validation;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.ratifire.devrate.security.configuration.properties.CognitoProviderProperties;
 import com.ratifire.devrate.security.configuration.properties.CognitoRegistrationProperties;
-import com.ratifire.devrate.security.exception.TokenExpiredException;
+import com.ratifire.devrate.security.exception.AuthTokenExpiredException;
 import com.ratifire.devrate.security.util.TokenUtil;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +55,7 @@ public abstract class BaseTokenClaimsValidator implements TokenClaimsValidator {
 
   private boolean verifyTokenExpiration(Date exp) {
     if (new Date().after(exp)) {
-      throw new TokenExpiredException("Token has expired.");
+      throw new AuthTokenExpiredException("Token has expired.");
     }
     return true;
   }
