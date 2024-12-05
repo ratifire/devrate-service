@@ -7,12 +7,12 @@ import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.exception.SpecializationLinkedToInterviewException;
 import com.ratifire.devrate.exception.UserSearchInvalidInputException;
+import com.ratifire.devrate.security.exception.AuthTokenExpiredException;
 import com.ratifire.devrate.security.exception.AuthenticationException;
 import com.ratifire.devrate.security.exception.LogoutException;
 import com.ratifire.devrate.security.exception.PasswordResetException;
 import com.ratifire.devrate.security.exception.RefreshTokenException;
 import com.ratifire.devrate.security.exception.RefreshTokenExpiredException;
-import com.ratifire.devrate.security.exception.AuthTokenExpiredException;
 import com.ratifire.devrate.security.exception.UserAlreadyExistsException;
 import com.ratifire.devrate.security.exception.UserRegistrationException;
 import jakarta.servlet.http.HttpServletResponse;
@@ -137,8 +137,8 @@ public class HandlerException {
   }
 
   /**
-   * Handles exceptions related to user registration, password reset, and token refresh.
-   * This method returns an HTTP 400 (Bad Request) status code for the specified exceptions.
+   * Handles exceptions related to user registration, password reset, and token refresh. This method
+   * returns an HTTP 400 (Bad Request) status code for the specified exceptions.
    */
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler({

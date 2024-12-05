@@ -5,8 +5,8 @@ import static com.ratifire.devrate.security.model.enums.AuthenticationError.UNAU
 import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.ACCESS_TOKEN;
 import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.ID_TOKEN;
 
-import com.ratifire.devrate.security.exception.AuthenticationException;
 import com.ratifire.devrate.security.exception.AuthTokenExpiredException;
+import com.ratifire.devrate.security.exception.AuthenticationException;
 import com.ratifire.devrate.security.service.CognitoTokenValidationService;
 import com.ratifire.devrate.security.util.TokenUtil;
 import jakarta.servlet.FilterChain;
