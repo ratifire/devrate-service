@@ -30,6 +30,8 @@ env:
   REGISTRATION_COGNITO_CLIENT_NAME: ${{secrets.REGISTRATION_COGNITO_CLIENT_NAME}}
   REGISTRATION_COGNITO_CLIENT_ID: ${{secrets.REGISTRATION_COGNITO_CLIENT_ID}}
   REGISTRATION_COGNITO_CLIENT_SECRET: ${{secrets.REGISTRATION_COGNITO_CLIENT_SECRET}}
+  PROVIDER_COGNITO_ISSUER_URI: ${{secrets.PROVIDER_COGNITO_ISSUER_URI}}
+  PROVIDER_COGNITO_JWK_SET_URI: ${{secrets.PROVIDER_COGNITO_JWK_SET_URI}}
 
 permissions:
   contents: read
@@ -64,6 +66,8 @@ jobs:
           sed -i 's|<REGISTRATION_COGNITO_CLIENT_NAME>|'${{ secrets.REGISTRATION_COGNITO_CLIENT_NAME }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<REGISTRATION_COGNITO_CLIENT_ID>|'${{ secrets.REGISTRATION_COGNITO_CLIENT_ID }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<REGISTRATION_COGNITO_CLIENT_SECRET>|'${{ secrets.REGISTRATION_COGNITO_CLIENT_SECRET }}'|g' src/main/resources/application-dev.properties
+          sed -i 's|<PROVIDER_COGNITO_ISSUER_URI>|'${{ secrets.PROVIDER_COGNITO_ISSUER_URI }}'|g' src/main/resources/application-dev.properties
+          sed -i 's|<PROVIDER_COGNITO_JWK_SET_URI>|'${{ secrets.PROVIDER_COGNITO_JWK_SET_URI }}'|g' src/main/resources/application-dev.properties
 
       - name: Run tests
         run: mvn test
