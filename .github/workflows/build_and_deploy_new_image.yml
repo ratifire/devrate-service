@@ -28,6 +28,8 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
   AWS_REGION: ${{secrets.AWS_REGION}}
   REGISTRATION_COGNITO_CLIENT_NAME: ${{secrets.REGISTRATION_COGNITO_CLIENT_NAME}}
+  REGISTRATION_COGNITO_CLIENT_ID: ${{secrets.REGISTRATION_COGNITO_CLIENT_ID}}
+  REGISTRATION_COGNITO_CLIENT_SECRET: ${{secrets.REGISTRATION_COGNITO_CLIENT_SECRET}}
 
 permissions:
   contents: read
@@ -60,6 +62,8 @@ jobs:
           sed -i 's|<AWS_SECRET_ACCESS_KEY>|'${{ secrets.AWS_SECRET_ACCESS_KEY }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<AWS_REGION>|'${{ secrets.AWS_REGION }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<REGISTRATION_COGNITO_CLIENT_NAME>|'${{ secrets.REGISTRATION_COGNITO_CLIENT_NAME }}'|g' src/main/resources/application-dev.properties
+          sed -i 's|<REGISTRATION_COGNITO_CLIENT_ID>|'${{ secrets.REGISTRATION_COGNITO_CLIENT_ID }}'|g' src/main/resources/application-dev.properties
+          sed -i 's|<REGISTRATION_COGNITO_CLIENT_SECRET>|'${{ secrets.REGISTRATION_COGNITO_CLIENT_SECRET }}'|g' src/main/resources/application-dev.properties
 
       - name: Run tests
         run: mvn test
