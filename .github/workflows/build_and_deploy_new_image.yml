@@ -25,6 +25,8 @@ env:
   ZOOM_ACCOUNT_ID: ${{secrets.ZOOM_ACCOUNT_ID}}
   ZOOM_SECRET: ${{secrets.ZOOM_SECRET}}
   AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+  AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+  AWS_REGION: ${{secrets.AWS_REGION}}
 
 permissions:
   contents: read
@@ -54,6 +56,8 @@ jobs:
           sed -i 's|<ZOOM_SECRET>|'${{ env.ZOOM_SECRET }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<DOMAIN>|'${{ vars.DOMAIN }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<AWS_ACCESS_KEY_ID>|'${{ secrets.AWS_ACCESS_KEY_ID }}'|g' src/main/resources/application-dev.properties
+          sed -i 's|<AWS_SECRET_ACCESS_KEY>|'${{ secrets.AWS_SECRET_ACCESS_KEY }}'|g' src/main/resources/application-dev.properties
+          sed -i 's|<AWS_REGION>|'${{ secrets.AWS_REGION }}'|g' src/main/resources/application-dev.properties
 
       - name: Run tests
         run: mvn test
