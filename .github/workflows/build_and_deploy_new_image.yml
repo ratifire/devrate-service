@@ -58,15 +58,13 @@ jobs:
           sed -i 's|<AWS_SES_SECRET_ACCESS_KEY>|'${{ secrets.AWS_SES_SECRET_ACCESS_KEY }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<AWS_ACCESS_KEY_ID>|'${{ secrets.AWS_ACCESS_KEY_ID }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<AWS_SECRET_ACCESS_KEY>|'${{ secrets.AWS_SECRET_ACCESS_KEY }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<AWS_REGION>|'${{ secrets.AWS_REGION }}'|g' src/main/resources/application-dev.properties
-          
+          sed -i 's|<AWS_REGION>|'${{ secrets.AWS_REGION }}'|g' src/main/resources/application-dev.properties    
           sed -i 's|<REGISTRATION_COGNITO_CLIENT_NAME>|'${{ secrets.REGISTRATION_COGNITO_CLIENT_NAME }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<REGISTRATION_COGNITO_CLIENT_ID>|'${{ secrets.REGISTRATION_COGNITO_CLIENT_ID }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<REGISTRATION_COGNITO_CLIENT_SECRET>|'${{ secrets.REGISTRATION_COGNITO_CLIENT_SECRET }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<REGISTRATION_COGNITO_SCOPE>|'${{ secrets.REGISTRATION_COGNITO_SCOPE }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<PROVIDER_COGNITO_ISSUER_URI>|'${{ secrets.PROVIDER_COGNITO_ISSUER_URI }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<PROVIDER_COGNITO_JWK_SET_URI>|'${{ secrets.PROVIDER_COGNITO_JWK_SET_URI }}'|g' src/main/resources/application-dev.properties
-          
           sed -i 's|<ZOOM_CLIENT_ID>|'${{ env.ZOOM_CLIENT_ID }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<ZOOM_CLIENT_SECRET>|'${{ env.ZOOM_CLIENT_SECRET }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<ZOOM_ACCOUNT_ID>|'${{ env.ZOOM_ACCOUNT_ID }}'|g' src/main/resources/application-dev.properties
