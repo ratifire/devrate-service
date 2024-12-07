@@ -4,6 +4,9 @@ get:
   summary: Get all main mastery hard skills for a user.
   description: Retrieve all main mastery hard skills, for the specified user.
   operationId: getMainHardSkills
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId

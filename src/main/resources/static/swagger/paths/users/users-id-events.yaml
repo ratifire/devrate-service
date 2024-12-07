@@ -4,6 +4,9 @@ get:
   summary: Get Events By UserId and date range
   description: Retrieve events by user ID and date range
   operationId: findEventsBetweenDate
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId

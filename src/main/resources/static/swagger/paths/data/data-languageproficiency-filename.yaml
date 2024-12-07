@@ -4,6 +4,9 @@ get:
   summary: Get static file from language proficiency folder
   description: "Returns the content of the static file by its name from the language
       proficiency folder."
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: filename

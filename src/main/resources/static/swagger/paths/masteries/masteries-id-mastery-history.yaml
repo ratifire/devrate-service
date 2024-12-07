@@ -3,6 +3,9 @@ get:
     - Mastery
   summary: Get mastery history by Mastery ID
   description: Endpoint for accessing the history of changes to hard/soft marks related to mastery
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - name: masteryId
       in: path

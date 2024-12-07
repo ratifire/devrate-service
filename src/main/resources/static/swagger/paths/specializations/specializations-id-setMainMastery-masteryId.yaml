@@ -1,5 +1,8 @@
 put:
   summary: Set new main mastery by Specialization ID and Mastery ID
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   tags:
     - Specialization
   parameters:

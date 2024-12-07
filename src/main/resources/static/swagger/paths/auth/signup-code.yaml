@@ -3,14 +3,13 @@ put:
     - Registration
   description: Confirming the user's email by matching the code
   security: [ ]
-  operationId: confirmEmail
-  parameters:
-    - in: path
-      name: code
-      required: true
-      schema:
-        type: string
-      description: The confirmation code to be checked against the stored code.
+  operationId: confirm
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/ConfirmRegistrationDto.yaml'
   responses:
     '201':
       description: Email confirmation code successfully confirmed

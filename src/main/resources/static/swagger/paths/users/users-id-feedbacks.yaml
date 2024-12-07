@@ -3,6 +3,9 @@ post:
     - Interview Feedback
   summary: Add an interview feedback to evaluate opposite interview participant
   description: Adds an interview feedback to evaluate opposite interview participant
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: reviewerId

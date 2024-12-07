@@ -4,6 +4,9 @@ delete:
   summary: Reject interview By ID
   description: Reject the interview by its ID and apply the matching logic for the interview participants.
   operationId: deleteRejectedInterview
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId

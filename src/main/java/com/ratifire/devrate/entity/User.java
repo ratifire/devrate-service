@@ -65,6 +65,12 @@ public class User {
   @Column(name = "conducted_interviews")
   private int conductedInterviews;
 
+  @Column(nullable = false, unique = true)
+  private String email;
+
+  @Column(nullable = false)
+  private String password;
+
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "user_id", nullable = false)
   private List<Contact> contacts;

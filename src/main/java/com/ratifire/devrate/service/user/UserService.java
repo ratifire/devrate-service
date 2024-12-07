@@ -46,7 +46,6 @@ import com.ratifire.devrate.repository.InterviewSummaryRepository;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
 import com.ratifire.devrate.service.NotificationService;
-import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.email.EmailService;
 import com.ratifire.devrate.service.interview.InterviewFeedbackDetailService;
 import com.ratifire.devrate.service.interview.InterviewMatchingService;
@@ -98,7 +97,6 @@ public class UserService {
   private final InterviewService interviewService;
   private final InterviewSummaryService interviewSummaryService;
   private final InterviewFeedbackDetailService interviewFeedbackDetailService;
-  private final UserSecurityService userSecurityService;
   private final EmailService emailService;
   private final NotificationService notificationService;
   private final DataMapper<UserDto, User> userMapper;
@@ -149,8 +147,10 @@ public class UserService {
    * @param userDto the user as a DTO
    * @return the created user
    */
-  public User create(UserDto userDto) {
+  public User create(UserDto userDto, String email, String password) {
     User user = userMapper.toEntity(userDto);
+    user.setEmail(email);
+    user.setPassword(password);
     return userRepository.save(user);
   }
 
@@ -637,7 +637,7 @@ public class UserService {
       String zoomJoinUrl) {
 
     User recipient = recipientRequest.getUser();
-    String recipientEmail = userSecurityService.findEmailByUserId(recipient.getId());
+    String recipientEmail = recipient.getEmail();
     String role = String.valueOf(recipientRequest.getRole());
 
     notificationService.addInterviewScheduled(recipient, role,
@@ -744,10 +744,10 @@ public class UserService {
    */
   private void notifyUsers(User recipient, User rejector,
       ZonedDateTime scheduledTime) {
-    String recipientEmail = userSecurityService.findEmailByUserId(recipient.getId());
+    String recipientEmail = recipient.getEmail();
     notificationService.addRejectInterview(recipient, rejector.getFirstName(),
         scheduledTime, recipientEmail);
-    String rejectorEmail = userSecurityService.findEmailByUserId(rejector.getId());
+    String rejectorEmail = rejector.getEmail();
     notificationService.addRejectInterview(rejector, recipient.getFirstName(),
         scheduledTime, rejectorEmail);
 
@@ -890,7 +890,7 @@ public class UserService {
    */
   // TODO: ATTENTION!!! Remove this method after testing is completed.
   public void sendTestNotification(long userId, NotificationDto notificationDto) {
-    String userEmail = userSecurityService.findEmailByUserId(userId);
+    String userEmail = findEmailByUserId(userId);
     User user = findUserById(userId);
     Notification notification = Notification.builder()
         .user(user)
@@ -900,5 +900,23 @@ public class UserService {
         .createdAt(notificationDto.getCreatedAt())
         .build();
     notificationService.sendTestNotification(userEmail, notification);
+  }
+
+  /**
+   * Finds the email address associated with a given user ID.
+   *
+   * @param userId the ID of the user whose email address is to be retrieved
+   * @return the email address of the user with the specified ID
+   */
+  public String findEmailByUserId(long userId) {
+    return userRepository.findEmailByUserId(userId);
+  }
+
+  public User findByEmail(String email) {
+    return userRepository.findByEmail(email);
+  }
+
+  public boolean existsByEmail(String email) {
+    return userRepository.existsByEmail(email);
   }
 }

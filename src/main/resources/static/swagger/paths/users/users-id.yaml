@@ -4,6 +4,9 @@ get:
   summary: Get user by user ID
   description: Retrieve a specific user personal info based on the user ID
   operationId: findById
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: id
@@ -37,6 +40,9 @@ delete:
   summary: Delete user by user ID
   description: Delete a specific user personal info based on the user ID
   operationId: delete
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: id

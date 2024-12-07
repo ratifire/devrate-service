@@ -3,7 +3,6 @@ package com.ratifire.devrate.controller;
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.service.specialization.SkillService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -36,7 +35,6 @@ public class SkillController {
    *
    * @param id the ID of skill
    */
-  @PreAuthorize("@resourceAuthorizationService.isResourceOwnedByLoggedUser('skills', #id)")
   @DeleteMapping("/{id}")
   public void deleteById(@PathVariable long id) {
     skillService.delete(id);
@@ -49,7 +47,6 @@ public class SkillController {
    * @param hide the flag indicating whether to hide (true) or unhide (false) the skill
    * @return a {@link SkillDto} object representing the updated skill
    */
-  @PreAuthorize("@resourceAuthorizationService.isResourceOwnedByLoggedUser('skills', #id)")
   @PatchMapping("/{id}/hide/{hide}")
   public SkillDto hideSkill(@PathVariable long id, @PathVariable boolean hide) {
     return skillService.hideSkill(id, hide);

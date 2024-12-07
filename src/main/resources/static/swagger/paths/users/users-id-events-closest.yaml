@@ -4,6 +4,9 @@ get:
   summary: Get Events By UserId from a specified date and time
   description: Retrieve events by user ID from a specified date and time
   operationId: findEventsFromDateTime
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId

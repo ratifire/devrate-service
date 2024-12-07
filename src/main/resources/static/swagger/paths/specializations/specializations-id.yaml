@@ -1,5 +1,8 @@
 get:
   summary: Retrieve specialization by ID
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   tags:
     - Specialization
   parameters:
@@ -20,6 +23,9 @@ get:
       description: Bad Request. The request cannot be fulfilled due to bad syntax.
 delete:
   summary: Delete specialization by ID
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   tags:
     - Specialization
   parameters:

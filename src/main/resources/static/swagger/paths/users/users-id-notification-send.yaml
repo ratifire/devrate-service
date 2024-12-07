@@ -3,6 +3,9 @@ post:
     - Notification
   summary: ONLY FOR TESTING WEBSOCKET NOTIFICATION.
   description: Send notification to the websocket by user id
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId

@@ -4,8 +4,8 @@ import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.repository.interview.InterviewRequestRepository;
 import com.ratifire.devrate.service.NotificationService;
-import com.ratifire.devrate.service.UserSecurityService;
 import com.ratifire.devrate.service.email.EmailService;
+import com.ratifire.devrate.service.user.UserService;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class InterviewCleanUpScheduler {
   private static final long CLEANUP_INTERVAL = 21600000L; // 6 hours in milliseconds
 
   private final InterviewRequestRepository interviewRequestRepository;
-  private final UserSecurityService userSecurityService;
+  private final UserService userService;
   private final NotificationService notificationService;
   private final EmailService emailService;
 
@@ -41,7 +41,7 @@ public class InterviewCleanUpScheduler {
 
     for (InterviewRequest interviewRequest : expiredRequests) {
       User user = interviewRequest.getUser();
-      String email = userSecurityService.findEmailByUserId(user.getId());
+      String email = userService.findEmailByUserId(user.getId());
       sendInterviewRequestExpiryAlerts(user, email);
     }
 

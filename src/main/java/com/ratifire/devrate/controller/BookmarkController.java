@@ -2,7 +2,6 @@ package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.service.BookmarkService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +22,6 @@ public class BookmarkController {
    *
    * @param id The ID of the bookmark to delete.
    */
-  @PreAuthorize("@resourceAuthorizationService.isResourceOwnedByLoggedUser('bookmarks', #id)")
   @DeleteMapping("/{id}")
   public void delete(@PathVariable long id) {
     bookmarkService.delete(id);

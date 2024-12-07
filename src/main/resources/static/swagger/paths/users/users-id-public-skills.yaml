@@ -4,6 +4,9 @@ get:
   summary: Get all main mastery skills for a user, excluding hidden skills.
   description: Retrieve all main mastery skills, excluding hidden skills, for the specified user.
   operationId: getPublicMainMasterySkillsByUserId.
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId

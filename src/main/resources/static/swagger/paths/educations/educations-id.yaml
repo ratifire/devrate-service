@@ -4,6 +4,9 @@ get:
   summary: Get Education By ID
   description: Retrieves an education record based on the provided ID.
   operationId: getEducationById
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: id
@@ -37,6 +40,9 @@ put:
   summary: Update Education By ID
   description: Updates an existing education record identified by the provided ID.
   operationId: updateEducation
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: id
@@ -76,6 +82,9 @@ delete:
   summary: Delete Education By ID
   description: Deletes an education record identified by the provided ID.
   operationId: deleteEducation
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: id
