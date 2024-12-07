@@ -1,4 +1,4 @@
-package com.ratifire.devrate.util.websocket;
+package com.ratifire.devrate.configuration;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.exception.EmailNotFoundException;
+import com.ratifire.devrate.util.WebSocketSessionRegistry;
 import java.security.Principal;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

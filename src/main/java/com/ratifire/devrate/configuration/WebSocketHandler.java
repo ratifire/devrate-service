@@ -1,10 +1,11 @@
-package com.ratifire.devrate.util.websocket;
+package com.ratifire.devrate.configuration;
 
 import com.ratifire.devrate.exception.EmailNotFoundException;
+import com.ratifire.devrate.util.WebSocketSessionRegistry;
 import java.security.Principal;
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
@@ -12,7 +13,7 @@ import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 /**
  * Controller class for handling WebSocket connections.
  */
-@Component
+@Configuration
 @AllArgsConstructor
 public class WebSocketHandler extends AbstractWebSocketHandler {
 
