@@ -19,10 +19,10 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketSession;
 
 /**
- * Unit tests for the {@link WebSocketHandler} class.
+ * Unit tests for the {@link WebSocketConfig} class.
  */
 @ExtendWith(MockitoExtension.class)
-class WebSocketHandlerTest {
+class WebSocketConfigTest {
 
   @Mock
   private Principal principal;
@@ -31,7 +31,7 @@ class WebSocketHandlerTest {
   @Mock
   private WebSocketSession session;
   @InjectMocks
-  private WebSocketHandler webSocketHandler;
+  private WebSocketConfig webSocketHandler;
 
   private final String testLogin = "test@example.com";
 
