@@ -1,4 +1,4 @@
-package com.ratifire.devrate.service.specialization;
+package com.ratifire.devrate.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -189,21 +189,21 @@ public class SpecializationServiceTest {
   void deleteById_shouldCallRepositoryDelete() {
     doNothing().when(specializationRepository).deleteById(specId);
     when(interviewRepository.findFirstBySpecializationId(specId)).thenReturn(null);
-    specializationService.deleteById(specId);
+    specializationService.delete(specId);
 
     verify(specializationRepository).deleteById(specId);
   }
 
   @Test
-  void deleteById_linkedInterview_shouldThrowSpecializationLinkedToInterviewException() {
+  void delete_linkedInterview_shouldThrowSpecializationLinkedToInterviewException() {
     when(interviewRepository.findFirstBySpecializationId(specId)).thenReturn(anyLong());
 
     assertThrows(SpecializationLinkedToInterviewException.class,
-        () -> specializationService.deleteById(specId));
+        () -> specializationService.delete(specId));
   }
 
   @Test
-  void getMasteriesBySpecializationId_shouldReturnListOfMasteries() {
+  void getMasteriesBySpecializationId_shouldReturnListOf() {
     List<Mastery> listMasteries = new ArrayList<>();
     List<MasteryDto> listMasteriesDto = new ArrayList<>();
     listMasteriesDto.add(masteryDto);

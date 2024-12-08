@@ -20,7 +20,7 @@ import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.exception.InterviewNotFoundException;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
-import com.ratifire.devrate.service.event.EventService;
+import com.ratifire.devrate.service.EventService;
 import com.ratifire.devrate.util.interview.InterviewPair;
 import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
 import com.ratifire.devrate.util.zoom.payloads.ZoomCreateMeetingResponse;
@@ -82,7 +82,7 @@ class InterviewServiceTest {
   }
 
   @Test
-  void createInterviewSuccess() {
+  void createSuccess() {
     ZonedDateTime matchingDate = ZonedDateTime.now().plusDays(2).withHour(10).withMinute(0);
     candidateRequest.setAvailableDates(List.of(matchingDate));
     interviewerRequest.setAvailableDates(List.of(matchingDate));
@@ -90,7 +90,7 @@ class InterviewServiceTest {
     when(zoomApiService.createMeeting(anyString(), anyString(), any(ZonedDateTime.class)))
         .thenReturn(Optional.of(zoomCreateMeetingResponse));
 
-    Optional<Interview> result = interviewService.createInterview(interviewPair);
+    Optional<Interview> result = interviewService.create(interviewPair);
 
     assertTrue(result.isPresent());
     verify(interviewRepository).save(any(Interview.class));
@@ -104,19 +104,19 @@ class InterviewServiceTest {
   }
 
   @Test
-  void createInterviewThrowsNoSuchElementExceptionWhenNoMatchingDate() {
+  void createThrowsNoSuchElementExceptionWhenNoMatchingDate() {
     candidateRequest.setAvailableDates(new ArrayList<>());
     interviewerRequest.setAvailableDates(new ArrayList<>());
 
     assertThrows(NoSuchElementException.class,
-        () -> interviewService.createInterview(interviewPair));
+        () -> interviewService.create(interviewPair));
 
     verify(interviewRepository, never()).save(any());
     verify(eventService, never()).save(any(), anyList());
   }
 
   @Test
-  void deleteRejectedInterview() throws ZoomApiException {
+  void deleteRejected() throws ZoomApiException {
     Interview interview = Interview.builder()
         .zoomMeetingId(123456789L)
         .zoomJoinUrl("https://zoom.us/j/123456789")
@@ -124,7 +124,7 @@ class InterviewServiceTest {
 
     when(interviewRepository.findById(100L)).thenReturn(Optional.of(interview));
 
-    Interview result = interviewService.deleteRejectedInterview(100L);
+    Interview result = interviewService.deleteRejected(100L);
 
     assertNotNull(result);
     verify(interviewRepository).deleteById(100L);
@@ -133,11 +133,11 @@ class InterviewServiceTest {
   }
 
   @Test
-  void deleteRejectedInterviewThrowsExceptionWhenNotFound() throws ZoomApiException {
+  void deleteRejectedThrowsExceptionWhenNotFound() throws ZoomApiException {
     when(interviewRepository.findById(100L)).thenReturn(Optional.empty());
 
     assertThrows(InterviewNotFoundException.class,
-        () -> interviewService.deleteRejectedInterview(100L));
+        () -> interviewService.deleteRejected(100L));
 
     verify(interviewRepository, never()).deleteById(anyLong());
     verify(eventService, never()).deleteByEventTypeId(anyLong());

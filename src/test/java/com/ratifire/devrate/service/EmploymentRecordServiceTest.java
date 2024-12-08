@@ -1,4 +1,4 @@
-package com.ratifire.devrate.service.employmentrecord;
+package com.ratifire.devrate.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -12,7 +12,6 @@ import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.exception.EmploymentRecordNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.EmploymentRecordRepository;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;

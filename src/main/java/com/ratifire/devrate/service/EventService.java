@@ -1,4 +1,4 @@
-package com.ratifire.devrate.service.event;
+package com.ratifire.devrate.service;
 
 import com.ratifire.devrate.entity.Event;
 import com.ratifire.devrate.entity.User;

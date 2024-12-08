@@ -61,7 +61,7 @@ public class InterviewSummaryService {
    * @param interview the Interview object used to retrieve details for creating the summary
    * @param endTime   the end time of the interview, used to calculate the duration
    */
-  public long createInterviewSummary(Interview interview, String endTime) {
+  public long create(Interview interview, String endTime) {
     User interviewer = interview.getInterviewerRequest().getUser();
     User candidate = interview.getCandidateRequest().getUser();
     ZonedDateTime startTime = interview.getStartTime();

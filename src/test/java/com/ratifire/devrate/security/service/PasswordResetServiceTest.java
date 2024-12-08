@@ -10,7 +10,7 @@
 //import com.ratifire.devrate.entity.EmailConfirmationCode;
 //import com.ratifire.devrate.entity.UserSecurity;
 //import com.ratifire.devrate.service.UserSecurityService;
-//import com.ratifire.devrate.service.email.EmailService;
+//import com.ratifire.devrate.service.EmailService;
 //import com.ratifire.devrate.service.registration.EmailConfirmationCodeService;
 //import org.junit.jupiter.api.Test;
 //import org.junit.jupiter.api.extension.ExtendWith;

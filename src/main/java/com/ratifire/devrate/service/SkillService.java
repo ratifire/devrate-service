@@ -1,4 +1,4 @@
-package com.ratifire.devrate.service.specialization;
+package com.ratifire.devrate.service;
 
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.dto.SkillFeedbackDto;
@@ -26,11 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class SkillService {
 
-  private final SkillRepository skillRepository;
-  private final DataMapper<SkillDto, Skill> skillMapper;
-  private final List<String> defaultSoftSkills;
-
   private MasteryService masteryService;
+  private final SkillRepository repository;
+  private final DataMapper<SkillDto, Skill> mapper;
+  private final List<String> defaultSoftSkills;
 
   @Autowired
   public void setMasteryService(@Lazy MasteryService masteryService) {
@@ -41,11 +40,12 @@ public class SkillService {
    * Retrieves Skill by ID.
    *
    * @param id the ID of the Skill
-   * @return the Skill as a DTO
+   * @return the Skill as entity
    * @throws ResourceNotFoundException if Skill is not found
    */
-  public SkillDto findById(long id) {
-    return skillMapper.toDto(getSkillById(id));
+  private Skill findById(long id) {
+    return repository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Skill not found with id: " + id));
   }
 
   /**
@@ -56,19 +56,31 @@ public class SkillService {
    * @throws ResourceNotFoundException if any of the skills with the given IDs are not found
    */
   public List<Skill> findAllById(List<Long> ids) {
-    return skillRepository.findAllById(ids);
+    return repository.findAllById(ids);
   }
 
   /**
-   * Retrieves Skill by ID.
+   * Retrieves SkillDto by ID.
    *
    * @param id the ID of the Skill
-   * @return the Skill as entity
+   * @return the Skill as a DTO
    * @throws ResourceNotFoundException if Skill is not found
    */
-  private Skill getSkillById(long id) {
-    return skillRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Skill not found with id: " + id));
+  public SkillDto getSkillDtoById(long id) {
+    return mapper.toDto(findById(id));
+  }
+
+  /**
+   * Updates the hide status of a skill identified by its ID.
+   *
+   * @param id   the ID of the skill to be hidden or unhidden
+   * @param hide the flag indicating whether to hide (true) or unhide (false) the skill
+   * @return a {@link SkillDto} object representing the updated skill
+   */
+  public SkillDto updateHiddenStatus(long id, boolean hide) {
+    Skill skill = findById(id);
+    skill.setHidden(hide);
+    return mapper.toDto(repository.save(skill));
   }
 
   /**
@@ -77,7 +89,7 @@ public class SkillService {
    * @param skillFeedbackDtos a list of SkillFeedbackDto objects containing the skill IDs and their
    *                          corresponding new marks provided as feedback
    */
-  public void updateSkillMarksAfterGettingFeedback(List<SkillFeedbackDto> skillFeedbackDtos) {
+  public void updateMarks(List<SkillFeedbackDto> skillFeedbackDtos) {
     List<Long> skillIds = skillFeedbackDtos.stream()
         .map(SkillFeedbackDto::getId)
         .toList();
@@ -85,7 +97,7 @@ public class SkillService {
     Map<Long, BigDecimal> skillIdToMarkMap = skillFeedbackDtos.stream()
         .collect(Collectors.toMap(SkillFeedbackDto::getId, SkillFeedbackDto::getMark));
 
-    List<Skill> skills = skillRepository.findAllById(skillIds);
+    List<Skill> skills = repository.findAllById(skillIds);
 
     skills.forEach(skill -> {
       BigDecimal newMark = skillIdToMarkMap.get(skill.getId());
@@ -98,6 +110,40 @@ public class SkillService {
 
       setMarkCounterGrowAndSave(skill, newAverageMark, counter + 1);
     });
+  }
+
+  /**
+   * Deletes a skill by its ID and updates the mastery average marks.
+   *
+   * @param id the ID of the skill to be deleted
+   */
+  @Transactional
+  public void delete(long id) {
+    Mastery mastery = masteryService.findMasteryBySkillId(id);
+
+    mastery.getSkills().stream()
+        .filter(s -> s.getId() == id)
+        .findFirst()
+        .ifPresent(skill -> {
+          mastery.getSkills().remove(skill);
+          masteryService.refreshMasteryAverageMark(mastery, skill.getType());
+          masteryService.update(mastery);
+        });
+  }
+
+  /**
+   * Generates a list of softSkills entities with default values of name and other using bean.
+   */
+  public List<Skill> loadSoftSkills() {
+    return defaultSoftSkills.stream()
+        .map(skillName -> Skill.builder()
+            .name(skillName)
+            .counter(0)
+            .averageMark(BigDecimal.ZERO)
+            .grows(false)
+            .type(SkillType.SOFT_SKILL)
+            .build())
+        .collect(Collectors.toList());
   }
 
   /**
@@ -127,54 +173,6 @@ public class SkillService {
     skill.setGrows(comparisonResult <= 0);
     skill.setAverageMark(mark);
     skill.setCounter(counter);
-    skillRepository.save(skill);
-  }
-
-
-  /**
-   * Deletes a skill by its ID and updates the mastery average marks.
-   *
-   * @param id the ID of the skill to be deleted
-   */
-  @Transactional
-  public void delete(long id) {
-    Mastery mastery = masteryService.findMasteryBySkillId(id);
-
-    mastery.getSkills().stream()
-        .filter(s -> s.getId() == id)
-        .findFirst()
-        .ifPresent(skill -> {
-          mastery.getSkills().remove(skill);
-          masteryService.refreshMasteryAverageMark(mastery, skill.getType());
-          masteryService.updateMastery(mastery);
-        });
-  }
-
-  /**
-   * Generates a list of softSkills entities with default values of name and other using bean.
-   */
-  public List<Skill> loadSoftSkills() {
-    return defaultSoftSkills.stream()
-        .map(skillName -> Skill.builder()
-            .name(skillName)
-            .counter(0)
-            .averageMark(BigDecimal.ZERO)
-            .grows(false)
-            .type(SkillType.SOFT_SKILL)
-            .build())
-        .collect(Collectors.toList());
-  }
-
-  /**
-   * Updates the hide status of a skill identified by its ID.
-   *
-   * @param id   the ID of the skill to be hidden or unhidden
-   * @param hide the flag indicating whether to hide (true) or unhide (false) the skill
-   * @return a {@link SkillDto} object representing the updated skill
-   */
-  public SkillDto hideSkill(long id, boolean hide) {
-    Skill skill = getSkillById(id);
-    skill.setHidden(hide);
-    return skillMapper.toDto(skillRepository.save(skill));
+    repository.save(skill);
   }
 }

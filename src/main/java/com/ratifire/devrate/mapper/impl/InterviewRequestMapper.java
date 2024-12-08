@@ -3,7 +3,7 @@ package com.ratifire.devrate.mapper.impl;
 import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.mapper.DataMapper;
-import com.ratifire.devrate.service.specialization.MasteryService;
+import com.ratifire.devrate.service.MasteryService;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;

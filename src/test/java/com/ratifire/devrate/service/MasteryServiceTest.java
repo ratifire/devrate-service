@@ -1,4 +1,4 @@
-package com.ratifire.devrate.service.specialization;
+package com.ratifire.devrate.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -142,13 +142,13 @@ public class MasteryServiceTest {
   }
 
   @Test
-  public void createSkillTest() {
+  public void createTest() {
     when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
     when(dataMapper.toEntity(any(SkillDto.class))).thenReturn(skill);
     when(masteryRepository.existsByIdAndSkills_Name(anyLong(), anyString())).thenReturn(false);
     when(dataMapper.toDto(any(Skill.class))).thenReturn(skillDto);
 
-    SkillDto result = masteryService.createSkill(skillDto, 1L);
+    SkillDto result = masteryService.create(skillDto, 1L);
 
     assertNotNull(result);
     assertEquals(skillDto, result);
@@ -157,15 +157,15 @@ public class MasteryServiceTest {
   }
 
   @Test
-  void createSkillTestSkillAlreadyExistsThrowResourceAlreadyExistException() {
+  void createSkillTestAlreadyExistsThrowResourceAlreadyExistException() {
     when(masteryRepository.existsByIdAndSkills_Name(anyLong(), anyString())).thenReturn(true);
 
     assertThrows(ResourceAlreadyExistException.class,
-        () -> masteryService.createSkill(skillDto, 1L));
+        () -> masteryService.create(skillDto, 1L));
   }
 
   @Test
-  public void createSkillsTest() {
+  public void createBulkTest() {
     List<Skill> skills = List.of(skill);
 
     when(masteryRepository.findById(anyLong())).thenReturn(Optional.of(masteryMid));
@@ -173,7 +173,7 @@ public class MasteryServiceTest {
     when(masteryRepository.existsByIdAndSkills_Name(anyLong(), anyString())).thenReturn(false);
     when(dataMapper.toDto(skills)).thenReturn(skillDtos);
 
-    List<SkillDto> result = masteryService.createSkills(skillDtos, 1L);
+    List<SkillDto> result = masteryService.createBulk(skillDtos, 1L);
 
     assertNotNull(result);
     assertEquals(skillDtos, result);
@@ -182,10 +182,10 @@ public class MasteryServiceTest {
   }
 
   @Test
-  void createSkillsTestSkillsEmptyReturnEmptySkillDtos() {
+  void createSkillsTestBulkEmptyReturnEmptyDtos() {
     when(masteryRepository.existsByIdAndSkills_Name(anyLong(), anyString())).thenReturn(true);
 
-    List<SkillDto> result = masteryService.createSkills(skillDtos, 1L);
+    List<SkillDto> result = masteryService.createBulk(skillDtos, 1L);
 
     assertTrue(result.isEmpty());
   }

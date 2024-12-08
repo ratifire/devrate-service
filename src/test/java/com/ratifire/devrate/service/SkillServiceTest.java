@@ -1,4 +1,4 @@
-package com.ratifire.devrate.service.specialization;
+package com.ratifire.devrate.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -60,12 +60,12 @@ public class SkillServiceTest {
   }
 
   @Test
-  public void updateHideSkillTest() {
+  public void updateUpdateHiddenStatusTest() {
     when(skillRepository.findById(anyLong())).thenReturn(Optional.of(skill));
     when(dataMapper.toDto(any(Skill.class))).thenReturn(skillDto);
     when(skillRepository.save(any(Skill.class))).thenReturn(skill);
 
-    SkillDto result = skillService.hideSkill(1L, true);
+    SkillDto result = skillService.updateHiddenStatus(1L, true);
     assertEquals(skillDto, result);
   }
 }

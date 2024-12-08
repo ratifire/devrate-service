@@ -1,4 +1,4 @@
-package com.ratifire.devrate.service.specialization;
+package com.ratifire.devrate.service;
 
 import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.SpecializationDto;
@@ -17,7 +17,6 @@ import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,23 +27,37 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SpecializationService {
 
+  private final MasteryService masteryService;
   private final SpecializationRepository specializationRepository;
   private final InterviewRepository interviewRepository;
   private final DataMapper<SpecializationDto, Specialization> specializationMapper;
   private final DataMapper<MasteryDto, Mastery> masteryMapper;
-  private final MasteryService masteryService;
   private final Map<Integer, String> defaultMasteryLevels;
   private final List<String> defaultSpecializationNames;
 
   /**
-   * Retrieves specialization by ID.
+   * Finds a specialization by its ID.
+   *
+   * @param specializationId The ID of the specialization to find.
+   * @return The specialization if found.
+   * @throws SpecializationNotFoundException If the specialization with the given ID is not found.
+   */
+  public Specialization findById(long specializationId) {
+    return specializationRepository.findById(specializationId)
+        .orElseThrow(
+            () -> new SpecializationNotFoundException(
+                "The specialization not found with specializationId " + specializationId));
+  }
+
+  /**
+   * Retrieves specializationDto by ID.
    *
    * @param id the ID of the specialization
    * @return the specialization as a DTO
    * @throws SpecializationNotFoundException if specialization is not found
    */
-  public SpecializationDto findById(long id) {
-    return specializationMapper.toDto(findSpecializationById(id));
+  public SpecializationDto getDtoById(long id) {
+    return specializationMapper.toDto(findById(id));
   }
 
   /**
@@ -55,12 +68,23 @@ public class SpecializationService {
    * @throws ResourceNotFoundException if mastery is not found
    */
   public MasteryDto getMainMasteryById(long id) {
-    Mastery mainMastery = findSpecializationById(id).getMainMastery();
+    Mastery mainMastery = findById(id).getMainMastery();
     if (mainMastery == null) {
       throw new ResourceNotFoundException(
           "Main mastery not found for specialization with id: " + id);
     }
     return masteryMapper.toDto(mainMastery);
+  }
+
+  /**
+   * Retrieves Mastery by specialization ID.
+   *
+   * @param specializationId the ID of the specialization
+   * @return the specialization's mastery as a DTO
+   */
+  public List<MasteryDto> getMasteriesBySpecializationId(long specializationId) {
+    Specialization specialization = findById(specializationId);
+    return masteryMapper.toDto(specialization.getMasteries());
   }
 
   /**
@@ -71,7 +95,7 @@ public class SpecializationService {
    */
   @Transactional
   public SpecializationDto update(SpecializationDto specializationDto) {
-    Specialization specialisation = findSpecializationById(specializationDto.getId());
+    Specialization specialisation = findById(specializationDto.getId());
     if (specializationRepository.existsSpecializationByUserIdAndName(
         specialisation.getUser().getId(), specializationDto.getName())) {
       throw new ResourceAlreadyExistException("Specialization name is already exist.");
@@ -82,20 +106,6 @@ public class SpecializationService {
     specialisation.setMain(mainStatus);
     Specialization updatedSpecialization = specializationRepository.save(specialisation);
     return specializationMapper.toDto(updatedSpecialization);
-  }
-
-  /**
-   * Finds a specialization by its ID.
-   *
-   * @param specializationId The ID of the specialization to find.
-   * @return The specialization if found.
-   * @throws SpecializationNotFoundException If the specialization with the given ID is not found.
-   */
-  private Specialization findSpecializationById(long specializationId) {
-    return specializationRepository.findById(specializationId)
-        .orElseThrow(
-            () -> new SpecializationNotFoundException(
-                "The specialization not found with specializationId " + specializationId));
   }
 
   /**
@@ -141,7 +151,7 @@ public class SpecializationService {
    * @return the updated new main specialization as a DTO
    */
   public SpecializationDto setAsMainById(long specializationId) {
-    Specialization newMainSpecialization = findSpecializationById(specializationId);
+    Specialization newMainSpecialization = findById(specializationId);
 
     specializationRepository.findSpecializationByUserIdAndMainTrue(
             newMainSpecialization.getUser().getId())
@@ -164,23 +174,12 @@ public class SpecializationService {
    * @throws SpecializationLinkedToInterviewException if specialization stills linked to interview
    */
   @Transactional
-  public void deleteById(long id) {
+  public void delete(long id) {
     Long linkedInterviewId = interviewRepository.findFirstBySpecializationId(id);
     if (linkedInterviewId != null) {
       throw new SpecializationLinkedToInterviewException(id, linkedInterviewId);
     }
     specializationRepository.deleteById(id);
-  }
-
-  /**
-   * Retrieves Mastery by specialization ID.
-   *
-   * @param specializationId the ID of the specialization
-   * @return the specialization's mastery as a DTO
-   */
-  public List<MasteryDto> getMasteriesBySpecializationId(long specializationId) {
-    Specialization specialization = findSpecializationById(specializationId);
-    return masteryMapper.toDto(specialization.getMasteries());
   }
 
   /**
@@ -219,7 +218,7 @@ public class SpecializationService {
             .hardSkillMark(BigDecimal.ZERO)
             .specialization(specialization)
             .build())
-        .collect(Collectors.toList());
+        .toList();
   }
 
   /**
@@ -243,7 +242,7 @@ public class SpecializationService {
    */
   public MasteryDto setMainMasteryById(long specId, long masteryId) {
     Mastery newMainMastery = masteryService.getMasteryById(masteryId);
-    Specialization specialization = findSpecializationById(specId);
+    Specialization specialization = findById(specId);
     if (!specialization.getMasteries().contains(newMainMastery)) {
       throw new ResourceNotFoundException(
           "The mastery does not belong to the specified specialization.");

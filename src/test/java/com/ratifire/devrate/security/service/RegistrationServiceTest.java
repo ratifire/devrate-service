@@ -21,8 +21,8 @@
 //import com.ratifire.devrate.service.NotificationService;
 //import com.ratifire.devrate.service.RoleService;
 //import com.ratifire.devrate.service.UserSecurityService;
-//import com.ratifire.devrate.service.email.EmailService;
-//import com.ratifire.devrate.service.user.UserService;
+//import com.ratifire.devrate.service.EmailService;
+//import com.ratifire.devrate.service.UserService;
 //import java.time.LocalDateTime;
 //import java.util.ArrayList;
 //import org.junit.jupiter.api.Test;

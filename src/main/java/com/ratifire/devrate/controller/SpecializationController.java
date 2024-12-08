@@ -2,7 +2,7 @@ package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.SpecializationDto;
-import com.ratifire.devrate.service.specialization.SpecializationService;
+import com.ratifire.devrate.service.SpecializationService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,7 +30,7 @@ public class SpecializationController {
    */
   @GetMapping("/{id}")
   public SpecializationDto findById(@PathVariable Long id) {
-    return specializationService.findById(id);
+    return specializationService.getDtoById(id);
   }
 
   /**
@@ -82,7 +82,7 @@ public class SpecializationController {
    */
   @DeleteMapping("/{id}")
   public void deleteById(@PathVariable long id) {
-    specializationService.deleteById(id);
+    specializationService.delete(id);
   }
 
   /**

@@ -1,4 +1,4 @@
-package com.ratifire.devrate.service.email;
+package com.ratifire.devrate.service;
 
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
@@ -11,11 +11,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -27,32 +24,16 @@ import org.thymeleaf.context.Context;
 /**
  * Service implementation for sending emails using JavaMailSender.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EmailService {
 
-  private static final Logger log = LogManager.getLogger(EmailService.class);
   private final JavaMailSender mailSender;
   private final TemplateEngine templateEngine;
 
   @Value("${from.email.address}")
   private String fromEmailAddress;
-
-  /**
-   * Sends a confirmation code email to the user.
-   *
-   * @param email The user's email address.
-   * @param code  The confirmation code.
-   */
-  public void sendConfirmationCodeEmail(String email, String code) {
-    String subject = "Your DevRate Confirmation Code - " + code;
-
-    Map<String, Object> variables = new HashMap<>();
-    variables.put("email", email);
-    variables.put("code", code);
-    String text = buildTemplateEmailText("confirmation-email", variables);
-    sendEmail(email, subject, text);
-  }
 
   /**
    * Sends a welcome email to the user.
@@ -67,23 +48,11 @@ public class EmailService {
   }
 
   /**
-   * Sends an email with a password reset code to the user.
-   *
-   * @param email The user's email address.
-   * @param code  The unique password reset code.
-   */
-  public void sendPasswordResetEmail(String email, String code) {
-    String subject = "Password Reset";
-    String text = buildTemplateEmailText("reset-password-email", Map.of("code", code));
-    sendEmail(email, subject, text);
-  }
-
-  /**
    * Sends an email confirmation about the password change.
    *
    * @param email The user's email address.
    */
-  public void sendPasswordChangeConfirmation(String email) {
+  public void sendPasswordChangeConfirmationEmail(String email) {
     String subject = "Password Successfully Reset";
     LocalDateTime now = LocalDateTime.now();
     String formattedDateTime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -101,6 +70,52 @@ public class EmailService {
     String subject = "Interview Request Expired";
     String text = buildTemplateEmailText("interview-request-expired-email",
         Map.of("user", user));
+    sendEmail(email, subject, text);
+  }
+
+  /**
+   * Sends an email to notify recipient about interview rejection.
+   *
+   * @param recipientUser The user for whom the interview was rejected.
+   * @param rejectionUser The user who rejected the interview.
+   * @param scheduledTime The scheduled time of the interview.
+   */
+  public void sendInterviewRejectionMessageEmail(User recipientUser, User rejectionUser,
+      ZonedDateTime scheduledTime, String email) {
+    Map<String, Object> model = new HashMap<>();
+    model.put("recipientUser", recipientUser);
+    model.put("rejectionUser", rejectionUser);
+    model.put("scheduledTime", scheduledTime);
+
+    String subject = "Interview Rejected";
+    String text = buildTemplateEmailText("interview-rejected-email", model);
+    sendEmail(email, subject, text);
+  }
+
+  /**
+   * Sends an email to notify the recipient about the scheduled interview.
+   *
+   * @param recipient         the user who will receive the email
+   * @param email             the email address of the recipient
+   * @param interviewDateTime the date and time of the interview
+   * @param interviewRequest  the interview request containing details about the interview
+   * @param zoomJoinUrl       the join url to the zoom meeting
+   */
+  public void sendInterviewScheduledEmail(User recipient, String email,
+      ZonedDateTime interviewDateTime, InterviewRequest interviewRequest, String zoomJoinUrl) {
+
+    Map<String, Object> model = new HashMap<>();
+    model.put("recipient", recipient);
+    model.put("interviewDateTime", interviewDateTime);
+    model.put("interviewRequest", interviewRequest);
+    model.put("zoomJoinUrl", zoomJoinUrl);
+
+    String template =
+        interviewRequest.getRole().equals(InterviewRequestRole.CANDIDATE)
+            ? "interviewer-interview-scheduled-email"
+            : "candidate-interview-scheduled-email";
+    String text = buildTemplateEmailText(template, model);
+    String subject = "Interview Scheduled Successfully";
     sendEmail(email, subject, text);
   }
 
@@ -143,52 +158,6 @@ public class EmailService {
       context.setVariable(entry.getKey(), entry.getValue());
     }
     return templateEngine.process(template, context);
-  }
-
-  /**
-   * Sends an email to notify recipient about interview rejection.
-   *
-   * @param recipientUser The user for whom the interview was rejected.
-   * @param rejectionUser The user who rejected the interview.
-   * @param scheduledTime The scheduled time of the interview.
-   */
-  public void sendInterviewRejectionMessage(User recipientUser, User rejectionUser,
-      ZonedDateTime scheduledTime, String email) {
-    Map<String, Object> model = new HashMap<>();
-    model.put("recipientUser", recipientUser);
-    model.put("rejectionUser", rejectionUser);
-    model.put("scheduledTime", scheduledTime);
-
-    String subject = "Interview Rejected";
-    String text = buildTemplateEmailText("interview-rejected-email", model);
-    sendEmail(email, subject, text);
-  }
-
-  /**
-   * Sends an email to notify the recipient about the scheduled interview.
-   *
-   * @param recipient         the user who will receive the email
-   * @param email             the email address of the recipient
-   * @param interviewDateTime the date and time of the interview
-   * @param interviewRequest  the interview request containing details about the interview
-   * @param zoomJoinUrl       the join url to the zoom meeting
-   */
-  public void sendInterviewScheduledEmail(User recipient, String email,
-      ZonedDateTime interviewDateTime, InterviewRequest interviewRequest, String zoomJoinUrl) {
-
-    Map<String, Object> model = new HashMap<>();
-    model.put("recipient", recipient);
-    model.put("interviewDateTime", interviewDateTime);
-    model.put("interviewRequest", interviewRequest);
-    model.put("zoomJoinUrl", zoomJoinUrl);
-
-    String template =
-        interviewRequest.getRole().equals(InterviewRequestRole.CANDIDATE)
-            ? "interviewer-interview-scheduled-email"
-            : "candidate-interview-scheduled-email";
-    String text = buildTemplateEmailText(template, model);
-    String subject = "Interview Scheduled Successfully";
-    sendEmail(email, subject, text);
   }
 
 }
