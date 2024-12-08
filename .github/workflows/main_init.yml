@@ -28,7 +28,7 @@ jobs:
         id: determine_env
         run: |
           if [ -z "${{ github.event.inputs.environment }}" ]; then
-            ENVIRONMENT="dev"  # Default value for scheduled runs
+            ENVIRONMENT="dev_new"  # Default value for scheduled runs
           else
             ENVIRONMENT="${{ github.event.inputs.environment }}"
           fi
