@@ -70,10 +70,7 @@ class InterviewServiceTest {
         .user(User.builder().id(201L).build())
         .build();
 
-    interviewPair = InterviewPair.builder()
-        .candidate(candidateRequest)
-        .interviewer(interviewerRequest)
-        .build();
+    interviewPair = new InterviewPair(candidateRequest, interviewerRequest);
 
     zoomCreateMeetingResponse = new ZoomCreateMeetingResponse();
     zoomCreateMeetingResponse.setId(123456789L);

@@ -56,10 +56,7 @@ class InterviewMatchingServiceTest {
         .availableDates(List.of(ZonedDateTime.now().plusDays(2)))
         .build();
 
-    interviewPair = InterviewPair.builder()
-        .candidate(candidateRequest)
-        .interviewer(interviewerRequest)
-        .build();
+    interviewPair = new InterviewPair(candidateRequest, interviewerRequest);
 
     interview = Interview.builder()
         .candidateRequest(candidateRequest)

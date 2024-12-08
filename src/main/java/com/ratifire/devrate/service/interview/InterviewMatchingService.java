@@ -59,8 +59,8 @@ public class InterviewMatchingService {
    * @param interviewPair the matched interview pair to mark as non-active
    */
   public void markPairAsNonActive(InterviewPair interviewPair) {
-    interviewRequestService.markAsNonActive(interviewPair.getCandidate());
-    interviewRequestService.markAsNonActive(interviewPair.getInterviewer());
+    interviewRequestService.markAsNonActive(interviewPair.candidate());
+    interviewRequestService.markAsNonActive(interviewPair.interviewer());
   }
 
   /**
@@ -72,16 +72,11 @@ public class InterviewMatchingService {
    */
   private Optional<InterviewPair> getInterviewPair(
       InterviewRequest incomingRequest, List<User> ignoreList) {
-    return incomingRequest.getRole() == INTERVIEWER ? getMatchedCandidate(incomingRequest,
-        ignoreList)
-        .map(candidate -> InterviewPair.builder()
-            .candidate(candidate)
-            .interviewer(incomingRequest)
-            .build()) : getMatchedInterviewer(incomingRequest, ignoreList)
-        .map(interviewer -> InterviewPair.builder()
-            .candidate(incomingRequest)
-            .interviewer(interviewer)
-            .build());
+    return incomingRequest.getRole() == INTERVIEWER
+        ? getMatchedCandidate(incomingRequest, ignoreList)
+            .map(candidate -> new InterviewPair(candidate, incomingRequest))
+        : getMatchedInterviewer(incomingRequest, ignoreList)
+            .map(interviewer -> new InterviewPair(incomingRequest, interviewer));
   }
 
   /**

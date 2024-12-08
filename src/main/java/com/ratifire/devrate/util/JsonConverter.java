@@ -3,7 +3,6 @@ package com.ratifire.devrate.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Utility class for converting instances to JSON strings.
@@ -23,8 +22,7 @@ public class JsonConverter {
     try {
       return objectMapper.writeValueAsString(object);
     } catch (JsonProcessingException e) {
-      log.warn("Failed to convert object {} to JSON String", object, e);
-      return StringUtils.EMPTY;
+      throw new RuntimeException("Failed to serialize object to JSON", e);
     }
   }
 }

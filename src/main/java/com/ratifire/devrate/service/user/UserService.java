@@ -687,8 +687,8 @@ public class UserService {
 
     InterviewPair activeAndRejectedRequest = determineActiveAndRejectedRequest(user, interview);
 
-    InterviewRequest activeRequest = activeAndRejectedRequest.getCandidate();
-    InterviewRequest rejectedRequest = activeAndRejectedRequest.getInterviewer();
+    InterviewRequest activeRequest = activeAndRejectedRequest.candidate();
+    InterviewRequest rejectedRequest = activeAndRejectedRequest.interviewer();
 
     notifyUsers(activeRequest.getUser(), user, interview.getStartTime());
     interviewRequestService.handleRejectedInterview(activeRequest, rejectedRequest);
@@ -711,14 +711,8 @@ public class UserService {
   private InterviewPair determineActiveAndRejectedRequest(
       User user, Interview interview) {
     return isCandidateRejected(user, interview.getCandidateRequest())
-        ? InterviewPair.builder()
-        .candidate(interview.getInterviewerRequest())    // interviewer has active request
-        .interviewer(interview.getCandidateRequest())    // candidate has rejected request
-        .build()
-        : InterviewPair.builder()
-            .candidate(interview.getCandidateRequest())    // candidate has active request
-            .interviewer(interview.getInterviewerRequest())    // interviewer has rejected request
-            .build();
+        ? new InterviewPair(interview.getInterviewerRequest(), interview.getCandidateRequest())
+        : new InterviewPair(interview.getCandidateRequest(), interview.getInterviewerRequest());
   }
 
   /**

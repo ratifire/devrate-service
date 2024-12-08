@@ -39,8 +39,8 @@ public class InterviewService {
    *     created, otherwise an empty Optional
    */
   public Optional<Interview> createInterview(InterviewPair interviewPair) {
-    InterviewRequest candidate = interviewPair.getCandidate();
-    InterviewRequest interviewer = interviewPair.getInterviewer();
+    InterviewRequest candidate = interviewPair.candidate();
+    InterviewRequest interviewer = interviewPair.interviewer();
 
     ZonedDateTime matchedStartTime = getMatchedStartTime(candidate.getAvailableDates(),
         interviewer.getAvailableDates());

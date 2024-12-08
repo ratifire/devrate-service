@@ -29,23 +29,13 @@ public class WebSocketSender {
    */
   public void sendNotificationByUserEmail(NotificationDto notification, String email) {
     Set<WebSocketSession> sessions = sessionRegistry.getUserSessions(email);
+    TextMessage message = new TextMessage(JsonConverter.serialize(notification));
     for (WebSocketSession session : sessions) {
-      TextMessage message = new TextMessage(JsonConverter.serialize(notification));
-      sendMessage(session, message);
-    }
-  }
-
-  /**
-   * Sends a message to a WebSocket session.
-   *
-   * @param session The WebSocket session to send the message to.
-   * @param message The message to send.
-   */
-  private void sendMessage(WebSocketSession session, TextMessage message) {
-    try {
-      session.sendMessage(message);
-    } catch (IOException e) {
-      log.error("Failed to send message: {}", message, e);
+      try {
+        session.sendMessage(message);
+      } catch (IOException e) {
+        log.error("Failed to send message: {}", message, e);
+      }
     }
   }
 }
