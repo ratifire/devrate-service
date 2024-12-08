@@ -1,7 +1,7 @@
 package com.ratifire.devrate.dto;
 
 import com.ratifire.devrate.enums.ContactType;
-import com.ratifire.devrate.validation.annotations.ValidateContactValue;
+import com.ratifire.devrate.validation.ValidContact;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@ValidateContactValue
+@ValidContact
 public class ContactDto {
 
   private Long id;

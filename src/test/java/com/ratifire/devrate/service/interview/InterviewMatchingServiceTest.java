@@ -14,7 +14,7 @@ import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.InterviewRequestRole;
-import com.ratifire.devrate.util.interview.InterviewPair;
+import com.ratifire.devrate.util.InterviewPair;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +39,7 @@ class InterviewMatchingServiceTest {
 
   private InterviewRequest candidateRequest;
   private InterviewRequest interviewerRequest;
-  private InterviewPair<InterviewRequest, InterviewRequest> interviewPair;
+  private InterviewPair interviewPair;
   private Interview interview;
 
   @BeforeEach
@@ -56,7 +56,7 @@ class InterviewMatchingServiceTest {
         .availableDates(List.of(ZonedDateTime.now().plusDays(2)))
         .build();
 
-    interviewPair = InterviewPair.<InterviewRequest, InterviewRequest>builder()
+    interviewPair = InterviewPair.builder()
         .candidate(candidateRequest)
         .interviewer(interviewerRequest)
         .build();

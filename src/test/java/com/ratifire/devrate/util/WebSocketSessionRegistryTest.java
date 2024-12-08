@@ -1,17 +1,14 @@
-package com.ratifire.devrate.util.websocket;
+package com.ratifire.devrate.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ratifire.devrate.exception.WebSocketSessionNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -63,16 +60,6 @@ public class WebSocketSessionRegistryTest {
     sessionRegistry.closeRemoveSession(testLogin, session);
 
     verify(session, never()).close();
-  }
-
-  @Test
-  void closeRemoveSession_SessionNotFound_ThrowsWebSocketSessionNotFoundException()
-      throws IOException {
-    when(session.isOpen()).thenReturn(true);
-    doThrow(IOException.class).when(session).close();
-
-    assertThrows(WebSocketSessionNotFoundException.class, () ->
-        sessionRegistry.closeRemoveSession(testLogin, session));
   }
 
   @Test

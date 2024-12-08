@@ -7,7 +7,7 @@ import com.ratifire.devrate.enums.EventType;
 import com.ratifire.devrate.exception.InterviewNotFoundException;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
 import com.ratifire.devrate.service.event.EventService;
-import com.ratifire.devrate.util.interview.InterviewPair;
+import com.ratifire.devrate.util.InterviewPair;
 import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
 import com.ratifire.devrate.util.zoom.service.ZoomApiService;
 import java.time.ZonedDateTime;
@@ -38,8 +38,7 @@ public class InterviewService {
    * @return an Optional containing the created Interview if the Zoom meeting was successfully
    *     created, otherwise an empty Optional
    */
-  public Optional<Interview> createInterview(
-      InterviewPair<InterviewRequest, InterviewRequest> interviewPair) {
+  public Optional<Interview> createInterview(InterviewPair interviewPair) {
     InterviewRequest candidate = interviewPair.getCandidate();
     InterviewRequest interviewer = interviewPair.getInterviewer();
 

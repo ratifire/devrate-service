@@ -8,7 +8,6 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,7 +20,7 @@ import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.exception.InterviewNotFoundException;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
 import com.ratifire.devrate.service.event.EventService;
-import com.ratifire.devrate.util.interview.InterviewPair;
+import com.ratifire.devrate.util.InterviewPair;
 import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
 import com.ratifire.devrate.util.zoom.payloads.ZoomCreateMeetingResponse;
 import com.ratifire.devrate.util.zoom.service.ZoomApiService;
@@ -54,7 +53,7 @@ class InterviewServiceTest {
 
   private InterviewRequest candidateRequest;
   private InterviewRequest interviewerRequest;
-  private InterviewPair<InterviewRequest, InterviewRequest> interviewPair;
+  private InterviewPair interviewPair;
   private ZoomCreateMeetingResponse zoomCreateMeetingResponse;
 
   @BeforeEach
@@ -71,7 +70,7 @@ class InterviewServiceTest {
         .user(User.builder().id(201L).build())
         .build();
 
-    interviewPair = InterviewPair.<InterviewRequest, InterviewRequest>builder()
+    interviewPair = InterviewPair.builder()
         .candidate(candidateRequest)
         .interviewer(interviewerRequest)
         .build();

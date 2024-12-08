@@ -17,7 +17,6 @@ import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.NotificationNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.NotificationRepository;
-import com.ratifire.devrate.util.websocket.WebSocketSender;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;

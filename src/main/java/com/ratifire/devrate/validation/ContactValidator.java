@@ -1,8 +1,7 @@
-package com.ratifire.devrate.validation.validators;
+package com.ratifire.devrate.validation;
 
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.enums.ContactType;
-import com.ratifire.devrate.validation.annotations.ValidateContactValue;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import java.util.EnumMap;
@@ -11,11 +10,11 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 /**
- * Validator for the {@link ContactDto} class, ensuring that the value of a contact matches the
- * expected format based on the ContactType.
+ * Validator for the {@link ContactDto} class, ensuring that the contact matches the expected
+ * format based on the ContactType.
  */
-public class ContactValueValidator implements
-    ConstraintValidator<ValidateContactValue, ContactDto> {
+public class ContactValidator implements
+    ConstraintValidator<ValidContact, ContactDto> {
 
   private static final Pattern EMAIL_PATTERN = Pattern.compile(
       "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$");
@@ -30,16 +29,16 @@ public class ContactValueValidator implements
       "https://www\\.behance\\.net/[a-zA-Z0-9-]+/?$");
   private final Map<ContactType, Predicate<String>> validatorsByContactType;
 
-  public ContactValueValidator() {
+  public ContactValidator() {
     this.validatorsByContactType = initializeValidators();
   }
 
   /**
-   * Validates the value of the given ContactDto based on its ContactType.
+   * Validates the given ContactDto based on its ContactType.
    *
    * @param contactDto the contact DTO to validate
    * @param context    the context in which the constraint is evaluated
-   * @return True if the contact value is valid or empty, false otherwise
+   * @return True if the contact is valid or empty, false otherwise
    */
   @Override
   public boolean isValid(ContactDto contactDto, ConstraintValidatorContext context) {

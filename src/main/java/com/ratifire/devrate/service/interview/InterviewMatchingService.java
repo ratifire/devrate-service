@@ -5,7 +5,7 @@ import static com.ratifire.devrate.enums.InterviewRequestRole.INTERVIEWER;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
-import com.ratifire.devrate.util.interview.InterviewPair;
+import com.ratifire.devrate.util.InterviewPair;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -38,8 +38,7 @@ public class InterviewMatchingService {
    *
    * @param incomingRequest the interview request to be matched
    * @param ignoreList      a list of users to ignore during matching
-   * @return an Optional containing the created Interview if a match is found and the interview is
-   *     created, otherwise an empty Optional
+   * @return an Optional containing the created Interview
    */
   public Optional<Interview> match(InterviewRequest incomingRequest, List<User> ignoreList) {
     return getInterviewPair(incomingRequest, ignoreList)
@@ -59,7 +58,7 @@ public class InterviewMatchingService {
    *
    * @param interviewPair the matched interview pair to mark as non-active
    */
-  public void markPairAsNonActive(InterviewPair<InterviewRequest, InterviewRequest> interviewPair) {
+  public void markPairAsNonActive(InterviewPair interviewPair) {
     interviewRequestService.markAsNonActive(interviewPair.getCandidate());
     interviewRequestService.markAsNonActive(interviewPair.getInterviewer());
   }
@@ -71,15 +70,15 @@ public class InterviewMatchingService {
    * @param ignoreList      a list of users to ignore during matching
    * @return an optional InterviewPair containing the matched candidate and interviewer
    */
-  private Optional<InterviewPair<InterviewRequest, InterviewRequest>> getInterviewPair(
+  private Optional<InterviewPair> getInterviewPair(
       InterviewRequest incomingRequest, List<User> ignoreList) {
     return incomingRequest.getRole() == INTERVIEWER ? getMatchedCandidate(incomingRequest,
         ignoreList)
-        .map(candidate -> InterviewPair.<InterviewRequest, InterviewRequest>builder()
+        .map(candidate -> InterviewPair.builder()
             .candidate(candidate)
             .interviewer(incomingRequest)
             .build()) : getMatchedInterviewer(incomingRequest, ignoreList)
-        .map(interviewer -> InterviewPair.<InterviewRequest, InterviewRequest>builder()
+        .map(interviewer -> InterviewPair.builder()
             .candidate(incomingRequest)
             .interviewer(interviewer)
             .build());
