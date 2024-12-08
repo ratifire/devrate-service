@@ -1,4 +1,4 @@
-package com.ratifire.devrate.service.employmentrecord;
+package com.ratifire.devrate.service;
 
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.entity.EmploymentRecord;
@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EmploymentRecordService {
 
-  private final EmploymentRecordRepository employmentRecordRepository;
-  private final DataMapper<EmploymentRecordDto, EmploymentRecord> employmentRecordDataMapper;
+  private final EmploymentRecordRepository repository;
+  private final DataMapper<EmploymentRecordDto, EmploymentRecord> mapper;
 
   /**
    * Retrieves EmploymentRecord (work experience) information by employment ID.
@@ -28,10 +28,8 @@ public class EmploymentRecordService {
    * @throws EmploymentRecordNotFoundException if work experience information is not found
    */
   public EmploymentRecordDto findById(long id) {
-    return employmentRecordRepository.findById(id).map(employmentRecordDataMapper::toDto)
-        .orElseThrow(
-            () -> new EmploymentRecordNotFoundException("Employment record not found with id: "
-                + id));
+    return repository.findById(id).map(mapper::toDto)
+        .orElseThrow(() -> new EmploymentRecordNotFoundException(id));
   }
 
   /**
@@ -44,13 +42,13 @@ public class EmploymentRecordService {
    *                                             Employment record`s id
    */
   public EmploymentRecordDto update(long id, EmploymentRecordDto employmentRecordDto) {
-    Optional<EmploymentRecord> optionalEmploymentRecord = employmentRecordRepository.findById(id);
+    Optional<EmploymentRecord> optionalEmploymentRecord = repository.findById(id);
 
     return optionalEmploymentRecord.map(employmentRecord -> {
-      employmentRecordDataMapper.updateEntity(employmentRecordDto, employmentRecord);
-      EmploymentRecord updatedRecord = employmentRecordRepository.save(employmentRecord);
-      return employmentRecordDataMapper.toDto(updatedRecord);
-    }).orElseThrow(() -> new EmploymentRecordNotFoundException("Employment record`s id: " + id));
+      mapper.updateEntity(employmentRecordDto, employmentRecord);
+      EmploymentRecord updatedRecord = repository.save(employmentRecord);
+      return mapper.toDto(updatedRecord);
+    }).orElseThrow(() -> new EmploymentRecordNotFoundException(id));
   }
 
   /**
@@ -58,7 +56,7 @@ public class EmploymentRecordService {
    *
    * @param id the ID of the employment whose EmploymentRecord information is to be deleted
    */
-  public void deleteById(long id) {
-    employmentRecordRepository.deleteById(id);
+  public void delete(long id) {
+    repository.deleteById(id);
   }
 }

@@ -3,9 +3,9 @@ package com.ratifire.devrate.util.interview;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.repository.interview.InterviewRequestRepository;
+import com.ratifire.devrate.service.EmailService;
 import com.ratifire.devrate.service.NotificationService;
-import com.ratifire.devrate.service.email.EmailService;
-import com.ratifire.devrate.service.user.UserService;
+import com.ratifire.devrate.service.UserService;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +55,7 @@ public class InterviewCleanUpScheduler {
    * @param email The email address of the user.
    */
   private void sendInterviewRequestExpiryAlerts(User user, String email) {
-    notificationService.addInterviewRequestExpiryNotification(user, email);
+    notificationService.addInterviewRequestExpiry(user, email);
     emailService.sendInterviewRequestExpiryEmail(user, email);
   }
 }

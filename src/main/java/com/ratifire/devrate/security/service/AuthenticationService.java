@@ -11,7 +11,7 @@ import com.ratifire.devrate.security.exception.LogoutException;
 import com.ratifire.devrate.security.helper.RefreshTokenCookieHelper;
 import com.ratifire.devrate.security.model.dto.LoginDto;
 import com.ratifire.devrate.security.util.TokenUtil;
-import com.ratifire.devrate.service.user.UserService;
+import com.ratifire.devrate.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

@@ -53,11 +53,11 @@
 //import com.ratifire.devrate.repository.InterviewSummaryRepository;
 //import com.ratifire.devrate.repository.UserRepository;
 //import com.ratifire.devrate.service.NotificationService;
-//import com.ratifire.devrate.service.email.EmailService;
+//import com.ratifire.devrate.service.EmailService;
 //import com.ratifire.devrate.service.interview.InterviewMatchingService;
 //import com.ratifire.devrate.service.interview.InterviewRequestService;
 //import com.ratifire.devrate.service.interview.InterviewService;
-//import com.ratifire.devrate.service.specialization.SpecializationService;
+//import com.ratifire.devrate.service.SpecializationService;
 //import java.math.BigDecimal;
 //import java.time.LocalDate;
 //import java.time.ZonedDateTime;

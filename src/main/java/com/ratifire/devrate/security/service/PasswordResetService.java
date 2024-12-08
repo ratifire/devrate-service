@@ -3,8 +3,8 @@ package com.ratifire.devrate.security.service;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.security.exception.PasswordResetException;
 import com.ratifire.devrate.security.model.dto.PasswordResetDto;
-import com.ratifire.devrate.service.email.EmailService;
-import com.ratifire.devrate.service.user.UserService;
+import com.ratifire.devrate.service.EmailService;
+import com.ratifire.devrate.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,8 +59,8 @@ public class PasswordResetService {
       User user = userService.findByEmail(email);
       user.setPassword(encodedPassword);
 
-      userService.updateUser(user);
-      emailService.sendPasswordChangeConfirmation(email);
+      userService.updateByEntity(user);
+      emailService.sendPasswordChangeConfirmationEmail(email);
     } catch (Exception e) {
       log.error("Confirmation password reset process was failed: {}", e.getMessage(), e);
       throw new PasswordResetException("Confirmation password reset process was failed.");

@@ -20,7 +20,7 @@ import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.exception.InterviewFeedbackDetailNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.interview.InterviewFeedbackDetailRepository;
-import com.ratifire.devrate.service.specialization.SkillService;
+import com.ratifire.devrate.service.SkillService;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +50,7 @@ class InterviewFeedbackDetailServiceTest {
   private static final List<Long> SKILL_IDS = List.of(101L, 102L);
 
   @Test
-  void getInterviewFeedbackDetailWhenExistsThenReturnFeedbackDetailDto() {
+  void getDtoByIdDto() {
     InterviewFeedbackDetail feedbackDetail = InterviewFeedbackDetail.builder()
         .id(FEEDBACK_ID)
         .startTime(ZonedDateTime.now())
@@ -67,7 +67,7 @@ class InterviewFeedbackDetailServiceTest {
     when(feedbackDetailMapper.toDto(feedbackDetail, List.of())).thenReturn(feedbackDetailDto);
 
     InterviewFeedbackDetailDto result = feedbackDetailService
-        .getInterviewFeedbackDetail(FEEDBACK_ID);
+        .getDtoById(FEEDBACK_ID);
 
     assertNotNull(result);
     assertEquals(feedbackDetailDto, result);
@@ -77,17 +77,17 @@ class InterviewFeedbackDetailServiceTest {
   }
 
   @Test
-  void getInterviewFeedbackDetailWhenNotFoundThenThrowException() {
+  void getDtoByIdWhenNotFoundThenThrowException() {
     when(feedbackDetailRepository.findById(FEEDBACK_ID)).thenReturn(Optional.empty());
 
     assertThrows(InterviewFeedbackDetailNotFoundException.class,
-        () -> feedbackDetailService.getInterviewFeedbackDetail(FEEDBACK_ID));
+        () -> feedbackDetailService.getDtoById(FEEDBACK_ID));
 
     verify(feedbackDetailRepository).findById(FEEDBACK_ID);
   }
 
   @Test
-  void saveInterviewFeedbackDetailThenReturnSavedIds() {
+  void saveThenReturnSavedIds() {
     Interview interview = mock(Interview.class);
     InterviewRequest candidateRequest = mock(InterviewRequest.class);
     InterviewRequest interviewerRequest = mock(InterviewRequest.class);
@@ -118,7 +118,7 @@ class InterviewFeedbackDetailServiceTest {
       return savedDetail;
     });
 
-    Map<InterviewRequestRole, Long> result = feedbackDetailService.saveInterviewFeedbackDetail(
+    Map<InterviewRequestRole, Long> result = feedbackDetailService.save(
         interview, 100L);
 
     assertEquals(FEEDBACK_ID, result.get(InterviewRequestRole.CANDIDATE));
@@ -129,13 +129,13 @@ class InterviewFeedbackDetailServiceTest {
 
   @Test
   void deleteInterviewFeedbackDetailById() {
-    feedbackDetailService.deleteById(FEEDBACK_ID);
+    feedbackDetailService.delete(FEEDBACK_ID);
     verify(feedbackDetailRepository).deleteById(FEEDBACK_ID);
   }
 
   @Test
-  void deleteExpiredInterviewFeedbackDetailsTaskTest() {
-    feedbackDetailService.deleteExpiredInterviewFeedbackDetailsTask();
+  void deleteExpiredTaskTest() {
+    feedbackDetailService.deleteExpiredTask();
 
     verify(feedbackDetailRepository, times(1))
         .deleteExpiredFeedbackDetails(any(ZonedDateTime.class));

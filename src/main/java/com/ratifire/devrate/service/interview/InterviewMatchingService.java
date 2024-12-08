@@ -9,20 +9,19 @@ import com.ratifire.devrate.util.interview.InterviewPair;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
  * Service for matching interview requests between candidates and interviewers.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class InterviewMatchingService {
 
   private final InterviewRequestService interviewRequestService;
   private final InterviewService interviewService;
-  private static final Logger logger = LoggerFactory.getLogger(InterviewMatchingService.class);
 
   /**
    * Matches the given interview request with an existing request.
@@ -44,12 +43,12 @@ public class InterviewMatchingService {
   public Optional<Interview> match(InterviewRequest incomingRequest, List<User> ignoreList) {
     return getInterviewPair(incomingRequest, ignoreList)
         .flatMap(interviewPair -> {
-          Optional<Interview> interviewOptional = interviewService.createInterview(interviewPair);
+          Optional<Interview> interviewOptional = interviewService.create(interviewPair);
           interviewOptional.ifPresent(interview -> markPairAsNonActive(interviewPair));
           return interviewOptional;
         })
         .or(() -> {
-          logger.debug("No matching request found for: {}", incomingRequest);
+          log.debug("No matching request found for: {}", incomingRequest);
           return Optional.empty();
         });
   }

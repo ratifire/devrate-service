@@ -11,7 +11,7 @@ import com.ratifire.devrate.enums.SkillType;
 import com.ratifire.devrate.exception.InterviewFeedbackDetailNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.interview.InterviewFeedbackDetailRepository;
-import com.ratifire.devrate.service.specialization.SkillService;
+import com.ratifire.devrate.service.SkillService;
 import jakarta.transaction.Transactional;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -29,11 +29,24 @@ public class InterviewFeedbackDetailService {
 
   private static final long CLEANUP_INTERVAL = 2592000000L; // 30 days in milliseconds
   private static final int RECORD_RETENTION_PERIOD_IN_MONTHS = 1;
+  private final SkillService skillService;
   private final InterviewFeedbackDetailRepository interviewFeedbackDetailRepository;
   private final DataMapper<InterviewFeedbackDetailDto, InterviewFeedbackDetail>
       interviewFeedbackDetailMapper;
-  private final SkillService skillService;
 
+
+  /**
+   * Finds the interview feedback detail by its ID.
+   *
+   * @param id the ID of the interview feedback detail to find
+   * @return the InterviewFeedbackDetail entity if found
+   * @throws InterviewFeedbackDetailNotFoundException if no feedback detail is found with the given
+   *                                                  ID
+   */
+  public InterviewFeedbackDetail findById(Long id) {
+    return interviewFeedbackDetailRepository.findById(id)
+        .orElseThrow(() -> new InterviewFeedbackDetailNotFoundException(id));
+  }
 
   /**
    * Retrieves feedback details by the given feedback detail ID.
@@ -43,8 +56,8 @@ public class InterviewFeedbackDetailService {
    * @throws InterviewFeedbackDetailNotFoundException if the feedback detail is not found by the
    *                                                  given ID
    */
-  public InterviewFeedbackDetailDto getInterviewFeedbackDetail(long id) {
-    InterviewFeedbackDetail feedbackDetail = findDetailById(id);
+  public InterviewFeedbackDetailDto getDtoById(long id) {
+    InterviewFeedbackDetail feedbackDetail = findById(id);
     return interviewFeedbackDetailMapper.toDto(feedbackDetail,
         skillService.findAllById(feedbackDetail.getSkillsIds()));
   }
@@ -58,15 +71,14 @@ public class InterviewFeedbackDetailService {
    * @return a map containing the IDs of the saved feedback details for the interviewer and
    *     candidate
    */
-  public Map<InterviewRequestRole, Long> saveInterviewFeedbackDetail(Interview interview,
-      long interviewSummaryId) {
+  public Map<InterviewRequestRole, Long> save(Interview interview, long interviewSummaryId) {
     ZonedDateTime startTime = interview.getStartTime();
     User candidate = interview.getCandidateRequest().getUser();
     User interviewer = interview.getInterviewerRequest().getUser();
-    InterviewFeedbackDetail candidateFeedbackDetail = createInterviewFeedbackDetail(
+    InterviewFeedbackDetail candidateFeedbackDetail = create(
         candidate.getId(), interviewer, interviewSummaryId, interview.getInterviewerRequest(),
         startTime);
-    InterviewFeedbackDetail interviewerFeedbackDetail = createInterviewFeedbackDetail(
+    InterviewFeedbackDetail interviewerFeedbackDetail = create(
         interviewer.getId(), candidate, interviewSummaryId, interview.getCandidateRequest(),
         startTime);
 
@@ -89,9 +101,8 @@ public class InterviewFeedbackDetailService {
    * @param startTime          the start time of the interview
    * @return the created InterviewFeedbackDetail entity
    */
-  private InterviewFeedbackDetail createInterviewFeedbackDetail(long ownerId,
-      User participant, long interviewSummaryId, InterviewRequest request,
-      ZonedDateTime startTime) {
+  private InterviewFeedbackDetail create(long ownerId, User participant, long interviewSummaryId,
+      InterviewRequest request, ZonedDateTime startTime) {
     List<Long> skillsIds = request.getRole() == InterviewRequestRole.INTERVIEWER
         ? request.getMastery().getSkills().stream()
         .filter(s -> s.getType() == SkillType.SOFT_SKILL)
@@ -113,24 +124,11 @@ public class InterviewFeedbackDetailService {
   }
 
   /**
-   * Finds the interview feedback detail by its ID.
-   *
-   * @param id the ID of the interview feedback detail to find
-   * @return the InterviewFeedbackDetail entity if found
-   * @throws InterviewFeedbackDetailNotFoundException if no feedback detail is found with the given
-   *                                                  ID
-   */
-  public InterviewFeedbackDetail findDetailById(Long id) {
-    return interviewFeedbackDetailRepository.findById(id)
-        .orElseThrow(() -> new InterviewFeedbackDetailNotFoundException(id));
-  }
-
-  /**
    * Deletes the interview feedback detail by its ID.
    *
    * @param id the ID of the interview feedback detail to delete
    */
-  public void deleteById(long id) {
+  public void delete(long id) {
     interviewFeedbackDetailRepository.deleteById(id);
   }
 
@@ -144,7 +142,7 @@ public class InterviewFeedbackDetailService {
   @Transactional
   @Scheduled(fixedRate = CLEANUP_INTERVAL, initialDelay = 86400000) // initialDelay parameter is
   // only for development phase, before release it must be removed
-  public void deleteExpiredInterviewFeedbackDetailsTask() {
+  public void deleteExpiredTask() {
     ZonedDateTime expiredRecordsCutoffDate = ZonedDateTime.now()
         .minusMonths(RECORD_RETENTION_PERIOD_IN_MONTHS);
     interviewFeedbackDetailRepository.deleteExpiredFeedbackDetails(expiredRecordsCutoffDate);

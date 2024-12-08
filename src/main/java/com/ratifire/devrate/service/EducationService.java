@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EducationService {
 
-  private final EducationRepository educationRepository;
+  private final EducationRepository repository;
 
   private final DataMapper<EducationDto, Education> mapper;
 
@@ -27,8 +27,8 @@ public class EducationService {
    * @throws EducationNotFoundException If no education entity is found with the given ID.
    */
   public EducationDto getById(long id) {
-    return educationRepository.findById(id).map(mapper::toDto)
-        .orElseThrow(() -> new EducationNotFoundException("Education not found with id: " + id));
+    return repository.findById(id).map(mapper::toDto)
+        .orElseThrow(() -> new EducationNotFoundException(id));
   }
 
   /**
@@ -40,13 +40,12 @@ public class EducationService {
    * @throws EducationNotFoundException If no education entity is found with the given ID.
    */
   public EducationDto update(long id, EducationDto educationDto) {
-    Education education = educationRepository.findById(id)
-        .orElseThrow(() -> new EducationNotFoundException(
-            "Education not found with id: " + id));
+    Education education = repository.findById(id)
+        .orElseThrow(() -> new EducationNotFoundException(id));
 
     mapper.updateEntity(educationDto, education);
 
-    return mapper.toDto(educationRepository.save(education));
+    return mapper.toDto(repository.save(education));
   }
 
   /**
@@ -55,6 +54,6 @@ public class EducationService {
    * @param id The ID of the education entity to be deleted.
    */
   public void delete(long id) {
-    educationRepository.deleteById(id);
+    repository.deleteById(id);
   }
 }
