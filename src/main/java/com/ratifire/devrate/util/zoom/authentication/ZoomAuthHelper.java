@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * Helper class for Zoom authentication.
@@ -29,7 +29,7 @@ public class ZoomAuthHelper {
   private long tokenExpiryTime;
   private ZoomAuthResponse authResponse;
   private final ZoomAuthRequest authRequest;
-  private final RestTemplate restTemplate;
+  private final RestTemplateBuilder restTemplate;
 
   /**
    * Retrieve authentication token.
@@ -72,7 +72,7 @@ public class ZoomAuthHelper {
     HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(map, headers);
     String url = authRequest.getZoomIssuerUrl() + "/token";
     try {
-      this.authResponse = restTemplate.exchange(url, HttpMethod.POST, entity,
+      this.authResponse = restTemplate.build().exchange(url, HttpMethod.POST, entity,
           ZoomAuthResponse.class).getBody();
     } catch (HttpClientErrorException ex) {
       ResponseEntity<String> res =
