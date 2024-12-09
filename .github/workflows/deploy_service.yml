@@ -24,7 +24,7 @@ jobs:
   terraform:
     name: Terraform deploy service to AWS
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
+    environment: ${{ github.event.inputs.environment || 'dev_new' }}
     env:
       working-directory: terraform/deploy_service
     defaults:

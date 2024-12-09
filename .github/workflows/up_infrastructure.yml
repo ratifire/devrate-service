@@ -21,7 +21,7 @@ jobs:
   terraform:
     name: Terraform deploy infrastructure
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
+    environment: ${{ github.event.inputs.environment || 'dev_new' }}
     env:
       working-directory: terraform/infrastructure
     defaults:

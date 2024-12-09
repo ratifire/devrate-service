@@ -21,7 +21,7 @@ jobs:
   terraform:
     name: Terraform_destroy_service
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
+    environment: ${{ github.event.inputs.environment || 'dev_new' }}
     env:
       working-directory: terraform/deploy_service
     defaults:
