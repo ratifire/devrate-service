@@ -12,11 +12,14 @@ import com.ratifire.devrate.exception.SpecializationNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
+import com.ratifire.devrate.util.converter.JsonUtil;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,13 +30,24 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SpecializationService {
 
+  private static final String DEFAULT_SOFT_SKILLS_PATH =
+      "/static/data/specialization/specialization-names.json";
+  private static final String DEFAULT_MASTERY_LEVELS_PATH =
+      "/static/data/specialization/mastery-levels.json";
+
   private final MasteryService masteryService;
   private final SpecializationRepository specializationRepository;
   private final InterviewRepository interviewRepository;
   private final DataMapper<SpecializationDto, Specialization> specializationMapper;
   private final DataMapper<MasteryDto, Mastery> masteryMapper;
-  private final Map<Integer, String> defaultMasteryLevels;
-  private final List<String> defaultSpecializationNames;
+  private Map<Integer, String> defaultMasteryLevels;
+
+  {
+    List<String> masteryLevels = JsonUtil.loadStringFromJson(DEFAULT_MASTERY_LEVELS_PATH);
+    defaultMasteryLevels = IntStream.range(0, masteryLevels.size())
+        .boxed()
+        .collect(Collectors.toMap(i -> i + 1, masteryLevels::get));
+  }
 
   /**
    * Finds a specialization by its ID.
@@ -122,6 +136,7 @@ public class SpecializationService {
   public void validateBeforeCreate(SpecializationDto specializationDto,
       long userId) {
     String specializationName = specializationDto.getName();
+    List<?> defaultSpecializationNames = JsonUtil.loadStringFromJson(DEFAULT_SOFT_SKILLS_PATH);
     if (specializationName != null && !defaultSpecializationNames.contains(specializationName)) {
       throw new ResourceNotFoundException(
           "The specialization name \"" + specializationName + "\" not found.");

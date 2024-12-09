@@ -12,7 +12,7 @@ import com.ratifire.devrate.enums.NotificationType;
 import com.ratifire.devrate.exception.NotificationNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.NotificationRepository;
-import com.ratifire.devrate.util.converter.JsonConverter;
+import com.ratifire.devrate.util.converter.JsonUtil;
 import com.ratifire.devrate.util.websocket.WebSocketSender;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -138,7 +138,7 @@ public class NotificationService {
       User user) {
     return Notification.builder()
         .type(type)
-        .payload(payload != null ? JsonConverter.serialize(payload) : null)
+        .payload(payload != null ? JsonUtil.serialize(payload) : null)
         .read(false)
         .createdAt(LocalDateTime.now())
         .user(user)
