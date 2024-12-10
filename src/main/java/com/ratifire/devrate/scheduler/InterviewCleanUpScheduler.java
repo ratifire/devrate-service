@@ -49,7 +49,7 @@ public class InterviewCleanUpScheduler {
    */
   private void sendInterviewRequestExpiryAlerts(User user) {
     String email = userService.findEmailByUserId(user.getId());
-    notificationService.addInterviewRequestExpiryNotification(user, email);
+    notificationService.addInterviewRequestExpiry(user, email);
     emailService.sendInterviewRequestExpiryEmail(user, email);
   }
 }

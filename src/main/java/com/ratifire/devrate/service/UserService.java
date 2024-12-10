@@ -1,4 +1,4 @@
-package com.ratifire.devrate.service.user;
+package com.ratifire.devrate.service;
 
 import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.BookmarkDto;
