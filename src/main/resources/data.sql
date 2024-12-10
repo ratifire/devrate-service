@@ -622,7 +622,8 @@ VALUES
     (11000, '2024-07-27', 45, 8881, 8882),
     (12000, '2024-07-27', 30, 8882, 8881),
     (13000, '2024-07-28', 90, 8881, 8882),
-    (14000, '2024-07-28', 75, 8882, 8881);
+    (14000, '2024-07-28', 75, 8882, 8881)
+    ON CONFLICT (id) DO NOTHING;
 
 -- Insert interview summaries for each month of the year
 INSERT INTO interview_summaries (id, date, duration, candidate_id, interviewer_id)
@@ -638,7 +639,8 @@ VALUES
     (23000, '2024-05-01', 90, 8881, 8882),
     (24000, '2024-06-01', 75, 8882, 8881),
     (25000, '2024-07-01', 60, 8881, 8882),
-    (26000, '2024-08-01', 45, 8882, 8881);
+    (26000, '2024-08-01', 45, 8882, 8881)
+    ON CONFLICT (id) DO NOTHING;
 
 -- Associate interview summaries with user
 -- Ensure the interview_summary_id exists in interview_summaries table
