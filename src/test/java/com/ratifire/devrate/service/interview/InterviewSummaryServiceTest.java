@@ -115,10 +115,10 @@ class InterviewSummaryServiceTest {
   }
 
   @Test
-  void createInterviewSummaryTest() {
+  void createTest() {
     String endTime = startTime.plusMinutes(60).toString();
 
-    interviewSummaryService.createInterviewSummary(interview, endTime);
+    interviewSummaryService.create(interview, endTime);
 
     assertAll(
         () -> verify(interviewSummaryRepository, times(1))

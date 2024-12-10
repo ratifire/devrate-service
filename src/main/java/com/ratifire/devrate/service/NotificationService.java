@@ -30,7 +30,7 @@ public class NotificationService {
 
   private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
 
-  private final NotificationRepository notificationRepository;
+  private final NotificationRepository repository;
   private final DataMapper<NotificationDto, Notification> mapper;
   private final WebSocketSender webSocketSender;
 
@@ -40,10 +40,10 @@ public class NotificationService {
    * @param user      The user to add the greeting notification for.
    * @param userEmail The user email to add the notification for.
    */
-  public void addGreetingNotification(User user, String userEmail) {
-    Notification notification = createNotification(NotificationType.GREETING, null, user);
+  public void addGreeting(User user, String userEmail) {
+    Notification notification = create(NotificationType.GREETING, null, user);
 
-    addNotification(notification, userEmail);
+    save(notification, userEmail);
   }
 
   /**
@@ -52,15 +52,15 @@ public class NotificationService {
    * @param user      The user to whom the expiration notification will be sent.
    * @param userEmail The user email to add the notification for.
    */
-  public void addInterviewRequestExpiryNotification(User user, String userEmail) {
+  public void addInterviewRequestExpiry(User user, String userEmail) {
     InterviewRequestExpiredPayload expiredPayload = InterviewRequestExpiredPayload.builder()
         .userFirstName(user.getFirstName())
         .build();
 
-    Notification notification = createNotification(NotificationType.INTERVIEW_REQUEST_EXPIRED,
+    Notification notification = create(NotificationType.INTERVIEW_REQUEST_EXPIRED,
         expiredPayload, user);
 
-    addNotification(notification, userEmail);
+    save(notification, userEmail);
   }
 
   /**
@@ -78,10 +78,10 @@ public class NotificationService {
         .scheduledDateTime(scheduleTime.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)))
         .build();
 
-    Notification notification = createNotification(NotificationType.INTERVIEW_REJECTED,
+    Notification notification = create(NotificationType.INTERVIEW_REJECTED,
         rejectedPayload, recipient);
 
-    addNotification(notification, userEmail);
+    save(notification, userEmail);
   }
 
   /**
@@ -101,10 +101,10 @@ public class NotificationService {
             interviewDateTime.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)))
         .build();
 
-    Notification notification = createNotification(NotificationType.INTERVIEW_SCHEDULED,
+    Notification notification = create(NotificationType.INTERVIEW_SCHEDULED,
         scheduledPayload, recipient);
 
-    addNotification(notification, userEmail);
+    save(notification, userEmail);
   }
 
   /**
@@ -119,10 +119,10 @@ public class NotificationService {
         .feedbackId(feedbackId)
         .build();
 
-    Notification notification = createNotification(NotificationType.INTERVIEW_FEEDBACK,
+    Notification notification = create(NotificationType.INTERVIEW_FEEDBACK,
         feedbackPayload, recipient);
 
-    addNotification(notification, userEmail);
+    save(notification, userEmail);
   }
 
   /**
@@ -133,7 +133,7 @@ public class NotificationService {
    * @param user    The user to whom the notification will be associated.
    * @return The built Notification object.
    */
-  private Notification createNotification(NotificationType type, NotificationPayload payload,
+  private Notification create(NotificationType type, NotificationPayload payload,
       User user) {
     return Notification.builder()
         .type(type)
@@ -150,10 +150,10 @@ public class NotificationService {
    * @param notification The notification that will be saved.
    * @param userEmail    The user email to add the notification for.
    */
-  private void addNotification(Notification notification, String userEmail) {
-    notificationRepository.save(notification);
+  private void save(Notification notification, String userEmail) {
+    repository.save(notification);
 
-    sendUserNotification(userEmail, mapper.toDto(notification));
+    sendToUser(userEmail, mapper.toDto(notification));
   }
 
   /**
@@ -161,8 +161,8 @@ public class NotificationService {
    *
    * @param notificationId The ID of the notification to delete.
    */
-  public void deleteById(long notificationId) {
-    notificationRepository.deleteById(notificationId);
+  public void delete(long notificationId) {
+    repository.deleteById(notificationId);
   }
 
   /**
@@ -171,7 +171,7 @@ public class NotificationService {
    * @param userEmail    The email of the user to send fresh notification for.
    * @param notification The notification data to be sent.
    */
-  private void sendUserNotification(String userEmail, NotificationDto notification) {
+  private void sendToUser(String userEmail, NotificationDto notification) {
     webSocketSender.sendNotificationByUserEmail(notification, userEmail);
   }
 
@@ -185,7 +185,7 @@ public class NotificationService {
     // we could get notifications from user, but during the LAZY mode we can not retrieve it regard
     // to closed DB session
     // TODO: should be refactored to reduce DB invocations
-    List<Notification> notifications = notificationRepository.findNotificationsByUserId(userId)
+    List<Notification> notifications = repository.findNotificationsByUserId(userId)
         .orElseThrow(() -> new NotificationNotFoundException(
             "Can not find notifications by user id " + userId));
 
@@ -198,11 +198,11 @@ public class NotificationService {
    * @param notificationId The ID of the notification to mark as read.
    */
   public void markAsReadById(long notificationId) {
-    Notification notification = notificationRepository.findById(notificationId)
+    Notification notification = repository.findById(notificationId)
         .orElseThrow(() -> new NotificationNotFoundException(notificationId));
 
     notification.setRead(true);
-    notificationRepository.save(notification);
+    repository.save(notification);
   }
 
   /**
@@ -210,6 +210,6 @@ public class NotificationService {
    */
   // TODO: ATTENTION!!! Remove this method after testing is completed.
   public void sendTestNotification(String userEmail, Notification notification) {
-    addNotification(notification, userEmail);
+    save(notification, userEmail);
   }
 }

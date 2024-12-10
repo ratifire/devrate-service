@@ -1,4 +1,4 @@
-package com.ratifire.devrate.service.specialization;
+package com.ratifire.devrate.service;
 
 import static com.ratifire.devrate.enums.InterviewRequestRole.INTERVIEWER;
 
@@ -31,23 +31,12 @@ import org.springframework.stereotype.Service;
 @Named("MasteryService")
 public class MasteryService {
 
-  private final MasteryRepository masteryRepository;
   private final SkillService skillService;
+  private final MasteryRepository masteryRepository;
+  private final MasteryHistoryRepository masteryHistoryRepository;
   private final DataMapper<MasteryDto, Mastery> masteryMapper;
   private final DataMapper<SkillDto, Skill> skillMapper;
-  private final MasteryHistoryRepository masteryHistoryRepository;
   private final DataMapper<MasteryHistoryDto, MasteryHistory> masteryHistoryMapper;
-
-  /**
-   * Retrieves Mastery by ID.
-   *
-   * @param id the ID of the Mastery
-   * @return the Mastery as a DTO
-   * @throws ResourceNotFoundException if Mastery is not found
-   */
-  public MasteryDto findById(long id) {
-    return masteryMapper.toDto(getMasteryById(id));
-  }
 
   /**
    * Retrieves Mastery by ID.
@@ -63,6 +52,17 @@ public class MasteryService {
   }
 
   /**
+   * Retrieves Mastery by ID.
+   *
+   * @param id the ID of the Mastery
+   * @return the Mastery as a DTO
+   * @throws ResourceNotFoundException if Mastery is not found
+   */
+  public MasteryDto findById(long id) {
+    return masteryMapper.toDto(getMasteryById(id));
+  }
+
+  /**
    * Retrieves Mastery by Skill ID.
    *
    * @param skillId the ID of the Skill
@@ -70,15 +70,6 @@ public class MasteryService {
    */
   public Mastery findMasteryBySkillId(long skillId) {
     return masteryRepository.findMasteryBySkillId(skillId);
-  }
-
-  /**
-   * Updates existing Mastery.
-   *
-   * @param mastery the updated Mastery
-   */
-  public void updateMastery(Mastery mastery) {
-    masteryRepository.save(mastery);
   }
 
   /**
@@ -120,13 +111,22 @@ public class MasteryService {
   }
 
   /**
+   * Updates existing Mastery.
+   *
+   * @param mastery the updated Mastery
+   */
+  public void update(Mastery mastery) {
+    masteryRepository.save(mastery);
+  }
+
+  /**
    * Creates a skill and associates it with a mastery.
    *
    * @param skillDto  the skill information as a DTO
    * @param masteryId the ID of the mastery to associate with the skill
    * @return the created skill information as a DTO
    */
-  public SkillDto createSkill(SkillDto skillDto, long masteryId) {
+  public SkillDto create(SkillDto skillDto, long masteryId) {
     if (skillDto == null) {
       throw new ResourceNotFoundException("The skill is a required param.");
     }
@@ -140,7 +140,7 @@ public class MasteryService {
     skill.setAverageMark(BigDecimal.ZERO);
     mastery.getSkills().add(skill);
     refreshMasteryAverageMark(mastery, skill.getType());
-    updateMastery(mastery);
+    update(mastery);
     return skillMapper.toDto(skill);
   }
 
@@ -151,7 +151,7 @@ public class MasteryService {
    * @param masteryId the ID of the mastery to associate with the skill
    * @return the created skill information as a DTO
    */
-  public List<SkillDto> createSkills(List<SkillDto> skillDtos, long masteryId) {
+  public List<SkillDto> createBulk(List<SkillDto> skillDtos, long masteryId) {
     List<Skill> skills = skillDtos.stream()
         .filter(skill -> !masteryRepository.existsByIdAndSkills_Name(masteryId, skill.getName()))
         .map(skillMapper::toEntity)
@@ -165,7 +165,7 @@ public class MasteryService {
     Mastery mastery = getMasteryById(masteryId);
     mastery.getSkills().addAll(skills);
     refreshMasteryAverageMark(mastery, skillDtos.getFirst().getType());
-    updateMastery(mastery);
+    update(mastery);
     return skillMapper.toDto(skills);
   }
 
@@ -235,8 +235,7 @@ public class MasteryService {
    * @param reviewerRole The role of the reviewer, which determines whether hard skills should also
    *                     be updated.
    */
-  public void updateMasteryAverageMarksAfterGettingFeedback(long masteryId,
-      InterviewRequestRole reviewerRole) {
+  public void updateAverageMarks(long masteryId, InterviewRequestRole reviewerRole) {
     Mastery mastery = getMasteryById(masteryId);
 
     BigDecimal updatedSoftSkillMark = calculateAverageMark(
@@ -250,7 +249,7 @@ public class MasteryService {
       mastery.setHardSkillMark(updatedHardSkillMark);
     }
 
-    updateMastery(mastery);
+    update(mastery);
     saveHistory(mastery);
   }
 

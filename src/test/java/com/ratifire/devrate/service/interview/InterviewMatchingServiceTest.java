@@ -74,12 +74,12 @@ class InterviewMatchingServiceTest {
 
     when(interviewRequestService.findMatchedCandidates(any(),
         anyList())).thenReturn(List.of(candidateRequest));
-    when(interviewService.createInterview(any())).thenReturn(Optional.of(interview));
+    when(interviewService.create(any())).thenReturn(Optional.of(interview));
 
     Optional<Interview> result = interviewMatchingService.match(interviewerRequest);
 
     assertTrue(result.isPresent());
-    verify(interviewService, times(1)).createInterview(any());
+    verify(interviewService, times(1)).create(any());
 
     Interview createdInterview = result.get();
     assertEquals(candidateRequest, createdInterview.getCandidateRequest());
@@ -95,7 +95,7 @@ class InterviewMatchingServiceTest {
 
     assertFalse(result.isPresent());
     verify(interviewRequestService, never()).markAsNonActive(any());
-    verify(interviewService, never()).createInterview(any());
+    verify(interviewService, never()).create(any());
   }
 
   @Test
@@ -107,20 +107,20 @@ class InterviewMatchingServiceTest {
 
     assertFalse(result.isPresent());
     verify(interviewRequestService, never()).markAsNonActive(any());
-    verify(interviewService, never()).createInterview(any());
+    verify(interviewService, never()).create(any());
   }
 
   @Test
   void matchFailureOnCreateInterview() {
     when(interviewRequestService.findMatchedCandidates(any(),
         anyList())).thenReturn(List.of(candidateRequest));
-    when(interviewService.createInterview(any())).thenReturn(Optional.empty());
+    when(interviewService.create(any())).thenReturn(Optional.empty());
 
     Optional<Interview> result = interviewMatchingService.match(interviewerRequest);
 
     assertFalse(result.isPresent());
     verify(interviewRequestService, never()).markAsNonActive(any());
-    verify(interviewService, times(1)).createInterview(any());
+    verify(interviewService, times(1)).create(any());
   }
 
   @Test

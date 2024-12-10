@@ -9,9 +9,9 @@ import com.ratifire.devrate.security.exception.UserRegistrationException;
 import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import com.ratifire.devrate.security.model.enums.AccessLevel;
+import com.ratifire.devrate.service.EmailService;
 import com.ratifire.devrate.service.NotificationService;
-import com.ratifire.devrate.service.email.EmailService;
-import com.ratifire.devrate.service.user.UserService;
+import com.ratifire.devrate.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,7 +101,7 @@ public class RegistrationService {
    * @param email The email address of the user.
    */
   private void sendGreetings(User user, String email) {
-    notificationService.addGreetingNotification(user, email);
+    notificationService.addGreeting(user, email);
     emailService.sendGreetingsEmail(user, email);
   }
 }

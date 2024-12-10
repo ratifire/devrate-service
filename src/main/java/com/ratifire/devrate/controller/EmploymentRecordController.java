@@ -1,7 +1,7 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.EmploymentRecordDto;
-import com.ratifire.devrate.service.employmentrecord.EmploymentRecordService;
+import com.ratifire.devrate.service.EmploymentRecordService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -53,6 +53,6 @@ public class EmploymentRecordController {
    */
   @DeleteMapping("/{id}")
   public void deleteById(@PathVariable long id) {
-    employmentRecordService.deleteById(id);
+    employmentRecordService.delete(id);
   }
 }

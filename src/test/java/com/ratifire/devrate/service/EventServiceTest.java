@@ -1,4 +1,4 @@
-package com.ratifire.devrate.service.event;
+package com.ratifire.devrate.service;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;

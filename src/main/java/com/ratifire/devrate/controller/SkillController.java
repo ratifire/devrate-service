@@ -1,7 +1,7 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.SkillDto;
-import com.ratifire.devrate.service.specialization.SkillService;
+import com.ratifire.devrate.service.SkillService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +27,7 @@ public class SkillController {
    */
   @GetMapping("/{id}")
   public SkillDto findById(@PathVariable Long id) {
-    return skillService.findById(id);
+    return skillService.getSkillDtoById(id);
   }
 
   /**
@@ -49,6 +49,6 @@ public class SkillController {
    */
   @PatchMapping("/{id}/hide/{hide}")
   public SkillDto hideSkill(@PathVariable long id, @PathVariable boolean hide) {
-    return skillService.hideSkill(id, hide);
+    return skillService.updateHiddenStatus(id, hide);
   }
 }

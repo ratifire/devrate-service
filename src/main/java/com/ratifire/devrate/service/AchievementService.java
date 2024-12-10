@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AchievementService {
 
-  private final AchievementRepository achievementRepository;
+  private final AchievementRepository repository;
   private final DataMapper<AchievementDto, Achievement> mapper;
 
   /**
@@ -23,12 +23,11 @@ public class AchievementService {
    *
    * @param id The ID of the achievement to retrieve.
    * @return The AchievementDto object representing the retrieved achievement.
-   * @throws AchievementNotFoundException if the achievement with the given ID is not found.
+   * @throws AchievementNotFoundException if the achievement with the given ID isn't found.
    */
   public AchievementDto getById(long id) {
-    return achievementRepository.findById(id).map(mapper::toDto)
-        .orElseThrow(
-            () -> new AchievementNotFoundException("Achievement not found with id: " + id));
+    return repository.findById(id).map(mapper::toDto)
+        .orElseThrow(() -> new AchievementNotFoundException(id));
   }
 
   /**
@@ -38,16 +37,15 @@ public class AchievementService {
    * @param achievementDto The AchievementDto object containing updated information about the
    *                       achievement.
    * @return The AchievementDto object representing the updated achievement.
-   * @throws AchievementNotFoundException if the achievement with the given ID is not found.
+   * @throws AchievementNotFoundException if the achievement with the given ID isn't found.
    */
   public AchievementDto update(long id, AchievementDto achievementDto) {
-    Achievement achievement = achievementRepository.findById(id)
-        .orElseThrow(
-            () -> new AchievementNotFoundException("Achievement not found with id: " + id));
+    Achievement achievement = repository.findById(id)
+        .orElseThrow(() -> new AchievementNotFoundException(id));
 
     mapper.updateEntity(achievementDto, achievement);
 
-    return mapper.toDto(achievementRepository.save(achievement));
+    return mapper.toDto(repository.save(achievement));
   }
 
   /**
@@ -56,6 +54,6 @@ public class AchievementService {
    * @param id The ID of the achievement to delete.
    */
   public void delete(long id) {
-    achievementRepository.deleteById(id);
+    repository.deleteById(id);
   }
 }

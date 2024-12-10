@@ -70,8 +70,8 @@ class NotificationServiceTest {
   }
 
   @Test
-  void testDeleteById() {
-    notificationService.deleteById(anyLong());
+  void testDelete() {
+    notificationService.delete(anyLong());
 
     verify(notificationRepository, times(1)).deleteById(anyLong());
   }
@@ -109,10 +109,10 @@ class NotificationServiceTest {
         .build();
     NotificationDto expectedNotifications = NotificationDto.builder().build();
 
-    setupSendUserNotificationMock(Notification.builder().build(), expectedNotifications);
+    setupSendToUserMock(Notification.builder().build(), expectedNotifications);
 
-    notificationService.addGreetingNotification(user, anyString());
-    notificationService.addInterviewRequestExpiryNotification(user, anyString());
+    notificationService.addGreeting(user, anyString());
+    notificationService.addInterviewRequestExpiry(user, anyString());
     notificationService.addRejectInterview(user, "rejectionUserFirstName", ZonedDateTime.now(),
         anyString());
     notificationService.addInterviewScheduled(user, "role", ZonedDateTime.now(), anyString());
@@ -122,7 +122,7 @@ class NotificationServiceTest {
     verify(webSocketSender, times(5)).sendNotificationByUserEmail(any(), anyString());
   }
 
-  private void setupSendUserNotificationMock(Notification notification,
+  private void setupSendToUserMock(Notification notification,
       NotificationDto expectedNotification) {
     when(notificationRepository.save(any(Notification.class))).thenReturn(any());
     when(mapper.toDto(notification)).thenReturn(expectedNotification);

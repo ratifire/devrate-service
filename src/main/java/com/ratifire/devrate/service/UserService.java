@@ -43,16 +43,11 @@ import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.InterviewSummaryRepository;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
-import com.ratifire.devrate.service.NotificationService;
-import com.ratifire.devrate.service.email.EmailService;
 import com.ratifire.devrate.service.interview.InterviewFeedbackDetailService;
 import com.ratifire.devrate.service.interview.InterviewMatchingService;
 import com.ratifire.devrate.service.interview.InterviewRequestService;
 import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.service.interview.InterviewSummaryService;
-import com.ratifire.devrate.service.specialization.MasteryService;
-import com.ratifire.devrate.service.specialization.SkillService;
-import com.ratifire.devrate.service.specialization.SpecializationService;
 import com.ratifire.devrate.util.DateTimeUtils;
 import com.ratifire.devrate.util.InterviewPair;
 import java.math.BigDecimal;
@@ -117,14 +112,56 @@ public class UserService {
   }
 
   /**
+   * Retrieves a user entity by ID.
+   *
+   * @param id the ID of the user to retrieve
+   * @return the user entity
+   * @throws UserNotFoundException if the user with the specified ID is not found
+   */
+  public User findById(long id) {
+    return userRepository.findById(id)
+        .orElseThrow(() -> new UserNotFoundException(id));
+  }
+
+  /**
+   * Retrieves a User entity by their email address.
+   *
+   * @param email the email address of the user to retrieve
+   * @return the User entity associated with the given email address
+   */
+  public User findByEmail(String email) {
+    return userRepository.findByEmail(email);
+  }
+
+  /**
+   * Checks if a user exists with the specified email address.
+   *
+   * @param email the email address to check for existence
+   * @return true if a user with the given email exists
+   */
+  public boolean existsByEmail(String email) {
+    return userRepository.existsByEmail(email);
+  }
+
+  /**
+   * Finds the email address associated with a given user ID.
+   *
+   * @param userId the ID of the user whose email address is to be retrieved
+   * @return the email address of the user with the specified ID
+   */
+  public String findEmailByUserId(long userId) {
+    return userRepository.findEmailByUserId(userId);
+  }
+
+  /**
    * Retrieves a user by ID.
    *
    * @param id the ID of the user to retrieve
    * @return the user DTO
    * @throws UserNotFoundException if the user with the specified ID is not found
    */
-  public UserDto findById(long id) {
-    UserDto dto = userMapper.toDto(findUserById(id));
+  public UserDto getDtoById(long id) {
+    UserDto dto = userMapper.toDto(findById(id));
 
     specializationRepository.findSpecializationByUserIdAndMainTrue(id)
         .ifPresent(spec -> {
@@ -159,8 +196,8 @@ public class UserService {
    * @return the updated user as a DTO
    * @throws UserNotFoundException if the user does not exist
    */
-  public UserDto update(UserDto userDto) {
-    User user = findUserById(userDto.getId());
+  public UserDto updateByDto(UserDto userDto) {
+    User user = findById(userDto.getId());
     userMapper.updateEntity(userDto, user);
     return userMapper.toDto(userRepository.save(user));
   }
@@ -171,7 +208,7 @@ public class UserService {
    * @param user the updated user entity
    * @return the updated user entity
    */
-  public User updateUser(User user) {
+  public User updateByEntity(User user) {
     return userRepository.save(user);
   }
 
@@ -182,23 +219,23 @@ public class UserService {
    * @throws UserNotFoundException if the user does not exist
    */
   public void delete(long userId) {
-    User user = findUserById(userId);
+    User user = findById(userId);
     userRepository.delete(user);
   }
 
   /**
-   * Refreshes the interview counts for a list of users.
+   * Recalculate the interview counts for a list of users.
    *
    * @param users the list of users for whom the interview counts need to be refreshed. Each user's
    *              conducted and completed interview counts will be recalculated and updated in the
    *              database.
    */
-  public void refreshUserInterviewCounts(List<User> users) {
+  public void recalculateInterviewCounts(List<User> users) {
     users.forEach(user -> {
       long userId = user.getId();
       user.setConductedInterviews(interviewSummaryRepository.countByInterviewerId(userId));
       user.setCompletedInterviews(interviewSummaryRepository.countByCandidateId(userId));
-      updateUser(user);
+      updateByEntity(user);
     });
   }
 
@@ -209,7 +246,7 @@ public class UserService {
    * @return A list of LanguageProficiencyDto objects.
    */
   public List<LanguageProficiencyDto> findAllLanguageProficienciesByUserId(long userId) {
-    User user = findUserById(userId);
+    User user = findById(userId);
     return languageProficiencyMapper.toDto(user.getLanguageProficiencies());
   }
 
@@ -222,7 +259,7 @@ public class UserService {
    */
   public List<LanguageProficiencyDto> saveLanguageProficiencies(long userId,
       List<LanguageProficiencyDto> languageProficiencyDtos) {
-    User user = findUserById(userId);
+    User user = findById(userId);
     List<LanguageProficiency> existingProficiencies = user.getLanguageProficiencies();
 
     existingProficiencies.removeIf(proficiency -> languageProficiencyDtos.stream()
@@ -244,25 +281,13 @@ public class UserService {
   }
 
   /**
-   * Retrieves a user entity by ID.
-   *
-   * @param id the ID of the user to retrieve
-   * @return the user entity
-   * @throws UserNotFoundException if the user with the specified ID is not found
-   */
-  public User findUserById(long id) {
-    return userRepository.findById(id)
-        .orElseThrow(() -> new UserNotFoundException("The user not found with id " + id));
-  }
-
-  /**
    * Retrieves EmploymentRecord (work experience) information by user ID.
    *
    * @param userId the ID of the user
    * @return the user's work experience as a DTO
    */
   public List<EmploymentRecordDto> getEmploymentRecordsByUserId(long userId) {
-    User user = findUserById(userId);
+    User user = findById(userId);
     return employmentRecordMapper.toDto(user.getEmploymentRecords());
   }
 
@@ -274,10 +299,10 @@ public class UserService {
    */
   public EmploymentRecordDto createEmploymentRecord(EmploymentRecordDto employmentRecordDto,
       long userId) {
-    User user = findUserById(userId);
+    User user = findById(userId);
     EmploymentRecord employmentRecord = employmentRecordMapper.toEntity(employmentRecordDto);
     user.getEmploymentRecords().add(employmentRecord);
-    updateUser(user);
+    updateByEntity(user);
     return employmentRecordMapper.toDto(employmentRecord);
   }
 
@@ -287,7 +312,7 @@ public class UserService {
    * @param userId the ID of the user whose picture is to be retrieved
    * @return the user's picture as a base64-encoded string
    */
-  public UserPictureDto getUserPicture(long userId) {
+  public UserPictureDto getPicture(long userId) {
     return new UserPictureDto(userRepository.findPictureByUserId(userId));
   }
 
@@ -298,10 +323,10 @@ public class UserService {
    * @param userId      the ID of the user whose picture is to be added or updated
    * @param userPicture the picture data as a base64-encoded string
    */
-  public void addUserPicture(long userId, String userPicture) {
-    User user = findUserById(userId);
+  public void addPicture(long userId, String userPicture) {
+    User user = findById(userId);
     user.setPicture(userPicture);
-    updateUser(user);
+    updateByEntity(user);
   }
 
   /**
@@ -309,10 +334,10 @@ public class UserService {
    *
    * @param userId the ID of the user whose picture is to be removed
    */
-  public void deleteUserPicture(long userId) {
-    User user = findUserById(userId);
+  public void deletePicture(long userId) {
+    User user = findById(userId);
     user.setPicture(null);
-    updateUser(user);
+    updateByEntity(user);
   }
 
   /**
@@ -322,7 +347,7 @@ public class UserService {
    * @return A list of AchievementDto objects representing the achievements of the user.
    */
   public List<AchievementDto> getAchievementsByUserId(long userId) {
-    User user = findUserById(userId);
+    User user = findById(userId);
     return achievementMapper.toDto(user.getAchievements());
   }
 
@@ -335,10 +360,10 @@ public class UserService {
    * @return The AchievementDto object representing the created achievement.
    */
   public AchievementDto createAchievement(long userId, AchievementDto achievementDto) {
-    User user = findUserById(userId);
+    User user = findById(userId);
     Achievement achievement = achievementMapper.toEntity(achievementDto);
     user.getAchievements().add(achievement);
-    updateUser(user);
+    updateByEntity(user);
     return achievementMapper.toDto(achievement);
   }
 
@@ -349,7 +374,7 @@ public class UserService {
    * @return A list of {@link EducationDto} objects representing the education details.
    */
   public List<EducationDto> getEducationsByUserId(long userId) {
-    User user = findUserById(userId);
+    User user = findById(userId);
     return educationMapper.toDto(user.getEducations());
   }
 
@@ -363,10 +388,10 @@ public class UserService {
    * @return The {@link EducationDto} object representing the newly created education record.
    */
   public EducationDto createEducation(long userId, EducationDto educationDto) {
-    User user = findUserById(userId);
+    User user = findById(userId);
     Education education = educationMapper.toEntity(educationDto);
     user.getEducations().add(education);
-    updateUser(user);
+    updateByEntity(user);
     return educationMapper.toDto(education);
   }
 
@@ -377,7 +402,7 @@ public class UserService {
    * @return A list of ContactDto objects.
    */
   public List<ContactDto> findAllContactsByUserId(long userId) {
-    User user = findUserById(userId);
+    User user = findById(userId);
     return contactMapper.toDto(user.getContacts());
   }
 
@@ -389,7 +414,7 @@ public class UserService {
    * @return the list of saved ContactDto objects
    */
   public List<ContactDto> saveContacts(long userId, List<ContactDto> contactDtos) {
-    User user = findUserById(userId);
+    User user = findById(userId);
     List<Contact> existingContacts = user.getContacts();
 
     existingContacts.removeIf(contact -> contactDtos.stream()
@@ -417,7 +442,7 @@ public class UserService {
    * @return A list of BookmarkDto objects.
    */
   public List<BookmarkDto> getBookmarksByUserId(long userId) {
-    User user = findUserById(userId);
+    User user = findById(userId);
     return bookmarkMapper.toDto(user.getBookmarks());
   }
 
@@ -428,10 +453,10 @@ public class UserService {
    * @param bookmarkDto The BookmarkDto object containing details of the bookmark to be created.
    */
   public void createBookmark(long userId, BookmarkDto bookmarkDto) {
-    User user = findUserById(userId);
+    User user = findById(userId);
     Bookmark bookmark = bookmarkMapper.toEntity(bookmarkDto);
     user.getBookmarks().add(bookmark);
-    updateUser(user);
+    updateByEntity(user);
   }
 
   /**
@@ -441,7 +466,7 @@ public class UserService {
    * @return A list of InterviewSummaryDto objects.
    */
   public List<InterviewSummaryDto> getInterviewSummariesByUserId(long userId) {
-    User user = findUserById(userId);
+    User user = findById(userId);
     return interviewSummaryMapper.toDto(user.getInterviewSummaries());
   }
 
@@ -487,7 +512,7 @@ public class UserService {
    * @param id     the ID of the interview summary to be removed from the user's associations
    */
   public void deleteInterviewSummary(long userId, long id) {
-    User user = findUserById(userId);
+    User user = findById(userId);
     InterviewSummary interviewSummary = interviewSummaryRepository.findById(id)
         .orElseThrow(() -> new InterviewSummaryNotFoundException(id));
     user.getInterviewSummaries().remove(interviewSummary);
@@ -501,7 +526,7 @@ public class UserService {
    * @return the user's specialization as a DTO
    */
   public List<SpecializationDto> getSpecializationsByUserId(long userId) {
-    User user = findUserById(userId);
+    User user = findById(userId);
     return specializationDataMapper.toDto(user.getSpecializations());
   }
 
@@ -512,7 +537,7 @@ public class UserService {
    * @return a list of all main mastery skills for the user.
    */
   public List<UserMainMasterySkillDto> getPrivateMainMasterySkillsByUserId(long userId) {
-    User user = findUserById(userId);
+    User user = findById(userId);
     return userMainMasterySkillMapper.toDto(user.getSpecializations());
   }
 
@@ -523,7 +548,7 @@ public class UserService {
    * @return a list of main mastery skills for the user, excluding hidden skills.
    */
   public List<UserMainMasterySkillDto> getPublicMainMasterySkillsByUserId(long userId) {
-    User user = findUserById(userId);
+    User user = findById(userId);
     user.getSpecializations().forEach(specialization -> {
       List<Skill> skills = specialization.getMainMastery().getSkills().stream()
           .filter(skill -> !skill.isHidden())
@@ -543,11 +568,11 @@ public class UserService {
   public SpecializationDto createSpecialization(SpecializationDto specializationDto,
       long userId) {
     specializationService.validateBeforeCreate(specializationDto, userId);
-    User user = findUserById(userId);
+    User user = findById(userId);
     Specialization specialization = specializationDataMapper.toEntity(specializationDto);
     specialization.setUser(user);
     user.getSpecializations().add(specialization);
-    updateUser(user);
+    updateByEntity(user);
     specializationService.createMasteriesForSpecialization(specialization,
         specializationDto.getMainMasteryName());
     return specializationDataMapper.toDto(specialization);
@@ -603,7 +628,7 @@ public class UserService {
    * @param requestId the ID of the interview request to be deleted
    */
   public void deleteInterviewRequest(long requestId) {
-    interviewRequestService.deleteInterviewRequestById(requestId);
+    interviewRequestService.delete(requestId);
   }
 
   /**
@@ -653,7 +678,7 @@ public class UserService {
    * @return the created InterviewRequest entity
    */
   private InterviewRequest createInterviewRequest(long userId, InterviewRequestDto requestDto) {
-    User user = findUserById(userId);
+    User user = findById(userId);
     InterviewRequest interviewRequest = interviewRequestMapper.toEntity(requestDto);
     interviewRequest.setUser(user);
     return interviewRequestService.save(interviewRequest);
@@ -681,9 +706,9 @@ public class UserService {
    */
   @Transactional
   public void deleteRejectedInterview(long userId, long interviewId) {
-    Interview interview = interviewService.deleteRejectedInterview(interviewId);
+    Interview interview = interviewService.deleteRejected(interviewId);
 
-    User user = findUserById(userId);
+    User user = findById(userId);
 
     InterviewPair activeAndRejectedRequest = determineActiveAndRejectedRequest(user, interview);
 
@@ -742,7 +767,8 @@ public class UserService {
     notificationService.addRejectInterview(rejector, recipient.getFirstName(),
         scheduledTime, rejectorEmail);
 
-    emailService.sendInterviewRejectionMessage(recipient, rejector, scheduledTime, recipientEmail);
+    emailService.sendInterviewRejectionMessageEmail(
+        recipient, rejector, scheduledTime, recipientEmail);
   }
 
   /**
@@ -754,12 +780,12 @@ public class UserService {
    * @return a list of {@link EventDto} objects representing the events for the user
    */
   public List<EventDto> findEventsBetweenDate(long userId, LocalDate from, LocalDate to) {
-    User user = findUserById(userId);
+    User user = findById(userId);
 
     return user.getEvents().stream()
         .filter(event -> DateTimeUtils.isWithinRange(event.getStartTime().toLocalDate(), from, to))
         .map(event -> {
-          User host = findUserById(event.getHostId());
+          User host = findById(event.getHostId());
           List<User> participants = userRepository.findAllById(event.getParticipantIds());
           return eventMapper.toDto(event, host, participants);
         })
@@ -775,13 +801,13 @@ public class UserService {
    * @throws UserNotFoundException if no user with the specified ID is found
    */
   public List<EventDto> findEventsFromDateTime(long userId, ZonedDateTime from) {
-    User user = findUserById(userId);
+    User user = findById(userId);
 
     return user.getEvents().stream()
         .filter(event -> !event.getStartTime().isBefore(DateTimeUtils.toUtc(from)))
         .sorted(Comparator.comparing(Event::getStartTime))
         .map(event -> {
-          User host = findUserById(event.getHostId());
+          User host = findById(event.getHostId());
           List<User> participants = userRepository.findAllById(event.getParticipantIds());
           return eventMapper.toDto(event, host, participants);
         })
@@ -797,7 +823,7 @@ public class UserService {
    */
   @Transactional
   public void saveFeedback(long reviewerId, InterviewFeedbackDto interviewFeedbackDto) {
-    InterviewFeedbackDetail feedbackDetail = interviewFeedbackDetailService.findDetailById(
+    InterviewFeedbackDetail feedbackDetail = interviewFeedbackDetailService.findById(
         interviewFeedbackDto.getInterviewFeedbackDetailId());
 
     if (!new HashSet<>(feedbackDetail.getSkillsIds())
@@ -810,12 +836,12 @@ public class UserService {
     InterviewRequestRole reviewerRole = interviewSummaryService.addComment(
         feedbackDetail.getInterviewSummaryId(), reviewerId, interviewFeedbackDto.getComment());
 
-    skillService.updateSkillMarksAfterGettingFeedback(interviewFeedbackDto.getSkills());
+    skillService.updateMarks(interviewFeedbackDto.getSkills());
 
-    masteryService.updateMasteryAverageMarksAfterGettingFeedback(
+    masteryService.updateAverageMarks(
         feedbackDetail.getEvaluatedMasteryId(), reviewerRole);
 
-    interviewFeedbackDetailService.deleteById(feedbackDetail.getId());
+    interviewFeedbackDetailService.delete(feedbackDetail.getId());
   }
 
   /**
@@ -826,7 +852,7 @@ public class UserService {
    * @throws UserNotFoundException if no user with the given ID is found
    */
   public List<UserMainHardSkillsDto> getMainHardSkills(long userId) {
-    User user = findUserById(userId);
+    User user = findById(userId);
     return userMainHardSkillsMapper.toDto(user.getSpecializations());
   }
 
@@ -882,7 +908,7 @@ public class UserService {
   // TODO: ATTENTION!!! Remove this method after testing is completed.
   public void sendTestNotification(long userId, NotificationDto notificationDto) {
     String userEmail = findEmailByUserId(userId);
-    User user = findUserById(userId);
+    User user = findById(userId);
     Notification notification = Notification.builder()
         .user(user)
         .read(notificationDto.isRead())
@@ -891,23 +917,5 @@ public class UserService {
         .createdAt(notificationDto.getCreatedAt())
         .build();
     notificationService.sendTestNotification(userEmail, notification);
-  }
-
-  /**
-   * Finds the email address associated with a given user ID.
-   *
-   * @param userId the ID of the user whose email address is to be retrieved
-   * @return the email address of the user with the specified ID
-   */
-  public String findEmailByUserId(long userId) {
-    return userRepository.findEmailByUserId(userId);
-  }
-
-  public User findByEmail(String email) {
-    return userRepository.findByEmail(email);
-  }
-
-  public boolean existsByEmail(String email) {
-    return userRepository.existsByEmail(email);
   }
 }
