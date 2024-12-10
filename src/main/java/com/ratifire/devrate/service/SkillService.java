@@ -8,6 +8,7 @@ import com.ratifire.devrate.enums.SkillType;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SkillRepository;
+import com.ratifire.devrate.util.converter.JsonUtil;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -26,10 +27,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class SkillService {
 
+  private static final String DEFAULT_SOFT_SKILLS_PATH =
+      "/static/data/specialization/default-soft-skill-names.json";
+
   private MasteryService masteryService;
   private final SkillRepository repository;
   private final DataMapper<SkillDto, Skill> mapper;
-  private final List<String> defaultSoftSkills;
 
   @Autowired
   public void setMasteryService(@Lazy MasteryService masteryService) {
@@ -135,7 +138,7 @@ public class SkillService {
    * Generates a list of softSkills entities with default values of name and other using bean.
    */
   public List<Skill> loadSoftSkills() {
-    return defaultSoftSkills.stream()
+    return JsonUtil.loadStringFromJson(DEFAULT_SOFT_SKILLS_PATH).stream()
         .map(skillName -> Skill.builder()
             .name(skillName)
             .counter(0)
