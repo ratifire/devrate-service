@@ -653,7 +653,7 @@ VALUES
     (8881, 13000), (8881, 14000), (8881, 15000), (8881, 16000), (8881, 17000),
     (8881, 18000), (8881, 19000), (8881, 20000), (8881, 21000), (8881, 22000),
     (8881, 23000), (8881, 24000), (8881, 25000), (8881, 26000)
-ON CONFLICT (user_id, interview_summary_id) DO NOTHING;
+ON CONFLICT (user_id) DO NOTHING;
 
 --  Create event records
 INSERT INTO events (id, event_type_id, type, room_link, host_id, participant_id, start_time)
