@@ -62,20 +62,20 @@ jobs:
               gh run watch $RUN_ID --exit-status --interval 15
           fi   
 
-      - name: Run down_infrastructure workflow
-        id: down_infrastructure
-        if: steps.destroy_service.conclusion == 'success'
-        run: |
-          gh workflow run Down_infrastructure --ref ${{ env.BRANCH_NAME }} -F environment=${{ env.ENVIRONMENT }}
-          echo "Waiting for Down_infrastructure to complete..."
-          sleep 10
-          RUN_ID=$(gh run list --workflow=Down_infrastructure --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
-          if [ -z "$RUN_ID" ]; then
-            echo "No in-progress run found. Skipping watch."
-          else
-            echo "Waiting for workflow run $RUN_ID to complete..."
-              gh run watch $RUN_ID --exit-status --interval 15
-          fi 
+#      - name: Run down_infrastructure workflow
+#        id: down_infrastructure
+#        if: steps.destroy_service.conclusion == 'success'
+#        run: |
+#          gh workflow run Down_infrastructure --ref ${{ env.BRANCH_NAME }} -F environment=${{ env.ENVIRONMENT }}
+#          echo "Waiting for Down_infrastructure to complete..."
+#          sleep 10
+#          RUN_ID=$(gh run list --workflow=Down_infrastructure --json databaseId,status --limit 1 | jq -r '.[0] | select(.status == "in_progress" or .status == "queued").databaseId')
+#          if [ -z "$RUN_ID" ]; then
+#            echo "No in-progress run found. Skipping watch."
+#          else
+#            echo "Waiting for workflow run $RUN_ID to complete..."
+#              gh run watch $RUN_ID --exit-status --interval 15
+#          fi
 
       - name: Send notification to Slack
         if: success()
