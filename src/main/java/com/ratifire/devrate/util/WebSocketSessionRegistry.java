@@ -1,10 +1,10 @@
-package com.ratifire.devrate.util.websocket;
+package com.ratifire.devrate.util;
 
-import com.ratifire.devrate.exception.WebSocketSessionNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -12,6 +12,7 @@ import org.springframework.web.socket.WebSocketSession;
  * Component class for managing WebSocket sessions.
  */
 @Component
+@Slf4j
 public class WebSocketSessionRegistry {
 
   private final Map<String, Set<WebSocketSession>> sessions = new ConcurrentHashMap<>();
@@ -53,7 +54,7 @@ public class WebSocketSessionRegistry {
       try {
         session.close();
       } catch (IOException e) {
-        throw new WebSocketSessionNotFoundException("Can't close WebSocketSession " + session);
+        log.debug("Can't close WebSocketSession {}", session, e);
       }
     }
   }

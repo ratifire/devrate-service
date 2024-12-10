@@ -1,6 +1,5 @@
-package com.ratifire.devrate.validation.annotations;
+package com.ratifire.devrate.validation;
 
-import com.ratifire.devrate.validation.validators.ContactValueValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import java.lang.annotation.ElementType;
@@ -9,12 +8,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Custom annotation for validating contact values.
+ * Custom annotation for validating contacts.
  */
-@Constraint(validatedBy = ContactValueValidator.class)
+@Constraint(validatedBy = ContactValidator.class)
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidateContactValue {
+public @interface ValidContact {
 
   /**
    * The default validation message.

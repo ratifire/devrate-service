@@ -1,4 +1,4 @@
-package com.ratifire.devrate.util.interview;
+package com.ratifire.devrate.scheduler;
 
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
@@ -7,7 +7,7 @@ import com.ratifire.devrate.service.EmailService;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserService;
 import java.time.ZonedDateTime;
-import java.util.List;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -20,8 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class InterviewCleanUpScheduler {
 
-  private static final long CLEANUP_INTERVAL = 21600000L; // 6 hours in milliseconds
-
   private final InterviewRequestRepository interviewRequestRepository;
   private final UserService userService;
   private final NotificationService notificationService;
@@ -31,19 +29,15 @@ public class InterviewCleanUpScheduler {
    * Periodically cleans up expired interview requests. This method is scheduled to run at a fixed
    * interval to find and delete interview requests that have expired and are still active.
    */
-  @Scheduled(fixedRate = CLEANUP_INTERVAL, initialDelay = 86400000)  //initialDelay parameter is
-  // only for development phase, before release it must be removed
+  @Scheduled(fixedRate = 6, timeUnit = TimeUnit.HOURS, initialDelay = 24)
   @Transactional
   public void deleteExpiredAndActiveInterviewRequestsTask() {
-    ZonedDateTime currentDateTime = ZonedDateTime.now();
-    List<InterviewRequest> expiredRequests =
-        interviewRequestRepository.findByActiveTrueAndExpiredAtBefore(currentDateTime);
+    final var now = ZonedDateTime.now();
+    final var expiredRequests = interviewRequestRepository.findByActiveTrueAndExpiredAtBefore(now);
 
-    for (InterviewRequest interviewRequest : expiredRequests) {
-      User user = interviewRequest.getUser();
-      String email = userService.findEmailByUserId(user.getId());
-      sendInterviewRequestExpiryAlerts(user, email);
-    }
+    expiredRequests.stream()
+        .map(InterviewRequest::getUser)
+        .forEach(this::sendInterviewRequestExpiryAlerts);
 
     interviewRequestRepository.deleteAll(expiredRequests);
   }
@@ -51,10 +45,10 @@ public class InterviewCleanUpScheduler {
   /**
    * Sends interview request expiry alerts to a user via email and adds a notification.
    *
-   * @param user  The user to whom the expiry alerts are sent.
-   * @param email The email address of the user.
+   * @param user The user to whom the expiry alerts are sent.
    */
-  private void sendInterviewRequestExpiryAlerts(User user, String email) {
+  private void sendInterviewRequestExpiryAlerts(User user) {
+    String email = userService.findEmailByUserId(user.getId());
     notificationService.addInterviewRequestExpiry(user, email);
     emailService.sendInterviewRequestExpiryEmail(user, email);
   }

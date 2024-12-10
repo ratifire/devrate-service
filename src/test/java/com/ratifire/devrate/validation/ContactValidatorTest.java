@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.enums.ContactType;
-import com.ratifire.devrate.validation.validators.ContactValueValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,10 +16,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class ContactValueValidatorTest {
+class ContactValidatorTest {
 
   @InjectMocks
-  private ContactValueValidator contactValueValidator;
+  private ContactValidator contactValidator;
 
   @Mock
   private ConstraintValidatorContext context;
@@ -59,13 +58,13 @@ class ContactValueValidatorTest {
   @MethodSource("validContactProvider")
   void validContactsTest(ContactType type, String value) {
     ContactDto contactDto = new ContactDto(1L, type, value);
-    assertTrue(contactValueValidator.isValid(contactDto, context));
+    assertTrue(contactValidator.isValid(contactDto, context));
   }
 
   @ParameterizedTest
   @MethodSource("invalidContactProvider")
   void invalidContactsTest(ContactType type, String value) {
     ContactDto contactDto = new ContactDto(1L, type, value);
-    assertFalse(contactValueValidator.isValid(contactDto, context));
+    assertFalse(contactValidator.isValid(contactDto, context));
   }
 }
