@@ -458,7 +458,8 @@ VALUES
     (10012, '2024-01-07', 7.7, 6.8),
     (10012, '2024-01-08', 7.8, 6.9),
     (10012, '2024-01-09', 7.9, 7.0),
-    (10012, '2024-01-10', 8.0, 7.1);
+    (10012, '2024-01-10', 8.0, 7.1)
+ON CONFLICT (id) DO NOTHING;
 
 -- Insert mastery history records for each month of the year
 INSERT INTO mastery_histories (mastery_id, date, hard_skill_mark, soft_skill_mark)
@@ -606,7 +607,8 @@ VALUES
     (10012, '2024-05-01', 7.6, 6.7),
     (10012, '2024-06-01', 7.4, 6.5),
     (10012, '2024-07-01', 7.2, 6.3),
-    (10012, '2024-08-01', 7.4, 6.5);
+    (10012, '2024-08-01', 7.4, 6.5)
+ON CONFLICT (id) DO NOTHING;
 
 -- Insert interview summaries for 10 days
 INSERT INTO interview_summaries (id, date, duration, candidate_id, interviewer_id)
@@ -623,7 +625,7 @@ VALUES
     (12000, '2024-07-27', 30, 8882, 8881),
     (13000, '2024-07-28', 90, 8881, 8882),
     (14000, '2024-07-28', 75, 8882, 8881)
-    ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO NOTHING;
 
 -- Insert interview summaries for each month of the year
 INSERT INTO interview_summaries (id, date, duration, candidate_id, interviewer_id)
@@ -640,7 +642,7 @@ VALUES
     (24000, '2024-06-01', 75, 8882, 8881),
     (25000, '2024-07-01', 60, 8881, 8882),
     (26000, '2024-08-01', 45, 8882, 8881)
-    ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO NOTHING;
 
 -- Associate interview summaries with user
 -- Ensure the interview_summary_id exists in interview_summaries table
@@ -792,7 +794,8 @@ VALUES
     (6708, 'Frontend Developer', 10, 9, true, 8976),
     (6710, 'UX Researcher', 9, 7, true, 8978),
     (6711, 'Design Engineer', 13, 10, true, 8979),
-    (6712, 'Product Designer', 12, 10, true, 8980);
+    (6712, 'Product Designer', 12, 10, true, 8980)
+ON CONFLICT (id) DO NOTHING;
 
 -- Create test data for interview_feedback_details
 INSERT INTO interview_feedback_details (id, participant_role, start_time, interview_summary_id, evaluated_mastery_id, skill_id, participant_id, owner_id)
