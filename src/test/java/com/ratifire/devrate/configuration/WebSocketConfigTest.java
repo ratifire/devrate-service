@@ -1,4 +1,4 @@
-package com.ratifire.devrate.util.websocket;
+package com.ratifire.devrate.configuration;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ratifire.devrate.exception.EmailNotFoundException;
+import com.ratifire.devrate.util.WebSocketSessionRegistry;
 import java.security.Principal;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,10 +19,10 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketSession;
 
 /**
- * Unit tests for the {@link WebSocketHandler} class.
+ * Unit tests for the {@link WebSocketConfig} class.
  */
 @ExtendWith(MockitoExtension.class)
-class WebSocketHandlerTest {
+class WebSocketConfigTest {
 
   @Mock
   private Principal principal;
@@ -30,7 +31,7 @@ class WebSocketHandlerTest {
   @Mock
   private WebSocketSession session;
   @InjectMocks
-  private WebSocketHandler webSocketHandler;
+  private WebSocketConfig webSocketHandler;
 
   private final String testLogin = "test@example.com";
 

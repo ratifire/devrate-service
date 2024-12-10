@@ -1,7 +1,5 @@
 package com.ratifire.devrate.service;
 
-import static com.ratifire.devrate.util.interview.DateTimeUtils.convertToUtcTimeZone;
-
 import com.ratifire.devrate.dto.AchievementDto;
 import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
@@ -50,8 +48,8 @@ import com.ratifire.devrate.service.interview.InterviewMatchingService;
 import com.ratifire.devrate.service.interview.InterviewRequestService;
 import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.service.interview.InterviewSummaryService;
-import com.ratifire.devrate.util.interview.DateTimeUtils;
-import com.ratifire.devrate.util.interview.InterviewPair;
+import com.ratifire.devrate.util.DateTimeUtils;
+import com.ratifire.devrate.util.InterviewPair;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -639,7 +637,7 @@ public class UserService {
    * @param interview the interview whose participants are sent alerts
    */
   private void sendInterviewScheduledAlerts(Interview interview) {
-    ZonedDateTime interviewStartTimeInUtc = convertToUtcTimeZone(interview.getStartTime());
+    ZonedDateTime interviewStartTimeInUtc = DateTimeUtils.toUtc(interview.getStartTime());
     InterviewRequest interviewer = interview.getInterviewerRequest();
     InterviewRequest candidate = interview.getCandidateRequest();
 
@@ -712,11 +710,10 @@ public class UserService {
 
     User user = findById(userId);
 
-    InterviewPair<InterviewRequest, InterviewRequest> activeAndRejectedRequest =
-        determineActiveAndRejectedRequest(user, interview);
+    InterviewPair activeAndRejectedRequest = determineActiveAndRejectedRequest(user, interview);
 
-    InterviewRequest activeRequest = activeAndRejectedRequest.getCandidate();
-    InterviewRequest rejectedRequest = activeAndRejectedRequest.getInterviewer();
+    InterviewRequest activeRequest = activeAndRejectedRequest.candidate();
+    InterviewRequest rejectedRequest = activeAndRejectedRequest.interviewer();
 
     notifyUsers(activeRequest.getUser(), user, interview.getStartTime());
     interviewRequestService.handleRejectedInterview(activeRequest, rejectedRequest);
@@ -736,17 +733,11 @@ public class UserService {
    * @param interview The interview to be processed.
    * @return An InterviewPair containing the active and rejected InterviewRequests.
    */
-  private InterviewPair<InterviewRequest, InterviewRequest> determineActiveAndRejectedRequest(
+  private InterviewPair determineActiveAndRejectedRequest(
       User user, Interview interview) {
     return isCandidateRejected(user, interview.getCandidateRequest())
-        ? InterviewPair.<InterviewRequest, InterviewRequest>builder()
-        .candidate(interview.getInterviewerRequest())    // interviewer has active request
-        .interviewer(interview.getCandidateRequest())    // candidate has rejected request
-        .build()
-        : InterviewPair.<InterviewRequest, InterviewRequest>builder()
-            .candidate(interview.getCandidateRequest())    // candidate has active request
-            .interviewer(interview.getInterviewerRequest())    // interviewer has rejected request
-            .build();
+        ? new InterviewPair(interview.getInterviewerRequest(), interview.getCandidateRequest())
+        : new InterviewPair(interview.getCandidateRequest(), interview.getInterviewerRequest());
   }
 
   /**
@@ -813,7 +804,7 @@ public class UserService {
     User user = findById(userId);
 
     return user.getEvents().stream()
-        .filter(event -> !event.getStartTime().isBefore(convertToUtcTimeZone(from)))
+        .filter(event -> !event.getStartTime().isBefore(DateTimeUtils.toUtc(from)))
         .sorted(Comparator.comparing(Event::getStartTime))
         .map(event -> {
           User host = findById(event.getHostId());
