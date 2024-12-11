@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Utility class for converting instances to JSON strings.
  */
-public class JsonUtil {
+public class JsonConverter {
 
   private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -31,6 +31,21 @@ public class JsonUtil {
   }
 
   /**
+   * Deserializes a JSON string to an object of the given type.
+   *
+   * @param json  the JSON string to deserialize
+   * @param clazz the class type of the object
+   * @return the deserialized object
+   */
+  public static <T> T deserialize(String json, Class<T> clazz) {
+    try {
+      return objectMapper.readValue(json, clazz);
+    } catch (JsonProcessingException e) {
+      throw new JsonConverterException(e.getMessage(), e);
+    }
+  }
+
+  /**
    * Loads a list of strings from a JSON file located at the specified path.
    *
    * @param path the path to the JSON file
@@ -38,13 +53,14 @@ public class JsonUtil {
    * @throws ResourceNotFoundException if the file is not found or cannot be deserialized
    */
   public static List<String> loadStringFromJson(String path) {
-    try (InputStream inputStream = JsonUtil.class.getResourceAsStream(path)) {
-      if (inputStream == null) {
-        throw new ResourceNotFoundException("Json resource not found.");
-      }
+    try (InputStream inputStream = JsonConverter.class.getResourceAsStream(path)) {
       return objectMapper.readValue(inputStream, new TypeReference<>() {});
     } catch (IOException e) {
-      throw new ResourceNotFoundException("Failed to load default skills");
+      throw new ResourceNotFoundException("Failed to load data from: " + path);
     }
+  }
+
+  private JsonConverter() {
+    throw new IllegalStateException("Utility class");
   }
 }

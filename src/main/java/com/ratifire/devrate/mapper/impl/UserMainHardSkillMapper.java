@@ -4,12 +4,10 @@ import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.dto.UserMainHardSkillsDto;
 import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.entity.Specialization;
+import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.enums.SkillType;
 import com.ratifire.devrate.mapper.DataMapper;
-import com.ratifire.devrate.util.converter.JsonUtil;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -21,9 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Mapper(componentModel = "spring")
 public abstract class UserMainHardSkillMapper implements
     DataMapper<UserMainHardSkillsDto, Specialization> {
-
-  private static final String DEFAULT_MASTERY_LEVELS_PATH =
-      "/static/data/specialization/mastery-levels.json";
 
   protected SkillMapper skillMapper;
 
@@ -48,11 +43,7 @@ public abstract class UserMainHardSkillMapper implements
    */
   @Named("getMainMasteryName")
   public String getMainMasteryName(int level) {
-    List<String> masteryLevels = JsonUtil.loadStringFromJson(DEFAULT_MASTERY_LEVELS_PATH);
-    return IntStream.range(0, masteryLevels.size())
-        .boxed()
-        .collect(Collectors.toMap(i -> i + 1, masteryLevels::get))
-        .getOrDefault(level, "Unknown");
+    return MasteryLevel.getNameByLevel(level);
   }
 
   /**
