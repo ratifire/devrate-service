@@ -1,12 +1,12 @@
-package com.ratifire.devrate.util.websocket;
+package com.ratifire.devrate.service;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ratifire.devrate.dto.NotificationDto;
+import com.ratifire.devrate.util.WebSocketSessionRegistry;
 import java.io.IOException;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -27,21 +27,17 @@ class WebSocketSenderTest {
   private WebSocketSessionRegistry sessionRegistry;
 
   @Mock
-  private ObjectMapper objectMapper;
-
-  @Mock
   private WebSocketSession session;
 
   @InjectMocks
   private WebSocketSender webSocketSender;
 
-  private final String testMessage = "{test message}";
-
   @Test
-  void testSendNotificationByUserEmail() throws IOException {
-    NotificationDto notification = NotificationDto.builder().build();
+  void testSendMessageByUserEmail() throws IOException {
+    NotificationDto notification = NotificationDto.builder()
+        .payload("{test message}")
+        .build();
 
-    when(objectMapper.writeValueAsString(any())).thenReturn(testMessage);
     String login = "test@email.com";
     when(sessionRegistry.getUserSessions(login)).thenReturn(Set.of(session));
 

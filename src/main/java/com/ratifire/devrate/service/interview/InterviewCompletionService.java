@@ -6,7 +6,7 @@ import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.SpecializationService;
 import com.ratifire.devrate.service.UserService;
-import com.ratifire.devrate.util.interview.DateTimeUtils;
+import com.ratifire.devrate.util.DateTimeUtils;
 import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
 import com.ratifire.devrate.util.zoom.service.ZoomApiService;
 import com.ratifire.devrate.util.zoom.webhook.exception.ZoomWebhookException;
@@ -101,7 +101,7 @@ public class InterviewCompletionService {
 
     Interview interview = interviewService.getByMeetingId(meetingId);
     ZonedDateTime scheduledStartTime = interview.getStartTime();
-    ZonedDateTime currentDateTime = DateTimeUtils.convertToUtcTimeZone(ZonedDateTime.now());
+    ZonedDateTime currentDateTime = DateTimeUtils.toUtc(ZonedDateTime.now());
 
     // TODO: nee change to for prod
     //  if (currentDateTime.isBefore(scheduledStartTime.plusMinutes(WEBHOOK_ACTIVATION_DELAY))) {
