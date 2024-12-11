@@ -8,7 +8,7 @@ import com.ratifire.devrate.enums.SkillType;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SkillRepository;
-import com.ratifire.devrate.util.converter.JsonConverter;
+import com.ratifire.devrate.util.JsonConverter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class SkillService {
 
-  @Value("${specialization.defaultSoftSkillsPath}")
+  @Value("${skill.defaultSoftSkillsPath}")
   private String defaultSoftSkillsPath;
 
   private MasteryService masteryService;

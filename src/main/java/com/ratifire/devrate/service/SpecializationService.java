@@ -13,7 +13,7 @@ import com.ratifire.devrate.exception.SpecializationNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
-import com.ratifire.devrate.util.converter.JsonConverter;
+import com.ratifire.devrate.util.JsonConverter;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
