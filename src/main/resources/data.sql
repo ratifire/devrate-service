@@ -311,6 +311,8 @@ WHERE id = 6664
 
 -- Insert mastery history records for 10 days and each month of the year
 INSERT INTO mastery_histories (mastery_id, date, hard_skill_mark, soft_skill_mark)
+SELECT mastery_id, date::DATE, hard_skill_mark, soft_skill_mark
+FROM (
 VALUES
     -- July
     (10001, '2024-07-19', 6.2, 5.7),
@@ -458,10 +460,19 @@ VALUES
     (10012, '2024-01-07', 7.7, 6.8),
     (10012, '2024-01-08', 7.8, 6.9),
     (10012, '2024-01-09', 7.9, 7.0),
-    (10012, '2024-01-10', 8.0, 7.1);
+    (10012, '2024-01-10', 8.0, 7.1)
+) AS new_mastery_histories (mastery_id, date, hard_skill_mark, soft_skill_mark)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM mastery_histories
+    WHERE mastery_histories.mastery_id = new_mastery_histories.mastery_id
+      AND mastery_histories.date = new_mastery_histories.date::DATE
+);
 
 -- Insert mastery history records for each month of the year
 INSERT INTO mastery_histories (mastery_id, date, hard_skill_mark, soft_skill_mark)
+SELECT mastery_id, date::DATE, hard_skill_mark, soft_skill_mark
+FROM (
 VALUES
     -- For mastery_id 10001
     (10001, '2023-10-01', 7.0, 6.5),
@@ -606,10 +617,19 @@ VALUES
     (10012, '2024-05-01', 7.6, 6.7),
     (10012, '2024-06-01', 7.4, 6.5),
     (10012, '2024-07-01', 7.2, 6.3),
-    (10012, '2024-08-01', 7.4, 6.5);
+    (10012, '2024-08-01', 7.4, 6.5)
+) AS new_mastery_histories (mastery_id, date, hard_skill_mark, soft_skill_mark)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM mastery_histories
+    WHERE mastery_histories.mastery_id = new_mastery_histories.mastery_id
+      AND mastery_histories.date = new_mastery_histories.date::DATE
+);
 
 -- Insert interview summaries for 10 days
 INSERT INTO interview_summaries (id, date, duration, candidate_id, interviewer_id)
+SELECT id, date::DATE, duration, candidate_id, interviewer_id
+FROM (
 VALUES
     (1000, '2024-07-21', 60, 8881, 8882),
     (2000, '2024-07-21', 45, 8882, 8881),
@@ -622,10 +642,18 @@ VALUES
     (11000, '2024-07-27', 45, 8881, 8882),
     (12000, '2024-07-27', 30, 8882, 8881),
     (13000, '2024-07-28', 90, 8881, 8882),
-    (14000, '2024-07-28', 75, 8882, 8881);
+    (14000, '2024-07-28', 75, 8882, 8881)
+) AS new_interview_summaries (id, date, duration, candidate_id, interviewer_id)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM interview_summaries
+    WHERE id = new_interview_summaries.id
+);
 
 -- Insert interview summaries for each month of the year
 INSERT INTO interview_summaries (id, date, duration, candidate_id, interviewer_id)
+SELECT id, date::DATE, duration, candidate_id, interviewer_id
+FROM (
 VALUES
     (15000, '2023-11-01', 60, 8881, 8882),
     (16000, '2023-12-01', 45, 8882, 8881),
@@ -638,17 +666,30 @@ VALUES
     (23000, '2024-05-01', 90, 8881, 8882),
     (24000, '2024-06-01', 75, 8882, 8881),
     (25000, '2024-07-01', 60, 8881, 8882),
-    (26000, '2024-08-01', 45, 8882, 8881);
+    (26000, '2024-08-01', 45, 8882, 8881)
+) AS new_interview_summaries (id, date, duration, candidate_id, interviewer_id)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM interview_summaries
+    WHERE id = new_interview_summaries.id
+);
 
 -- Associate interview summaries with user
--- Ensure the interview_summary_id exists in interview_summaries table
 INSERT INTO interview_summaries_users (user_id, interview_summary_id)
+SELECT * FROM (
 VALUES
     (8881, 1000), (8881, 2000), (8881, 5000), (8881, 6000), (8881, 7000),
     (8881, 8000), (8881, 9000), (8881, 10000), (8881, 11000), (8881, 12000),
     (8881, 13000), (8881, 14000), (8881, 15000), (8881, 16000), (8881, 17000),
     (8881, 18000), (8881, 19000), (8881, 20000), (8881, 21000), (8881, 22000),
-    (8881, 23000), (8881, 24000), (8881, 25000), (8881, 26000);
+    (8881, 23000), (8881, 24000), (8881, 25000), (8881, 26000)
+) AS new_interview_summaries_users (user_id, interview_summary_id)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM interview_summaries_users
+    WHERE user_id = new_interview_summaries_users.user_id
+      AND interview_summary_id = new_interview_summaries_users.interview_summary_id
+);
 
 --  Create event records
 INSERT INTO events (id, event_type_id, type, room_link, host_id, participant_id, start_time)
@@ -754,6 +795,7 @@ WHERE NOT EXISTS (SELECT 1
 
 -- Create test data specialization records with different names
 INSERT INTO specializations (id, name, completed_interviews, conducted_interviews, is_main, user_id)
+SELECT * FROM (
 VALUES
     (6666, 'Python Developer', 5, 7, true, 8934),
     (6667, 'React Developer', 12, 9, true, 8935),
@@ -790,7 +832,13 @@ VALUES
     (6708, 'Frontend Developer', 10, 9, true, 8976),
     (6710, 'UX Researcher', 9, 7, true, 8978),
     (6711, 'Design Engineer', 13, 10, true, 8979),
-    (6712, 'Product Designer', 12, 10, true, 8980);
+    (6712, 'Product Designer', 12, 10, true, 8980)
+    ) AS new_specializations (id, name, completed_interviews, conducted_interviews, is_main, user_id)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM specializations
+    WHERE specializations.id = new_specializations.id
+    );
 
 -- Create test data for interview_feedback_details
 INSERT INTO interview_feedback_details (id, participant_role, start_time, interview_summary_id, evaluated_mastery_id, skill_id, participant_id, owner_id)
@@ -805,7 +853,15 @@ WHERE NOT EXISTS (SELECT 1
 
 -- Create test data for interview_summaries
 INSERT INTO interview_summaries (id, date, duration, candidate_id, interviewer_id)
-VALUES (3001, '2024-09-08', 60, 8881, 8882);
+SELECT id, date::DATE, duration, candidate_id, interviewer_id
+FROM (
+         VALUES (3001, '2024-09-08', 60, 8881, 8882)
+     ) AS new_interview_summaries (id, date, duration, candidate_id, interviewer_id)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM interview_summaries
+    WHERE id = new_interview_summaries.id
+);
 
 -- Create test data interview_summaries_users relation records
 INSERT INTO interview_summaries_users (user_id, interview_summary_id)
