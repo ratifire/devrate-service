@@ -3,7 +3,6 @@ package com.ratifire.devrate.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ratifire.devrate.exception.ResourceNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -36,13 +35,13 @@ public class JsonConverter {
    *
    * @param path the path to the JSON file
    * @return a {@link List} of strings deserialized from the JSON file
-   * @throws ResourceNotFoundException if the file is not found or cannot be deserialized
+   * @throws RuntimeException if the file is not found or cannot be deserialized
    */
   public static List<String> loadStringFromJson(String path) {
     try (InputStream inputStream = JsonConverter.class.getResourceAsStream(path)) {
       return objectMapper.readValue(inputStream, new TypeReference<>() {});
     } catch (IOException e) {
-      throw new ResourceNotFoundException("Failed to load data from: " + path);
+      throw new RuntimeException("Failed to load data from: " + path);
     }
   }
 }
