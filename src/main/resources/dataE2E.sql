@@ -1,5 +1,6 @@
 -- Reserving additional users (famous Ukrainian figures + other famous figures) for testing purposes E2E
 INSERT INTO users (id, first_name, last_name, country, city, is_subscribed, description, completed_interviews, conducted_interviews, email, password)
+SELECT * FROM (
 VALUES
     (8990, 'Taras', 'Shevchenko', 'Ukraine', 'Kyiv', true, 'Famous poet and national hero of Ukraine.', 0, 0, 'dev.rate1+autotestuser1@proton.me', '$2a$10$gpHUj9woEnFCGLNDy4MYVuCbmWapK.ZDgzqtZLZBvtIzKhh221pW6'),
     (8991, 'Lesya', 'Ukrainka', 'Ukraine', 'Kyiv', true, 'Renowned Ukrainian writer and poet.', 0, 0, 'dev.rate1+autotestuser2@proton.me', '$2a$10$5ynESBsukeVmwJM7LLbgo.RuIlIfT8T7CGSgj1roB3qUMSKuqJz7a'),
@@ -27,10 +28,16 @@ VALUES
     (9013, 'Albert', 'Einstein', 'Germany', 'Ulm', true, 'Theoretical physicist who developed the theory of relativity.', 0, 0, 'dev.rate2+manualtestuser19@proton.me', '$2a$10$Ec2kKdIPbXaqlM3nDub3wuKqW5CBFDjxcDFA1086WLk8g2BhBTSt2'),
     (9014, 'Marie', 'Curie', 'France', 'Paris', true, 'Pioneer in radioactivity and first woman to win a Nobel Prize.', 0, 0, 'dev.rate2+manualtestuser20@proton.me', '$2a$10$szgsj6onRApANT69yMQYZ.RjmivMjoNaHaijSvJOPrwnNolIyVgTq'),
     (9015, 'Isaac', 'Newton', 'UK', 'Woolsthorpe', true, 'Mathematician and physicist who formulated the laws of motion.', 0, 0, 'dev.rate2+manualtestuser21@proton.me', '$2a$10$KK7r4MK3F00wP2HxrvphTOfAK/tTxDVeNRFZoOjRS5sP0DmFDtVWe'),
-    (9016, 'Vincent', 'van Gogh', 'Netherlands', 'Zundert', true, 'Post-impressionist painter famous for Starry Night.', 0, 0, 'dev.rate2+manualtestuser22@proton.me', '$2a$10$D/c41be.FKddIBQ7qbijk.crI2fM.26cotHPiVpINl85zD.tqn7Y6');
+    (9016, 'Vincent', 'van Gogh', 'Netherlands', 'Zundert', true, 'Post-impressionist painter famous for Starry Night.', 0, 0, 'dev.rate2+manualtestuser22@proton.me', '$2a$10$D/c41be.FKddIBQ7qbijk.crI2fM.26cotHPiVpINl85zD.tqn7Y6')
+) AS new_users (id, first_name, last_name, country, city, is_subscribed, picture, completed_interviews, conducted_interviews, email, password)
+WHERE NOT EXISTS (SELECT 1
+                  FROM users
+                  WHERE id = new_users.id);
 
 -- Reserving contact records for the test users E2E
 INSERT INTO contacts (type, value, user_id)
+SELECT type, value, user_id
+FROM (
 VALUES
     ('EMAIL', 'dev.rate1+autotestuser1@proton.me', 8990),
     ('EMAIL', 'dev.rate1+autotestuser2@proton.me', 8991),
@@ -58,7 +65,13 @@ VALUES
     ('EMAIL', 'dev.rate2+manualtestuser19@proton.me', 9013),
     ('EMAIL', 'dev.rate2+manualtestuser20@proton.me', 9014),
     ('EMAIL', 'dev.rate2+manualtestuser21@proton.me', 9015),
-    ('EMAIL', 'dev.rate2+manualtestuser22@proton.me', 9016);
+    ('EMAIL', 'dev.rate2+manualtestuser22@proton.me', 9016)
+     ) AS new_contacts (type, value, user_id)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM contacts
+    WHERE contacts.user_id = new_contacts.user_id
+);
 
 
 -- Email: dev.rate1+autotestuser1@proton.me
