@@ -11,7 +11,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.MasteryHistoryDto;
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.entity.Mastery;
@@ -32,7 +31,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 
 /**
  * Unit tests for the MasteryService class.
@@ -55,7 +53,6 @@ public class MasteryServiceTest {
   private Mastery masteryJun;
   private Mastery masteryMid;
   private List<Mastery> masteryList;
-  private MasteryDto masteryDtoJun;
   private Skill skill;
   private SkillDto skillDto;
   private List<SkillDto> skillDtos;
@@ -81,13 +78,6 @@ public class MasteryServiceTest {
         .softSkillMark(BigDecimal.valueOf(6))
         .hardSkillMark(BigDecimal.valueOf(6))
         .skills(new ArrayList<>())
-        .build();
-
-    masteryDtoJun = MasteryDto.builder()
-        .id(1L)
-        .level("JUNIOR")
-        .hardSkillMark(BigDecimal.valueOf(5))
-        .softSkillMark(BigDecimal.valueOf(5))
         .build();
 
     masteryList = new ArrayList<>();

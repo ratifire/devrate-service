@@ -18,6 +18,7 @@ import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.exception.SpecializationLinkedToInterviewException;
@@ -28,7 +29,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,8 +55,6 @@ public class SpecializationServiceTest {
   private DataMapper dataMapper;
   @Mock
   private MasteryService masteryService;
-  @Mock
-  private Map<Integer, String> masteryLevels;
   private SpecializationDto specializationDto;
   private Specialization specialization;
   private Mastery junMastery;
@@ -89,7 +87,7 @@ public class SpecializationServiceTest {
 
     masteryDto = MasteryDto.builder()
         .id(1L)
-        .level("MIDDLE")
+        .level(2)
         .hardSkillMark(BigDecimal.valueOf(1))
         .softSkillMark(BigDecimal.valueOf(2))
         .build();
@@ -109,10 +107,6 @@ public class SpecializationServiceTest {
         .mainMastery(junMastery)
         .user(User.builder().build())
         .build();
-
-    masteryLevels.put(1, "JUNIOR");
-    masteryLevels.put(2, "MIDDLE");
-    masteryLevels.put(3, "SENIOR");
   }
 
   @Test
@@ -222,7 +216,8 @@ public class SpecializationServiceTest {
   @Transactional
   void createMasteriesForSpecialization_shouldCreateMasteries() {
     when(specializationRepository.save(specialization)).thenReturn(specialization);
-    specializationService.createMasteriesForSpecialization(specialization, "JUNIOR");
+    specializationService.createMasteriesForSpecialization(specialization,
+        MasteryLevel.JUNIOR.getLevel());
     specialization.setMasteries(defaultMasteryLevels);
     assertNotNull(specialization.getMasteries());
     assertEquals(3, specialization.getMasteries().size());

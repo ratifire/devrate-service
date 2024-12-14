@@ -574,7 +574,7 @@ public class UserService {
     user.getSpecializations().add(specialization);
     updateByEntity(user);
     specializationService.createMasteriesForSpecialization(specialization,
-        specializationDto.getMainMasteryName());
+        specializationDto.getMainMasteryLevel());
     return specializationDataMapper.toDto(specialization);
   }
 

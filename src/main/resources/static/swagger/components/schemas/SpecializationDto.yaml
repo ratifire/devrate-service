@@ -8,9 +8,9 @@ properties:
   name:
     type: string
     description: The name of the specialization
-  mainMasteryName:
-    type: string
-    description: The main mastery name of the specialization
+  mainMasteryLevel:
+    type: integer
+    description: The main mastery level of the specialization (JUNIOR (1), MIDDLE (2), SENIOR (3))
   main:
     type: boolean
     description: Whether the specialization is the main specialization

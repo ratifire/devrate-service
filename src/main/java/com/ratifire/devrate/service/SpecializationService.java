@@ -5,6 +5,7 @@ import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.interview.Interview;
+import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.exception.SpecializationLinkedToInterviewException;
@@ -12,12 +13,14 @@ import com.ratifire.devrate.exception.SpecializationNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
+import com.ratifire.devrate.util.JsonConverter;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -27,13 +30,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SpecializationService {
 
+  @Value("${specialization.defaultSpecializationsPath}")
+  private String defaultSpecializationsPath;
+
   private final MasteryService masteryService;
   private final SpecializationRepository specializationRepository;
   private final InterviewRepository interviewRepository;
   private final DataMapper<SpecializationDto, Specialization> specializationMapper;
   private final DataMapper<MasteryDto, Mastery> masteryMapper;
-  private final Map<Integer, String> defaultMasteryLevels;
-  private final List<String> defaultSpecializationNames;
 
   /**
    * Finds a specialization by its ID.
@@ -68,12 +72,10 @@ public class SpecializationService {
    * @throws ResourceNotFoundException if mastery is not found
    */
   public MasteryDto getMainMasteryById(long id) {
-    Mastery mainMastery = findById(id).getMainMastery();
-    if (mainMastery == null) {
-      throw new ResourceNotFoundException(
-          "Main mastery not found for specialization with id: " + id);
-    }
-    return masteryMapper.toDto(mainMastery);
+    return Optional.ofNullable(findById(id).getMainMastery())
+        .map(masteryMapper::toDto)
+        .orElseThrow(() -> new ResourceNotFoundException(
+            "Main mastery not found for specialization with id: " + id));
   }
 
   /**
@@ -83,8 +85,10 @@ public class SpecializationService {
    * @return the specialization's mastery as a DTO
    */
   public List<MasteryDto> getMasteriesBySpecializationId(long specializationId) {
-    Specialization specialization = findById(specializationId);
-    return masteryMapper.toDto(specialization.getMasteries());
+    return Optional.ofNullable(findById(specializationId))
+        .map(Specialization::getMasteries)
+        .map(masteryMapper::toDto)
+        .orElse(List.of());
   }
 
   /**
@@ -122,14 +126,16 @@ public class SpecializationService {
   public void validateBeforeCreate(SpecializationDto specializationDto,
       long userId) {
     String specializationName = specializationDto.getName();
+    List<String> defaultSpecializationNames = JsonConverter.loadStringFromJson(
+        defaultSpecializationsPath);
     if (specializationName != null && !defaultSpecializationNames.contains(specializationName)) {
       throw new ResourceNotFoundException(
           "The specialization name \"" + specializationName + "\" not found.");
     }
 
-    String masteryName = specializationDto.getMainMasteryName();
-    if (masteryName != null && !defaultMasteryLevels.containsValue(masteryName)) {
-      throw new ResourceNotFoundException("The mastery level \"" + masteryName + "\" not found.");
+    int masteryLevel = specializationDto.getMainMasteryLevel();
+    if (!MasteryLevel.containsLevel(masteryLevel)) {
+      throw new ResourceNotFoundException("The mastery level \"" + masteryLevel + "\" not found.");
     }
 
     if (specializationDto.isMain()
@@ -187,15 +193,10 @@ public class SpecializationService {
    */
   @Transactional
   public void createMasteriesForSpecialization(Specialization specialization,
-      @NotNull String mainMasteryName) {
-    if (mainMasteryName == null || mainMasteryName.isEmpty() || mainMasteryName.isBlank()) {
-      throw new ResourceNotFoundException("The main mastery name is required param.");
-    }
-
+      int mainMasteryLevel) {
     List<Mastery> masteries = createMasteryList(specialization);
     masteries.stream()
-        .filter(mastery -> defaultMasteryLevels.get(mastery.getLevel())
-            .equalsIgnoreCase(mainMasteryName))
+        .filter(mastery -> mastery.getLevel() == mainMasteryLevel)
         .findFirst()
         .ifPresent(specialization::setMainMastery);
 
@@ -211,9 +212,9 @@ public class SpecializationService {
    * @param specialization the specialization to associate with each mastery entity
    */
   private List<Mastery> createMasteryList(Specialization specialization) {
-    return defaultMasteryLevels.keySet().stream()
-        .map(s -> Mastery.builder()
-            .level(s)
+    return Stream.of(MasteryLevel.values())
+        .map(level -> Mastery.builder()
+            .level(level.getLevel())
             .softSkillMark(BigDecimal.ZERO)
             .hardSkillMark(BigDecimal.ZERO)
             .specialization(specialization)
