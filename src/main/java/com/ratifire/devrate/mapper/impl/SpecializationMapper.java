@@ -2,12 +2,10 @@ package com.ratifire.devrate.mapper.impl;
 
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.entity.Specialization;
-import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.mapper.DataMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.Named;
 
 /**
  * Mapper interface for mapping between Specialization and SpecializationDto objects.
@@ -33,18 +31,6 @@ public abstract class SpecializationMapper implements
   public abstract Specialization updateEntity(SpecializationDto specializationDto,
       @MappingTarget Specialization specialization);
 
-  @Mapping(target = "mainMasteryName", source = "mainMastery.level",
-      qualifiedByName = "getMainMasteryName")
+  @Mapping(target = "mainMasteryLevel", source = "mainMastery.level")
   public abstract SpecializationDto toDto(Specialization specialization);
-
-  /**
-   * Retrieves the name of the main mastery level associated with a given numeric level.
-   *
-   * @param level the numeric level to search for
-   * @return the name of the mastery level corresponding to the given numeric level, or "Unknown"
-   */
-  @Named("getMainMasteryName")
-  public String getMainMasteryName(int level) {
-    return MasteryLevel.getNameByLevel(level);
-  }
 }

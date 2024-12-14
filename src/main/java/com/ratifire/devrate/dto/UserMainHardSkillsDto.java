@@ -15,6 +15,6 @@ public class UserMainHardSkillsDto {
 
   private String specializationName;
   private boolean isMainSpecialization;
-  private String masteryName;
+  private int masteryLevel;
   private List<SkillDto> hardSkills;
 }

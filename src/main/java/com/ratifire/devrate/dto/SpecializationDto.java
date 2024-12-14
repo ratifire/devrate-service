@@ -18,8 +18,7 @@ public class SpecializationDto {
   @NotBlank(message = "Specialization name must not be null or empty")
   private String name;
 
-  @NotBlank(message = "Main Mastery name must not be null or empty")
-  private String mainMasteryName;
+  private int mainMasteryLevel;
 
   private boolean main;
 

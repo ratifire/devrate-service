@@ -4,7 +4,6 @@ import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.dto.UserMainHardSkillsDto;
 import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.entity.Specialization;
-import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.enums.SkillType;
 import com.ratifire.devrate.mapper.DataMapper;
 import java.util.List;
@@ -29,22 +28,10 @@ public abstract class UserMainHardSkillMapper implements
 
   @Mapping(target = "specializationName", source = "specialization.name")
   @Mapping(target = "isMainSpecialization", source = "specialization.main")
-  @Mapping(target = "masteryName", source = "specialization.mainMastery.level",
-      qualifiedByName = "getMainMasteryName")
+  @Mapping(target = "masteryLevel", source = "specialization.mainMastery.level")
   @Mapping(target = "hardSkills", source = "specialization.mainMastery.skills",
       qualifiedByName = "filterHardSkills")
   public abstract UserMainHardSkillsDto toDto(Specialization specialization);
-
-  /**
-   * Retrieves the name of the main mastery level based on the given level.
-   *
-   * @param level the mastery level to look up
-   * @return the name of the corresponding mastery level, or "Unknown" if the level is not found
-   */
-  @Named("getMainMasteryName")
-  public String getMainMasteryName(int level) {
-    return MasteryLevel.getNameByLevel(level);
-  }
 
   /**
    * Filters a list of skills to include only hard skills.

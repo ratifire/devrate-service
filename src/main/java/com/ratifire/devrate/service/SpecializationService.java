@@ -15,7 +15,6 @@ import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
 import com.ratifire.devrate.util.JsonConverter;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -134,9 +133,9 @@ public class SpecializationService {
           "The specialization name \"" + specializationName + "\" not found.");
     }
 
-    String masteryName = specializationDto.getMainMasteryName();
-    if (masteryName != null && !MasteryLevel.containsName(masteryName)) {
-      throw new ResourceNotFoundException("The mastery level \"" + masteryName + "\" not found.");
+    int masteryLevel = specializationDto.getMainMasteryLevel();
+    if (!MasteryLevel.containsLevel(masteryLevel)) {
+      throw new ResourceNotFoundException("The mastery level \"" + masteryLevel + "\" not found.");
     }
 
     if (specializationDto.isMain()
@@ -194,15 +193,10 @@ public class SpecializationService {
    */
   @Transactional
   public void createMasteriesForSpecialization(Specialization specialization,
-      @NotNull String mainMasteryName) {
-    if (mainMasteryName == null || mainMasteryName.isEmpty() || mainMasteryName.isBlank()) {
-      throw new ResourceNotFoundException("The main mastery name is required param.");
-    }
-
+      int mainMasteryLevel) {
     List<Mastery> masteries = createMasteryList(specialization);
     masteries.stream()
-        .filter(mastery -> MasteryLevel.getNameByLevel(mastery.getLevel())
-            .equalsIgnoreCase(mainMasteryName))
+        .filter(mastery -> mastery.getLevel() == mainMasteryLevel)
         .findFirst()
         .ifPresent(specialization::setMainMastery);
 
