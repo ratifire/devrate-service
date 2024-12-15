@@ -6,6 +6,9 @@ get:
     Retrieves all necessary data of interview feedback detail based on the provided ID for 
     filling the feedback form
   operationId: getInterviewFeedbackDetail
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: id

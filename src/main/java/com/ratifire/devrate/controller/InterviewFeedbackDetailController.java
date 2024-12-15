@@ -27,6 +27,6 @@ public class InterviewFeedbackDetailController {
    */
   @GetMapping("/{id}")
   public InterviewFeedbackDetailDto getInterviewFeedbackDetail(@PathVariable long id) {
-    return interviewFeedbackDetailService.getInterviewFeedbackDetail(id);
+    return interviewFeedbackDetailService.getDtoById(id);
   }
 }

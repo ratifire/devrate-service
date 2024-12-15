@@ -37,6 +37,6 @@ public class NotificationController {
    */
   @DeleteMapping
   public void delete(@RequestParam long userId, @RequestParam long notificationId) {
-    notificationService.deleteById(notificationId);
+    notificationService.delete(notificationId);
   }
 }

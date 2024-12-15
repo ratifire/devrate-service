@@ -24,8 +24,8 @@ public class AuthenticationFailureHandlerEntryPoint implements AuthenticationEnt
   }
 
   private int determineResponseStatus(String error) {
-    if (AuthenticationError.TOKEN_EXPIRED.name().equals(error)) {
-      return AuthenticationError.TOKEN_EXPIRED.getHttpStatus();
+    if (AuthenticationError.AUTH_TOKEN_EXPIRED.name().equals(error)) {
+      return AuthenticationError.AUTH_TOKEN_EXPIRED.getHttpStatus();
     }
     return AuthenticationError.UNAUTHORIZED.getHttpStatus();
   }

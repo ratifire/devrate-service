@@ -14,8 +14,8 @@
 //import com.ratifire.devrate.entity.interview.InterviewRequest;
 //import com.ratifire.devrate.enums.InterviewRequestRole;
 //import com.ratifire.devrate.service.NotificationService;
-//import com.ratifire.devrate.service.specialization.SpecializationService;
-//import com.ratifire.devrate.service.user.UserService;
+//import com.ratifire.devrate.service.SpecializationService;
+//import com.ratifire.devrate.service.UserService;
 //import com.ratifire.devrate.util.interview.DateTimeUtils;
 //import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
 //import com.ratifire.devrate.util.zoom.service.ZoomApiService;

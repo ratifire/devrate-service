@@ -311,6 +311,8 @@ WHERE id = 6664
 
 -- Insert mastery history records for 10 days and each month of the year
 INSERT INTO mastery_histories (mastery_id, date, hard_skill_mark, soft_skill_mark)
+SELECT mastery_id, date::DATE, hard_skill_mark, soft_skill_mark
+FROM (
 VALUES
     -- July
     (10001, '2024-07-19', 6.2, 5.7),
@@ -458,10 +460,19 @@ VALUES
     (10012, '2024-01-07', 7.7, 6.8),
     (10012, '2024-01-08', 7.8, 6.9),
     (10012, '2024-01-09', 7.9, 7.0),
-    (10012, '2024-01-10', 8.0, 7.1);
+    (10012, '2024-01-10', 8.0, 7.1)
+) AS new_mastery_histories (mastery_id, date, hard_skill_mark, soft_skill_mark)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM mastery_histories
+    WHERE mastery_histories.mastery_id = new_mastery_histories.mastery_id
+      AND mastery_histories.date = new_mastery_histories.date::DATE
+);
 
 -- Insert mastery history records for each month of the year
 INSERT INTO mastery_histories (mastery_id, date, hard_skill_mark, soft_skill_mark)
+SELECT mastery_id, date::DATE, hard_skill_mark, soft_skill_mark
+FROM (
 VALUES
     -- For mastery_id 10001
     (10001, '2023-10-01', 7.0, 6.5),
@@ -606,10 +617,19 @@ VALUES
     (10012, '2024-05-01', 7.6, 6.7),
     (10012, '2024-06-01', 7.4, 6.5),
     (10012, '2024-07-01', 7.2, 6.3),
-    (10012, '2024-08-01', 7.4, 6.5);
+    (10012, '2024-08-01', 7.4, 6.5)
+) AS new_mastery_histories (mastery_id, date, hard_skill_mark, soft_skill_mark)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM mastery_histories
+    WHERE mastery_histories.mastery_id = new_mastery_histories.mastery_id
+      AND mastery_histories.date = new_mastery_histories.date::DATE
+);
 
 -- Insert interview summaries for 10 days
 INSERT INTO interview_summaries (id, date, duration, candidate_id, interviewer_id)
+SELECT id, date::DATE, duration, candidate_id, interviewer_id
+FROM (
 VALUES
     (1000, '2024-07-21', 60, 8881, 8882),
     (2000, '2024-07-21', 45, 8882, 8881),
@@ -622,10 +642,18 @@ VALUES
     (11000, '2024-07-27', 45, 8881, 8882),
     (12000, '2024-07-27', 30, 8882, 8881),
     (13000, '2024-07-28', 90, 8881, 8882),
-    (14000, '2024-07-28', 75, 8882, 8881);
+    (14000, '2024-07-28', 75, 8882, 8881)
+) AS new_interview_summaries (id, date, duration, candidate_id, interviewer_id)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM interview_summaries
+    WHERE id = new_interview_summaries.id
+);
 
 -- Insert interview summaries for each month of the year
 INSERT INTO interview_summaries (id, date, duration, candidate_id, interviewer_id)
+SELECT id, date::DATE, duration, candidate_id, interviewer_id
+FROM (
 VALUES
     (15000, '2023-11-01', 60, 8881, 8882),
     (16000, '2023-12-01', 45, 8882, 8881),
@@ -638,17 +666,30 @@ VALUES
     (23000, '2024-05-01', 90, 8881, 8882),
     (24000, '2024-06-01', 75, 8882, 8881),
     (25000, '2024-07-01', 60, 8881, 8882),
-    (26000, '2024-08-01', 45, 8882, 8881);
+    (26000, '2024-08-01', 45, 8882, 8881)
+) AS new_interview_summaries (id, date, duration, candidate_id, interviewer_id)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM interview_summaries
+    WHERE id = new_interview_summaries.id
+);
 
 -- Associate interview summaries with user
--- Ensure the interview_summary_id exists in interview_summaries table
 INSERT INTO interview_summaries_users (user_id, interview_summary_id)
+SELECT * FROM (
 VALUES
     (8881, 1000), (8881, 2000), (8881, 5000), (8881, 6000), (8881, 7000),
     (8881, 8000), (8881, 9000), (8881, 10000), (8881, 11000), (8881, 12000),
     (8881, 13000), (8881, 14000), (8881, 15000), (8881, 16000), (8881, 17000),
     (8881, 18000), (8881, 19000), (8881, 20000), (8881, 21000), (8881, 22000),
-    (8881, 23000), (8881, 24000), (8881, 25000), (8881, 26000);
+    (8881, 23000), (8881, 24000), (8881, 25000), (8881, 26000)
+) AS new_interview_summaries_users (user_id, interview_summary_id)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM interview_summaries_users
+    WHERE user_id = new_interview_summaries_users.user_id
+      AND interview_summary_id = new_interview_summaries_users.interview_summary_id
+);
 
 --  Create event records
 INSERT INTO events (id, event_type_id, type, room_link, host_id, participant_id, start_time)
@@ -695,102 +736,109 @@ WHERE NOT EXISTS (SELECT 1
                   FROM user_event
                   WHERE user_id = user_event.user_id AND event_id = user_event.event_id);
 
--- -- Create 50 test user records with names in Ukrainian, English, and Ukrainian transliteration
--- INSERT INTO users (id, first_name, last_name, country, city, is_subscribed, picture, completed_interviews, conducted_interviews)
--- SELECT * FROM (
--- VALUES
---     (8933, 'Андрій', 'Шевченко', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 8, 10),
---     (8934, 'Andrew', 'Shevchenko', 'USA', 'New York', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 5, 7),
---     (8935, 'Andrii', 'Shevchenko', 'Ukraine', 'Lviv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 12, 9),
---     (8936, 'Марія', 'Іванова', 'Ukraine', 'Odessa', true, '', 10, 11),
---     (8937, 'Maria', 'Ivanova', 'Canada', 'Toronto', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 14, 8),
---     (8938, 'Mariya', 'Ivanova', 'Ukraine', 'Dnipro', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 9, 7),
---     (8939, 'Олексій', 'Коваленко', 'Ukraine', 'Kharkiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 7, 6),
---     (8940, 'Alex', 'Kovalenko', 'USA', 'Los Angeles', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 12),
---     (8941, 'Oleksii', 'Kovalenko', 'Ukraine', 'Vinnytsia', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 6, 8),
---     (8942, 'Іван', 'Петренко', 'Ukraine', 'Zaporizhzhia', true, '', 13, 10),
---     (8943, 'Ivan', 'Petrenko', 'USA', 'Chicago', true, '', 11, 9),
---     (8944, 'Iwan', 'Petrenko', 'Ukraine', 'Poltava', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 8, 6),
---     (8945, 'Софія', 'Сидоренко', 'Ukraine', 'Kyiv', true, '', 14, 13),
---     (8946, 'Sofia', 'Sydorenko', 'USA', 'San Francisco', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 9, 10),
---     (8947, 'Sofiia', 'Sydorenko', 'Ukraine', 'Chernihiv', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 7),
---     (8948, 'Дмитро', 'Мельник', 'Ukraine', 'Lutsk', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 11, 8),
---     (8949, 'Dmytro', 'Melnyk', 'USA', 'Austin', false, '', 13, 9),
---     (8950, 'Dmitriy', 'Melnyk', 'Ukraine', 'Rivne', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 10),
---     (8951, 'Анастасія', 'Гончаренко', 'Ukraine', 'Kherson', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 12, 11),
---     (8952, 'Anastasia', 'Honcharenko', 'Canada', 'Montreal', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 14, 12),
---     (8953, 'Anastasiia', 'Honcharenko', 'Ukraine', 'Ivano-Frankivsk', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 9, 8),
---     (8954, 'Олена', 'Бондар', 'Ukraine', 'Cherkasy', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 11),
---     (8955, 'Olena', 'Bondar', 'USA', 'Boston', false, '', 8, 6),
---     (8956, 'Olha', 'Bondar', 'Ukraine', 'Sumy', true, '', 11, 9),
---     (8957, 'Віктор', 'Захарчук', 'Ukraine', 'Ternopil', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 13, 8),
---     (8958, 'Victor', 'Zakharchuk', 'USA', 'Seattle', false, '', 9, 10),
---     (8959, 'Viktor', 'Zakharchuk', 'Ukraine', 'Zhytomyr', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 15, 12),
---     (8960, 'Катерина', 'Романюк', 'Ukraine', 'Kyiv', true, '', 11, 8),
---     (8961, 'Katerina', 'Romaniuk', 'USA', 'Denver', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 7),
---     (8962, 'Kateryna', 'Romaniuk', 'Ukraine', 'Lviv', true, '', 14, 9),
---     (8963, 'Юлія', 'Савчук', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 12, 10),
---     (8964, 'Julia', 'Savchuk', 'Canada', 'Vancouver', false, '', 13, 11),
---     (8965, 'Yuliya', 'Savchuk', 'Ukraine', 'Kharkiv', true, '', 8, 6),
---     (8966, 'Михайло', 'Олійник', 'Ukraine', 'Khmelnytskyi', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 9, 7),
---     (8967, 'Michael', 'Oliinyk', 'USA', 'San Diego', false, '', 15, 14),
---     (8968, 'Mykhailo', 'Oliinyk', 'Ukraine', 'Chernivtsi', true, '', 12, 11),
---     (8969, 'Ірина', 'Григоренко', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 11, 9),
---     (8970, 'Iryna', 'Hryhorenko', 'USA', 'New York', false, '', 10, 7),
---     (8971, 'Irena', 'Hryhorenko', 'Ukraine', 'Mykolaiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 8, 6),
---     (8972, 'Тарас', 'Кравченко', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 14, 12),
---     (8973, 'Taras', 'Kravchenko', 'USA', 'Chicago', false, '', 11, 10),
---     (8974, 'Taras', 'Kravchenko', 'Ukraine', 'Kharkiv', true, '', 13, 11),
---     (8975, 'Артем', 'Литвин', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 9),
---     (8976, 'Artem', 'Lytvyn', 'USA', 'San Francisco', false, '', 12, 8),
---     (8977, 'Artemiy', 'Lytvyn', 'Ukraine', 'Dnipro', true, '', 14, 13),
---     (8978, 'Наталія', 'Мороз', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 9, 7),
---     (8979, 'Natalia', 'Moroz', 'USA', 'Miami', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 8),
---     (8980, 'Nataliya', 'Moroz', 'Ukraine', 'Poltava', true, '', 12, 10)
--- ) AS new_users (id, first_name, last_name, country, city, is_subscribed, picture, completed_interviews, conducted_interviews)
--- WHERE NOT EXISTS (SELECT 1
---                   FROM users
---                   WHERE id = new_users.id);
+-- Create 50 test user records with names in Ukrainian, English, and Ukrainian transliteration
+INSERT INTO users (id, first_name, last_name, country, city, is_subscribed, picture, completed_interviews, conducted_interviews, email, password)
+SELECT * FROM (
+VALUES
+    (8933, 'Андрій', 'Шевченко', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 8, 10, 'andrii.shevchenko1@example.com', 'password8933'),
+    (8934, 'Andrew', 'Shevchenko', 'USA', 'New York', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 5, 7, 'andrew.shevchenko@example.com', 'password8934'),
+    (8935, 'Andrii', 'Shevchenko', 'Ukraine', 'Lviv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 12, 9, 'andrii.shevchenko@example.com', 'password8935'),
+    (8936, 'Марія', 'Іванова', 'Ukraine', 'Odessa', true, '', 10, 11, 'maria.ivanova1@example.com', 'password8936'),
+    (8937, 'Maria', 'Ivanova', 'Canada', 'Toronto', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 14, 8, 'maria.ivanova@example.com', 'password8937'),
+    (8938, 'Mariya', 'Ivanova', 'Ukraine', 'Dnipro', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 9, 7, 'mariya.ivanova@example.com', 'password8938'),
+    (8939, 'Олексій', 'Коваленко', 'Ukraine', 'Kharkiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 7, 6, 'oleksii.kovalenko1@example.com', 'password8939'),
+    (8940, 'Alex', 'Kovalenko', 'USA', 'Los Angeles', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 12, 'alex.kovalenko@example.com', 'password8940'),
+    (8941, 'Oleksii', 'Kovalenko', 'Ukraine', 'Vinnytsia', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 6, 8, 'oleksii.kovalenko@example.com', 'password8941'),
+    (8942, 'Іван', 'Петренко', 'Ukraine', 'Zaporizhzhia', true, '', 13, 10, 'ivan.petrenko1@example.com', 'password8942'),
+    (8943, 'Ivan', 'Petrenko', 'USA', 'Chicago', true, '', 11, 9, 'ivan.petrenko@example.com', 'password8943'),
+    (8944, 'Iwan', 'Petrenko', 'Ukraine', 'Poltava', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 8, 6, 'iwan.petrenko@example.com', 'password8944'),
+    (8945, 'Софія', 'Сидоренко', 'Ukraine', 'Kyiv', true, '', 14, 13, 'sofia.sydorenko@example.com', 'password8945'),
+    (8946, 'Sofia', 'Sydorenko', 'USA', 'San Francisco', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 9, 10, 'sofia.sydorenko1@example.com', 'password8946'),
+    (8947, 'Sofiia', 'Sydorenko', 'Ukraine', 'Chernihiv', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 7, 'sofiia.sydorenko@example.com', 'password8947'),
+    (8948, 'Дмитро', 'Мельник', 'Ukraine', 'Lutsk', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 11, 8, 'dmytro.melnyk1@example.com', 'password8948'),
+    (8949, 'Dmytro', 'Melnyk', 'USA', 'Austin', false, '', 13, 9, 'dmytro.melnyk@example.com', 'password8949'),
+    (8950, 'Dmitriy', 'Melnyk', 'Ukraine', 'Rivne', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 10, 'dmitriy.melnyk@example.com', 'password8950'),
+    (8951, 'Анастасія', 'Гончаренко', 'Ukraine', 'Kherson', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 12, 11, 'anastasiia.honcharenko1@example.com', 'password8951'),
+    (8952, 'Anastasia', 'Honcharenko', 'Canada', 'Montreal', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 14, 12, 'anastasia.honcharenko@example.com', 'password8952'),
+    (8953, 'Anastasiia', 'Honcharenko', 'Ukraine', 'Ivano-Frankivsk', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 9, 8, 'anastasiia.honcharenko@example.com', 'password8953'),
+    (8954, 'Олена', 'Бондар', 'Ukraine', 'Cherkasy', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 11, 'olena.bondar@example.com', 'password8954'),
+    (8955, 'Olena', 'Bondar', 'USA', 'Boston', false, '', 8, 6, 'olena.bondar1@example.com', 'password8955'),
+    (8956, 'Olha', 'Bondar', 'Ukraine', 'Sumy', true, '', 11, 9, 'olha.bondar@example.com', 'password8956'),
+    (8957, 'Віктор', 'Захарчук', 'Ukraine', 'Ternopil', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 13, 8, 'viktor.zakharchuk@example.com', 'password8957'),
+    (8958, 'Victor', 'Zakharchuk', 'USA', 'Seattle', false, '', 9, 10, 'victor.zakharchuk@example.com', 'password8958'),
+    (8959, 'Viktor', 'Zakharchuk', 'Ukraine', 'Zhytomyr', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 15, 12, 'viktor.zakharchuk1@example.com', 'password8959'),
+    (8960, 'Катерина', 'Романюк', 'Ukraine', 'Kyiv', true, '', 11, 8, 'katerina.romaniuk@example.com', 'password8960'),
+    (8961, 'Katerina', 'Romaniuk', 'USA', 'Denver', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 7, 'katerina.romaniuk1@example.com', 'password8961'),
+    (8962, 'Kateryna', 'Romaniuk', 'Ukraine', 'Lviv', true, '', 14, 9, 'kateryna.romaniuk@example.com', 'password8962'),
+    (8963, 'Юлія', 'Савчук', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 12, 10, 'yuliya.savchuk1@example.com', 'password8963'),
+    (8964, 'Julia', 'Savchuk', 'Canada', 'Vancouver', false, '', 13, 11, 'julia.savchuk@example.com', 'password8964'),
+    (8965, 'Yuliya', 'Savchuk', 'Ukraine', 'Kharkiv', true, '', 8, 6, 'yuliya.savchuk@example.com', 'password8965'),
+    (8966, 'Михайло', 'Олійник', 'Ukraine', 'Khmelnytskyi', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 9, 7, 'mykhailo.oliinyk1@example.com', 'password8966'),
+    (8967, 'Michael', 'Oliinyk', 'USA', 'San Diego', false, '', 15, 14, 'michael.oliinyk@example.com', 'password8967'),
+    (8968, 'Mykhailo', 'Oliinyk', 'Ukraine', 'Chernivtsi', true, '', 12, 11, 'mykhailo.oliinyk@example.com', 'password8968'),
+    (8969, 'Ірина', 'Григоренко', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 11, 9, 'iryna.hryhorenko1@example.com', 'password8969'),
+    (8970, 'Iryna', 'Hryhorenko', 'USA', 'New York', false, '', 10, 7, 'iryna.hryhorenko@example.com', 'password8970'),
+    (8971, 'Irena', 'Hryhorenko', 'Ukraine', 'Mykolaiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 8, 6, 'irena.hryhorenko@example.com', 'password8971'),
+    (8972, 'Тарас', 'Кравченко', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 14, 12, 'taras.kravchenko1@example.com', 'password8972'),
+    (8973, 'Taras', 'Kravchenko', 'USA', 'Chicago', false, '', 11, 10, 'taras.kravchenko2@example.com', 'password8973'),
+    (8974, 'Taras', 'Kravchenko', 'Ukraine', 'Kharkiv', true, '', 13, 11, 'taras.kravchenko@example.com', 'password8974'),
+    (8975, 'Артем', 'Литвин', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 9, 'artem.lytvyn@example.com', 'password8975'),
+    (8976, 'Artem', 'Lytvyn', 'USA', 'San Francisco', false, '', 12, 8, 'artem.lytvyn1@example.com', 'password8976'),
+    (8977, 'Artemiy', 'Lytvyn', 'Ukraine', 'Dnipro', true, '', 14, 13, 'artemiy.lytvyn@example.com', 'password8977'),
+    (8978, 'Наталія', 'Мороз', 'Ukraine', 'Kyiv', true, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 9, 7, 'natalia.moroz1@example.com', 'password8978'),
+    (8979, 'Natalia', 'Moroz', 'USA', 'Miami', false, 'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAIAAAADnC86AAAALUlEQVR4nO3NAQ0AAAgDILV/Z43xzUEBeitjQq9YLBaLxWKxWCwWLGFiVgkMAVzYG6LAAAAAElFTkSuQmCC', 10, 8, 'natalia.moroz@example.com', 'password8979'),
+    (8980, 'Nataliya', 'Moroz', 'Ukraine', 'Poltava', true, '', 12, 10, 'nataliya.moroz@example.com', 'password8980')
+) AS new_users (id, first_name, last_name, country, city, is_subscribed, picture, completed_interviews, conducted_interviews, email, password)
+WHERE NOT EXISTS (SELECT 1
+                  FROM users
+                  WHERE id = new_users.id);
 
--- -- Create test data specialization records with different names
--- INSERT INTO specializations (id, name, completed_interviews, conducted_interviews, is_main, user_id)
--- VALUES
---     (6666, 'Python Developer', 5, 7, true, 8934),
---     (6667, 'React Developer', 12, 9, true, 8935),
---     (6668, 'UI/UX Designer', 10, 11, true, 8936),
---     (6669, 'Full Stack Developer', 14, 8, true, 8937),
---     (6670, 'Database Administrator', 9, 7, true, 8938),
---     (6671, 'DevOps Engineer', 7, 6, true, 8939),
---     (6673, 'System Analyst', 6, 8, true, 8941),
---     (6674, 'Cloud Architect', 13, 10, true, 8942),
---     (6675, 'Machine Learning Engineer', 11, 9, true, 8943),
---     (6676, 'Scrum Master', 8, 6, true, 8944),
---     (6677, 'iOS Developer', 14, 13, true, 8945),
---     (6678, 'Frontend Developer', 9, 10, true, 8946),
---     (6681, 'Backend Developer', 13, 9, true, 8949),
---     (6682, 'Data Analyst', 10, 10, true, 8950),
---     (6683, 'Product Designer', 12, 11, true, 8951),
---     (6684, 'Software Engineer', 14, 12, true, 8952),
---     (6686, 'Cloud Consultant', 8, 6, true, 8954),
---     (6687, 'Project Manager', 9, 7, true, 8955),
---     (6688, 'Data Engineer', 15, 14, true, 8956),
---     (6691, 'React Native Developer', 13, 9, true, 8959),
---     (6692, 'Network Engineer', 11, 9, true, 8960),
---     (6693, 'AI Specialist', 10, 7, true, 8961),
---     (6694, 'Cybersecurity Specialist', 14, 9, true, 8962),
---     (6695, 'Quality Assurance', 8, 6, true, 8963),
---     (6697, 'Frontend Consultant', 11, 8, true, 8965),
---     (6699, 'Cloud Developer', 14, 10, true, 8967),
---     (6700, 'AI Developer', 9, 8, true, 8968),
---     (6701, 'Cloud Engineer', 12, 11, true, 8969),
---     (6702, 'Data Scientist', 10, 7, true, 8970),
---     (6704, 'Cloud Solutions Architect', 8, 6, true, 8972),
---     (6705, 'Systems Administrator', 9, 10, true, 8973),
---     (6706, 'Database Engineer', 14, 12, true, 8974),
---     (6708, 'Frontend Developer', 10, 9, true, 8976),
---     (6710, 'UX Researcher', 9, 7, true, 8978),
---     (6711, 'Design Engineer', 13, 10, true, 8979),
---     (6712, 'Product Designer', 12, 10, true, 8980);
+-- Create test data specialization records with different names
+INSERT INTO specializations (id, name, completed_interviews, conducted_interviews, is_main, user_id)
+SELECT * FROM (
+VALUES
+    (6666, 'Python Developer', 5, 7, true, 8934),
+    (6667, 'React Developer', 12, 9, true, 8935),
+    (6668, 'UI/UX Designer', 10, 11, true, 8936),
+    (6669, 'Full Stack Developer', 14, 8, true, 8937),
+    (6670, 'Database Administrator', 9, 7, true, 8938),
+    (6671, 'DevOps Engineer', 7, 6, true, 8939),
+    (6673, 'System Analyst', 6, 8, true, 8941),
+    (6674, 'Cloud Architect', 13, 10, true, 8942),
+    (6675, 'Machine Learning Engineer', 11, 9, true, 8943),
+    (6676, 'Scrum Master', 8, 6, true, 8944),
+    (6677, 'iOS Developer', 14, 13, true, 8945),
+    (6678, 'Frontend Developer', 9, 10, true, 8946),
+    (6681, 'Backend Developer', 13, 9, true, 8949),
+    (6682, 'Data Analyst', 10, 10, true, 8950),
+    (6683, 'Product Designer', 12, 11, true, 8951),
+    (6684, 'Software Engineer', 14, 12, true, 8952),
+    (6686, 'Cloud Consultant', 8, 6, true, 8954),
+    (6687, 'Project Manager', 9, 7, true, 8955),
+    (6688, 'Data Engineer', 15, 14, true, 8956),
+    (6691, 'React Native Developer', 13, 9, true, 8959),
+    (6692, 'Network Engineer', 11, 9, true, 8960),
+    (6693, 'AI Specialist', 10, 7, true, 8961),
+    (6694, 'Cybersecurity Specialist', 14, 9, true, 8962),
+    (6695, 'Quality Assurance', 8, 6, true, 8963),
+    (6697, 'Frontend Consultant', 11, 8, true, 8965),
+    (6699, 'Cloud Developer', 14, 10, true, 8967),
+    (6700, 'AI Developer', 9, 8, true, 8968),
+    (6701, 'Cloud Engineer', 12, 11, true, 8969),
+    (6702, 'Data Scientist', 10, 7, true, 8970),
+    (6704, 'Cloud Solutions Architect', 8, 6, true, 8972),
+    (6705, 'Systems Administrator', 9, 10, true, 8973),
+    (6706, 'Database Engineer', 14, 12, true, 8974),
+    (6708, 'Frontend Developer', 10, 9, true, 8976),
+    (6710, 'UX Researcher', 9, 7, true, 8978),
+    (6711, 'Design Engineer', 13, 10, true, 8979),
+    (6712, 'Product Designer', 12, 10, true, 8980)
+    ) AS new_specializations (id, name, completed_interviews, conducted_interviews, is_main, user_id)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM specializations
+    WHERE specializations.id = new_specializations.id
+    );
 
 -- Create test data for interview_feedback_details
 INSERT INTO interview_feedback_details (id, participant_role, start_time, interview_summary_id, evaluated_mastery_id, skill_id, participant_id, owner_id)
@@ -805,7 +853,15 @@ WHERE NOT EXISTS (SELECT 1
 
 -- Create test data for interview_summaries
 INSERT INTO interview_summaries (id, date, duration, candidate_id, interviewer_id)
-VALUES (3001, '2024-09-08', 60, 8881, 8882);
+SELECT id, date::DATE, duration, candidate_id, interviewer_id
+FROM (
+         VALUES (3001, '2024-09-08', 60, 8881, 8882)
+     ) AS new_interview_summaries (id, date, duration, candidate_id, interviewer_id)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM interview_summaries
+    WHERE id = new_interview_summaries.id
+);
 
 -- Create test data interview_summaries_users relation records
 INSERT INTO interview_summaries_users (user_id, interview_summary_id)

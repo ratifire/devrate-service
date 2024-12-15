@@ -1,12 +1,12 @@
 package com.ratifire.devrate.security.filter;
 
-import static com.ratifire.devrate.security.model.enums.AuthenticationError.TOKEN_EXPIRED;
+import static com.ratifire.devrate.security.model.enums.AuthenticationError.AUTH_TOKEN_EXPIRED;
 import static com.ratifire.devrate.security.model.enums.AuthenticationError.UNAUTHORIZED;
 import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.ACCESS_TOKEN;
 import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.ID_TOKEN;
 
+import com.ratifire.devrate.security.exception.AuthTokenExpiredException;
 import com.ratifire.devrate.security.exception.AuthenticationException;
-import com.ratifire.devrate.security.exception.TokenExpiredException;
 import com.ratifire.devrate.security.service.CognitoTokenValidationService;
 import com.ratifire.devrate.security.util.TokenUtil;
 import jakarta.servlet.FilterChain;
@@ -33,6 +33,11 @@ public class CognitoAuthenticationFilter extends OncePerRequestFilter {
   private final CognitoTokenValidationService cognitoTokenValidationService;
 
   @Override
+  protected boolean shouldNotFilter(HttpServletRequest request) {
+    return request.getServletPath().equals("/auth/refresh-token");
+  }
+
+  @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException {
 
@@ -40,6 +45,7 @@ public class CognitoAuthenticationFilter extends OncePerRequestFilter {
     String idToken = TokenUtil.extractIdTokenFromRequest(request);
 
     if (accessToken == null || idToken == null) {
+      request.setAttribute(AUTHENTICATION_ERROR_ATTRIBUTE, UNAUTHORIZED);
       filterChain.doFilter(request, response);
       return;
     }
@@ -53,9 +59,10 @@ public class CognitoAuthenticationFilter extends OncePerRequestFilter {
 
       filterChain.doFilter(request, response);
 
-    } catch (TokenExpiredException e) {
-      request.setAttribute(AUTHENTICATION_ERROR_ATTRIBUTE, TOKEN_EXPIRED);
-      throw new TokenExpiredException("Authentication process was failed. Token has been expired");
+    } catch (AuthTokenExpiredException e) {
+      request.setAttribute(AUTHENTICATION_ERROR_ATTRIBUTE, AUTH_TOKEN_EXPIRED);
+      throw new AuthTokenExpiredException(
+          "Authentication process was failed. Token has been expired");
 
     } catch (Exception e) {
       request.setAttribute(AUTHENTICATION_ERROR_ATTRIBUTE, UNAUTHORIZED);

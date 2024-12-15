@@ -4,6 +4,9 @@ put:
   summary: Update user by user ID
   description: Update an existing user personal info based on the user ID
   operationId: update
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   requestBody:
     required: true
     content:

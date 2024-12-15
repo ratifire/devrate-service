@@ -110,10 +110,10 @@ class InterviewRequestServiceTest {
   }
 
   @Test
-  void testDeleteInterviewRequests() {
+  void testDeleteBulk() {
     List<Long> ids = List.of(1L, 2L);
 
-    interviewRequestService.deleteInterviewRequests(ids);
+    interviewRequestService.deleteBulk(ids);
 
     verify(interviewRequestRepository, times(1)).deleteAllById(ids);
   }

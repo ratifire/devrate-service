@@ -4,6 +4,9 @@ patch:
   summary: Mark Notification as Read
   description: Marks a notification as read for a given user.
   operationId: markAsRead
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: query
       name: userId

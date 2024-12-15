@@ -5,7 +5,9 @@ package com.ratifire.devrate.exception;
  */
 public class EmploymentRecordNotFoundException extends ResourceNotFoundException {
 
-  public EmploymentRecordNotFoundException(String message) {
-    super(message);
+  private static final String MESSAGE_ID_NOT_FOUND = "Employment record with id %d not found.";
+
+  public EmploymentRecordNotFoundException(long id) {
+    super(String.format(MESSAGE_ID_NOT_FOUND, id));
   }
 }

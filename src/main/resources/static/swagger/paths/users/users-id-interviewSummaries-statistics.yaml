@@ -3,6 +3,9 @@ get:
     - Interview Summary
   summary: Get interview statistics by User ID
   description: Endpoint for conducted and passed interviews by user ID and date range.
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId

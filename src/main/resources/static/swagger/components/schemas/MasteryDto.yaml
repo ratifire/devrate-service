@@ -5,9 +5,9 @@ properties:
     format: int64
     description: The unique identifier for the mastery
     readOnly: true
-  name:
-    type: string
-    description: The name of the mastery level (JUNIOR (1), MIDDLE (2), SENIOR (3))
+  level:
+    type: integer
+    description: The mastery level (JUNIOR (1), MIDDLE (2), SENIOR (3))
   softSkillMark:
     type: number
     format: double

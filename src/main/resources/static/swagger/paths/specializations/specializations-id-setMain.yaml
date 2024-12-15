@@ -1,5 +1,8 @@
 put:
   summary: Set main specialization status by Specialization ID
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   tags:
     - Specialization
   parameters:

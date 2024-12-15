@@ -4,6 +4,9 @@ get:
   summary: Get all notifications for a user by its id
   operationId: getAllNotifications
   description: Retrieves a list of all notifications for the specified user.
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId

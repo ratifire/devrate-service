@@ -1,5 +1,8 @@
 put:
   summary: Update Mastery by ID
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   tags:
     - Mastery
   requestBody:

@@ -4,6 +4,9 @@ get:
   summary: Get static file from specialization folder
   description: "Returns the content of the static file by its name from the specialization 
       folder."
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: filename

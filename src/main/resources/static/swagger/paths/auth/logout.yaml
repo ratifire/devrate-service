@@ -2,16 +2,39 @@ post:
   tags:
     - Authentication
   summary: Logs out the user
-  description: Logs out the currently authenticated user.
-  security: [ ]
-  parameters:
-    - in: cookie
-      name: JSESSIONID
-      description: Session ID cookie
-      required: true
+  description: Logout the currently authenticated user by invalidating tokens and clearing the refresh token cookie.
+  operationId: logout
+  security:
+    - accessToken: []
   responses:
     '200':
-      description: Successful logout
+      description: Successful logout. Refresh token cookie cleared.
+      headers:
+        Set-Cookie:
+          description: Sets the refresh token cookie to empty with a zero expiration time.
+          schema:
+            type: string
+            example: Refresh-Token=; Path=/; Max-Age=0; HttpOnly; Secure
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Logout process was successfully completed.
+    '400':
+      description: Bad Request. Missing or invalid parameters in the request.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '498':
+      description: Token expired. The access token has expired.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
     '500':
       description: Internal server error.
       content:

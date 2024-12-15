@@ -7,9 +7,9 @@ properties:
   isMainSpecialization:
     type: boolean
     description: "Flag indicating whether the current specialization is the user's main specialization."
-  masteryName:
-    type: string
-    description: "Name of the user's specialization main mastery."
+  masteryLevel:
+    type: integer
+    description: "Level of the user's specialization main mastery."
   hardSkills:
     type: array
     description: "List of hard skills associated with the user's main mastery."

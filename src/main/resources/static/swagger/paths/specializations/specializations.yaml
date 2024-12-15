@@ -1,5 +1,8 @@
 put:
   summary: Update specialization name by specialization ID
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   tags:
     - Specialization
   requestBody:

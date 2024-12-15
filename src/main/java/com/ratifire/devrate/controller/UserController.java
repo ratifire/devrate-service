@@ -19,7 +19,7 @@ import com.ratifire.devrate.dto.UserMainMasterySkillDto;
 import com.ratifire.devrate.dto.UserNameSearchDto;
 import com.ratifire.devrate.dto.UserPictureDto;
 import com.ratifire.devrate.enums.InterviewRequestRole;
-import com.ratifire.devrate.service.user.UserService;
+import com.ratifire.devrate.service.UserService;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -55,7 +55,7 @@ public class UserController {
    */
   @GetMapping("/{id}")
   public UserDto findById(@PathVariable long id) {
-    return userService.findById(id);
+    return userService.getDtoById(id);
   }
 
   /**
@@ -66,7 +66,7 @@ public class UserController {
    */
   @PutMapping
   public UserDto update(@Valid @RequestBody UserDto userDto) {
-    return userService.update(userDto);
+    return userService.updateByDto(userDto);
   }
 
   /**
@@ -162,7 +162,7 @@ public class UserController {
    */
   @GetMapping("/{userId}/pictures")
   public ResponseEntity<UserPictureDto> getUserPicture(@PathVariable long userId) {
-    UserPictureDto userPicture = userService.getUserPicture(userId);
+    UserPictureDto userPicture = userService.getPicture(userId);
     return userPicture.getUserPicture() != null
         ? ResponseEntity.ok(userPicture)
         : ResponseEntity.noContent().build();
@@ -176,7 +176,7 @@ public class UserController {
    */
   @PostMapping("/{userId}/pictures")
   public void addUserPicture(@PathVariable long userId, @RequestBody String userPicture) {
-    userService.addUserPicture(userId, userPicture);
+    userService.addPicture(userId, userPicture);
   }
 
   /**
@@ -184,7 +184,7 @@ public class UserController {
    */
   @DeleteMapping("/{userId}/pictures")
   public void removeUserPicture(@PathVariable long userId) {
-    userService.deleteUserPicture(userId);
+    userService.deletePicture(userId);
   }
 
   /**

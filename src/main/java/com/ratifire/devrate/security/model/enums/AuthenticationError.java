@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum AuthenticationError {
 
-  TOKEN_EXPIRED("token_expired", 498),
+  AUTH_TOKEN_EXPIRED("auth_token_expired", 498),
   UNAUTHORIZED("unauthorized", HttpStatus.UNAUTHORIZED.value());
 
   private final String error;

@@ -1,0 +1,28 @@
+post:
+  tags:
+    - Refresh-Token
+  summary: Refresh authentication tokens
+  description: Refreshes the authentication tokens, including the access token, ID token.
+  operationId: refreshToken
+  security: [ ]
+  responses:
+    '200':
+      description: Access and ID tokens was successfully refreshed.
+    '400':
+      description: Bad Request.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '498':
+      description: Refresh token expired.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

@@ -4,6 +4,9 @@ get:
   summary: Get bookmarks By UserId
   description: Retrieves all user`s bookmarks based on the provided UserId.
   operationId: getBookmarksByUserId
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId
@@ -39,6 +42,9 @@ post:
   summary: Create new bookmark
   description: Creates a new bookmark for a specified user.
   operationId: createBookmark
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId

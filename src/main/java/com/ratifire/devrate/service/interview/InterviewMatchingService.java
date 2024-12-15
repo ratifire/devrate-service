@@ -5,24 +5,23 @@ import static com.ratifire.devrate.enums.InterviewRequestRole.INTERVIEWER;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
-import com.ratifire.devrate.util.interview.InterviewPair;
+import com.ratifire.devrate.util.InterviewPair;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
  * Service for matching interview requests between candidates and interviewers.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class InterviewMatchingService {
 
   private final InterviewRequestService interviewRequestService;
   private final InterviewService interviewService;
-  private static final Logger logger = LoggerFactory.getLogger(InterviewMatchingService.class);
 
   /**
    * Matches the given interview request with an existing request.
@@ -38,18 +37,17 @@ public class InterviewMatchingService {
    *
    * @param incomingRequest the interview request to be matched
    * @param ignoreList      a list of users to ignore during matching
-   * @return an Optional containing the created Interview if a match is found and the interview is
-   *     created, otherwise an empty Optional
+   * @return an Optional containing the created Interview
    */
   public Optional<Interview> match(InterviewRequest incomingRequest, List<User> ignoreList) {
     return getInterviewPair(incomingRequest, ignoreList)
         .flatMap(interviewPair -> {
-          Optional<Interview> interviewOptional = interviewService.createInterview(interviewPair);
+          Optional<Interview> interviewOptional = interviewService.create(interviewPair);
           interviewOptional.ifPresent(interview -> markPairAsNonActive(interviewPair));
           return interviewOptional;
         })
         .or(() -> {
-          logger.debug("No matching request found for: {}", incomingRequest);
+          log.debug("No matching request found for: {}", incomingRequest);
           return Optional.empty();
         });
   }
@@ -59,9 +57,9 @@ public class InterviewMatchingService {
    *
    * @param interviewPair the matched interview pair to mark as non-active
    */
-  public void markPairAsNonActive(InterviewPair<InterviewRequest, InterviewRequest> interviewPair) {
-    interviewRequestService.markAsNonActive(interviewPair.getCandidate());
-    interviewRequestService.markAsNonActive(interviewPair.getInterviewer());
+  public void markPairAsNonActive(InterviewPair interviewPair) {
+    interviewRequestService.markAsNonActive(interviewPair.candidate());
+    interviewRequestService.markAsNonActive(interviewPair.interviewer());
   }
 
   /**
@@ -71,18 +69,13 @@ public class InterviewMatchingService {
    * @param ignoreList      a list of users to ignore during matching
    * @return an optional InterviewPair containing the matched candidate and interviewer
    */
-  private Optional<InterviewPair<InterviewRequest, InterviewRequest>> getInterviewPair(
+  private Optional<InterviewPair> getInterviewPair(
       InterviewRequest incomingRequest, List<User> ignoreList) {
-    return incomingRequest.getRole() == INTERVIEWER ? getMatchedCandidate(incomingRequest,
-        ignoreList)
-        .map(candidate -> InterviewPair.<InterviewRequest, InterviewRequest>builder()
-            .candidate(candidate)
-            .interviewer(incomingRequest)
-            .build()) : getMatchedInterviewer(incomingRequest, ignoreList)
-        .map(interviewer -> InterviewPair.<InterviewRequest, InterviewRequest>builder()
-            .candidate(incomingRequest)
-            .interviewer(interviewer)
-            .build());
+    return incomingRequest.getRole() == INTERVIEWER
+        ? getMatchedCandidate(incomingRequest, ignoreList)
+            .map(candidate -> new InterviewPair(candidate, incomingRequest))
+        : getMatchedInterviewer(incomingRequest, ignoreList)
+            .map(interviewer -> new InterviewPair(incomingRequest, interviewer));
   }
 
   /**

@@ -3,7 +3,7 @@ package com.ratifire.devrate.controller;
 import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.MasteryHistoryDto;
 import com.ratifire.devrate.dto.SkillDto;
-import com.ratifire.devrate.service.specialization.MasteryService;
+import com.ratifire.devrate.service.MasteryService;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
@@ -67,7 +67,7 @@ public class MasteryController {
   @PostMapping("/{id}/skills")
   public SkillDto createSkill(
       @Valid @RequestBody SkillDto skillDto, @PathVariable long id) {
-    return masteryService.createSkill(skillDto, id);
+    return masteryService.create(skillDto, id);
   }
 
   /**
@@ -80,7 +80,7 @@ public class MasteryController {
   @PostMapping("/{id}/skills/bulk")
   public List<SkillDto> createSkills(
       @Valid @RequestBody List<SkillDto> skillDtos, @PathVariable long id) {
-    return masteryService.createSkills(skillDtos, id);
+    return masteryService.createBulk(skillDtos, id);
   }
 
   /**

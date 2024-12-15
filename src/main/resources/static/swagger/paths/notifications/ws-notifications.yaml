@@ -3,6 +3,9 @@ get:
     - Notification
   summary: Connect to WebSocket notifications
   description: Establish a WebSocket connection to receive real-time notifications.
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   responses:
     '200':
       description: OK

@@ -4,6 +4,9 @@ delete:
   summary: Delete Bookmark By ID
   description: Deletes a bookmark by the provided ID.
   operationId: deleteBookmark
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: id

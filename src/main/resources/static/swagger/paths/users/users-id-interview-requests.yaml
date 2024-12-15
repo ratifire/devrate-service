@@ -3,6 +3,9 @@ post:
     - Interview Request
   summary: Add an interview request for the specified user
   description: Adds an interview request for the specified user.
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId
@@ -29,6 +32,9 @@ get:
     - Interview Request
   summary: Retrieve the interview request for a specific user, role and mastery id.
   description: Retrieves the interview request for a specific user, role and mastery id.
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId
@@ -67,6 +73,9 @@ put:
     - Interview Request
   summary: Update the interview request for a specific user
   description: Updates the interview request for a specific user.
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   parameters:
     - in: path
       name: userId

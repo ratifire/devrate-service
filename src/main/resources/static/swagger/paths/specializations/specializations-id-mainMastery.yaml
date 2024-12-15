@@ -1,5 +1,8 @@
 get:
   summary: Retrieve main mastery by Specialization ID
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
   tags:
     - Specialization
   parameters:

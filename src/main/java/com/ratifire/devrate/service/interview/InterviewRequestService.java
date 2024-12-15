@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class InterviewRequestService {
 
-  private final InterviewRequestRepository interviewRequestRepository;
+  private final InterviewRequestRepository repository;
 
   /**
    * Saves the given interview request.
@@ -26,7 +26,7 @@ public class InterviewRequestService {
    * @return the saved interview request
    */
   public InterviewRequest save(InterviewRequest interviewRequest) {
-    return interviewRequestRepository.save(interviewRequest);
+    return repository.save(interviewRequest);
   }
 
   /**
@@ -39,7 +39,7 @@ public class InterviewRequestService {
    */
   public InterviewRequest findByUserIdRoleMasteryId(long userId, InterviewRequestRole role,
       long masteryId) {
-    return interviewRequestRepository.findByUserIdAndRoleAndMastery_Id(userId, role, masteryId)
+    return repository.findByUserIdAndRoleAndMastery_Id(userId, role, masteryId)
         .orElseThrow(
             () -> new InterviewRequestDoesntExistException(userId, role.name(), masteryId));
   }
@@ -52,7 +52,7 @@ public class InterviewRequestService {
    */
   public List<InterviewRequest> findMatchedCandidates(InterviewRequest request,
       List<User> ignoreList) {
-    return interviewRequestRepository.findMatchedCandidates(request, ignoreList);
+    return repository.findMatchedCandidates(request, ignoreList);
   }
 
   /**
@@ -63,7 +63,7 @@ public class InterviewRequestService {
    */
   public List<InterviewRequest> findMatchedInterviewers(InterviewRequest request,
       List<User> ignoreList) {
-    return interviewRequestRepository.findMatchedInterviewers(request, ignoreList);
+    return repository.findMatchedInterviewers(request, ignoreList);
   }
 
   /**
@@ -73,7 +73,7 @@ public class InterviewRequestService {
    */
   public void markAsNonActive(InterviewRequest request) {
     request.setActive(false);
-    interviewRequestRepository.save(request);
+    repository.save(request);
   }
 
   /**
@@ -86,8 +86,8 @@ public class InterviewRequestService {
       InterviewRequest rejectedRequest) {
     activeRequest.setActive(true);
     rejectedRequest.setActive(true);
-    interviewRequestRepository.save(activeRequest);
-    interviewRequestRepository.save(rejectedRequest);
+    repository.save(activeRequest);
+    repository.save(rejectedRequest);
   }
 
   /**
@@ -95,8 +95,8 @@ public class InterviewRequestService {
    *
    * @param ids the list of interview request IDs to be deleted.
    */
-  public void deleteInterviewRequests(List<Long> ids) {
-    interviewRequestRepository.deleteAllById(ids);
+  public void deleteBulk(List<Long> ids) {
+    repository.deleteAllById(ids);
   }
 
   /**
@@ -104,10 +104,10 @@ public class InterviewRequestService {
    *
    * @param id the ID of the interview request to be deleted
    */
-  public void deleteInterviewRequestById(long id) {
+  public void delete(long id) {
     InterviewRequest interviewRequest = findById(id);
     if (interviewRequest.isActive()) {
-      interviewRequestRepository.delete(interviewRequest);
+      repository.delete(interviewRequest);
     }
   }
 
@@ -119,7 +119,7 @@ public class InterviewRequestService {
    * @throws InterviewRequestNotFoundException if no interview request is found with the given ID
    */
   private InterviewRequest findById(long id) {
-    return interviewRequestRepository.findById(id)
+    return repository.findById(id)
         .orElseThrow(() -> new InterviewRequestNotFoundException(id));
   }
 }
