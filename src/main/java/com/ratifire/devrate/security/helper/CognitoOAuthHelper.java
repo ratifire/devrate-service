@@ -18,30 +18,21 @@ public class CognitoOAuthHelper {
 
   private final CognitoRegistrationProperties properties;
 
-  public String generateAuthorizationHeader() {
-    return "Basic " + Base64.getEncoder().encodeToString(
-        (properties.getClientId() + ":" + properties.getClientSecret()).getBytes(
-            StandardCharsets.UTF_8)
-    );
-  }
-
   public HttpEntity<MultiValueMap<String, String>> buildTokenExchangeRequest(
       String authorizationCode) {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Content-Type", "application/x-www-form-urlencoded");
     headers.set("Authorization", generateAuthorizationHeader());
-
     MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
     body.add("grant_type", properties.getAuthorizationGrantType());
     body.add("code", authorizationCode);
     body.add("redirect_uri", properties.getRedirectUri());
-
     return new HttpEntity<>(body, headers);
   }
 
   public String buildAuthorizationUrl(String providerName, String state) {
-    return UriComponentsBuilder.fromUriString(properties.getAuthorizationUrlTemplate())
-        .queryParam("response_type", properties.getResponseType())
+    return UriComponentsBuilder.fromUriString("https://{domain}/oauth2/authorize")
+        .queryParam("response_type", "code")
         .queryParam("client_id", properties.getClientId())
         .queryParam("redirect_uri", properties.getRedirectUri())
         .queryParam("scope", properties.getScope())
@@ -52,9 +43,15 @@ public class CognitoOAuthHelper {
   }
 
   public String buildTokenUrl() {
-    return UriComponentsBuilder.fromUriString(properties.getTokenUrlTemplate())
+    return UriComponentsBuilder.fromUriString("https://{domain}/oauth2/token")
         .buildAndExpand(Map.of("domain", properties.getDomain()))
         .toUriString();
   }
 
+  private String generateAuthorizationHeader() {
+    return "Basic " + Base64.getEncoder().encodeToString(
+        (properties.getClientId() + ":" + properties.getClientSecret()).getBytes(
+            StandardCharsets.UTF_8)
+    );
+  }
 }
