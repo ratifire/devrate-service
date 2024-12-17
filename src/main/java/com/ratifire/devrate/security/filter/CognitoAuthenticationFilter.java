@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +28,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
  */
 @Component
 @RequiredArgsConstructor
+@Profile("!local")
 public class CognitoAuthenticationFilter extends OncePerRequestFilter {
 
   private static final String AUTHENTICATION_ERROR_ATTRIBUTE = "authentication_error";
