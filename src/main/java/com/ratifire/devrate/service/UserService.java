@@ -7,7 +7,6 @@ import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.EventDto;
 import com.ratifire.devrate.dto.InterviewFeedbackDto;
-import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
@@ -44,7 +43,6 @@ import com.ratifire.devrate.repository.InterviewSummaryRepository;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
 import com.ratifire.devrate.service.interview.InterviewFeedbackDetailService;
-import com.ratifire.devrate.service.interview.InterviewMatchingService;
 import com.ratifire.devrate.service.interview.InterviewRequestService;
 import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.service.interview.InterviewSummaryService;
@@ -85,7 +83,6 @@ public class UserService {
   private final SpecializationService specializationService;
   private final MasteryService masteryService;
   private final SkillService skillService;
-  private final InterviewMatchingService interviewMatchingService;
   private final InterviewRequestService interviewRequestService;
   private final InterviewService interviewService;
   private final InterviewSummaryService interviewSummaryService;
@@ -102,7 +99,6 @@ public class UserService {
   private final DataMapper<InterviewSummaryDto, InterviewSummary> interviewSummaryMapper;
   private final DataMapper<SpecializationDto, Specialization> specializationDataMapper;
   private final DataMapper<UserMainMasterySkillDto, Specialization> userMainMasterySkillMapper;
-  private final DataMapper<InterviewRequestDto, InterviewRequest> interviewRequestMapper;
   private final DataMapper<EventDto, Event> eventMapper;
   private final DataMapper<UserMainHardSkillsDto, Specialization> userMainHardSkillsMapper;
 
@@ -579,59 +575,6 @@ public class UserService {
   }
 
   /**
-   * Creates an interview request for the specified user and attempts to match it with an existing
-   * request.
-   *
-   * @param userId     the ID of the user creating the interview request
-   * @param requestDto the DTO containing the interview request details
-   */
-  @Transactional
-  public void createAndMatchInterviewRequest(long userId, InterviewRequestDto requestDto) {
-    InterviewRequest interviewRequest = createInterviewRequest(userId, requestDto);
-    Optional<Interview> interview = interviewMatchingService.match(interviewRequest);
-    interview.ifPresent(this::sendInterviewScheduledAlerts);
-  }
-
-  /**
-   * Retrieves the interview request for the specified user, role and mastery id.
-   *
-   * @param userId    the user's ID
-   * @param role      the role of the interview request
-   * @param masteryId the mastery id of the interview request
-   * @return the interview request as InterviewRequestDto
-   */
-  public InterviewRequestDto getInterviewRequest(long userId, InterviewRequestRole role,
-      long masteryId) {
-    InterviewRequest interviewRequest =
-        interviewRequestService.findByUserIdRoleMasteryId(userId, role, masteryId);
-    return interviewRequestMapper.toDto(interviewRequest);
-  }
-
-  /**
-   * Updates and matches the interview request for the specified user.
-   *
-   * @param userId     the user's ID
-   * @param requestDto the interview request details
-   */
-  @Transactional
-  public void updateAndMatchInterviewRequest(long userId, InterviewRequestDto requestDto) {
-    InterviewRequest interviewRequest = updateInterviewRequest(userId, requestDto);
-    if (interviewRequest.isActive()) {
-      Optional<Interview> interview = interviewMatchingService.match(interviewRequest);
-      interview.ifPresent(this::sendInterviewScheduledAlerts);
-    }
-  }
-
-  /**
-   * Deletes an interview request by its ID.
-   *
-   * @param requestId the ID of the interview request to be deleted
-   */
-  public void deleteInterviewRequest(long requestId) {
-    interviewRequestService.delete(requestId);
-  }
-
-  /**
    * Sends alerts to both the interviewer and the candidate about the scheduled interview.
    *
    * @param interview the interview whose participants are sent alerts
@@ -671,34 +614,6 @@ public class UserService {
   }
 
   /**
-   * Creates an interview request for the specified user.
-   *
-   * @param userId     the ID of the user creating the interview request
-   * @param requestDto the DTO containing the interview request details
-   * @return the created InterviewRequest entity
-   */
-  private InterviewRequest createInterviewRequest(long userId, InterviewRequestDto requestDto) {
-    User user = findById(userId);
-    InterviewRequest interviewRequest = interviewRequestMapper.toEntity(requestDto);
-    interviewRequest.setUser(user);
-    return interviewRequestService.save(interviewRequest);
-  }
-
-  /**
-   * Updates the interview request for the specified user based on the provided request DTO.
-   *
-   * @param userId     the user's ID
-   * @param requestDto the interview request details
-   * @return the updated InterviewRequest entity
-   */
-  private InterviewRequest updateInterviewRequest(long userId, InterviewRequestDto requestDto) {
-    InterviewRequest interviewRequest = interviewRequestService.findByUserIdRoleMasteryId(
-        userId, requestDto.getRole(), requestDto.getMasteryId());
-    interviewRequestMapper.updateEntity(requestDto, interviewRequest);
-    return interviewRequestService.save(interviewRequest);
-  }
-
-  /**
    * Delete the interview that was rejected by the user.
    *
    * @param userId      the ID of the user who rejected the interview
@@ -716,14 +631,9 @@ public class UserService {
     InterviewRequest rejectedRequest = activeAndRejectedRequest.interviewer();
 
     notifyUsers(activeRequest.getUser(), user, interview.getStartTime());
-    interviewRequestService.handleRejectedInterview(activeRequest, rejectedRequest);
 
-    Optional<Interview> matchedInterviewForActiveRequest = interviewMatchingService.match(
-        activeRequest, List.of(rejectedRequest.getUser()));
-    matchedInterviewForActiveRequest.ifPresent(this::sendInterviewScheduledAlerts);
-    Optional<Interview> matchedInterviewForRejectedRequest = interviewMatchingService.match(
-        rejectedRequest, List.of(activeRequest.getUser()));
-    matchedInterviewForRejectedRequest.ifPresent(this::sendInterviewScheduledAlerts);
+    // TODO: use matched-service for update candidate and interviewer - interview request
+    interviewRequestService.handleRejectedInterview(activeRequest, rejectedRequest);
   }
 
   /**

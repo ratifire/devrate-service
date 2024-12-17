@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 /**
  * Repository interface for accessing InterviewRequest entities.
  */
+@Deprecated
 @Repository
 @RepositoryRestResource(exported = false)
 public interface InterviewRequestRepository extends JpaRepository<InterviewRequest, Long> {
