@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -34,7 +35,12 @@ public class CognitoAuthenticationFilter extends OncePerRequestFilter {
 
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) {
-    return request.getServletPath().equals("/auth/refresh-token");
+    Set<String> excludedPaths = Set.of(
+        "/auth/refresh-token",
+        "/auth/{providerName}/login",
+        "/auth/callback"
+    );
+    return excludedPaths.contains(request.getServletPath());
   }
 
   @Override
