@@ -1,14 +1,11 @@
 package com.ratifire.devrate.security.controller;
 
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.security.facade.AuthenticationFacade;
 import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.LoginDto;
 import com.ratifire.devrate.security.model.dto.PasswordResetDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
-import com.ratifire.devrate.security.service.AuthenticationService;
-import com.ratifire.devrate.security.service.PasswordResetService;
-import com.ratifire.devrate.security.service.RefreshTokenService;
-import com.ratifire.devrate.security.service.RegistrationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -30,10 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthenticationController {
 
-  private final AuthenticationService authenticationService;
-  private final RegistrationService registrationService;
-  private final PasswordResetService passwordResetService;
-  private final RefreshTokenService refreshTokenService;
+  private final AuthenticationFacade authenticationFacade;
 
   /**
    * Endpoint for user login.
@@ -43,7 +37,7 @@ public class AuthenticationController {
    */
   @PostMapping("/signin")
   public UserDto login(@RequestBody LoginDto loginDto, HttpServletResponse response) {
-    return authenticationService.login(loginDto, response);
+    return authenticationFacade.login(loginDto, response);
   }
 
   /**
@@ -54,7 +48,7 @@ public class AuthenticationController {
    */
   @PostMapping("/logout")
   public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
-    String result = authenticationService.logout(request, response);
+    String result = authenticationFacade.logout(request, response);
     return ResponseEntity.status(HttpStatus.OK).body(result);
   }
 
@@ -65,7 +59,7 @@ public class AuthenticationController {
    */
   @PostMapping("/signup")
   public void registerUser(@RequestBody @Valid UserRegistrationDto userRegistrationDto) {
-    registrationService.registerUser(userRegistrationDto);
+    authenticationFacade.registerUser(userRegistrationDto);
   }
 
   /**
@@ -77,7 +71,7 @@ public class AuthenticationController {
   @PutMapping("/signup/confirm")
   public ResponseEntity<Long> confirm(@RequestBody @Valid ConfirmRegistrationDto
       confirmRegistrationDto) {
-    long userId = registrationService.confirmRegistration(confirmRegistrationDto);
+    long userId = authenticationFacade.confirmRegistration(confirmRegistrationDto);
     return ResponseEntity.status(HttpStatus.CREATED).body(userId);
   }
 
@@ -89,7 +83,7 @@ public class AuthenticationController {
    */
   @PostMapping("/request-password-reset")
   public ResponseEntity<Void> resetPassword(@RequestParam String email) {
-    passwordResetService.resetPassword(email);
+    authenticationFacade.resetPassword(email);
     return ResponseEntity.ok().build();
   }
 
@@ -101,7 +95,7 @@ public class AuthenticationController {
    */
   @PostMapping("/password-reset")
   public ResponseEntity<Void> confirmResetPassword(@RequestBody PasswordResetDto passwordResetDto) {
-    passwordResetService.confirmResetPassword(passwordResetDto);
+    authenticationFacade.confirmResetPassword(passwordResetDto);
     return ResponseEntity.ok().build();
   }
 
@@ -114,7 +108,7 @@ public class AuthenticationController {
   @PostMapping("/refresh-token")
   public ResponseEntity<Void> refreshToken(HttpServletRequest request,
       HttpServletResponse response) {
-    refreshTokenService.refreshAuthTokens(request, response);
+    authenticationFacade.refreshAuthTokens(request, response);
     return ResponseEntity.ok().build();
   }
 }

@@ -16,12 +16,14 @@ import java.net.URL;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 /**
  * AWS Cognito client configuration class.
  */
 @Configuration
 @RequiredArgsConstructor
+@Profile("!local")
 public class CognitoApiClientConfiguration {
 
   private static final long CACHE_TIME_TO_LIVE = 1200000L;    // 20 minutes
