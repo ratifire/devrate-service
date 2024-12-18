@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,6 +41,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
@@ -172,6 +176,27 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
         servletContext.getSessionCookieConfig().setPath("/");
       };
     }
+
+    /**
+     * Configures a CORS (Cross-Origin Resource Sharing) setup to allow all origins, methods etc.
+     *
+     * @return Configured CorsConfigurationSource for cross-origin requests.
+     */
+    @Bean
+    @ConditionalOnProperty(prefix = "cors", name = "enabled", havingValue = "false")
+    public CorsConfigurationSource corsConfigurationSource(
+        @Value("${cors.allowed.origins}") List<String> allowedOrigins) {
+      CorsConfiguration configuration = new CorsConfiguration();
+      configuration.setAllowedOrigins(allowedOrigins);
+      configuration.setAllowedMethods(List.of("*"));
+      configuration.setAllowedHeaders(List.of("*"));
+      configuration.setExposedHeaders(List.of("Authorization", "ID-Token"));
+      configuration.setAllowCredentials(true);
+      UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+      source.registerCorsConfiguration("/**", configuration);
+      return source;
+    }
+
   }
 
   /**
