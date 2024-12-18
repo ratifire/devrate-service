@@ -177,6 +177,11 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
       };
     }
 
+    /**
+     * Configures a CORS (Cross-Origin Resource Sharing) setup to allow all origins, methods etc.
+     *
+     * @return Configured CorsConfigurationSource for cross-origin requests.
+     */
     @Bean
     @ConditionalOnProperty(prefix = "cors", name = "enabled", havingValue = "false")
     public CorsConfigurationSource corsConfigurationSource(
