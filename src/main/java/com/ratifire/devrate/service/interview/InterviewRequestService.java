@@ -21,7 +21,7 @@ public class InterviewRequestService {
 
   private final InterviewRequestRepository repository;
   private final InterviewRequestMapper mapper;
-  private final MatchingServiceOrchestrator matchingServiceOrchestrator;
+  private final MatcherServiceOrchestrator matcherServiceOrchestrator;
 
   /**
    * Updates the interview request for the specified user based on the provided request DTO.
@@ -35,7 +35,7 @@ public class InterviewRequestService {
     mapper.updateEntity(requestDto, interviewRequest);
     repository.save(interviewRequest);
 
-    matchingServiceOrchestrator.update(interviewRequest);
+    matcherServiceOrchestrator.update(interviewRequest);
   }
 
   /**
@@ -97,6 +97,6 @@ public class InterviewRequestService {
     interviewRequest.setBlackList(new HashSet<>());
     repository.save(interviewRequest);
 
-    matchingServiceOrchestrator.sendToQueue(interviewRequest);
+    matcherServiceOrchestrator.sendToQueue(interviewRequest);
   }
 }

@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-public class MatchingServiceOrchestrator {
+public class MatcherServiceOrchestrator {
 
   private final MatcherServiceQueueSender queueSender;
-  private final MatchingServiceHttpClient httpClient;
+  private final MatcherServiceHttpClient httpClient;
 
   /**
    * Sends an interview request to the matcher-service queue.

@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-public class MatchingServiceHttpClient {
+public class MatcherServiceHttpClient {
 
   @Value("${matching-service.url}")
   private String matchingServiceUrl;
