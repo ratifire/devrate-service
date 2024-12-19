@@ -43,11 +43,9 @@ import com.ratifire.devrate.repository.InterviewSummaryRepository;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
 import com.ratifire.devrate.service.interview.InterviewFeedbackDetailService;
-import com.ratifire.devrate.service.interview.InterviewRequestService;
 import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.service.interview.InterviewSummaryService;
 import com.ratifire.devrate.util.DateTimeUtils;
-import com.ratifire.devrate.util.InterviewPair;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -83,7 +81,6 @@ public class UserService {
   private final SpecializationService specializationService;
   private final MasteryService masteryService;
   private final SkillService skillService;
-  private final InterviewRequestService interviewRequestService;
   private final InterviewService interviewService;
   private final InterviewSummaryService interviewSummaryService;
   private final InterviewFeedbackDetailService interviewFeedbackDetailService;
@@ -622,43 +619,7 @@ public class UserService {
   @Transactional
   public void deleteRejectedInterview(long userId, long interviewId) {
     Interview interview = interviewService.deleteRejected(interviewId);
-
-    User user = findById(userId);
-
-    InterviewPair activeAndRejectedRequest = determineActiveAndRejectedRequest(user, interview);
-
-    InterviewRequest activeRequest = activeAndRejectedRequest.candidate();
-    InterviewRequest rejectedRequest = activeAndRejectedRequest.interviewer();
-
-    notifyUsers(activeRequest.getUser(), user, interview.getStartTime());
-
-    // TODO: use matched-service for update candidate and interviewer - interview request
-    interviewRequestService.handleRejectedInterview(activeRequest, rejectedRequest);
-  }
-
-  /**
-   * Determines the active and rejected interview requests based on the user who rejected.
-   *
-   * @param user      The user who rejected the interview.
-   * @param interview The interview to be processed.
-   * @return An InterviewPair containing the active and rejected InterviewRequests.
-   */
-  private InterviewPair determineActiveAndRejectedRequest(
-      User user, Interview interview) {
-    return isCandidateRejected(user, interview.getCandidateRequest())
-        ? new InterviewPair(interview.getInterviewerRequest(), interview.getCandidateRequest())
-        : new InterviewPair(interview.getCandidateRequest(), interview.getInterviewerRequest());
-  }
-
-  /**
-   * Checks if the rejector is the candidate in the interview.
-   *
-   * @param rejector         The user who rejected the interview.
-   * @param candidateRequest The interview request from the candidate.
-   * @return true if the rejector is the candidate, false otherwise.
-   */
-  private boolean isCandidateRejected(User rejector, InterviewRequest candidateRequest) {
-    return rejector.getId() == candidateRequest.getUser().getId();
+    // TODO: notifyUsers(activeRequest.getUser(), user, interview.getStartTime());
   }
 
   /**

@@ -1,11 +1,9 @@
 package com.ratifire.devrate.entity.interview;
 
-
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.enums.InterviewRequestRole;
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -19,7 +17,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,7 +29,6 @@ import lombok.ToString;
 /**
  * Entity class representing an interview request entry.
  */
-@Deprecated
 @Data
 @Builder
 @AllArgsConstructor
@@ -49,16 +48,21 @@ public class InterviewRequest {
   @JoinColumn(name = "mastery_id", nullable = false)
   private Mastery mastery;
 
-  @Column(name = "is_active", nullable = false)
-  private boolean active;
+  @Column(name = "desired_interview", nullable = false)
+  private int desiredInterview;
+
+  @Column(name = "average_mark", nullable = false)
+  private double averageMark;    // need to be improved
 
   private ZonedDateTime expiredAt;
 
   @ElementCollection(targetClass = ZonedDateTime.class, fetch = FetchType.LAZY)
-  @CollectionTable(name = "interview_request_dates",
-      joinColumns = @JoinColumn(name = "interview_request_id"))
-  @Column(name = "interview_request_dates", nullable = false)
+  @Column(name = "available_dates", nullable = false)
   private List<ZonedDateTime> availableDates;
+
+  @ElementCollection(targetClass = Integer.class, fetch = FetchType.LAZY)
+  @Column(name = "black_list", nullable = false)
+  private Set<Integer> blackList = new HashSet<>();
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)

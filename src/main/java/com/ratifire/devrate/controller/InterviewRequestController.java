@@ -27,7 +27,7 @@ public class InterviewRequestController {
   private final InterviewRequestService interviewRequestService;
 
   /**
-   * Adds an interview request for the specified user.
+   * Adds an interview request for the specified user and send it to matcher-service.
    *
    * @param interviewRequest the interview request data
    */

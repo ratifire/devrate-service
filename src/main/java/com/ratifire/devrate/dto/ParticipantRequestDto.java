@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Builder
-public class ParticipantInterviewRequestDto {
+public class ParticipantRequestDto {
 
   private long participantId;
   private int desiredInterview;
