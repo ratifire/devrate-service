@@ -18,6 +18,7 @@ public class InterviewRequestDto {
   private InterviewRequestRole role;
   @NotNull
   private Long masteryId;
+  private int desiredInterview;
   @NotNull
   private List<ZonedDateTime> availableDates;
 }
