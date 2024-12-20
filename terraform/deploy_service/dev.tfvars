@@ -1,9 +1,11 @@
 region = "eu-north-1"
 
-domain_name = "devrate.org"
+domain_name = "skillzzy.com"
 
-subdomain_name = "server.devrate.org"
+subdomain_name = "server.skillzzy.com"
 
-vpc = "vpc-00b9e5046c1050334"
+vpc = "vpc-0032e90317069a534"
+
+target_group_name = "http-ecs-back-skillzzy-tg"
 
 instance_type = "t3.micro"
