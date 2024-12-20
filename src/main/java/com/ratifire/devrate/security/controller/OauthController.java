@@ -1,7 +1,7 @@
 package com.ratifire.devrate.security.controller;
 
 import com.ratifire.devrate.dto.UserDto;
-import com.ratifire.devrate.security.service.CognitoOAuthService;
+import com.ratifire.devrate.security.service.CognitoOauthService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
@@ -12,12 +12,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * test sso.
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
-public class OAuthController {
+public class OauthController {
 
-  private final CognitoOAuthService cognitoOAuthService;
+  private final CognitoOauthService cognitoOauthService;
 
   /**
    * Redirects the user to the specified provider for authentication.
@@ -30,7 +33,7 @@ public class OAuthController {
   @GetMapping("/{providerName}/login")
   public void redirectToProviderLogin(HttpServletResponse response, HttpSession session,
       @PathVariable String providerName) throws IOException {
-    String authUrl = cognitoOAuthService.generateAuthorizationUrl(session, providerName);
+    String authUrl = cognitoOauthService.generateAuthorizationUrl(session, providerName);
     response.sendRedirect(authUrl);
   }
 
@@ -44,6 +47,6 @@ public class OAuthController {
   @GetMapping("/callback")
   public UserDto handleProviderCallback(@RequestParam("code") String code,
       @RequestParam("state") String state, HttpServletResponse response) {
-    return cognitoOAuthService.exchangeAuthorizationCodeForTokens(code, response);
+    return cognitoOauthService.exchangeAuthorizationCodeForTokens(code, response);
   }
 }

@@ -12,12 +12,18 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
+/**
+ * test sso.
+ */
 @Component
 @RequiredArgsConstructor
-public class CognitoOAuthHelper {
+public class CognitoOauthHelper {
 
   private final CognitoRegistrationProperties properties;
 
+  /**
+   * test sso.
+   */
   public HttpEntity<MultiValueMap<String, String>> buildTokenExchangeRequest(
       String authorizationCode) {
     HttpHeaders headers = new HttpHeaders();
@@ -30,6 +36,9 @@ public class CognitoOAuthHelper {
     return new HttpEntity<>(body, headers);
   }
 
+  /**
+   * test sso.
+   */
   public String buildAuthorizationUrl(String providerName, String state) {
     return UriComponentsBuilder.fromUriString("https://{domain}/oauth2/authorize")
         .queryParam("response_type", "code")
@@ -42,12 +51,18 @@ public class CognitoOAuthHelper {
         .toUriString();
   }
 
+  /**
+   * test sso.
+   */
   public String buildTokenUrl() {
     return UriComponentsBuilder.fromUriString("https://{domain}/oauth2/token")
         .buildAndExpand(Map.of("domain", properties.getDomain()))
         .toUriString();
   }
 
+  /**
+   * test sso.
+   */
   private String generateAuthorizationHeader() {
     return "Basic " + Base64.getEncoder().encodeToString(
         (properties.getClientId() + ":" + properties.getClientSecret()).getBytes(

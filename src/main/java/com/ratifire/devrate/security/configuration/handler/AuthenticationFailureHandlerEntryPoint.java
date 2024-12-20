@@ -18,9 +18,9 @@ public class AuthenticationFailureHandlerEntryPoint implements AuthenticationEnt
   @Override
   public void commence(HttpServletRequest request, HttpServletResponse response,
       AuthenticationException authException) {
-//    String error = request.getAttribute(AUTHENTICATION_ERROR_ATTRIBUTE).toString();
-//    int responseStatus = determineResponseStatus(error);
-//    response.setStatus(responseStatus);
+    String error = request.getAttribute(AUTHENTICATION_ERROR_ATTRIBUTE).toString();
+    int responseStatus = determineResponseStatus(error);
+    response.setStatus(responseStatus);
   }
 
   private int determineResponseStatus(String error) {

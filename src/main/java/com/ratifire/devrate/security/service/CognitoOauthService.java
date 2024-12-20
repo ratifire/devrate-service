@@ -6,7 +6,6 @@ import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.model.AdminGetUserRequest;
 import com.amazonaws.services.cognitoidp.model.AdminGetUserResult;
 import com.amazonaws.services.cognitoidp.model.AdminLinkProviderForUserRequest;
-import com.amazonaws.services.cognitoidp.model.AdminLinkProviderForUserResult;
 import com.amazonaws.services.cognitoidp.model.AttributeType;
 import com.amazonaws.services.cognitoidp.model.ProviderUserIdentifierType;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -17,7 +16,7 @@ import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.security.exception.AuthenticationException;
 import com.ratifire.devrate.security.exception.InvalidTokenException;
-import com.ratifire.devrate.security.helper.CognitoOAuthHelper;
+import com.ratifire.devrate.security.helper.CognitoOauthHelper;
 import com.ratifire.devrate.security.helper.RefreshTokenCookieHelper;
 import com.ratifire.devrate.security.util.TokenUtil;
 import com.ratifire.devrate.service.UserService;
@@ -32,12 +31,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
+/**
+ * test sso.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CognitoOAuthService {
+public class CognitoOauthService {
 
-  private final CognitoOAuthHelper cognitoOAuthHelper;
+  private final CognitoOauthHelper cognitoOauthHelper;
   private final UserService userService;
   private final RestTemplateBuilder restTemplate;
   private final AWSCognitoIdentityProvider cognitoIdentityProvider;
@@ -55,16 +57,19 @@ public class CognitoOAuthService {
     String state = UUID.randomUUID().toString();
     session.setAttribute("oauth2State", state);
 
-    String authorizationUrl = cognitoOAuthHelper.buildAuthorizationUrl(providerName, state);
+    String authorizationUrl = cognitoOauthHelper.buildAuthorizationUrl(providerName, state);
     log.info("Generated Authorization URL for {}: {}", providerName, authorizationUrl);
     return authorizationUrl;
   }
 
+  /**
+   * test sso.
+   */
   public UserDto exchangeAuthorizationCodeForTokens(String authorizationCode,
       HttpServletResponse response) {
     try {
-      String tokenUrl = cognitoOAuthHelper.buildTokenUrl();
-      var tokenRequest = cognitoOAuthHelper.buildTokenExchangeRequest(authorizationCode);
+      String tokenUrl = cognitoOauthHelper.buildTokenUrl();
+      var tokenRequest = cognitoOauthHelper.buildTokenExchangeRequest(authorizationCode);
 
       ResponseEntity<String> cognitoResponse = restTemplate.build()
           .postForEntity(tokenUrl, tokenRequest, String.class);
@@ -83,7 +88,6 @@ public class CognitoOAuthService {
       String sub = (String) userInfo.get("sub");
       String providerName = "LinkedIn";
 
-
       User existingUser = userService.findByEmail(email);
       if (existingUser == null) {
         log.info("User not found in database. Registering new user with email: {}", email);
@@ -94,7 +98,7 @@ public class CognitoOAuthService {
             .build();
         existingUser = userService.create(userDto, email, "null");
       } else {
-//        linkUsers(email, providerName, sub);
+        //      linkUsers(email, providerName, sub);
       }
       return userMapper.toDto(existingUser);
     } catch (HttpClientErrorException e) {
@@ -106,6 +110,9 @@ public class CognitoOAuthService {
     }
   }
 
+  /**
+   * test sso.
+   */
   public void linkUsers(String email, String secondaryProviderName,
       String secondaryProviderUserId) {
     try {
@@ -145,45 +152,16 @@ public class CognitoOAuthService {
     }
   }
 
-//  public void linkUsers(String email, String secondaryProviderName, String secondaryProviderUserId) {
-//    try {
-//      log.info("Linking user accounts for email: {}", email);
-//
-//      String userPoolId = "eu-north-1_aD0ST9R4U"; // Cognito User Pool ID
-//
-//      // Получаем primaryUserSub из Cognito по email
-//      String primaryUserSub = getPrimaryUserSubByEmail(userPoolId, email);
-//      if (primaryUserSub == null) {
-//        log.error("No primary user found for email: {}", email);
-//        throw new RuntimeException("Primary user not found for email: " + email);
-//      }
-//
-//      // Проверяем, связана ли вторичная учетная запись с другим пользователем
-//      if (isUserAlreadyLinked(userPoolId, secondaryProviderName, secondaryProviderUserId)) {
-//        log.warn("Secondary user is already linked to another primary user.");
-//        throw new RuntimeException("Secondary user is already linked to another primary user.");
-//      }
-//
-//      // Связываем учетные записи
-//      linkTwoUsers(primaryUserSub, secondaryProviderName, secondaryProviderUserId);
-//      log.info("Users linked successfully: {} -> {}", secondaryProviderUserId, primaryUserSub);
-//    } catch (Exception e) {
-//      log.error("Error during user linking for email {}: {}", email, e.getMessage(), e);
-//      throw new RuntimeException("Failed to link users.", e);
-//    }
-//  }
 
   private boolean isUserAlreadyLinked(String userPoolId, String providerName,
       String providerUserId) {
     try {
-      // Проверяем наличие связей для пользователя
       AdminGetUserRequest getUserRequest = new AdminGetUserRequest()
           .withUserPoolId(userPoolId)
           .withUsername(providerUserId);
 
       AdminGetUserResult getUserResult = cognitoIdentityProvider.adminGetUser(getUserRequest);
 
-      // Логика проверки связей (зависит от структуры атрибутов в Cognito)
       return getUserResult.getUserAttributes().stream()
           .anyMatch(attr -> "cognito:linked_accounts".equals(attr.getName()));
     } catch (Exception e) {
@@ -192,16 +170,17 @@ public class CognitoOAuthService {
     }
   }
 
+  /**
+   * test sso.
+   */
   private String getUserSubByEmail(String userPoolId, String email) {
     try {
-      // Создаем запрос для поиска пользователя
       AdminGetUserRequest getUserRequest = new AdminGetUserRequest()
           .withUserPoolId(userPoolId)
-          .withUsername(email); // Email должен быть уникальным username в Cognito
+          .withUsername(email);
 
       AdminGetUserResult getUserResult = cognitoIdentityProvider.adminGetUser(getUserRequest);
 
-      // Ищем "sub" в атрибутах пользователя
       return getUserResult.getUserAttributes().stream()
           .filter(attr -> "sub".equals(attr.getName()))
           .map(AttributeType::getValue)
@@ -213,7 +192,9 @@ public class CognitoOAuthService {
     }
   }
 
-
+  /**
+   * test sso.
+   */
   public static Map<String, String> parseTokens(String tokenResponse) {
     try {
       ObjectMapper objectMapper = new ObjectMapper();
@@ -230,6 +211,9 @@ public class CognitoOAuthService {
     }
   }
 
+  /**
+   * test sso.
+   */
   public static Map<String, Object> decodeIdToken(String idToken) {
     try {
       JWTClaimsSet claimsSet = parseToken(idToken);

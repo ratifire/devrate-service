@@ -65,12 +65,12 @@ public class HandlerException {
    * @param ex The exception being handled.
    * @return A {@link ResponseEntity} with an appropriate error message and status code.
    */
-//  @ExceptionHandler(Exception.class)
-//  public ResponseEntity<?> handleExceptionErrors(Exception ex) {
-//    log.error("Handling Exception: {}", ex.getMessage(), ex);
-//    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//        .body("Oops! Something went wrong:( We're working to fix it! Please try again later:)");
-//  }
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<?> handleExceptionErrors(Exception ex) {
+    log.error("Handling Exception: {}", ex.getMessage(), ex);
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body("Oops! Something went wrong:( We're working to fix it! Please try again later:)");
+  }
 
   /**
    * Handles InterviewRequestDoesntExistException by returning an HTTP status 204 (No content).
