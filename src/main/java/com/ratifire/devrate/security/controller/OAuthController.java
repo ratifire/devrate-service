@@ -1,10 +1,10 @@
 package com.ratifire.devrate.security.controller;
 
+import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.security.service.CognitoOAuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,8 +42,8 @@ public class OAuthController {
    * @return a map containing the tokens
    */
   @GetMapping("/callback")
-  public Map<String, String> handleProviderCallback(@RequestParam("code") String code,
-      @RequestParam("state") String state) {
-    return cognitoOAuthService.exchangeAuthorizationCodeForTokens(code);
+  public UserDto handleProviderCallback(@RequestParam("code") String code,
+      @RequestParam("state") String state, HttpServletResponse response) {
+    return cognitoOAuthService.exchangeAuthorizationCodeForTokens(code, response);
   }
 }
