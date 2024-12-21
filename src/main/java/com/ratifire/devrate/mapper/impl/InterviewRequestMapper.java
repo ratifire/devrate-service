@@ -13,7 +13,7 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
 /**
- * Mapper for converting between InterviewRequestDto and InterviewRequest entities.
+ * Mapper for converting between InterviewRequestDto and InterviewRequestV2 entities.
  */
 @Mapper(componentModel = "spring", uses = {MasteryService.class})
 public abstract class InterviewRequestMapper implements
@@ -24,7 +24,6 @@ public abstract class InterviewRequestMapper implements
       qualifiedByName = {"MasteryService", "getMasteryById"})
   @Mapping(target = "expiredAt", source = "dto.availableDates",
       qualifiedByName = "expiredAtFromAvailableDates")
-  @Mapping(target = "active", constant = "true")
   @Mapping(target = "user", ignore = true)
   public abstract InterviewRequest toEntity(InterviewRequestDto dto);
 
@@ -33,7 +32,6 @@ public abstract class InterviewRequestMapper implements
       qualifiedByName = {"MasteryService", "getMasteryById"})
   @Mapping(target = "expiredAt", source = "dto.availableDates",
       qualifiedByName = "expiredAtFromAvailableDates")
-  @Mapping(target = "active", ignore = true)
   @Mapping(target = "user", ignore = true)
   public abstract InterviewRequest updateEntity(InterviewRequestDto dto,
       @MappingTarget InterviewRequest entity);
