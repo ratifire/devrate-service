@@ -22,6 +22,7 @@ public abstract class ParticipantRequestMapper implements
     DataMapper<ParticipantRequestDto, InterviewRequest> {
 
   @Mapping(target = "participantId", source = "entity.user.id")
+  @Mapping(target = "coreRequestId", source = "entity.id")
   @Mapping(target = "specialization", source = "entity.mastery.specialization.name")
   @Mapping(target = "masteryLevel", source = "entity.mastery.level")
   @Mapping(target = "hardSkills", source = "entity.mastery.skills",

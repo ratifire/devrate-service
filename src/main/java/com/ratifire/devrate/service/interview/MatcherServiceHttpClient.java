@@ -28,10 +28,8 @@ public class MatcherServiceHttpClient {
    *
    * @param request the interview request to process and send.
    */
-  // TODO: 6764178ae4f4c13c037caf6d used for testing should be changed to the participantId from
-  //  the matcher-service
   public void update(InterviewRequest request) {
-    String endpoint = matchingServiceUrl + "/participants/6764178ae4f4c13c037caf6d";
+    String endpoint = matchingServiceUrl + "/participants/" + request.getId();
 
     UpdateParticipantRequestDto participant = UpdateParticipantRequestDto.builder()
         .desiredInterview(request.getDesiredInterview())

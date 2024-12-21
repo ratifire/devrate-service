@@ -5,10 +5,12 @@ import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.exception.InterviewRequestDoesntExistException;
+import com.ratifire.devrate.exception.InvalidInterviewRequestException;
 import com.ratifire.devrate.mapper.impl.InterviewRequestMapper;
 import com.ratifire.devrate.repository.interview.InterviewRequestRepository;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,11 @@ public class InterviewRequestService {
    * @param requestDto the interview request details
    */
   public void update(long userId, InterviewRequestDto requestDto) {
+    Optional.ofNullable(requestDto.getAvailableDates())
+        .filter(dates -> dates.size() >= requestDto.getDesiredInterview())
+        .orElseThrow(() -> new InvalidInterviewRequestException(
+            "Available dates should be greater or equal to the desired number of interviews"));
+
     InterviewRequest interviewRequest =
         findByUserIdRoleMasteryId(userId, requestDto.getRole(), requestDto.getMasteryId());
     mapper.updateEntity(requestDto, interviewRequest);
@@ -92,6 +99,11 @@ public class InterviewRequestService {
    * @param requestDto the DTO containing the interview request details
    */
   public void create(InterviewRequestDto requestDto, long userId) {
+    Optional.ofNullable(requestDto.getAvailableDates())
+        .filter(dates -> dates.size() >= requestDto.getDesiredInterview())
+        .orElseThrow(() -> new InvalidInterviewRequestException(
+            "Available dates should be greater or equal to the desired number of interviews"));
+
     InterviewRequest interviewRequest = mapper.toEntity(requestDto);
     interviewRequest.setUser(User.builder().id(userId).build());
     interviewRequest.setBlackList(new HashSet<>());
