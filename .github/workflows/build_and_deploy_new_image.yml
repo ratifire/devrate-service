@@ -108,11 +108,15 @@ jobs:
           --query 'taskDefinition' \
           --output json > task-def.json
 
+      - name: Clean Task Definition File
+        run: |
+          jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' task-def.json > clean-task-def.json
+
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: task-def.json
+          task-definition: clean-task-def.json
           container-name: ${{ vars.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
 
