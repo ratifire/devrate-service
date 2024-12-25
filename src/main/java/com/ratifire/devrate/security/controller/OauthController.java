@@ -1,52 +1,48 @@
-package com.ratifire.devrate.security.controller;
-
-import com.ratifire.devrate.dto.UserDto;
-import com.ratifire.devrate.security.service.CognitoOauthService;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.io.IOException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-/**
- * test sso.
- */
-@RestController
-@RequiredArgsConstructor
-@RequestMapping("/auth")
-public class OauthController {
-
-  private final CognitoOauthService cognitoOauthService;
-
-  /**
-   * Redirects the user to the specified provider for authentication.
-   *
-   * @param response     the HTTP response object used for redirection
-   * @param session      the current session to store the unique state
-   * @param providerName the name of the identity provider (e.g., "Google", "LinkedIn")
-   * @throws IOException if an error occurs during redirection
-   */
-  @GetMapping("/{providerName}/login")
-  public void redirectToProviderLogin(HttpServletResponse response, HttpSession session,
-      @PathVariable String providerName) throws IOException {
-    String authUrl = cognitoOauthService.generateAuthorizationUrl(session, providerName);
-    response.sendRedirect(authUrl);
-  }
-
-  /**
-   * Handles the callback from the identity provider after authentication.
-   *
-   * @param code  the authorization code received from the provider
-   * @param state the unique state value to validate the request
-   * @return a map containing the tokens
-   */
-  @GetMapping("/callback")
-  public UserDto handleProviderCallback(@RequestParam("code") String code,
-      @RequestParam("state") String state, HttpServletResponse response) {
-    return cognitoOauthService.exchangeAuthorizationCodeForTokens(code, response);
-  }
-}
+//package com.ratifire.devrate.security.controller;
+//
+//import com.ratifire.devrate.dto.UserDto;
+//import com.ratifire.devrate.security.model.dto.OauthExchangeCodeRequest;
+//import com.ratifire.devrate.security.model.enums.OAuthProvider;
+//import com.ratifire.devrate.security.service.AuthenticationOauthService;
+//import jakarta.servlet.http.HttpServletResponse;
+//import jakarta.servlet.http.HttpSession;
+//import jakarta.validation.Valid;
+//import java.io.IOException;
+//import lombok.RequiredArgsConstructor;
+//import org.springframework.web.bind.annotation.GetMapping;
+//import org.springframework.web.bind.annotation.PostMapping;
+//import org.springframework.web.bind.annotation.RequestBody;
+//import org.springframework.web.bind.annotation.RequestMapping;
+//import org.springframework.web.bind.annotation.RestController;
+//
+///**
+// * test sso.
+// */
+//@RestController
+//@RequiredArgsConstructor
+//@RequestMapping("/auth/oauth")
+//public class OauthController {
+//
+//  private final AuthenticationOauthService authenticationOauthService;
+//
+//  @GetMapping("/login/linkedIn")
+//  public void loginLinkedInProvider(HttpServletResponse response, HttpSession session)
+//      throws IOException {
+//    String redirectUrl = authenticationOauthService.generateOauthRedirectUrl(session,
+//        OAuthProvider.LINKEDIN.getProvider());
+//    response.sendRedirect(redirectUrl);
+//  }
+//
+//  @GetMapping("/login/google")
+//  public void loginGoogleProvider(HttpServletResponse response, HttpSession session)
+//      throws IOException {
+//    String redirectUrl = authenticationOauthService.generateOauthRedirectUrl(session,
+//        OAuthProvider.GOOGLE.getProvider());
+//    response.sendRedirect(redirectUrl);
+//  }
+//
+//  @PostMapping("/exchange-code")
+//  public UserDto exchangeAuthorizationCode(@Valid @RequestBody OauthExchangeCodeRequest request) {
+//    return authenticationOauthService.exchangeAuthCodeForTokens(request);
+//  }
+//}

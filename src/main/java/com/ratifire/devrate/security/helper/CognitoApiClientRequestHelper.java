@@ -2,7 +2,31 @@ package com.ratifire.devrate.security.helper;
 
 import static com.amazonaws.services.cognitoidp.model.AuthFlowType.REFRESH_TOKEN_AUTH;
 import static com.amazonaws.services.cognitoidp.model.AuthFlowType.USER_PASSWORD_AUTH;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_EMAIL;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_ROLE;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_USER_ID;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.AUTHORIZATION_BASIC_PREFIX;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.CONTENT_TYPE_FORM_URLENCODED;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_AUTHORIZATION;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_CONTENT_TYPE;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.OAUTH_AUTHORIZE_URL;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.OAUTH_TOKEN_URL;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARAM_CLIENT_ID;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARAM_CODE;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARAM_DOMAIN;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARAM_GRANT_TYPE;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARAM_IDENTITY_PROVIDER;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARAM_PASSWORD;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARAM_REDIRECT_URI;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARAM_REFRESH_TOKEN;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARAM_RESPONSE_TYPE;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARAM_SCOPE;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARAM_SECRET_HASH;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARAM_STATE;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARAM_USERNAME;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
+import com.amazonaws.services.cognitoidp.model.AdminUpdateUserAttributesRequest;
 import com.amazonaws.services.cognitoidp.model.AttributeType;
 import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordRequest;
 import com.amazonaws.services.cognitoidp.model.ConfirmSignUpRequest;
@@ -11,10 +35,16 @@ import com.amazonaws.services.cognitoidp.model.GlobalSignOutRequest;
 import com.amazonaws.services.cognitoidp.model.InitiateAuthRequest;
 import com.amazonaws.services.cognitoidp.model.SignUpRequest;
 import com.ratifire.devrate.security.configuration.properties.CognitoRegistrationProperties;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Helper class for building AWS Cognito API requests.
@@ -23,10 +53,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CognitoApiClientRequestHelper {
 
-  private static final String USERNAME = "USERNAME";
-  private static final String REFRESH_TOKEN = "REFRESH_TOKEN";
-  private static final String PASSWORD = "PASSWORD";
-  private static final String SECRET_HASH = "SECRET_HASH";
   private final CognitoAuthenticationHelper cognitoAuthHelper;
   private final CognitoRegistrationProperties cognitoConfig;
 
@@ -47,9 +73,9 @@ public class CognitoApiClientRequestHelper {
         .withUsername(email)
         .withPassword(password)
         .withUserAttributes(List.of(
-            createAttribute("email", email),
-            createAttribute("custom:userId", String.valueOf(userId)),
-            createAttribute("custom:role", role)
+            createAttribute(ATTRIBUTE_EMAIL, email),
+            createAttribute(ATTRIBUTE_USER_ID, String.valueOf(userId)),
+            createAttribute(ATTRIBUTE_ROLE, role)
         ));
   }
 
@@ -112,28 +138,28 @@ public class CognitoApiClientRequestHelper {
         .withClientId(cognitoConfig.getClientId())
         .withAuthFlow(USER_PASSWORD_AUTH)
         .withAuthParameters(Map.of(
-            USERNAME, email,
-            PASSWORD, password,
-            SECRET_HASH, cognitoAuthHelper.generateSecretHash(email)
+            PARAM_USERNAME, email,
+            PARAM_PASSWORD, password,
+            PARAM_SECRET_HASH, cognitoAuthHelper.generateSecretHash(email)
         ));
   }
 
   /**
    * Builds a request to refresh authentication tokens using a refresh token.
    *
-   * @param sub          the unique identifier (subject) of the user whose tokens are being
+   * @param subject          the unique identifier (subject) of the user whose tokens are being
    *                     refreshed.
    * @param refreshToken the refresh token issued during initial authentication.
    * @return an {@link InitiateAuthRequest} object configured with the provided details.
    */
-  public InitiateAuthRequest buildRefreshAuthRequest(String sub, String refreshToken) {
+  public InitiateAuthRequest buildRefreshAuthRequest(String subject, String refreshToken) {
     return new InitiateAuthRequest()
         .withClientId(cognitoConfig.getClientId())
         .withAuthFlow(REFRESH_TOKEN_AUTH)
         .withAuthParameters(Map.of(
-            REFRESH_TOKEN, refreshToken,
-            USERNAME, sub,
-            SECRET_HASH, cognitoAuthHelper.generateSecretHash(sub)
+            PARAM_REFRESH_TOKEN, refreshToken,
+            PARAM_USERNAME, subject,
+            PARAM_SECRET_HASH, cognitoAuthHelper.generateSecretHash(subject)
         ));
   }
 
@@ -146,6 +172,63 @@ public class CognitoApiClientRequestHelper {
   public GlobalSignOutRequest buildLogoutRequest(String accessToken) {
     return new GlobalSignOutRequest()
         .withAccessToken(accessToken);
+  }
+
+  public AdminUpdateUserAttributesRequest buildAdminUpdateUserAttributesRequest(String subject,
+      long userId, String role) {
+    return new AdminUpdateUserAttributesRequest()
+        .withUserPoolId(cognitoConfig.getUserPoolId())
+        .withUsername(subject)
+        .withUserAttributes(List.of(
+            createAttribute(ATTRIBUTE_USER_ID, String.valueOf(userId)),
+            createAttribute(ATTRIBUTE_ROLE, role)
+        ));
+  }
+
+  public HttpEntity<MultiValueMap<String, String>> buildTokenExchangeRequest(
+      String authorizationCode) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.set(HEADER_CONTENT_TYPE, CONTENT_TYPE_FORM_URLENCODED);
+    headers.set(HEADER_AUTHORIZATION, generateAuthorizationHeader());
+    MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+    body.add(PARAM_GRANT_TYPE, cognitoConfig.getAuthorizationGrantType());
+    body.add(PARAM_CODE, authorizationCode);
+    body.add(PARAM_REDIRECT_URI, cognitoConfig.getRedirectUri());
+    return new HttpEntity<>(body, headers);
+  }
+
+  /**
+   * test sso.
+   */
+  public String buildOauthRedirectUrl(String provider, String state) {
+    return UriComponentsBuilder.fromUriString(OAUTH_AUTHORIZE_URL)
+        .queryParam(PARAM_RESPONSE_TYPE, PARAM_CODE)
+        .queryParam(PARAM_CLIENT_ID, cognitoConfig.getClientId())
+        .queryParam(PARAM_REDIRECT_URI, cognitoConfig.getRedirectUri())
+        .queryParam(PARAM_SCOPE, cognitoConfig.getScope())
+        .queryParam(PARAM_IDENTITY_PROVIDER, provider)
+        .queryParam(PARAM_STATE, state)
+        .buildAndExpand(Map.of(PARAM_DOMAIN, cognitoConfig.getDomain()))
+        .toUriString();
+  }
+
+  /**
+   * test sso.
+   */
+  public String buildTokenUrl() {
+    return UriComponentsBuilder.fromUriString(OAUTH_TOKEN_URL)
+        .buildAndExpand(Map.of(PARAM_DOMAIN, cognitoConfig.getDomain()))
+        .toUriString();
+  }
+
+  /**
+   * test sso.
+   */
+  private String generateAuthorizationHeader() {
+    String credentials = String.format("%s:%s", cognitoConfig.getClientId(),
+        cognitoConfig.getClientSecret());
+    return AUTHORIZATION_BASIC_PREFIX + Base64.getEncoder()
+        .encodeToString(credentials.getBytes(UTF_8));
   }
 
   private AttributeType createAttribute(String name, String value) {

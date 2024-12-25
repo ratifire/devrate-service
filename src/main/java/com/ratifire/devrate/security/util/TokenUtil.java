@@ -1,26 +1,31 @@
 package com.ratifire.devrate.security.util;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.ratifire.devrate.security.exception.InvalidTokenException;
 import com.ratifire.devrate.security.exception.RefreshTokenException;
+import com.ratifire.devrate.security.model.UserInfo;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.util.function.ThrowingFunction;
 
 /**
  * Utility class for extracting claims from a JWTClaimsSet.
  */
+@Slf4j
 public class TokenUtil {
 
-  private static final Logger log = LoggerFactory.getLogger(TokenUtil.class);
   private static final String AUTHORIZATION_HEADER = "Authorization";
   private static final String ID_TOKEN_HEADER = "ID-Token";
   private static final String REFRESH_TOKEN_COOKIE_NAME = "Refresh-Token";
@@ -85,11 +90,30 @@ public class TokenUtil {
   }
 
   /**
+   * test sso.
+   */
+  public static Map<String, String> parseTokens(String tokenResponse) {
+    try {
+      ObjectMapper objectMapper = new ObjectMapper();
+      Map<String, String> tokenMap = objectMapper.readValue(tokenResponse, new TypeReference<>() {
+      });
+
+      if (!tokenMap.containsKey("access_token") || !tokenMap.containsKey("id_token")) {
+        throw new InvalidTokenException("Missing required tokens in response");
+      }
+
+      return tokenMap;
+    } catch (Exception e) {
+      throw new InvalidTokenException("Failed to parse tokens from response");
+    }
+  }
+
+  /**
    * Retrieves the "subject" claim from the specified access token.
    *
    * @param accessToken the JWT access token containing user claims
-   * @return the "sub" claim as a String, representing the subject of the token
-   * @throws InvalidTokenException if the "sub" claim is missing or cannot be parsed
+   * @return the "subject" claim as a String, representing the subject of the token
+   * @throws InvalidTokenException if the "subject" claim is missing or cannot be parsed
    */
   public static String getSubjectFromAccessToken(String accessToken) {
     JWTClaimsSet claimsSet = TokenUtil.parseToken(accessToken);
@@ -123,6 +147,33 @@ public class TokenUtil {
     String role = TokenUtil.extractStringClaim(claimsSet, CLAIM_USER_ROLE)
         .orElseThrow(() -> new InvalidTokenException("Role claim is missing"));
     return List.of(new SimpleGrantedAuthority(role));
+  }
+
+  public static UserInfo getUserInfoFromIdToken(String idToken) throws ParseException {
+    JWTClaimsSet claimsSet = parseToken(idToken);
+    String firstName = claimsSet.getStringClaim("given_name");
+    String lastName = claimsSet.getStringClaim("family_name");
+    String sub = claimsSet.getStringClaim("sub");
+    String email = claimsSet.getStringClaim("email");
+
+    String providerName = null;
+    Object identitiesClaim = claimsSet.getClaim("identities");
+
+    if (identitiesClaim != null) {
+      try {
+        List<Map<String, Object>> identities = (List<Map<String, Object>>) identitiesClaim;
+        providerName = identities.stream()
+            .map(identity -> identity.get("providerName"))
+            .filter(Objects::nonNull)
+            .map(Object::toString)
+            .findFirst()
+            .orElse(null);
+      } catch (ClassCastException e) {
+        throw new IllegalArgumentException("Invalid format for identities claim in token", e);
+      }
+    }
+
+    return new UserInfo(firstName, lastName, sub, email, providerName);
   }
 
   /**
@@ -176,4 +227,6 @@ public class TokenUtil {
       return Optional.empty();
     }
   }
+
+
 }

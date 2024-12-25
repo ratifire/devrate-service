@@ -1,5 +1,7 @@
 package com.ratifire.devrate.security.helper;
 
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.REFRESH_TOKEN_COOKIE_NAME;
+
 import com.ratifire.devrate.security.configuration.properties.CookieProperties;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,9 +16,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RefreshTokenCookieHelper {
 
-  public static final String REFRESH_TOKEN_COOKIE_NAME = "Refresh-Token";
-  public static final int DELETE_COOKIE_LIFE_TIME = 0;
-  private final CookieProperties cookieProperties;
+  private static final int DELETE_COOKIE_LIFE_TIME = 0;
+  private final CookieProperties properties;
 
   /**
    * Sets the refresh token into a cookie and adds it to the HTTP response.
@@ -25,7 +26,7 @@ public class RefreshTokenCookieHelper {
    * @param refreshToken the refresh token to be set in the cookie.
    */
   public void setRefreshTokenToCookie(HttpServletResponse response, String refreshToken) {
-    Cookie cookie = buildCookie(refreshToken, cookieProperties.getLifeTime());
+    Cookie cookie = buildCookie(refreshToken, properties.getLifeTime());
     response.addCookie(cookie);
   }
 

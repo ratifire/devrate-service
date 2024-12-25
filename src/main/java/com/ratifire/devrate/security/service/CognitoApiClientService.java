@@ -9,9 +9,15 @@ import com.amazonaws.services.cognitoidp.model.GlobalSignOutRequest;
 import com.amazonaws.services.cognitoidp.model.InitiateAuthRequest;
 import com.amazonaws.services.cognitoidp.model.SignUpRequest;
 import com.ratifire.devrate.security.helper.CognitoApiClientRequestHelper;
+import com.ratifire.devrate.security.util.TokenUtil;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 
 /**
  * Service class for interacting with AWS Cognito API.
@@ -21,6 +27,7 @@ import org.springframework.stereotype.Service;
 @Profile("!local")
 public class CognitoApiClientService {
 
+  private final RestTemplateBuilder restTemplate;
   private final AWSCognitoIdentityProvider cognitoClient;
   private final CognitoApiClientRequestHelper requestHelper;
 
@@ -54,7 +61,7 @@ public class CognitoApiClientService {
    * @param email    The user's email (username).
    * @param password The user's password.
    * @return An {@link AuthenticationResultType} object containing authentication details such as
-   *     access token, refresh token, and ID token.
+   * access token, refresh token, and ID token.
    */
   public AuthenticationResultType login(String email, String password) {
     InitiateAuthRequest request = requestHelper.buildLoginRequest(email, password);
@@ -97,14 +104,29 @@ public class CognitoApiClientService {
   /**
    * Refreshes the user's authentication tokens using a refresh token.
    *
-   * @param sub          the unique identifier (subject) of the user whose tokens are being
+   * @param subject          the unique identifier (subject) of the user whose tokens are being
    *                     refreshed.
    * @param refreshToken the refresh token issued during the initial authentication process.
    * @return an {@link AuthenticationResultType} object containing the new access token, ID token,
-   *     and other authentication details.
+   * and other authentication details.
    */
-  public AuthenticationResultType refreshAuthTokens(String sub, String refreshToken) {
-    InitiateAuthRequest request = requestHelper.buildRefreshAuthRequest(sub, refreshToken);
+  public AuthenticationResultType refreshAuthTokens(String subject, String refreshToken) {
+    InitiateAuthRequest request = requestHelper.buildRefreshAuthRequest(subject, refreshToken);
     return cognitoClient.initiateAuth(request).getAuthenticationResult();
+  }
+
+  public Map<String, String> exchangeAuthCodeForRawTokens(String code) {
+    String url = requestHelper.buildTokenUrl();
+    HttpEntity<MultiValueMap<String, String>> request =
+        requestHelper.buildTokenExchangeRequest(code);
+
+    ResponseEntity<String> response = restTemplate.build()
+        .postForEntity(url, request, String.class);
+    return TokenUtil.parseTokens(response.getBody());
+  }
+
+  public void updateUserAttributes(String subject, long userId, String role) {
+    cognitoClient.adminUpdateUserAttributes(
+        requestHelper.buildAdminUpdateUserAttributesRequest(subject, userId, role));
   }
 }

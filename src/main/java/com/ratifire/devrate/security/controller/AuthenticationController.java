@@ -4,14 +4,20 @@ import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.security.facade.AuthenticationFacade;
 import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.LoginDto;
+import com.ratifire.devrate.security.model.dto.OauthExchangeCodeRequest;
 import com.ratifire.devrate.security.model.dto.PasswordResetDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,6 +44,32 @@ public class AuthenticationController {
   @PostMapping("/signin")
   public UserDto login(@RequestBody LoginDto loginDto, HttpServletResponse response) {
     return authenticationFacade.login(loginDto, response);
+  }
+
+  @GetMapping("/oauth/signin/linkedIn")
+  public void loginLinkedIn(HttpServletResponse response, HttpSession session) throws IOException {
+    authenticationFacade.loginLinkedIn(response, session);
+  }
+
+  @GetMapping("/oauth/signin/google")
+  public void loginGoogle(HttpServletResponse response, HttpSession session) throws IOException {
+    authenticationFacade.loginGoogle(response, session);
+  }
+
+  @PostMapping("/oauth/exchange-code")
+  public UserDto exchangeAuthCode(HttpServletResponse response,
+      @Valid @RequestBody OauthExchangeCodeRequest request) {
+    return authenticationFacade.exchangeAuthCode(response, request);
+  }
+
+  // just for testing
+  @GetMapping("/callback")
+  public ResponseEntity<Map<String, String>> handleProviderCallback(
+      @RequestParam("code") String code, @RequestParam("state") String state) {
+    Map<String, String> response = new HashMap<>();
+    response.put("code", code);
+    response.put("state", state);
+    return ResponseEntity.ok(response);
   }
 
   /**
@@ -103,7 +135,7 @@ public class AuthenticationController {
    * Handles the refresh token operation.
    *
    * @return a ResponseEntity with an HTTP 200 status indicating that the token was successfully
-   *     refreshed.
+   * refreshed.
    */
   @PostMapping("/refresh-token")
   public ResponseEntity<Void> refreshToken(HttpServletRequest request,

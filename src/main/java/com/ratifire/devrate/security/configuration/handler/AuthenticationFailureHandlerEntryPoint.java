@@ -1,5 +1,7 @@
 package com.ratifire.devrate.security.configuration.handler;
 
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_AUTHENTICATION_ERROR;
+
 import com.ratifire.devrate.security.model.enums.AuthenticationError;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,12 +15,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthenticationFailureHandlerEntryPoint implements AuthenticationEntryPoint {
 
-  private static final String AUTHENTICATION_ERROR_ATTRIBUTE = "authentication_error";
-
   @Override
   public void commence(HttpServletRequest request, HttpServletResponse response,
       AuthenticationException authException) {
-    String error = request.getAttribute(AUTHENTICATION_ERROR_ATTRIBUTE).toString();
+    String error = request.getAttribute(ATTRIBUTE_AUTHENTICATION_ERROR).toString();
     int responseStatus = determineResponseStatus(error);
     response.setStatus(responseStatus);
   }

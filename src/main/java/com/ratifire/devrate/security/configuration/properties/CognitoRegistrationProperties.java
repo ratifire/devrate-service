@@ -23,5 +23,6 @@ public class CognitoRegistrationProperties {
   private String redirectUri;
   private String domain;
   private String authorizationGrantType;
+  private String userPoolId;
 
 }
