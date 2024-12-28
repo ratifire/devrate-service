@@ -1,12 +1,16 @@
 package com.ratifire.devrate.security.service;
 
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
+import com.amazonaws.services.cognitoidp.model.AdminLinkProviderForUserRequest;
 import com.amazonaws.services.cognitoidp.model.AuthenticationResultType;
 import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordRequest;
 import com.amazonaws.services.cognitoidp.model.ConfirmSignUpRequest;
 import com.amazonaws.services.cognitoidp.model.ForgotPasswordRequest;
 import com.amazonaws.services.cognitoidp.model.GlobalSignOutRequest;
 import com.amazonaws.services.cognitoidp.model.InitiateAuthRequest;
+import com.amazonaws.services.cognitoidp.model.ListUsersRequest;
+import com.amazonaws.services.cognitoidp.model.ListUsersResult;
+import com.amazonaws.services.cognitoidp.model.ProviderUserIdentifierType;
 import com.amazonaws.services.cognitoidp.model.SignUpRequest;
 import com.ratifire.devrate.security.helper.CognitoApiClientRequestHelper;
 import com.ratifire.devrate.security.util.TokenUtil;
@@ -39,8 +43,10 @@ public class CognitoApiClientService {
    * @param userId   The unique identifier for the user.
    * @param role     The user's role.
    */
-  public void register(String email, String password, long userId, String role) {
-    SignUpRequest request = requestHelper.buildRegisterRequest(email, password, userId, role);
+  public void register(String email, String password, long userId, String role,
+      boolean isPrimaryRecord) {
+    SignUpRequest request = requestHelper.buildRegisterRequest(email, password, userId, role,
+        isPrimaryRecord);
     cognitoClient.signUp(request).getUserSub();
   }
 
@@ -125,8 +131,22 @@ public class CognitoApiClientService {
     return TokenUtil.parseTokens(response.getBody());
   }
 
-  public void updateUserAttributes(String subject, long userId, String role) {
+  public void updatePoolUserAttributes(String subject, long userId, String role,
+      boolean isPrimaryRecord, String linkedRecordSubject) {
     cognitoClient.adminUpdateUserAttributes(
-        requestHelper.buildAdminUpdateUserAttributesRequest(subject, userId, role));
+        requestHelper.buildAdminUpdateUserAttributesRequest(subject, userId, role, isPrimaryRecord,
+            linkedRecordSubject));
+  }
+
+  public void linkProviderForUser(ProviderUserIdentifierType destinationUser, String provider,
+      String subject) {
+    AdminLinkProviderForUserRequest request = requestHelper.buildAdminLinkProviderForUserRequest(
+        destinationUser, provider, subject);
+    cognitoClient.adminLinkProviderForUser(request);
+  }
+
+  public ListUsersResult getListPoolUsersByEmail(String email) {
+    ListUsersRequest request = requestHelper.buildListUsersRequest(email);
+    return cognitoClient.listUsers(request);
   }
 }

@@ -8,20 +8,19 @@ import com.ratifire.devrate.security.util.TokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 /**
  * Service responsible for handling the refresh token process.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Profile("!local")
 public class RefreshTokenService {
 
-  private static final Logger log = LoggerFactory.getLogger(RefreshTokenService.class);
   private final CognitoApiClientService cognitoApiClientService;
 
   /**

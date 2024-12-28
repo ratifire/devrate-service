@@ -1,9 +1,11 @@
 package com.ratifire.devrate.security.model;
 
-public record UserInfo(
+public record PoolUserInfo(
     String firstName,
     String lastName,
     String email,
     String subject,
-    String provider
+    String provider,
+    String linkedRecord,
+    String cognitoUsername
 ) {}

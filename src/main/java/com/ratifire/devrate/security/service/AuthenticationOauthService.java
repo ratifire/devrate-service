@@ -1,22 +1,22 @@
 package com.ratifire.devrate.security.service;
 
-import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
-import com.amazonaws.services.cognitoidp.model.AdminGetUserRequest;
-import com.amazonaws.services.cognitoidp.model.AdminLinkProviderForUserRequest;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_IS_PRIMARY_RECORD;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_PROVIDER_NAME;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.NONE_VALUE;
+
 import com.amazonaws.services.cognitoidp.model.AttributeType;
 import com.amazonaws.services.cognitoidp.model.AuthenticationResultType;
-import com.amazonaws.services.cognitoidp.model.ListUsersRequest;
 import com.amazonaws.services.cognitoidp.model.ListUsersResult;
 import com.amazonaws.services.cognitoidp.model.ProviderUserIdentifierType;
+import com.amazonaws.services.cognitoidp.model.UserType;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.mapper.DataMapper;
-import com.ratifire.devrate.security.configuration.properties.CognitoRegistrationProperties;
 import com.ratifire.devrate.security.exception.AuthenticationException;
 import com.ratifire.devrate.security.helper.CognitoApiClientRequestHelper;
 import com.ratifire.devrate.security.helper.CognitoAuthenticationHelper;
 import com.ratifire.devrate.security.helper.RefreshTokenCookieHelper;
-import com.ratifire.devrate.security.model.UserInfo;
+import com.ratifire.devrate.security.model.PoolUserInfo;
 import com.ratifire.devrate.security.model.dto.OauthExchangeCodeRequest;
 import com.ratifire.devrate.security.model.enums.AccessLevel;
 import com.ratifire.devrate.security.util.TokenUtil;
@@ -25,9 +25,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -39,80 +42,81 @@ import org.springframework.web.client.HttpClientErrorException;
 @RequiredArgsConstructor
 public class AuthenticationOauthService {
 
-  private final CognitoApiClientService apiClient;
+  private final CognitoApiClientService cognitoApiClient;
   private final UserService userService;
-  private final CognitoApiClientRequestHelper requestHelper;
+  private final CognitoApiClientRequestHelper apiRequestHelper;
   private final CognitoAuthenticationHelper authHelper;
   private final RefreshTokenCookieHelper refreshTokenCookieHelper;
   private final DataMapper<UserDto, User> userMapper;
 
-  private final AWSCognitoIdentityProvider cognitoClient;
-  private final CognitoRegistrationProperties cognitoConfig;
-
-
   public String generateOauthRedirectUrl(HttpSession session, String provider) {
     String state = UUID.randomUUID().toString();
     session.setAttribute("oauth2State", state);
-    return requestHelper.buildOauthRedirectUrl(provider, state);
+    return apiRequestHelper.buildOauthRedirectUrl(provider, state);
   }
 
-  public UserDto exchangeAuthCodeForTokens(HttpServletResponse response,
+  public UserDto exchangeAuthorizationCodeForTokens(HttpServletResponse response,
       OauthExchangeCodeRequest request) {
     try {
       Map<String, String> rawTokens =
-          apiClient.exchangeAuthCodeForRawTokens(request.getCode());
+          cognitoApiClient.exchangeAuthCodeForRawTokens(request.getCode());
 
       String accessToken = rawTokens.get("access_token");
       String idToken = rawTokens.get("id_token");
       String refreshToken = rawTokens.get("refresh_token");
 
-      UserInfo userInfo = TokenUtil.getUserInfoFromIdToken(idToken);
+      PoolUserInfo poolUserInfo = TokenUtil.getUserInfoFromIdToken(idToken);
+      String poolUserEmail = poolUserInfo.email();
+      String poolUserSubject = poolUserInfo.subject();
+      String poolUserProvider = poolUserInfo.provider();
+      String poolUserLinkedRecord = poolUserInfo.linkedRecord();
+      String poolUserCognitoUsername = poolUserInfo.cognitoUsername();
 
-      User existingUser = userService.findByEmail(userInfo.email());
-      if (existingUser == null) {
+      User internalUser = userService.findByEmail(poolUserEmail);
+
+      if (ObjectUtils.isNotEmpty(internalUser)) {
+        Optional<ProviderUserIdentifierType> poolPrimaryUserOptional = findPrimaryPoolUsersByEmail(
+            poolUserEmail);
+
+        if (poolPrimaryUserOptional.isEmpty()) {
+          throw new AuthenticationException("User not found");
+        }
+
+        ProviderUserIdentifierType poolPrimaryUser = poolPrimaryUserOptional.get();
+        String poolPrimaryUserSubject = poolPrimaryUser.getProviderAttributeValue();
+
+        if (arePoolUsersLinked(poolUserLinkedRecord, poolPrimaryUserSubject)) {
+          TokenUtil.setAuthTokensToHeaders(response, accessToken, idToken);
+          refreshTokenCookieHelper.setRefreshTokenToCookie(response, refreshToken);
+          return userMapper.toDto(internalUser);
+        }
+
+        linkUsersInPool(poolPrimaryUser, poolUserProvider, poolUserSubject);
+        cognitoApiClient.updatePoolUserAttributes(poolUserSubject, internalUser.getId(),
+            AccessLevel.getDefaultRole(), false, poolPrimaryUserSubject);
+
+      } else {
         UserDto userDto = UserDto.builder()
-            .firstName(userInfo.firstName())
-            .lastName(userInfo.lastName())
+            .firstName(poolUserInfo.firstName())
+            .lastName(poolUserInfo.lastName())
             .country("Ukraine")
             .subscribed(false)
             .build();
-        User newUser = userService.create(userDto, userInfo.email(),
+        User newInternalUser = userService.create(userDto, poolUserEmail,
             authHelper.generateRandomPassword());
 
-        apiClient.updateUserAttributes(
-            userInfo.subject(), newUser.getId(), AccessLevel.getDefaultRole());
-
-        AuthenticationResultType updatedTokens =
-            apiClient.refreshAuthTokens(userInfo.subject(), refreshToken);
-
-        TokenUtil.setAuthTokensToHeaders(response, updatedTokens.getAccessToken(),
-            updatedTokens.getIdToken());
-        refreshTokenCookieHelper.setRefreshTokenToCookie(response, refreshToken);
-
-      } else {
-        List<ProviderUserIdentifierType> allLinkedUsers = findAllLinkedUsersByEmail(
-            userInfo.email());
-        ProviderUserIdentifierType masterUser = findMasterRecord(allLinkedUsers, userInfo.email());
-
-        if (isUserLinked(userInfo.subject(), existingUser.getId())) {
-          TokenUtil.setAuthTokensToHeaders(response, accessToken, idToken);
-          refreshTokenCookieHelper.setRefreshTokenToCookie(response, refreshToken);
-        } else {
-
-          linkUsers(allLinkedUsers, masterUser, existingUser.getEmail(), userInfo.provider(),
-              userInfo.subject());
-          apiClient.updateUserAttributes(userInfo.subject(), existingUser.getId(),
-              AccessLevel.getDefaultRole());
-
-          AuthenticationResultType updatedTokens = apiClient.refreshAuthTokens(userInfo.subject(),
-              refreshToken);
-
-          TokenUtil.setAuthTokensToHeaders(response, updatedTokens.getAccessToken(),
-              updatedTokens.getIdToken());
-          refreshTokenCookieHelper.setRefreshTokenToCookie(response, refreshToken);
-        }
+        cognitoApiClient.updatePoolUserAttributes(poolUserSubject, newInternalUser.getId(),
+            AccessLevel.getDefaultRole(), true, NONE_VALUE);
       }
-      return userMapper.toDto(existingUser);
+
+      AuthenticationResultType updatedTokens = cognitoApiClient.refreshAuthTokens(
+          poolUserCognitoUsername, refreshToken);
+
+      TokenUtil.setAuthTokensToHeaders(response, updatedTokens.getAccessToken(),
+          updatedTokens.getIdToken());
+      refreshTokenCookieHelper.setRefreshTokenToCookie(response, refreshToken);
+
+      return userMapper.toDto(internalUser);
     } catch (HttpClientErrorException e) {
       log.error("HTTP Error during token exchange: {}", e.getResponseBodyAsString(), e);
       throw new AuthenticationException("Failed to exchange authorization code for tokens.");
@@ -122,114 +126,48 @@ public class AuthenticationOauthService {
     }
   }
 
-  private List<ProviderUserIdentifierType> findAllLinkedUsersByEmail(String email) {
-    try {
-      ListUsersRequest request = new ListUsersRequest();
-      request.setUserPoolId(cognitoConfig.getUserPoolId());
-      request.setFilter(String.format("email=\"%s\"", email));
-
-      ListUsersResult response = cognitoClient.listUsers(request);
-
-      return response.getUsers().stream()
-          .map(user -> {
-            ProviderUserIdentifierType providerUser = new ProviderUserIdentifierType();
-            providerUser.setProviderName(getProviderNameFromAttributes(user.getAttributes()));
-            providerUser.setProviderAttributeValue(user.getUsername());
-            return providerUser;
-          })
-          .toList();
-    } catch (Exception e) {
-      log.error("Error fetching linked users for email {}: {}", email, e.getMessage(), e);
-      throw new RuntimeException("Failed to fetch linked users for email: " + email, e);
-    }
+  private Optional<ProviderUserIdentifierType> findPrimaryPoolUsersByEmail(String email) {
+    ListUsersResult response = cognitoApiClient.getListPoolUsersByEmail(email);
+    return response.getUsers().stream()
+        .filter(user -> user.getAttributes().stream()
+            .anyMatch(attribute ->
+                StringUtils.equals(attribute.getName(), ATTRIBUTE_IS_PRIMARY_RECORD) &&
+                    StringUtils.equals(attribute.getValue(), "true")
+            ))
+        .findFirst()
+        .map(this::mapToProviderUserIdentifier);
   }
 
-  private String getProviderNameFromAttributes(List<AttributeType> attributes) {
+  private ProviderUserIdentifierType mapToProviderUserIdentifier(UserType user) {
+    ProviderUserIdentifierType providerUser = new ProviderUserIdentifierType();
+    providerUser.setProviderName(getProviderName(user.getAttributes()));
+    providerUser.setProviderAttributeValue(user.getUsername());
+    return providerUser;
+  }
+
+  private String getProviderName(List<AttributeType> attributes) {
     return attributes.stream()
-        .filter(attribute -> "cognito:providerName".equals(attribute.name()))
-        .map(AttributeType::value)
+        .filter(attribute -> StringUtils.equals(attribute.getName(), ATTRIBUTE_PROVIDER_NAME))
+        .map(AttributeType::getValue)
         .findFirst()
         .orElse("Cognito");
   }
 
-  private ProviderUserIdentifierType findMasterRecord(
-      List<ProviderUserIdentifierType> allLinkedUsers, String email) {
-    return allLinkedUsers.stream()
-        .filter(user -> isMasterRecord(user.providerAttributeValue()))
-        .findFirst()
-        .orElseThrow(() -> new RuntimeException("No master record found for email: " + email));
-  }
-
-  private boolean isMasterRecord(String subject) {
-    try {
-      AdminGetUserRequest request = AdminGetUserRequest.builder()
-          .userPoolId(cognitoConfig.getUserPoolId())
-          .username(subject)
-          .build();
-
-      AdminGetUserResponse response = cognitoClient.adminGetUser(request);
-
-      return response.userAttributes().stream()
-          .anyMatch(attribute ->
-              "custom:isMasterRecord".equals(attribute.name()) &&
-                  "true".equalsIgnoreCase(attribute.value())
-          );
-    } catch (Exception e) {
-      log.error("Failed to check if user with subject {} is master record: {}", subject,
-          e.getMessage(), e);
-      throw new RuntimeException("Failed to check if user is master record", e);
-    }
-  }
-
-  private boolean isUserLinked(String subject, long userId) {
-    try {
-      AdminGetUserRequest request = AdminGetUserRequest.builder()
-          .userPoolId(cognitoConfig.getUserPoolId())
-          .username(subject)
-          .build();
-
-      AdminGetUserResponse response = cognitoClient.adminGetUser(request);
-
-      return response.userAttributes().stream()
-          .anyMatch(attribute ->
-              "custom:userId".equals(attribute.name()) &&
-                  String.valueOf(userId).equals(attribute.value())
-          );
-    } catch (UserNotFoundException e) {
-      log.warn("User with subject {} not found in Cognito", subject);
+  private boolean arePoolUsersLinked(String poolUserLinkedRecord, String primaryPollUserSubject) {
+    if (StringUtils.isEmpty(poolUserLinkedRecord)) {
       return false;
-    } catch (Exception e) {
-      log.error("Error checking if user is linked: {}", e.getMessage(), e);
-      throw new RuntimeException("Error checking user linkage", e);
     }
+
+    if (StringUtils.equals(poolUserLinkedRecord, primaryPollUserSubject)) {
+      return true;
+    }
+    throw new IllegalStateException(String.format(
+        "Pool user linked record (%s) does not match the primary pool user subject (%s)",
+        poolUserLinkedRecord, primaryPollUserSubject));
   }
 
-  private void linkUsers(List<ProviderUserIdentifierType> allLinkedUsers,
-      ProviderUserIdentifierType masterUser,
-      String email, String provider, String subject) {
-    try {
-      if (allLinkedUsers.isEmpty()) {
-        log.error("No linked users found for email: {}", email);
-        throw new RuntimeException("Cannot link users: no existing records found");
-      }
-
-      AdminLinkProviderForUserRequest request = AdminLinkProviderForUserRequest.builder()
-          .userPoolId(cognitoConfig.getUserPoolId())
-          .destinationUser(masterUser)
-          .sourceUser(
-              ProviderUserIdentifierType.builder()
-                  .providerName(provider)
-                  .providerAttributeValue(subject)
-                  .build())
-          .build();
-
-      cognitoClient.adminLinkProviderForUser(request);
-
-      log.info("Successfully linked user with subject {} to provider {} and email {}",
-          subject, provider, email);
-    } catch (Exception e) {
-      log.error("Error linking user with provider: {}", e.getMessage(), e);
-      throw new RuntimeException("Error linking user with provider", e);
-    }
+  private void linkUsersInPool(ProviderUserIdentifierType destinationUser, String provider,
+      String subject) {
+    cognitoApiClient.linkProviderForUser(destinationUser, provider, subject);
   }
 }

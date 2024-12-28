@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CognitoAuthenticationHelper {
 
+  private static final int PASSWORD_BYTE_LENGTH = 64;
   private final CognitoRegistrationProperties properties;
 
   /**
@@ -56,7 +57,7 @@ public class CognitoAuthenticationHelper {
 
   public String generateRandomPassword() {
     SecureRandom random = new SecureRandom();
-    byte[] randomBytes = new byte[64];
+    byte[] randomBytes = new byte[PASSWORD_BYTE_LENGTH];
     random.nextBytes(randomBytes);
 
     String randomPassword = Base64.getEncoder().encodeToString(randomBytes);

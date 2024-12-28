@@ -55,7 +55,7 @@ public class AuthenticationCognitoFacade implements AuthenticationFacade {
 
   @Override
   public UserDto exchangeAuthCode(HttpServletResponse response, OauthExchangeCodeRequest request) {
-    return authenticationOauthService.exchangeAuthCodeForTokens(response, request);
+    return authenticationOauthService.exchangeAuthorizationCodeForTokens(response, request);
   }
 
   @Override

@@ -1,12 +1,26 @@
 package com.ratifire.devrate.security.util;
 
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_EMAIL;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_FAMILY_NAME;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_GIVEN_NAME;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_IDENTITIES;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_LINKED_RECORD_SUBJECT;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_ROLE;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_SUBJECT;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_USERNAME;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_USER_ID;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_AUTHORIZATION;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_ID_TOKEN;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.REFRESH_TOKEN_COOKIE_NAME;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.TOKEN_BEARER_PREFIX;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.ratifire.devrate.security.exception.InvalidTokenException;
 import com.ratifire.devrate.security.exception.RefreshTokenException;
-import com.ratifire.devrate.security.model.UserInfo;
+import com.ratifire.devrate.security.model.PoolUserInfo;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,14 +40,6 @@ import org.springframework.util.function.ThrowingFunction;
 @Slf4j
 public class TokenUtil {
 
-  private static final String AUTHORIZATION_HEADER = "Authorization";
-  private static final String ID_TOKEN_HEADER = "ID-Token";
-  private static final String REFRESH_TOKEN_COOKIE_NAME = "Refresh-Token";
-  private static final String BEARER_PREFIX = "Bearer ";
-  public static final String CLAIM_USER_ID = "custom:userId";
-  public static final String CLAIM_USER_ROLE = "custom:role";
-  public static final String CLAIM_SUBJECT = "sub";
-
   private TokenUtil() {
   }
 
@@ -42,8 +48,8 @@ public class TokenUtil {
    */
   public static void setAuthTokensToHeaders(HttpServletResponse response, String accessToken,
       String idToken) {
-    response.setHeader(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken);
-    response.setHeader(ID_TOKEN_HEADER, idToken);
+    response.setHeader(HEADER_AUTHORIZATION, TOKEN_BEARER_PREFIX + accessToken);
+    response.setHeader(HEADER_ID_TOKEN, idToken);
   }
 
   /**
@@ -53,9 +59,9 @@ public class TokenUtil {
    * @return the access token or an empty string if the header is invalid or missing
    */
   public static String extractAccessTokenFromRequest(HttpServletRequest request) {
-    String header = request.getHeader(AUTHORIZATION_HEADER);
-    if (header != null && header.startsWith(BEARER_PREFIX)) {
-      return header.substring(BEARER_PREFIX.length());
+    String header = request.getHeader(HEADER_AUTHORIZATION);
+    if (header != null && header.startsWith(TOKEN_BEARER_PREFIX)) {
+      return header.substring(TOKEN_BEARER_PREFIX.length());
     } else {
       return null;
     }
@@ -68,7 +74,7 @@ public class TokenUtil {
    * @return the ID token or an empty string if the header is missing
    */
   public static String extractIdTokenFromRequest(HttpServletRequest request) {
-    return request.getHeader(ID_TOKEN_HEADER);
+    return request.getHeader(HEADER_ID_TOKEN);
   }
 
   /**
@@ -117,7 +123,7 @@ public class TokenUtil {
    */
   public static String getSubjectFromAccessToken(String accessToken) {
     JWTClaimsSet claimsSet = TokenUtil.parseToken(accessToken);
-    return TokenUtil.extractStringClaim(claimsSet, CLAIM_SUBJECT)
+    return TokenUtil.extractStringClaim(claimsSet, ATTRIBUTE_SUBJECT)
         .orElseThrow(() -> new InvalidTokenException("Sub claim is missing"));
   }
 
@@ -130,7 +136,7 @@ public class TokenUtil {
    */
   public static long getUserIdFromIdToken(String idToken) {
     JWTClaimsSet claimsSet = TokenUtil.parseToken(idToken);
-    String userId = TokenUtil.extractStringClaim(claimsSet, CLAIM_USER_ID)
+    String userId = TokenUtil.extractStringClaim(claimsSet, ATTRIBUTE_USER_ID)
         .orElseThrow(() -> new InvalidTokenException("User ID claim is missing"));
     return Long.parseLong(userId);
   }
@@ -144,20 +150,22 @@ public class TokenUtil {
    */
   public static List<SimpleGrantedAuthority> getAuthoritiesFromIdToken(String idToken) {
     JWTClaimsSet claimsSet = TokenUtil.parseToken(idToken);
-    String role = TokenUtil.extractStringClaim(claimsSet, CLAIM_USER_ROLE)
+    String role = TokenUtil.extractStringClaim(claimsSet, ATTRIBUTE_ROLE)
         .orElseThrow(() -> new InvalidTokenException("Role claim is missing"));
     return List.of(new SimpleGrantedAuthority(role));
   }
 
-  public static UserInfo getUserInfoFromIdToken(String idToken) throws ParseException {
+  public static PoolUserInfo getUserInfoFromIdToken(String idToken) throws ParseException {
     JWTClaimsSet claimsSet = parseToken(idToken);
-    String firstName = claimsSet.getStringClaim("given_name");
-    String lastName = claimsSet.getStringClaim("family_name");
-    String sub = claimsSet.getStringClaim("sub");
-    String email = claimsSet.getStringClaim("email");
+    String firstName = claimsSet.getStringClaim(ATTRIBUTE_GIVEN_NAME);
+    String lastName = claimsSet.getStringClaim(ATTRIBUTE_FAMILY_NAME);
+    String subject = claimsSet.getStringClaim(ATTRIBUTE_SUBJECT);
+    String email = claimsSet.getStringClaim(ATTRIBUTE_EMAIL);
+    String cognitoUsername = claimsSet.getStringClaim(ATTRIBUTE_USERNAME);
+    String linkedRecord = claimsSet.getStringClaim(ATTRIBUTE_LINKED_RECORD_SUBJECT);
 
     String providerName = null;
-    Object identitiesClaim = claimsSet.getClaim("identities");
+    Object identitiesClaim = claimsSet.getClaim(ATTRIBUTE_IDENTITIES);
 
     if (identitiesClaim != null) {
       try {
@@ -173,7 +181,8 @@ public class TokenUtil {
       }
     }
 
-    return new UserInfo(firstName, lastName, sub, email, providerName);
+    return new PoolUserInfo(firstName, lastName, email, subject, providerName, linkedRecord,
+        cognitoUsername);
   }
 
   /**
@@ -227,6 +236,4 @@ public class TokenUtil {
       return Optional.empty();
     }
   }
-
-
 }

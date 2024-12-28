@@ -1,5 +1,8 @@
 package com.ratifire.devrate.security.facade;
 
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_AUTHORIZATION;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_ID_TOKEN;
+
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.mapper.DataMapper;
@@ -23,8 +26,7 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
@@ -51,12 +53,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /**
  * Local implementation facade class.
  */
+@Slf4j
 @RequiredArgsConstructor
 @Component
 @Profile("local")
 public class AuthenticationLocalFacade implements AuthenticationFacade {
 
-  private static final Logger log = LoggerFactory.getLogger(AuthenticationLocalFacade.class);
   private final UserService userService;
   private final DataMapper<UserDto, User> userMapper;
   private final RefreshTokenCookieHelper refreshTokenCookieHelper;
@@ -208,7 +210,7 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
       configuration.setAllowedOrigins(allowedOrigins);
       configuration.setAllowedMethods(List.of("*"));
       configuration.setAllowedHeaders(List.of("*"));
-      configuration.setExposedHeaders(List.of("Authorization", "ID-Token"));
+      configuration.setExposedHeaders(List.of(HEADER_AUTHORIZATION, HEADER_ID_TOKEN));
       configuration.setAllowCredentials(true);
       UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
       source.registerCorsConfiguration("/**", configuration);
@@ -233,7 +235,7 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
-      String userId = request.getHeader("ID-Token");
+      String userId = request.getHeader(HEADER_ID_TOKEN);
       if (userId == null) {
         filterChain.doFilter(request, response);
         return;

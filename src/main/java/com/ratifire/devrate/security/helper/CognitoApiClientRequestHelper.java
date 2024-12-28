@@ -2,13 +2,17 @@ package com.ratifire.devrate.security.helper;
 
 import static com.amazonaws.services.cognitoidp.model.AuthFlowType.REFRESH_TOKEN_AUTH;
 import static com.amazonaws.services.cognitoidp.model.AuthFlowType.USER_PASSWORD_AUTH;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_COGNITO_SUBJECT;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_EMAIL;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_IS_PRIMARY_RECORD;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_LINKED_RECORD_SUBJECT;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_ROLE;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_USER_ID;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.AUTHORIZATION_BASIC_PREFIX;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.CONTENT_TYPE_FORM_URLENCODED;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_AUTHORIZATION;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_CONTENT_TYPE;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.NONE_VALUE;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.OAUTH_AUTHORIZE_URL;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.OAUTH_TOKEN_URL;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARAM_CLIENT_ID;
@@ -26,6 +30,7 @@ import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARA
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARAM_USERNAME;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import com.amazonaws.services.cognitoidp.model.AdminLinkProviderForUserRequest;
 import com.amazonaws.services.cognitoidp.model.AdminUpdateUserAttributesRequest;
 import com.amazonaws.services.cognitoidp.model.AttributeType;
 import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordRequest;
@@ -33,6 +38,8 @@ import com.amazonaws.services.cognitoidp.model.ConfirmSignUpRequest;
 import com.amazonaws.services.cognitoidp.model.ForgotPasswordRequest;
 import com.amazonaws.services.cognitoidp.model.GlobalSignOutRequest;
 import com.amazonaws.services.cognitoidp.model.InitiateAuthRequest;
+import com.amazonaws.services.cognitoidp.model.ListUsersRequest;
+import com.amazonaws.services.cognitoidp.model.ProviderUserIdentifierType;
 import com.amazonaws.services.cognitoidp.model.SignUpRequest;
 import com.ratifire.devrate.security.configuration.properties.CognitoRegistrationProperties;
 import java.util.Base64;
@@ -66,7 +73,7 @@ public class CognitoApiClientRequestHelper {
    * @return a {@link SignUpRequest} object configured with the provided details.
    */
   public SignUpRequest buildRegisterRequest(String email, String password,
-      long userId, String role) {
+      long userId, String role, boolean isPrimaryRecord) {
     return new SignUpRequest()
         .withClientId(cognitoConfig.getClientId())
         .withSecretHash(cognitoAuthHelper.generateSecretHash(email))
@@ -75,7 +82,9 @@ public class CognitoApiClientRequestHelper {
         .withUserAttributes(List.of(
             createAttribute(ATTRIBUTE_EMAIL, email),
             createAttribute(ATTRIBUTE_USER_ID, String.valueOf(userId)),
-            createAttribute(ATTRIBUTE_ROLE, role)
+            createAttribute(ATTRIBUTE_ROLE, role),
+            createAttribute(ATTRIBUTE_IS_PRIMARY_RECORD, String.valueOf(isPrimaryRecord)),
+            createAttribute(ATTRIBUTE_LINKED_RECORD_SUBJECT, NONE_VALUE)
         ));
   }
 
@@ -175,14 +184,39 @@ public class CognitoApiClientRequestHelper {
   }
 
   public AdminUpdateUserAttributesRequest buildAdminUpdateUserAttributesRequest(String subject,
-      long userId, String role) {
+      long userId, String role, boolean isPrimaryRecord, String linkedRecordSubject) {
     return new AdminUpdateUserAttributesRequest()
         .withUserPoolId(cognitoConfig.getUserPoolId())
         .withUsername(subject)
         .withUserAttributes(List.of(
             createAttribute(ATTRIBUTE_USER_ID, String.valueOf(userId)),
-            createAttribute(ATTRIBUTE_ROLE, role)
+            createAttribute(ATTRIBUTE_ROLE, role),
+            createAttribute(ATTRIBUTE_IS_PRIMARY_RECORD, String.valueOf(isPrimaryRecord)),
+            createAttribute(ATTRIBUTE_LINKED_RECORD_SUBJECT, linkedRecordSubject)
         ));
+  }
+
+  public AdminLinkProviderForUserRequest buildAdminLinkProviderForUserRequest(
+      ProviderUserIdentifierType destinationUser, String sourceUserProvider,
+      String sourceUserSubject) {
+    AdminLinkProviderForUserRequest request = new AdminLinkProviderForUserRequest();
+    request.withUserPoolId(cognitoConfig.getUserPoolId());
+    request.withDestinationUser(destinationUser);
+
+    ProviderUserIdentifierType sourceUser = new ProviderUserIdentifierType();
+    sourceUser.setProviderName(sourceUserProvider);
+    sourceUser.setProviderAttributeName(ATTRIBUTE_COGNITO_SUBJECT);
+    sourceUser.setProviderAttributeValue(sourceUserSubject);
+
+    request.withSourceUser(sourceUser);
+    return request;
+  }
+
+  public ListUsersRequest buildListUsersRequest(String email) {
+    ListUsersRequest request = new ListUsersRequest();
+    request.setUserPoolId(cognitoConfig.getUserPoolId());
+    request.setFilter(String.format("email=\"%s\"", email));
+    return request;
   }
 
   public HttpEntity<MultiValueMap<String, String>> buildTokenExchangeRequest(

@@ -15,20 +15,19 @@ import com.ratifire.devrate.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 /**
  * Service class for handling authentication logic.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Profile("!local")
 public class AuthenticationService {
 
-  private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
   private final CognitoApiClientService cognitoApiClientService;
   private final UserService userService;
   private final RefreshTokenCookieHelper refreshTokenCookieHelper;

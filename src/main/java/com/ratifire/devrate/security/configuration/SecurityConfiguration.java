@@ -1,6 +1,9 @@
 package com.ratifire.devrate.security.configuration;
 
 
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_AUTHORIZATION;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_ID_TOKEN;
+
 import com.ratifire.devrate.security.configuration.handler.AuthenticationFailureHandlerEntryPoint;
 import com.ratifire.devrate.security.filter.CognitoAuthenticationFilter;
 import java.util.List;
@@ -91,7 +94,7 @@ public class SecurityConfiguration {
     configuration.setAllowedOrigins(allowedOrigins);
     configuration.setAllowedMethods(List.of("*"));
     configuration.setAllowedHeaders(List.of("*"));
-    configuration.setExposedHeaders(List.of("Authorization", "ID-Token"));
+    configuration.setExposedHeaders(List.of(HEADER_AUTHORIZATION, HEADER_ID_TOKEN));
     configuration.setAllowCredentials(true);
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
