@@ -125,7 +125,7 @@ public class AuthenticationController {
    * Handles the refresh token operation.
    *
    * @return a ResponseEntity with an HTTP 200 status indicating that the token was successfully
-   * refreshed.
+   *     refreshed.
    */
   @PostMapping("/refresh-token")
   public ResponseEntity<Void> refreshToken(HttpServletRequest request,
