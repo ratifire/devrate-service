@@ -62,16 +62,6 @@ public class AuthenticationController {
     return authenticationFacade.exchangeAuthCode(response, request);
   }
 
-  // just for testing
-  @GetMapping("/callback")
-  public ResponseEntity<Map<String, String>> handleProviderCallback(
-      @RequestParam("code") String code, @RequestParam("state") String state) {
-    Map<String, String> response = new HashMap<>();
-    response.put("code", code);
-    response.put("state", state);
-    return ResponseEntity.ok(response);
-  }
-
   /**
    * Endpoint for user logout.
    *
