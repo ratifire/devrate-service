@@ -4,7 +4,7 @@ import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.security.facade.AuthenticationFacade;
 import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.LoginDto;
-import com.ratifire.devrate.security.model.dto.OauthExchangeCodeRequest;
+import com.ratifire.devrate.security.model.dto.OauthAuthorizationDto;
 import com.ratifire.devrate.security.model.dto.PasswordResetDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,8 +12,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,20 +44,22 @@ public class AuthenticationController {
     return authenticationFacade.login(loginDto, response);
   }
 
-  @GetMapping("/oauth/signin/linkedIn")
-  public void loginLinkedIn(HttpServletResponse response, HttpSession session) throws IOException {
-    authenticationFacade.loginLinkedIn(response, session);
+  @GetMapping("/oauth/redirect/linkedIn")
+  public void redirectToLinkedIn(HttpServletResponse response, HttpSession session)
+      throws IOException {
+    authenticationFacade.redirectToLinkedIn(response, session);
   }
 
-  @GetMapping("/oauth/signin/google")
-  public void loginGoogle(HttpServletResponse response, HttpSession session) throws IOException {
-    authenticationFacade.loginGoogle(response, session);
+  @GetMapping("/oauth/redirect/google")
+  public void redirectToGoogle(HttpServletResponse response, HttpSession session)
+      throws IOException {
+    authenticationFacade.redirectToGoogle(response, session);
   }
 
-  @PostMapping("/oauth/exchange-code")
-  public UserDto exchangeAuthCode(HttpServletResponse response,
-      @Valid @RequestBody OauthExchangeCodeRequest request) {
-    return authenticationFacade.exchangeAuthCode(response, request);
+  @PostMapping("/oauth/authorize")
+  public UserDto handleOauthAuthorization(HttpServletResponse response,
+      @Valid @RequestBody OauthAuthorizationDto request) {
+    return authenticationFacade.handleOauthAuthorization(response, request);
   }
 
   /**

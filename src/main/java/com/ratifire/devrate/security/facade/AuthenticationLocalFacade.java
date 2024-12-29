@@ -12,7 +12,7 @@ import com.ratifire.devrate.security.exception.UserRegistrationException;
 import com.ratifire.devrate.security.helper.RefreshTokenCookieHelper;
 import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.LoginDto;
-import com.ratifire.devrate.security.model.dto.OauthExchangeCodeRequest;
+import com.ratifire.devrate.security.model.dto.OauthAuthorizationDto;
 import com.ratifire.devrate.security.model.dto.PasswordResetDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import com.ratifire.devrate.security.util.TokenUtil;
@@ -80,17 +80,18 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
   }
 
   @Override
-  public void loginLinkedIn(HttpServletResponse response, HttpSession session) {
+  public void redirectToLinkedIn(HttpServletResponse response, HttpSession session) {
     throw new UnsupportedOperationException("Unsupported operation locally.");
   }
 
   @Override
-  public void loginGoogle(HttpServletResponse response, HttpSession session) {
+  public void redirectToGoogle(HttpServletResponse response, HttpSession session) {
     throw new UnsupportedOperationException("Unsupported operation locally.");
   }
 
   @Override
-  public UserDto exchangeAuthCode(HttpServletResponse response, OauthExchangeCodeRequest request) {
+  public UserDto handleOauthAuthorization(HttpServletResponse response,
+      OauthAuthorizationDto request) {
     throw new UnsupportedOperationException("Unsupported operation locally.");
   }
 

@@ -3,7 +3,7 @@ package com.ratifire.devrate.security.facade;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.LoginDto;
-import com.ratifire.devrate.security.model.dto.OauthExchangeCodeRequest;
+import com.ratifire.devrate.security.model.dto.OauthAuthorizationDto;
 import com.ratifire.devrate.security.model.dto.PasswordResetDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,11 +18,12 @@ public interface AuthenticationFacade {
 
   UserDto login(LoginDto loginDto, HttpServletResponse response);
 
-  void loginLinkedIn(HttpServletResponse response, HttpSession session) throws IOException;
+  void redirectToLinkedIn(HttpServletResponse response, HttpSession session) throws IOException;
 
-  void loginGoogle(HttpServletResponse response, HttpSession session) throws IOException;
+  void redirectToGoogle(HttpServletResponse response, HttpSession session) throws IOException;
 
-  UserDto exchangeAuthCode(HttpServletResponse response, OauthExchangeCodeRequest request);
+  UserDto handleOauthAuthorization(HttpServletResponse response,
+      OauthAuthorizationDto request);
 
   String logout(HttpServletRequest request, HttpServletResponse response);
 

@@ -121,7 +121,7 @@ public class CognitoApiClientService {
     return cognitoClient.initiateAuth(request).getAuthenticationResult();
   }
 
-  public Map<String, String> exchangeAuthCodeForRawTokens(String code) {
+  public Map<String, String> fetchRawTokensFromCognito(String code) {
     String url = requestHelper.buildTokenUrl();
     HttpEntity<MultiValueMap<String, String>> request =
         requestHelper.buildTokenExchangeRequest(code);
@@ -131,21 +131,21 @@ public class CognitoApiClientService {
     return TokenUtil.parseTokens(response.getBody());
   }
 
-  public void updatePoolUserAttributes(String subject, long userId, String role,
+  public void updateCognitoUserAttributes(String subject, long userId, String role,
       boolean isPrimaryRecord, String linkedRecordSubject) {
     cognitoClient.adminUpdateUserAttributes(
         requestHelper.buildAdminUpdateUserAttributesRequest(subject, userId, role, isPrimaryRecord,
             linkedRecordSubject));
   }
 
-  public void linkProviderForUser(ProviderUserIdentifierType destinationUser, String provider,
+  public void linkCognitoUsersInPool(ProviderUserIdentifierType destinationUser, String provider,
       String subject) {
     AdminLinkProviderForUserRequest request = requestHelper.buildAdminLinkProviderForUserRequest(
         destinationUser, provider, subject);
     cognitoClient.adminLinkProviderForUser(request);
   }
 
-  public ListUsersResult getListPoolUsersByEmail(String email) {
+  public ListUsersResult getListCognitoUsersByEmail(String email) {
     ListUsersRequest request = requestHelper.buildListUsersRequest(email);
     return cognitoClient.listUsers(request);
   }

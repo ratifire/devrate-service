@@ -1,6 +1,6 @@
 package com.ratifire.devrate.security.model;
 
-public record PoolUserInfo(
+public record CognitoUserInfo(
     String firstName,
     String lastName,
     String email,

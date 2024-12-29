@@ -20,7 +20,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.ratifire.devrate.security.exception.InvalidTokenException;
 import com.ratifire.devrate.security.exception.RefreshTokenException;
-import com.ratifire.devrate.security.model.PoolUserInfo;
+import com.ratifire.devrate.security.model.CognitoUserInfo;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -155,7 +155,7 @@ public class TokenUtil {
     return List.of(new SimpleGrantedAuthority(role));
   }
 
-  public static PoolUserInfo getUserInfoFromIdToken(String idToken) throws ParseException {
+  public static CognitoUserInfo getUserInfoFromIdToken(String idToken) throws ParseException {
     JWTClaimsSet claimsSet = parseToken(idToken);
     String firstName = claimsSet.getStringClaim(ATTRIBUTE_GIVEN_NAME);
     String lastName = claimsSet.getStringClaim(ATTRIBUTE_FAMILY_NAME);
@@ -181,7 +181,7 @@ public class TokenUtil {
       }
     }
 
-    return new PoolUserInfo(firstName, lastName, email, subject, providerName, linkedRecord,
+    return new CognitoUserInfo(firstName, lastName, email, subject, providerName, linkedRecord,
         cognitoUsername);
   }
 

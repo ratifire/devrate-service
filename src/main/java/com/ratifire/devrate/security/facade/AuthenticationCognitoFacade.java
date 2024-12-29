@@ -6,7 +6,7 @@ import static com.ratifire.devrate.security.model.enums.OAuthProvider.LINKEDIN;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.LoginDto;
-import com.ratifire.devrate.security.model.dto.OauthExchangeCodeRequest;
+import com.ratifire.devrate.security.model.dto.OauthAuthorizationDto;
 import com.ratifire.devrate.security.model.dto.PasswordResetDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import com.ratifire.devrate.security.service.AuthenticationOauthService;
@@ -42,20 +42,25 @@ public class AuthenticationCognitoFacade implements AuthenticationFacade {
   }
 
   @Override
-  public void loginLinkedIn(HttpServletResponse response, HttpSession session) throws IOException {
-    response.sendRedirect(authenticationOauthService.generateOauthRedirectUrl(session,
-        LINKEDIN.getProvider()));
+  public void redirectToLinkedIn(HttpServletResponse response, HttpSession session)
+      throws IOException {
+    String url = authenticationOauthService.generateOauthRedirectUrl(session,
+        LINKEDIN.getProvider());
+    response.sendRedirect(url);
   }
 
   @Override
-  public void loginGoogle(HttpServletResponse response, HttpSession session) throws IOException {
-    response.sendRedirect(authenticationOauthService.generateOauthRedirectUrl(session,
-        GOOGLE.getProvider()));
+  public void redirectToGoogle(HttpServletResponse response, HttpSession session)
+      throws IOException {
+    String url = authenticationOauthService.generateOauthRedirectUrl(session,
+        GOOGLE.getProvider());
+    response.sendRedirect(url);
   }
 
   @Override
-  public UserDto exchangeAuthCode(HttpServletResponse response, OauthExchangeCodeRequest request) {
-    return authenticationOauthService.exchangeAuthorizationCodeForTokens(response, request);
+  public UserDto handleOauthAuthorization(HttpServletResponse response,
+      OauthAuthorizationDto request) {
+    return authenticationOauthService.handleOauthAuthorization(response, request);
   }
 
   @Override

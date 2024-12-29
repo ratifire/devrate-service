@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OauthExchangeCodeRequest {
+public class OauthAuthorizationDto {
 
   @NotBlank(message = "code cannot be blank")
-  private String code;
+  private String authorizationCode;
   @NotBlank(message = "state cannot be blank")
   private String state;
 
