@@ -1,3 +1,0 @@
-bucket  = "skillzzy-back-terraform-dev"
-key     = "AWS/skillzzy-back-terraform-dev-deploy/terraform.tfstate"
-region  = "eu-north-1"

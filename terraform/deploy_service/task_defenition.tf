@@ -27,10 +27,6 @@ resource "aws_ecs_task_definition" "task_definition" {
       essential = true,
       environment = [
         {
-          name  = "POSTGRES_USER",
-          value = "backend"
-        },
-        {
           name  = "PG_USERNAME",
           value = "backend"
         },
@@ -45,10 +41,6 @@ resource "aws_ecs_task_definition" "task_definition" {
         {
           name  = "PG_DATABASE",
           value = "backend"
-        },
-        {
-          name  = "POSTGRES_PASSWORD",
-          value = "backenddb"
         },
         {
           name  = "POSTGRES_DB",
