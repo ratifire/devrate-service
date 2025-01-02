@@ -4,6 +4,7 @@ import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTR
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_FAMILY_NAME;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_GIVEN_NAME;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_IDENTITIES;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_IS_PRIMARY_RECORD;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_LINKED_RECORD_SUBJECT;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_ROLE;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_SUBJECT;
@@ -13,9 +14,12 @@ import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEAD
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_ID_TOKEN;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.REFRESH_TOKEN_COOKIE_NAME;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.TOKEN_BEARER_PREFIX;
+import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.ACCESS_TOKEN;
+import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.ID_TOKEN;
+import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.REFRESH_TOKEN;
+import static com.ratifire.devrate.util.JsonConverter.deserialize;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.ratifire.devrate.security.exception.InvalidTokenException;
@@ -24,13 +28,13 @@ import com.ratifire.devrate.security.model.CognitoUserInfo;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.util.function.ThrowingFunction;
 
@@ -96,25 +100,6 @@ public class TokenUtil {
   }
 
   /**
-   * test sso.
-   */
-  public static Map<String, String> parseTokens(String tokenResponse) {
-    try {
-      ObjectMapper objectMapper = new ObjectMapper();
-      Map<String, String> tokenMap = objectMapper.readValue(tokenResponse, new TypeReference<>() {
-      });
-
-      if (!tokenMap.containsKey("access_token") || !tokenMap.containsKey("id_token")) {
-        throw new InvalidTokenException("Missing required tokens in response");
-      }
-
-      return tokenMap;
-    } catch (Exception e) {
-      throw new InvalidTokenException("Failed to parse tokens from response");
-    }
-  }
-
-  /**
    * Retrieves the "subject" claim from the specified access token.
    *
    * @param accessToken the JWT access token containing user claims
@@ -155,34 +140,46 @@ public class TokenUtil {
     return List.of(new SimpleGrantedAuthority(role));
   }
 
-  public static CognitoUserInfo getUserInfoFromIdToken(String idToken) throws ParseException {
+  /**
+   * Extracts user information from the provided Cognito ID token.
+   *
+   * @param idToken the Cognito ID token from which user information needs to be extracted
+   * @return a CognitoUserInfo containing the extracted user details
+   */
+  public static CognitoUserInfo getCognitoUserInfoFromIdToken(String idToken) {
     JWTClaimsSet claimsSet = parseToken(idToken);
-    String firstName = claimsSet.getStringClaim(ATTRIBUTE_GIVEN_NAME);
-    String lastName = claimsSet.getStringClaim(ATTRIBUTE_FAMILY_NAME);
-    String subject = claimsSet.getStringClaim(ATTRIBUTE_SUBJECT);
-    String email = claimsSet.getStringClaim(ATTRIBUTE_EMAIL);
-    String cognitoUsername = claimsSet.getStringClaim(ATTRIBUTE_USERNAME);
-    String linkedRecord = claimsSet.getStringClaim(ATTRIBUTE_LINKED_RECORD_SUBJECT);
 
-    String providerName = null;
-    Object identitiesClaim = claimsSet.getClaim(ATTRIBUTE_IDENTITIES);
-
-    if (identitiesClaim != null) {
-      try {
-        List<Map<String, Object>> identities = (List<Map<String, Object>>) identitiesClaim;
-        providerName = identities.stream()
-            .map(identity -> identity.get("providerName"))
-            .filter(Objects::nonNull)
-            .map(Object::toString)
-            .findFirst()
-            .orElse(null);
-      } catch (ClassCastException e) {
-        throw new IllegalArgumentException("Invalid format for identities claim in token", e);
-      }
-    }
+    String firstName = extractStringClaim(claimsSet, ATTRIBUTE_GIVEN_NAME).orElse(null);
+    String lastName = extractStringClaim(claimsSet, ATTRIBUTE_FAMILY_NAME).orElse(null);
+    String subject = extractStringClaim(claimsSet, ATTRIBUTE_SUBJECT).orElse(null);
+    String email = extractStringClaim(claimsSet, ATTRIBUTE_EMAIL).orElse(null);
+    String cognitoUsername = extractStringClaim(claimsSet, ATTRIBUTE_USERNAME).orElse(null);
+    String linkedRecord = extractStringClaim(claimsSet, ATTRIBUTE_LINKED_RECORD_SUBJECT)
+        .orElse(null);
+    boolean isPrimaryRecord = extractBooleanClaim(claimsSet, ATTRIBUTE_IS_PRIMARY_RECORD)
+        .orElse(false);
+    String providerName = getProviderNameFromIdentities(claimsSet.getClaim(ATTRIBUTE_IDENTITIES));
 
     return new CognitoUserInfo(firstName, lastName, email, subject, providerName, linkedRecord,
-        cognitoUsername);
+        cognitoUsername, isPrimaryRecord);
+  }
+
+  private static String getProviderNameFromIdentities(Object identityClaims) {
+    if (ObjectUtils.isEmpty(identityClaims)) {
+      return null;
+    }
+
+    try {
+      List<Map<String, Object>> identities = (List<Map<String, Object>>) identityClaims;
+      return identities.stream()
+          .map(identity -> identity.get("providerName"))
+          .filter(Objects::nonNull)
+          .map(Object::toString)
+          .findFirst()
+          .orElse(null);
+    } catch (Exception e) {
+      throw new InvalidTokenException("Failed to parse 'identities' claim from token", e);
+    }
   }
 
   /**
@@ -193,8 +190,27 @@ public class TokenUtil {
       SignedJWT signedJwt = SignedJWT.parse(token);
       return signedJwt.getJWTClaimsSet();
     } catch (Exception e) {
-      throw new InvalidTokenException("Parse token process was failed");
+      throw new InvalidTokenException("Parse token process was failed", e);
     }
+  }
+
+  /**
+   * Parses a JSON string containing token data and converts it into a map of tokens.
+   *
+   * @param json the JSON string containing the token data to be parsed
+   * @return a map containing the token data
+   */
+  public static Map<String, String> parseTokensFromJson(String json) {
+    Map<String, String> tokenMap = deserialize(json, new TypeReference<>() {
+    });
+
+    if (!tokenMap.containsKey(ACCESS_TOKEN.getValue())
+        || !tokenMap.containsKey(ID_TOKEN.getValue())
+        || !tokenMap.containsKey(REFRESH_TOKEN.getValue())) {
+      throw new InvalidTokenException("Missing required tokens in response");
+    }
+
+    return tokenMap;
   }
 
   /**
