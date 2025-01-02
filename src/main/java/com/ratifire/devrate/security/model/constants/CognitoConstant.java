@@ -1,6 +1,9 @@
 package com.ratifire.devrate.security.model.constants;
 
 
+/**
+ * Contains constant values used for AWS Cognito authentication and integration processes.
+ */
 public class CognitoConstant {
 
   public static final String PARAM_USERNAME = "USERNAME";
@@ -32,6 +35,7 @@ public class CognitoConstant {
   public static final String ATTRIBUTE_USER_ID = "custom:userId-v2";
   public static final String ATTRIBUTE_ROLE = "custom:role-v2";
   public static final String ATTRIBUTE_PROVIDER_NAME = "cognito:providerName";
+  public static final String ATTRIBUTE_DEFAULT_PROVIDER_NAME = "Cognito";
   public static final String ATTRIBUTE_IS_PRIMARY_RECORD = "custom:isPrimaryRecord-v2";
   public static final String ATTRIBUTE_LINKED_RECORD_SUBJECT = "custom:linkedRecord-v2";
   public static final String ATTRIBUTE_AUTHENTICATION_ERROR = "authentication_error";

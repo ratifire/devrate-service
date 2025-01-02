@@ -67,7 +67,7 @@ public class CognitoApiClientService {
    * @param email    The user's email (username).
    * @param password The user's password.
    * @return An {@link AuthenticationResultType} object containing authentication details such as
-   * access token, refresh token, and ID token.
+   *     access token, refresh token, and ID token.
    */
   public AuthenticationResultType login(String email, String password) {
     InitiateAuthRequest request = requestHelper.buildLoginRequest(email, password);
@@ -110,17 +110,23 @@ public class CognitoApiClientService {
   /**
    * Refreshes the user's authentication tokens using a refresh token.
    *
-   * @param subject          the unique identifier (subject) of the user whose tokens are being
+   * @param subject      the unique identifier (subject) of the user whose tokens are being
    *                     refreshed.
    * @param refreshToken the refresh token issued during the initial authentication process.
    * @return an {@link AuthenticationResultType} object containing the new access token, ID token,
-   * and other authentication details.
+   *     and other authentication details.
    */
   public AuthenticationResultType refreshAuthTokens(String subject, String refreshToken) {
     InitiateAuthRequest request = requestHelper.buildRefreshAuthRequest(subject, refreshToken);
     return cognitoClient.initiateAuth(request).getAuthenticationResult();
   }
 
+  /**
+   * Fetches raw tokens from Cognito using the provided authorization code.
+   *
+   * @param code The authorization code used to exchange for access and refresh tokens.
+   * @return A map containing the raw tokens retrieved from Cognito.
+   */
   public Map<String, String> fetchRawTokensFromCognito(String code) {
     String url = requestHelper.buildTokenUrl();
     HttpEntity<MultiValueMap<String, String>> request =
@@ -128,9 +134,18 @@ public class CognitoApiClientService {
 
     ResponseEntity<String> response = restTemplate.build()
         .postForEntity(url, request, String.class);
-    return TokenUtil.parseTokens(response.getBody());
+    return TokenUtil.parseTokensFromJson(response.getBody());
   }
 
+  /**
+   * Updates the attributes of a Cognito user with the specified details.
+   *
+   * @param subject             The subject identifier for the Cognito user.
+   * @param userId              The unique ID of the user whose attributes are being updated.
+   * @param role                The role of the user in the application.
+   * @param isPrimaryRecord     A flag indicating if this is the primary record for the user.
+   * @param linkedRecordSubject The subject identifier of the linked record, if any.
+   */
   public void updateCognitoUserAttributes(String subject, long userId, String role,
       boolean isPrimaryRecord, String linkedRecordSubject) {
     cognitoClient.adminUpdateUserAttributes(
@@ -138,6 +153,14 @@ public class CognitoApiClientService {
             linkedRecordSubject));
   }
 
+  /**
+   * Links a user from one identity provider to another within the specified Cognito user pool.
+   *
+   * @param destinationUser The identifier of the destination user in the Cognito user pool.
+   * @param provider        The name of the identity provider of the source user to be linked.
+   * @param subject         The unique identifier of the source user in the specified identity
+   *                        provider.
+   */
   public void linkCognitoUsersInPool(ProviderUserIdentifierType destinationUser, String provider,
       String subject) {
     AdminLinkProviderForUserRequest request = requestHelper.buildAdminLinkProviderForUserRequest(
@@ -145,6 +168,12 @@ public class CognitoApiClientService {
     cognitoClient.adminLinkProviderForUser(request);
   }
 
+  /**
+   * Retrieves a list of Cognito users filtered by the specified email address.
+   *
+   * @param email The email address used as a filter to list Cognito users.
+   * @return A ListUsersResult object containing the users that match the specified email filter.
+   */
   public ListUsersResult getListCognitoUsersByEmail(String email) {
     ListUsersRequest request = requestHelper.buildListUsersRequest(email);
     return cognitoClient.listUsers(request);

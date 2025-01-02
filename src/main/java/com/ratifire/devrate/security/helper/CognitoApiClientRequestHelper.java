@@ -156,7 +156,7 @@ public class CognitoApiClientRequestHelper {
   /**
    * Builds a request to refresh authentication tokens using a refresh token.
    *
-   * @param subject          the unique identifier (subject) of the user whose tokens are being
+   * @param subject      the unique identifier (subject) of the user whose tokens are being
    *                     refreshed.
    * @param refreshToken the refresh token issued during initial authentication.
    * @return an {@link InitiateAuthRequest} object configured with the provided details.
@@ -183,6 +183,16 @@ public class CognitoApiClientRequestHelper {
         .withAccessToken(accessToken);
   }
 
+  /**
+   * Builds a request to update user attributes in AWS Cognito for a specified user.
+   *
+   * @param subject             the unique identifier (subject) of the user to update.
+   * @param userId              the unique identifier ID of the user.
+   * @param role                the role to be assigned to the user.
+   * @param isPrimaryRecord     a boolean indicating if this is the primary record of the user.
+   * @param linkedRecordSubject the subject of the linked record, if any.
+   * @return an AdminUpdateUserAttributesRequest configured with the provided details.
+   */
   public AdminUpdateUserAttributesRequest buildAdminUpdateUserAttributesRequest(String subject,
       long userId, String role, boolean isPrimaryRecord, String linkedRecordSubject) {
     return new AdminUpdateUserAttributesRequest()
@@ -196,6 +206,15 @@ public class CognitoApiClientRequestHelper {
         ));
   }
 
+  /**
+   * Builds a request to link two users in AWS Cognito based on the specified source and destination
+   * user details.
+   *
+   * @param destinationUser    the identifier of the user to be linked to.
+   * @param sourceUserProvider the provider name of the source user.
+   * @param sourceUserSubject  the unique identifier of the source user within the provider.
+   * @return a configured AdminLinkProviderForUserRequest for the user link operation.
+   */
   public AdminLinkProviderForUserRequest buildAdminLinkProviderForUserRequest(
       ProviderUserIdentifierType destinationUser, String sourceUserProvider,
       String sourceUserSubject) {
@@ -212,6 +231,12 @@ public class CognitoApiClientRequestHelper {
     return request;
   }
 
+  /**
+   * Builds a request to list users from AWS Cognito based on a given email filter.
+   *
+   * @param email the email of the user to filter the list of users.
+   * @return a ListUsersRequest configured with the specified email filter.
+   */
   public ListUsersRequest buildListUsersRequest(String email) {
     ListUsersRequest request = new ListUsersRequest();
     request.setUserPoolId(cognitoConfig.getUserPoolId());
@@ -219,6 +244,13 @@ public class CognitoApiClientRequestHelper {
     return request;
   }
 
+  /**
+   * Builds an HTTP entity for a token exchange request in AWS Cognito.
+   *
+   * @param authorizationCode the authorization code received during the OAuth2 authentication
+   *                          flow.
+   * @return a HttpEntity containing the headers and body for the token exchange request.
+   */
   public HttpEntity<MultiValueMap<String, String>> buildTokenExchangeRequest(
       String authorizationCode) {
     HttpHeaders headers = new HttpHeaders();
@@ -232,7 +264,11 @@ public class CognitoApiClientRequestHelper {
   }
 
   /**
-   * test sso.
+   * Builds the OAuth redirect URL based on the specified OAuth2 provider and state.
+   *
+   * @param provider the name of the OAuth2 identity provider to use for login.
+   * @param state    a unique state parameter to include in the URL for CSRF protection.
+   * @return the complete OAuth redirect URL as a String.
    */
   public String buildOauthRedirectUrl(String provider, String state) {
     return UriComponentsBuilder.fromUriString(OAUTH_AUTHORIZE_URL)
@@ -247,7 +283,9 @@ public class CognitoApiClientRequestHelper {
   }
 
   /**
-   * test sso.
+   * Constructs the URL for obtaining an OAuth token using the configured Cognito domain.
+   *
+   * @return the complete token URL as a String
    */
   public String buildTokenUrl() {
     return UriComponentsBuilder.fromUriString(OAUTH_TOKEN_URL)
@@ -256,7 +294,10 @@ public class CognitoApiClientRequestHelper {
   }
 
   /**
-   * test sso.
+   * Generates an authorization header containing basic authentication credentials in the format
+   * "Basic {Base64EncodedCredentials}".
+   *
+   * @return a String representing the authorization header.
    */
   private String generateAuthorizationHeader() {
     String credentials = String.format("%s:%s", cognitoConfig.getClientId(),

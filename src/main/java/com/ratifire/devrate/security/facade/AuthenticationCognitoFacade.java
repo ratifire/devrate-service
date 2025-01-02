@@ -1,7 +1,7 @@
 package com.ratifire.devrate.security.facade;
 
-import static com.ratifire.devrate.security.model.enums.OAuthProvider.GOOGLE;
-import static com.ratifire.devrate.security.model.enums.OAuthProvider.LINKEDIN;
+import static com.ratifire.devrate.security.model.enums.OauthProvider.GOOGLE;
+import static com.ratifire.devrate.security.model.enums.OauthProvider.LINKEDIN;
 
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;

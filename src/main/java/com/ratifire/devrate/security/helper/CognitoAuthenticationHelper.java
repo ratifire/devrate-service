@@ -55,6 +55,11 @@ public class CognitoAuthenticationHelper {
     }
   }
 
+  /**
+   * Generates a random password encoded using BCrypt.
+   *
+   * @return A BCrypt-encoded random password string.
+   */
   public String generateRandomPassword() {
     SecureRandom random = new SecureRandom();
     byte[] randomBytes = new byte[PASSWORD_BYTE_LENGTH];

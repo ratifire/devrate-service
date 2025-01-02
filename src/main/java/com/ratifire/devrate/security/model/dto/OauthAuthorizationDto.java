@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * Data Transfer Object (DTO) for handling OAuth authorization details.
+ */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
