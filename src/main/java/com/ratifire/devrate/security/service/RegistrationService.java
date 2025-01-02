@@ -80,20 +80,31 @@ public class RegistrationService {
       String code = confirmationCodeDto.getConfirmationCode();
       cognitoApiClientService.confirmRegistration(email, code);
       User user = userService.findByEmail(email);
-      Contact contact = Contact
-          .builder()
-          .type(ContactType.EMAIL)
-          .value(email)
-          .build();
-      user.getContacts()
-          .add(contact);
-      sendGreetings(user, email);
+      finalizeUserRegistration(user, email);
       return user.getId();
     } catch (Exception e) {
       log.error("Confirmation registration process was failed for email {}: {}",
           confirmationCodeDto.getEmail(), e.getMessage(), e);
       throw new UserRegistrationException("Confirmation registration process was failed.");
     }
+  }
+
+  /**
+   * Finalizes the registration process for a user by adding an email contact and sending
+   * greetings.
+   *
+   * @param user  The user whose registration is being finalized.
+   * @param email The email address to be added as the user's contact.
+   */
+  public void finalizeUserRegistration(User user, String email) {
+    Contact contact = Contact
+        .builder()
+        .type(ContactType.EMAIL)
+        .value(email)
+        .build();
+    user.getContacts()
+        .add(contact);
+    sendGreetings(user, email);
   }
 
   /**
