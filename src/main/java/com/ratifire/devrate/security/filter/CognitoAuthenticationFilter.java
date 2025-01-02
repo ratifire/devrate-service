@@ -39,8 +39,9 @@ public class CognitoAuthenticationFilter extends OncePerRequestFilter {
   protected boolean shouldNotFilter(HttpServletRequest request) {
     Set<String> excludedPaths = Set.of(
         "/auth/refresh-token",
-        "/auth/{provider}/login",
-        "/auth/callback"
+        "/auth/oauth/redirect/linkedIn",
+        "/auth/oauth/redirect/google",
+        "/auth/oauth/authorize"
     );
     return excludedPaths.contains(request.getServletPath());
   }
