@@ -1,5 +1,6 @@
 package com.ratifire.devrate.security.service;
 
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_DEFAULT_PROVIDER_NAME;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_IS_PRIMARY_RECORD;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_PROVIDER_NAME;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.NONE_VALUE;
@@ -7,6 +8,7 @@ import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.ACCESS_
 import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.ID_TOKEN;
 import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.REFRESH_TOKEN;
 
+import com.amazonaws.services.cognitoidp.model.AWSCognitoIdentityProviderException;
 import com.amazonaws.services.cognitoidp.model.AttributeType;
 import com.amazonaws.services.cognitoidp.model.AuthenticationResultType;
 import com.amazonaws.services.cognitoidp.model.ListUsersResult;
@@ -15,7 +17,7 @@ import com.amazonaws.services.cognitoidp.model.UserType;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.mapper.DataMapper;
-import com.ratifire.devrate.security.exception.AuthenticationException;
+import com.ratifire.devrate.security.exception.OauthException;
 import com.ratifire.devrate.security.helper.CognitoApiClientRequestHelper;
 import com.ratifire.devrate.security.helper.CognitoAuthenticationHelper;
 import com.ratifire.devrate.security.helper.RefreshTokenCookieHelper;
@@ -34,30 +36,51 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
+
 /**
- * test sso.
+ * Service responsible for handling authentication and authorization via OAuth with AWS Cognito.
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Profile("!local")
 public class AuthenticationOauthService {
 
   private final CognitoApiClientService cognitoApiClient;
   private final UserService userService;
+  private final RegistrationService registrationService;
   private final CognitoApiClientRequestHelper apiRequestHelper;
   private final CognitoAuthenticationHelper authHelper;
   private final RefreshTokenCookieHelper cookieHelper;
   private final DataMapper<UserDto, User> userMapper;
 
+  /**
+   * Generates an OAuth redirect URL for the specified OAuth provider.
+   *
+   * @param session       the current HTTP session used to store the OAuth state parameter
+   * @param oauthProvider the name of the OAuth provider
+   * @return the constructed redirect URL for the specified OAuth provider
+   */
   public String generateOauthRedirectUrl(HttpSession session, String oauthProvider) {
     String oauthState = UUID.randomUUID().toString();
     session.setAttribute("oauth2State", oauthState);
     return apiRequestHelper.buildOauthRedirectUrl(oauthProvider, oauthState);
   }
 
+  /**
+   * Handles the OAuth authorization flow by exchanging the authorization code for tokens,
+   * processing the user information, refreshing authentication tokens, and setting the response
+   * with updated tokens.
+   *
+   * @param response the HttpServletResponse to which the tokens will be added
+   * @param request  the OauthAuthorizationDto containing the authorization code and other necessary
+   *                 details for OAuth processing
+   * @return a UserDto object representing the internal user mapped from the processed data
+   */
   public UserDto handleOauthAuthorization(HttpServletResponse response,
       OauthAuthorizationDto request) {
     try {
@@ -68,7 +91,7 @@ public class AuthenticationOauthService {
       String idToken = rawTokens.get(ID_TOKEN.getValue());
       String refreshToken = rawTokens.get(REFRESH_TOKEN.getValue());
 
-      CognitoUserInfo cognitoUserInfo = TokenUtil.getUserInfoFromIdToken(idToken);
+      CognitoUserInfo cognitoUserInfo = TokenUtil.getCognitoUserInfoFromIdToken(idToken);
 
       User internalUser = processInternalUser(response, accessToken, idToken, refreshToken,
           cognitoUserInfo);
@@ -81,11 +104,15 @@ public class AuthenticationOauthService {
       return userMapper.toDto(internalUser);
 
     } catch (HttpClientErrorException e) {
-      log.error("HTTP Error during token exchange: {}", e.getResponseBodyAsString(), e);
-      throw new AuthenticationException("Failed to exchange authorization code for tokens.");
-    } catch (Exception e) {
-      log.error("Error during token exchange or user processing: {}", e.getMessage(), e);
-      throw new AuthenticationException("Authentication process failed.");
+      log.error("HTTP Error during token exchange: {}", e.getMessage(), e);
+      throw new OauthException(
+          "OAuth authentication process failed during the exchange of code for tokens.", e);
+    } catch (AWSCognitoIdentityProviderException e) {
+      log.error("Cognito Error during OAuth authorization process: {}", e.getMessage(), e);
+      throw new OauthException("OAuth authentication process failed. Cognito error: " + e);
+    } catch (RuntimeException e) {
+      log.error("Error during OAuth authorization process: {}", e.getMessage(), e);
+      throw new OauthException("OAuth authentication process failed.", e);
     }
   }
 
@@ -110,12 +137,13 @@ public class AuthenticationOauthService {
         findCognitoPrimaryUserByEmail(userInfo.email());
 
     if (cognitoPrimaryUserOptional.isEmpty()) {
-      throw new AuthenticationException("User not found");
+      throw new OauthException("Primary user not found");
     }
 
     ProviderUserIdentifierType cognitoPrimaryUser = cognitoPrimaryUserOptional.get();
     String cognitoPrimaryUserSubject = cognitoPrimaryUser.getProviderAttributeValue();
-    if (areCognitoUsersLinked(userInfo.linkedRecord(), cognitoPrimaryUserSubject)) {
+    if (areCognitoUsersLinked(userInfo.linkedRecord(), userInfo.isPrimaryRecord(),
+        cognitoPrimaryUserSubject)) {
       setAuthTokensToResponse(response, accessToken, idToken, refreshToken);
       return;
     }
@@ -125,14 +153,15 @@ public class AuthenticationOauthService {
   }
 
   private User createInternalUser(CognitoUserInfo userInfo) {
+    String email = userInfo.email();
     UserDto userDto = UserDto.builder()
         .firstName(userInfo.firstName())
         .lastName(userInfo.lastName())
         .country("Ukraine")
         .subscribed(false)
         .build();
-    User newUser = userService.create(userDto, userInfo.email(),
-        authHelper.generateRandomPassword());
+    User newUser = userService.create(userDto, email, authHelper.generateRandomPassword());
+    registrationService.finalizeUserRegistration(newUser, email);
     cognitoApiClient.updateCognitoUserAttributes(userInfo.subject(), newUser.getId(),
         AccessLevel.getDefaultRole(), true, NONE_VALUE);
     return newUser;
@@ -143,24 +172,26 @@ public class AuthenticationOauthService {
     return response.getUsers().stream()
         .filter(user -> user.getAttributes().stream()
             .anyMatch(attribute ->
-                StringUtils.equals(attribute.getName(), ATTRIBUTE_IS_PRIMARY_RECORD) &&
-                    StringUtils.equals(attribute.getValue(), "true")
+                StringUtils.equals(attribute.getName(), ATTRIBUTE_IS_PRIMARY_RECORD)
+                    && StringUtils.equals(attribute.getValue(), "true")
             ))
         .findFirst()
         .map(this::mapToProviderUserIdentifier);
   }
 
-  private boolean areCognitoUsersLinked(String cognitoUserLinkedRecord,
+  private boolean areCognitoUsersLinked(String cognitoUserLinkedRecord, boolean isPrimaryRecord,
       String cognitoPrimaryUserSubject) {
     if (StringUtils.isEmpty(cognitoUserLinkedRecord)) {
       return false;
     }
 
-    if (StringUtils.equals(cognitoUserLinkedRecord, cognitoPrimaryUserSubject)) {
+    if (StringUtils.equals(cognitoUserLinkedRecord, cognitoPrimaryUserSubject)
+        || isPrimaryRecord) {
       return true;
     }
-    throw new IllegalStateException(String.format(
-        "Pool user linked record (%s) does not match the primary pool user subject (%s)",
+
+    throw new OauthException(String.format(
+        "Cognito pool user linked record (%s) does not match the primary pool user subject (%s)",
         cognitoUserLinkedRecord, cognitoPrimaryUserSubject));
   }
 
@@ -183,7 +214,7 @@ public class AuthenticationOauthService {
             ATTRIBUTE_PROVIDER_NAME))
         .map(AttributeType::getValue)
         .findFirst()
-        .orElse("Cognito");
+        .orElse(ATTRIBUTE_DEFAULT_PROVIDER_NAME);
   }
 
   private void setAuthTokensToResponse(HttpServletResponse response, String accessToken,
