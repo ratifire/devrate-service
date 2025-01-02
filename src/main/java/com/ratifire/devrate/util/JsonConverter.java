@@ -35,6 +35,21 @@ public class JsonConverter {
   }
 
   /**
+   * Deserializes a JSON string into an object of the specified type.
+   *
+   * @param json          the JSON string to deserialize
+   * @param typeReference the type reference defining the target object type
+   * @return the deserialized object
+   */
+  public static <T> T deserialize(String json, TypeReference<T> typeReference) {
+    try {
+      return objectMapper.readValue(json, typeReference);
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException("Failed to deserialize JSON to object", e);
+    }
+  }
+
+  /**
    * Loads a list of strings from a JSON file located at the specified path.
    *
    * @param path the path to the JSON file
