@@ -8,7 +8,7 @@ import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.EventDto;
 import com.ratifire.devrate.dto.InterviewFeedbackDto;
 import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
-import com.ratifire.devrate.dto.InterviewSummaryDto;
+import com.ratifire.devrate.dto.InterviewHistoryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.NotificationDto;
 import com.ratifire.devrate.dto.SpecializationDto;
@@ -257,44 +257,6 @@ public class UserController {
   public void createBookmark(@PathVariable long userId,
       @RequestBody @Valid BookmarkDto bookmarkDto) {
     userService.createBookmark(userId, bookmarkDto);
-  }
-
-  /**
-   * Retrieves a list of user`s interview summaries information by user ID.
-   *
-   * @param userId the ID of the user
-   * @return the list of user's InterviewSummary information as a DTO
-   */
-  @GetMapping("/{userId}/interview-summaries")
-  public List<InterviewSummaryDto> getInterviewSummariesByUserId(@PathVariable long userId) {
-    return userService.getInterviewSummariesByUserId(userId);
-  }
-
-  /**
-   * Retrieves a list of conducted and passed interviews by user ID and date range.
-   *
-   * @param userId the ID of the user
-   * @param from   the start date of the date range (inclusive)
-   * @param to     the end date of the date range (inclusive)
-   * @return the list of conducted and passed interviews as a DTO
-   */
-  @GetMapping("/{userId}/interview-summaries/statistics")
-  public List<InterviewStatsConductedPassedByDateDto> getInterviewsConductedPassed(
-      @PathVariable long userId,
-      @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-      @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-    return userService.getInterviewStatConductedPassedByDate(userId, from, to);
-  }
-
-  /**
-   * Deletes the association between a user and an interview summary.
-   *
-   * @param userId the ID of the user whose association with the interview summary is to be deleted
-   * @param id     the ID of the interview summary to be removed from the user's associations
-   */
-  @DeleteMapping("/{userId}/interview-summaries/{id}")
-  public void deleteInterviewSummary(@PathVariable long userId, @PathVariable long id) {
-    userService.deleteInterviewSummary(userId, id);
   }
 
   /**

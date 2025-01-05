@@ -9,13 +9,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ratifire.devrate.entity.InterviewSummary;
+import com.ratifire.devrate.entity.InterviewHistory;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.InterviewRequestRole;
-import com.ratifire.devrate.exception.InterviewSummaryNotFoundException;
-import com.ratifire.devrate.repository.InterviewSummaryRepository;
+import com.ratifire.devrate.exception.InterviewHistoryNotFoundException;
+import com.ratifire.devrate.repository.InterviewHistoryRepository;
 import com.ratifire.devrate.repository.UserRepository;
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -30,22 +30,22 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class InterviewSummaryServiceTest {
+class InterviewHistoryServiceTest {
 
   private static final long SUMMARY_ID = 1L;
   private static final long REVIEWER_ID = 2L;
   private static final String COMMENT = "A true feedback. You're a super developer. Keep it up!";
 
   @Mock
-  private InterviewSummaryRepository interviewSummaryRepository;
+  private InterviewHistoryRepository interviewHistoryRepository;
 
   @Mock
   private UserRepository userRepository;
 
   @InjectMocks
-  private InterviewSummaryService interviewSummaryService;
+  private InterviewHistoryService interviewHistoryService;
 
-  private InterviewSummary summary;
+  private InterviewHistory summary;
   private ZonedDateTime startTime;
   private Interview interview;
   private InterviewRequest interviewerRequest;
@@ -56,9 +56,9 @@ class InterviewSummaryServiceTest {
 
   @BeforeEach
   void setUp() {
-    interviewSummaryService.setUserRepository(userRepository);
+    interviewHistoryService.setUserRepository(userRepository);
 
-    summary = InterviewSummary.builder()
+    summary = InterviewHistory.builder()
         .candidateId(REVIEWER_ID)
         .build();
 
@@ -89,28 +89,28 @@ class InterviewSummaryServiceTest {
 
   @Test
   void findByIdTest() {
-    when(interviewSummaryRepository.findById(SUMMARY_ID)).thenReturn(Optional.of(summary));
+    when(interviewHistoryRepository.findById(SUMMARY_ID)).thenReturn(Optional.of(summary));
 
-    InterviewSummary result = interviewSummaryService.findById(SUMMARY_ID);
+    InterviewHistory result = interviewHistoryService.findById(SUMMARY_ID);
 
     assertEquals(summary, result);
   }
 
   @Test
   void findByIdThrowsInterviewSummaryNotFoundExceptionTest() {
-    when(interviewSummaryRepository.findById(SUMMARY_ID)).thenReturn(Optional.empty());
+    when(interviewHistoryRepository.findById(SUMMARY_ID)).thenReturn(Optional.empty());
 
-    assertThrows(InterviewSummaryNotFoundException.class,
-        () -> interviewSummaryService.findById(SUMMARY_ID));
+    assertThrows(InterviewHistoryNotFoundException.class,
+        () -> interviewHistoryService.findById(SUMMARY_ID));
   }
 
   @Test
   void saveInterviewSummaryAndParticipantsTest() {
     List<User> participants = List.of(interviewer, candidate);
 
-    interviewSummaryService.save(summary, participants);
+    interviewHistoryService.save(summary, participants);
 
-    verify(interviewSummaryRepository, times(1)).save(summary);
+    verify(interviewHistoryRepository, times(1)).save(summary);
     verify(userRepository, times(1)).saveAll(participants);
   }
 
@@ -118,12 +118,12 @@ class InterviewSummaryServiceTest {
   void createTest() {
     String endTime = startTime.plusMinutes(60).toString();
 
-    interviewSummaryService.create(interview, endTime);
+    interviewHistoryService.create(interview, endTime);
 
     assertAll(
-        () -> verify(interviewSummaryRepository, times(1))
-            .save(any(InterviewSummary.class)),
-        () -> verify(interviewSummaryRepository).save(
+        () -> verify(interviewHistoryRepository, times(1))
+            .save(any(InterviewHistory.class)),
+        () -> verify(interviewHistoryRepository).save(
             argThat(s -> s.getCandidateId() == candidate.getId()
                 && s.getInterviewerId() == interviewer.getId()
                 && s.getDuration() == Duration.between(startTime, ZonedDateTime.parse(endTime))
@@ -132,9 +132,9 @@ class InterviewSummaryServiceTest {
 
   @Test
   void addCommentReviewerTest() {
-    when(interviewSummaryRepository.findById(SUMMARY_ID)).thenReturn(Optional.of(summary));
+    when(interviewHistoryRepository.findById(SUMMARY_ID)).thenReturn(Optional.of(summary));
 
-    InterviewRequestRole role = interviewSummaryService
+    InterviewRequestRole role = interviewHistoryService
         .addComment(SUMMARY_ID, REVIEWER_ID, COMMENT);
 
     assertAll(

@@ -8,7 +8,7 @@ import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.EventDto;
 import com.ratifire.devrate.dto.InterviewFeedbackDto;
 import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
-import com.ratifire.devrate.dto.InterviewSummaryDto;
+import com.ratifire.devrate.dto.InterviewHistoryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.NotificationDto;
 import com.ratifire.devrate.dto.SkillFeedbackDto;
@@ -24,7 +24,7 @@ import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.Event;
-import com.ratifire.devrate.entity.InterviewSummary;
+import com.ratifire.devrate.entity.InterviewHistory;
 import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.Notification;
 import com.ratifire.devrate.entity.Skill;
@@ -34,17 +34,17 @@ import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewFeedbackDetail;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.InterviewRequestRole;
-import com.ratifire.devrate.exception.InterviewSummaryNotFoundException;
+import com.ratifire.devrate.exception.InterviewHistoryNotFoundException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.exception.UserSearchInvalidInputException;
 import com.ratifire.devrate.mapper.DataMapper;
-import com.ratifire.devrate.repository.InterviewSummaryRepository;
+import com.ratifire.devrate.repository.InterviewHistoryRepository;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
 import com.ratifire.devrate.service.interview.InterviewFeedbackDetailService;
 import com.ratifire.devrate.service.interview.InterviewService;
-import com.ratifire.devrate.service.interview.InterviewSummaryService;
+import com.ratifire.devrate.service.interview.InterviewHistoryService;
 import com.ratifire.devrate.util.DateTimeUtils;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -77,12 +77,12 @@ public class UserService {
 
   private UserRepository userRepository;
   private final SpecializationRepository specializationRepository;
-  private final InterviewSummaryRepository interviewSummaryRepository;
+  private final InterviewHistoryRepository interviewHistoryRepository;
   private final SpecializationService specializationService;
   private final MasteryService masteryService;
   private final SkillService skillService;
   private final InterviewService interviewService;
-  private final InterviewSummaryService interviewSummaryService;
+  private final InterviewHistoryService interviewHistoryService;
   private final InterviewFeedbackDetailService interviewFeedbackDetailService;
   private final EmailService emailService;
   private final NotificationService notificationService;
@@ -93,7 +93,7 @@ public class UserService {
   private final DataMapper<EmploymentRecordDto, EmploymentRecord> employmentRecordMapper;
   private final DataMapper<LanguageProficiencyDto, LanguageProficiency> languageProficiencyMapper;
   private final DataMapper<BookmarkDto, Bookmark> bookmarkMapper;
-  private final DataMapper<InterviewSummaryDto, InterviewSummary> interviewSummaryMapper;
+  private final DataMapper<InterviewHistoryDto, InterviewHistory> interviewSummaryMapper;
   private final DataMapper<SpecializationDto, Specialization> specializationDataMapper;
   private final DataMapper<UserMainMasterySkillDto, Specialization> userMainMasterySkillMapper;
   private final DataMapper<EventDto, Event> eventMapper;
@@ -226,8 +226,8 @@ public class UserService {
   public void recalculateInterviewCounts(List<User> users) {
     users.forEach(user -> {
       long userId = user.getId();
-      user.setConductedInterviews(interviewSummaryRepository.countByInterviewerId(userId));
-      user.setCompletedInterviews(interviewSummaryRepository.countByCandidateId(userId));
+      user.setConductedInterviews(interviewHistoryRepository.countByInterviewerId(userId));
+      user.setCompletedInterviews(interviewHistoryRepository.countByCandidateId(userId));
       updateByEntity(user);
     });
   }
@@ -458,7 +458,7 @@ public class UserService {
    * @param userId the ID of the user to associate the interview summaries with
    * @return A list of InterviewSummaryDto objects.
    */
-  public List<InterviewSummaryDto> getInterviewSummariesByUserId(long userId) {
+  public List<InterviewHistoryDto> getInterviewSummariesByUserId(long userId) {
     User user = findById(userId);
     return interviewSummaryMapper.toDto(user.getInterviewSummaries());
   }
@@ -475,12 +475,12 @@ public class UserService {
    */
   public List<InterviewStatsConductedPassedByDateDto> getInterviewStatConductedPassedByDate(
       long userId, LocalDate from, LocalDate to) {
-    List<InterviewSummary> interviewSummaries = interviewSummaryRepository
+    List<InterviewHistory> interviewSummaries = interviewHistoryRepository
         .findByCandidateOrInterviewerAndDateBetween(userId, from, to);
 
     Map<LocalDate, InterviewStatsConductedPassedByDateDto> interviewStats = new HashMap<>();
 
-    for (InterviewSummary summary : interviewSummaries) {
+    for (InterviewHistory summary : interviewSummaries) {
       LocalDate date = summary.getDate();
       interviewStats.putIfAbsent(date, new InterviewStatsConductedPassedByDateDto(date, 0, 0));
 
@@ -506,9 +506,9 @@ public class UserService {
    */
   public void deleteInterviewSummary(long userId, long id) {
     User user = findById(userId);
-    InterviewSummary interviewSummary = interviewSummaryRepository.findById(id)
-        .orElseThrow(() -> new InterviewSummaryNotFoundException(id));
-    user.getInterviewSummaries().remove(interviewSummary);
+    InterviewHistory interviewHistory = interviewHistoryRepository.findById(id)
+        .orElseThrow(() -> new InterviewHistoryNotFoundException(id));
+    user.getInterviewSummaries().remove(interviewHistory);
     userRepository.save(user);
   }
 
@@ -704,7 +704,7 @@ public class UserService {
       throw new ResourceNotFoundException("Input invalid skills");
     }
 
-    InterviewRequestRole reviewerRole = interviewSummaryService.addComment(
+    InterviewRequestRole reviewerRole = interviewHistoryService.addComment(
         feedbackDetail.getInterviewSummaryId(), reviewerId, interviewFeedbackDto.getComment());
 
     skillService.updateMarks(interviewFeedbackDto.getSkills());

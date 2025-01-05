@@ -7,13 +7,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Data Transfer Object representing the interview summary.
+ * Data Transfer Object representing the InterviewHistory.
  */
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InterviewSummaryDto {
+public class InterviewHistoryDto {
 
   private long id;
   private LocalDate date;

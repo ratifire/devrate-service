@@ -13,15 +13,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Entity class representing an interview summary in the system.
+ * Entity class representing an InterviewHistory in the system.
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "interview_summaries")
-public class InterviewSummary {
+@Table(name = "interview_historyies")
+public class InterviewHistory {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

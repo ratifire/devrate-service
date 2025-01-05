@@ -31,7 +31,7 @@ public class InterviewCompletionService {
 
   private final InterviewService interviewService;
   private final InterviewRequestService interviewRequestService;
-  private final InterviewSummaryService interviewSummaryService;
+  private final InterviewHistoryService interviewHistoryService;
   private final InterviewFeedbackDetailService interviewFeedbackDetailService;
   private final SpecializationService specializationService;
   private final UserService userService;
@@ -56,8 +56,8 @@ public class InterviewCompletionService {
     log.info("Zoom webhook triggered meeting.ended - {}", meeting);
     Interview interview = interviewService.getByMeetingId(Long.parseLong(meetingId));
 
-    long interviewSummaryId = interviewSummaryService.create(interview,
-        meeting.getEndTime());
+//    long interviewSummaryId = interviewHistoryService.create(interview,
+//        meeting.getEndTime());
 
     specializationService.updateUserInterviewCounts(interview);
 

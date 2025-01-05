@@ -1,6 +1,6 @@
 package com.ratifire.devrate.repository;
 
-import com.ratifire.devrate.entity.InterviewSummary;
+import com.ratifire.devrate.entity.InterviewHistory;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,12 +14,12 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 @RepositoryRestResource(exported = false)
-public interface InterviewSummaryRepository extends JpaRepository<InterviewSummary, Long> {
+public interface InterviewHistoryRepository extends JpaRepository<InterviewHistory, Long> {
 
-  @Query("SELECT i FROM InterviewSummary i "
+  @Query("SELECT i FROM InterviewHistory i "
       + "WHERE (i.candidateId = :id OR i.interviewerId = :id) "
       + "AND i.date BETWEEN :from AND :to")
-  List<InterviewSummary> findByCandidateOrInterviewerAndDateBetween(
+  List<InterviewHistory> findByCandidateOrInterviewerAndDateBetween(
       @Param("id") long id,
       @Param("from") LocalDate from,
       @Param("to") LocalDate to);
