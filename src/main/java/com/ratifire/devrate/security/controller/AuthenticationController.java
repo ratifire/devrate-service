@@ -44,18 +44,38 @@ public class AuthenticationController {
     return authenticationFacade.login(loginDto, response);
   }
 
+  /**
+   * Redirects the user to LinkedIn for OAuth authentication.
+   *
+   * @param response the HttpServletResponse object required to send the redirect
+   * @param session  the HttpSession object to store user-related session data
+   */
   @GetMapping("/oauth/redirect/linkedIn")
   public void redirectToLinkedIn(HttpServletResponse response, HttpSession session)
       throws IOException {
     authenticationFacade.redirectToLinkedIn(response, session);
   }
 
+  /**
+   * Redirects the user to Google's OAuth authorization page.
+   *
+   * @param response The HttpServletResponse used to redirect the user.
+   * @param session  The HttpSession containing the user's session data.
+   */
   @GetMapping("/oauth/redirect/google")
   public void redirectToGoogle(HttpServletResponse response, HttpSession session)
       throws IOException {
     authenticationFacade.redirectToGoogle(response, session);
   }
 
+  /**
+   * Handles the OAuth authorization request, processing the provided authorization details and
+   * returning the resulting user details and tokens.
+   *
+   * @param response the HttpServletResponse object to send HTTP responses
+   * @param request  the OAuth authorization request
+   * @return the UserDto object containing details of the authenticated user
+   */
   @PostMapping("/oauth/authorize")
   public UserDto handleOauthAuthorization(HttpServletResponse response,
       @Valid @RequestBody OauthAuthorizationDto request) {
