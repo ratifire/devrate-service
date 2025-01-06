@@ -18,7 +18,7 @@ public class InterviewRequestSender {
 
   private final SqsTemplate sqsTemplate;
 
-  @Value("${matching-service.sqs-endpoint}")
+  @Value("${matching-service.send-sqs-endpoint}")
   private String endpoint;
 
   /**
@@ -28,10 +28,11 @@ public class InterviewRequestSender {
    *                                       to be sent as a message.
    * @throws IllegalArgumentException if the DTO cannot be serialized into JSON format.
    */
-  public void send(ParticipantRequestDto participantRequestDto) {
+  public void send(String messageType, ParticipantRequestDto participantRequestDto) {
     String payload = JsonConverter.serialize(participantRequestDto);
 
     Message<String> message = MessageBuilder.withPayload(payload)
+        .setHeader("messageType", messageType)
         .setHeader("contentType", "application/json")
         .build();
 

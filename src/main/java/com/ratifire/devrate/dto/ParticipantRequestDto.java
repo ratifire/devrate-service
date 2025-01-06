@@ -16,8 +16,8 @@ import lombok.Setter;
 @Builder
 public class ParticipantRequestDto {
 
+  private int id;
   private long participantId;
-  private long coreRequestId;
   private int desiredInterview;
   @JsonProperty("type")
   private InterviewRequestRole role;
