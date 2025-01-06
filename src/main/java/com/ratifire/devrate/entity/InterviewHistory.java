@@ -1,16 +1,13 @@
 package com.ratifire.devrate.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import java.time.LocalDate;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.util.Map;
 
 /**
  * Entity class representing an InterviewHistory in the system.
@@ -33,15 +30,30 @@ public class InterviewHistory {
   @Column(nullable = false)
   private long duration;
 
-  @Column(name = "candidate_id", nullable = false)
-  private long candidateId;
+  @Column(name = "user_id", nullable = false)
+  private long userId;
 
-  @Column(name = "interviewer_id", nullable = false)
-  private long interviewerId;
+  @ElementCollection
+  @CollectionTable(name = "soft_skills", joinColumns = @JoinColumn(name = "interview_history_id"))
+  @MapKeyColumn(name = "skill_name")
+  @Column(name = "skill_value")
+  private Map<String, String> softSkills;
 
-  @Column(name = "candidate_comment", length = 500)
-  private String candidateComment;
+  @ElementCollection
+  @CollectionTable(name = "hard_skills", joinColumns = @JoinColumn(name = "interview_history_id"))
+  @MapKeyColumn(name = "skill_name")
+  @Column(name = "skill_value")
+  private Map<String, String> hardSkills;
 
-  @Column(name = "interviewer_comment", length = 500)
-  private String interviewerComment;
+  @Column(name = "title", nullable = false, length = 255)
+  private String title;
+
+  @Column(nullable = false, length = 100)
+  private String role;
+
+  @Column(name = "attendee_id", nullable = false)
+  private int attendeeId;
+
+  @Column(length = 1000)
+  private String feedback;
 }

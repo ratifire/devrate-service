@@ -27,4 +27,6 @@ public interface InterviewHistoryRepository extends JpaRepository<InterviewHisto
   int countByCandidateId(long userId);
 
   int countByInterviewerId(long userId);
+
+  List<InterviewHistory> getAllByUserId(long userId);
 }

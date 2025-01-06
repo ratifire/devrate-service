@@ -53,8 +53,8 @@ public class InterviewHistoryController {
    * @return the list of user's InterviewSummary information as a DTO
    */
   @GetMapping()
-  public InterviewHistory getInterviewHistoryies() {
-    return interviewHistoryService.findById();
+  public List<InterviewHistory> getInterviewHistoryies() {
+    return interviewHistoryService.getAllByUserId();
   }
 
   /**
@@ -70,7 +70,7 @@ public class InterviewHistoryController {
   /**
    * Deletes the association between a user and an interview summary.
    *
-   * @param id     the ID of the interview summary to be removed from the user's associations
+   * @param id the ID of the interview summary to be removed from the user's associations
    */
   @DeleteMapping("/{id}")
   public void deleteInterviewSummary(@PathVariable long id) {
