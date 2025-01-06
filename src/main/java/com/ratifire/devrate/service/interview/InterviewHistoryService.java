@@ -8,6 +8,7 @@ import com.ratifire.devrate.exception.InterviewHistoryNotFoundException;
 import com.ratifire.devrate.exception.RoleNotFoundException;
 import com.ratifire.devrate.repository.InterviewHistoryRepository;
 import com.ratifire.devrate.repository.UserRepository;
+import com.ratifire.devrate.service.UserService;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -24,7 +25,6 @@ public class InterviewHistoryService {
 
   private final InterviewHistoryRepository interviewHistoryRepository;
 
-
   /**
    * Retrieves an InterviewSummary entity by its identifier.
    *
@@ -33,6 +33,7 @@ public class InterviewHistoryService {
    * @throws InterviewHistoryNotFoundException if no InterviewSummary is found for the given id.
    */
   public InterviewHistory findById(long id) {
+
     return interviewHistoryRepository.findById(id).orElseThrow(() ->
         new InterviewHistoryNotFoundException(id));
   }

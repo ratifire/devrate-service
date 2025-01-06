@@ -42,7 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/interview_history")
+@RequestMapping("/interview_histories")
 public class InterviewHistoryController {
 
   private final InterviewHistoryService interviewHistoryService;
@@ -50,23 +50,31 @@ public class InterviewHistoryController {
   /**
    * Retrieves a list of user`s interview summaries information by user ID.
    *
-   * @param userId the ID of the user
    * @return the list of user's InterviewSummary information as a DTO
    */
-  @GetMapping("/{userId}/interview_history")
-  public InterviewHistory getInterviewHistoryiesByUserId(@PathVariable long userId) {
-    return interviewHistoryService.findById(userId);
+  @GetMapping()
+  public InterviewHistory getInterviewHistoryies() {
+    return interviewHistoryService.findById();
+  }
+
+  /**
+   * Retrieves a interview history information by ID.
+   *
+   * @return the Interview history information as a DTO
+   */
+  @GetMapping("/{id}")
+  public InterviewHistory getInterviewHistory() {
+    return interviewHistoryService.findById();
   }
 
   /**
    * Deletes the association between a user and an interview summary.
    *
-   * @param userId the ID of the user whose association with the interview summary is to be deleted
    * @param id     the ID of the interview summary to be removed from the user's associations
    */
-  @DeleteMapping("/{userId}/interview-histories/{id}")
-  public void deleteInterviewSummary(@PathVariable long userId, @PathVariable long id) {
-    interviewHistoryService.deleted(userId, id);
+  @DeleteMapping("/{id}")
+  public void deleteInterviewSummary(@PathVariable long id) {
+    interviewHistoryService.deleted(id);
   }
 
 }

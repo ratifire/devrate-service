@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "interview_historyies")
+@Table(name = "interview_histories")
 public class InterviewHistory {
 
   @Id
