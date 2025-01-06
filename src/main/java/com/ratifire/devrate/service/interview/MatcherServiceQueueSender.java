@@ -2,13 +2,14 @@ package com.ratifire.devrate.service.interview;
 
 import com.ratifire.devrate.dto.ParticipantRequestDto;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
+import com.ratifire.devrate.enums.SqsMessageType;
 import com.ratifire.devrate.mapper.impl.ParticipantRequestMapper;
 import com.ratifire.devrate.sender.InterviewRequestSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
- * Component responsible for sending interview requests to the matcher-service via a queue.
+ * Handles sending interview requests to the matcher-service queue.
  */
 @Component
 @RequiredArgsConstructor
@@ -18,12 +19,22 @@ public class MatcherServiceQueueSender {
   private final ParticipantRequestMapper mapper;
 
   /**
-   * Sends an {@link InterviewRequest} to the matching queue.
+   * Sends a create message to the queue.
    *
-   * @param request the interview request to process and send.
+   * @param request the interview request
    */
-  public void sendToQueue(InterviewRequest request) {
+  public void create(InterviewRequest request) {
     ParticipantRequestDto dto = mapper.toDto(request);
-    interviewRequestSender.send(dto);
+    interviewRequestSender.send(SqsMessageType.CREATE.name(), dto);
+  }
+
+  /**
+   * Sends an update message to the queue.
+   *
+   * @param request the interview request
+   */
+  public void update(InterviewRequest request) {
+    ParticipantRequestDto dto = mapper.toDto(request);
+    interviewRequestSender.send(SqsMessageType.UPDATE.name(), dto);
   }
 }

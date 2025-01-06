@@ -220,11 +220,11 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
         filterChain.doFilter(request, response);
         return;
       }
-      setUpAuthenticationContext(new String(Base64.getDecoder().decode(userId)));
+      setUpAuthenticationContext(Long.parseLong(new String(Base64.getDecoder().decode(userId))));
       filterChain.doFilter(request, response);
     }
 
-    private void setUpAuthenticationContext(String userId) {
+    private void setUpAuthenticationContext(Long userId) {
       UsernamePasswordAuthenticationToken authentication =
               new UsernamePasswordAuthenticationToken(userId, null, List.of());
       SecurityContextHolder.getContext().setAuthentication(authentication);
