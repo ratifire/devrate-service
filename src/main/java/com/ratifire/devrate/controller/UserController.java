@@ -7,8 +7,6 @@ import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.EventDto;
 import com.ratifire.devrate.dto.InterviewFeedbackDto;
-import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
-import com.ratifire.devrate.dto.InterviewHistoryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.NotificationDto;
 import com.ratifire.devrate.dto.SpecializationDto;
@@ -156,7 +154,7 @@ public class UserController {
    *
    * @param userId the ID of the user whose picture is to be retrieved
    * @return a ResponseEntity containing a UserPictureDto with the user's picture as a
-   *         base64-encoded string if present; otherwise, returns no content status
+   *         base64-encoded string if present otherwise, returns no content status
    */
   @GetMapping("/{userId}/pictures")
   public ResponseEntity<UserPictureDto> getUserPicture(@PathVariable long userId) {

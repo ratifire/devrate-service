@@ -58,13 +58,13 @@ public class InterviewHistoryController {
   }
 
   /**
-   * Retrieves a interview history information by ID.
+   * Retrieves an interview history information by ID.
    *
    * @return the Interview history information as a DTO
    */
   @GetMapping("/{id}")
-  public InterviewHistory getInterviewHistory() {
-    return interviewHistoryService.findById();
+  public InterviewHistory getInterviewHistory(@PathVariable long id) {
+    return interviewHistoryService.findById(id);
   }
 
   /**
@@ -74,7 +74,7 @@ public class InterviewHistoryController {
    */
   @DeleteMapping("/{id}")
   public void deleteInterviewSummary(@PathVariable long id) {
-    interviewHistoryService.deleted(id);
+    interviewHistoryService.delete(id);
   }
 
 }

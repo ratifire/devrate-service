@@ -7,8 +7,8 @@ import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.EventDto;
 import com.ratifire.devrate.dto.InterviewFeedbackDto;
-import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewHistoryDto;
+import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.NotificationDto;
 import com.ratifire.devrate.dto.SkillFeedbackDto;
@@ -33,8 +33,6 @@ import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewFeedbackDetail;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
-import com.ratifire.devrate.enums.InterviewRequestRole;
-import com.ratifire.devrate.exception.InterviewHistoryNotFoundException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.exception.UserSearchInvalidInputException;
@@ -43,8 +41,8 @@ import com.ratifire.devrate.repository.InterviewHistoryRepository;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
 import com.ratifire.devrate.service.interview.InterviewFeedbackDetailService;
-import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.service.interview.InterviewHistoryService;
+import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.util.DateTimeUtils;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -93,7 +91,7 @@ public class UserService {
   private final DataMapper<EmploymentRecordDto, EmploymentRecord> employmentRecordMapper;
   private final DataMapper<LanguageProficiencyDto, LanguageProficiency> languageProficiencyMapper;
   private final DataMapper<BookmarkDto, Bookmark> bookmarkMapper;
-  private final DataMapper<InterviewHistoryDto, InterviewHistory> interviewSummaryMapper;
+  private final DataMapper<InterviewHistoryDto, InterviewHistory> interviewHistoryDataMapper;
   private final DataMapper<SpecializationDto, Specialization> specializationDataMapper;
   private final DataMapper<UserMainMasterySkillDto, Specialization> userMainMasterySkillMapper;
   private final DataMapper<EventDto, Event> eventMapper;
@@ -226,8 +224,7 @@ public class UserService {
   public void recalculateInterviewCounts(List<User> users) {
     users.forEach(user -> {
       long userId = user.getId();
-      user.setConductedInterviews(interviewHistoryRepository.countByInterviewerId(userId));
-      user.setCompletedInterviews(interviewHistoryRepository.countByCandidateId(userId));
+
       updateByEntity(user);
     });
   }
@@ -460,7 +457,7 @@ public class UserService {
    */
   public List<InterviewHistoryDto> getInterviewSummariesByUserId(long userId) {
     User user = findById(userId);
-    return interviewSummaryMapper.toDto(user.getInterviewSummaries());
+    return interviewHistoryDataMapper.toDto(user.getInterviewHistories());
   }
 
   /**
@@ -475,41 +472,13 @@ public class UserService {
    */
   public List<InterviewStatsConductedPassedByDateDto> getInterviewStatConductedPassedByDate(
       long userId, LocalDate from, LocalDate to) {
-    List<InterviewHistory> interviewSummaries = interviewHistoryRepository
-        .findByCandidateOrInterviewerAndDateBetween(userId, from, to);
 
     Map<LocalDate, InterviewStatsConductedPassedByDateDto> interviewStats = new HashMap<>();
 
-    for (InterviewHistory summary : interviewSummaries) {
-      LocalDate date = summary.getDate();
-      interviewStats.putIfAbsent(date, new InterviewStatsConductedPassedByDateDto(date, 0, 0));
-
-      if (summary.getCandidateId() == userId) {
-        interviewStats.get(date).setPassed(interviewStats.get(date).getPassed() + 1);
-      }
-
-      if (summary.getInterviewerId() == userId) {
-        interviewStats.get(date).setConducted(interviewStats.get(date).getConducted() + 1);
-      }
-    }
 
     return interviewStats.values().stream()
         .sorted(Comparator.comparing(InterviewStatsConductedPassedByDateDto::getDate))
         .toList();
-  }
-
-  /**
-   * Deletes the association between a user and an interview summary.
-   *
-   * @param userId the ID of the user whose association with the interview summary is to be deleted
-   * @param id     the ID of the interview summary to be removed from the user's associations
-   */
-  public void deleteInterviewSummary(long userId, long id) {
-    User user = findById(userId);
-    InterviewHistory interviewHistory = interviewHistoryRepository.findById(id)
-        .orElseThrow(() -> new InterviewHistoryNotFoundException(id));
-    user.getInterviewSummaries().remove(interviewHistory);
-    userRepository.save(user);
   }
 
   /**
@@ -704,13 +673,7 @@ public class UserService {
       throw new ResourceNotFoundException("Input invalid skills");
     }
 
-    InterviewRequestRole reviewerRole = interviewHistoryService.addComment(
-        feedbackDetail.getInterviewSummaryId(), reviewerId, interviewFeedbackDto.getComment());
-
     skillService.updateMarks(interviewFeedbackDto.getSkills());
-
-    masteryService.updateAverageMarks(
-        feedbackDetail.getEvaluatedMasteryId(), reviewerRole);
 
     interviewFeedbackDetailService.delete(feedbackDetail.getId());
   }

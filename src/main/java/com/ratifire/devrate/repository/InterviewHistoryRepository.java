@@ -16,17 +16,5 @@ import org.springframework.stereotype.Repository;
 @RepositoryRestResource(exported = false)
 public interface InterviewHistoryRepository extends JpaRepository<InterviewHistory, Long> {
 
-  @Query("SELECT i FROM InterviewHistory i "
-      + "WHERE (i.candidateId = :id OR i.interviewerId = :id) "
-      + "AND i.date BETWEEN :from AND :to")
-  List<InterviewHistory> findByCandidateOrInterviewerAndDateBetween(
-      @Param("id") long id,
-      @Param("from") LocalDate from,
-      @Param("to") LocalDate to);
-
-  int countByCandidateId(long userId);
-
-  int countByInterviewerId(long userId);
-
   List<InterviewHistory> getAllByUserId(long userId);
 }

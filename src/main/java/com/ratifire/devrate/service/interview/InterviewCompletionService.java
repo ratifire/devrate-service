@@ -56,8 +56,7 @@ public class InterviewCompletionService {
     log.info("Zoom webhook triggered meeting.ended - {}", meeting);
     Interview interview = interviewService.getByMeetingId(Long.parseLong(meetingId));
 
-//    long interviewSummaryId = interviewHistoryService.create(interview,
-//        meeting.getEndTime());
+
 
     specializationService.updateUserInterviewCounts(interview);
 
@@ -65,15 +64,6 @@ public class InterviewCompletionService {
     User candidate = interview.getCandidateRequest().getUser();
     userService.recalculateInterviewCounts(List.of(interviewer, candidate));
 
-    Map<InterviewRequestRole, Long> feedbackDetailIdByRole =
-        interviewFeedbackDetailService.save(interview, interviewSummaryId);
-
-    Long candidateFeedbackDetailId = feedbackDetailIdByRole.get(InterviewRequestRole.CANDIDATE);
-    notificationService.addInterviewFeedbackDetail(candidate, candidateFeedbackDetailId,
-        candidate.getEmail());
-    Long interviewerFeedbackDetailId = feedbackDetailIdByRole.get(InterviewRequestRole.INTERVIEWER);
-    notificationService.addInterviewFeedbackDetail(interviewer, interviewerFeedbackDetailId,
-        interviewer.getEmail());
 
     zoomApiService.deleteMeeting(Long.parseLong(meetingId));
 

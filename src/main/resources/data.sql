@@ -627,55 +627,57 @@ WHERE NOT EXISTS (
 );
 
 -- Insert interview summaries for 10 days
-INSERT INTO interview_summaries (id, date, duration, candidate_id, interviewer_id)
-SELECT id, date::DATE, duration, candidate_id, interviewer_id
+INSERT INTO interview_histories (id, date, duration, user_id, title, role, attendee_id, feedback)
+SELECT id, date::DATE, duration, user_id, title, role, attendee_id, feedback
 FROM (
 VALUES
-    (1000, '2024-07-21', 60, 8881, 8882),
-    (2000, '2024-07-21', 45, 8882, 8881),
-    (5000, '2024-07-23', 75, 8881, 8882),
-    (6000, '2024-07-24', 60, 8882, 8881),
-    (7000, '2024-07-25', 45, 8881, 8882),
-    (8000, '2024-07-26', 30, 8882, 8881),
-    (9000, '2024-07-26', 90, 8881, 8882),
-    (10000, '2024-07-27', 75, 8882, 8881),
-    (11000, '2024-07-27', 45, 8881, 8882),
-    (12000, '2024-07-27', 30, 8882, 8881),
-    (13000, '2024-07-28', 90, 8881, 8882),
-    (14000, '2024-07-28', 75, 8882, 8881)
-) AS new_interview_summaries (id, date, duration, candidate_id, interviewer_id)
+    (1000, '2024-07-21', 60, 8881, 'Interview with candidate 1', 'Developer', 8882, 'Great interview'),
+    (2000, '2024-07-21', 45, 8882, 'Interview with candidate 2', 'Developer', 8881, 'Good communication skills'),
+    (5000, '2024-07-23', 75, 8881, 'Interview with candidate 3', 'Tester', 8882, 'Needs improvement'),
+    (6000, '2024-07-24', 60, 8882, 'Interview with candidate 4', 'Developer', 8881, 'Strong technical knowledge'),
+    (7000, '2024-07-25', 45, 8881, 'Interview with candidate 5', 'Developer', 8882, 'Good experience'),
+    (8000, '2024-07-26', 30, 8882, 'Interview with candidate 6', 'Manager', 8881, 'Lacked leadership skills'),
+    (9000, '2024-07-26', 90, 8881, 'Interview with candidate 7', 'Developer', 8882, 'Excellent problem-solving skills'),
+    (10000, '2024-07-27', 75, 8882, 'Interview with candidate 8', 'Tester', 8881, 'Attention to detail'),
+    (11000, '2024-07-27', 45, 8881, 'Interview with candidate 9', 'Manager', 8882, 'Strong decision making'),
+    (12000, '2024-07-27', 30, 8882, 'Interview with candidate 10', 'Developer', 8881, 'Good technical understanding'),
+    (13000, '2024-07-28', 90, 8881, 'Interview with candidate 11', 'Developer', 8882, 'Excellent performance'),
+    (14000, '2024-07-28', 75, 8882, 'Interview with candidate 12', 'Tester', 8881, 'Experience could be improved')
+) AS new_interview_histories (id, date, duration, user_id, title, role, attendee_id, feedback)
 WHERE NOT EXISTS (
     SELECT 1
-    FROM interview_summaries
-    WHERE id = new_interview_summaries.id
+    FROM interview_histories
+    WHERE id = new_interview_histories.id
 );
+
 
 -- Insert interview summaries for each month of the year
-INSERT INTO interview_summaries (id, date, duration, candidate_id, interviewer_id)
-SELECT id, date::DATE, duration, candidate_id, interviewer_id
+INSERT INTO interview_histories (id, date, duration, user_id, title, role, attendee_id, feedback)
+SELECT id, date::DATE, duration, user_id, title, role, attendee_id, feedback
 FROM (
 VALUES
-    (15000, '2023-11-01', 60, 8881, 8882),
-    (16000, '2023-12-01', 45, 8882, 8881),
-    (17000, '2023-12-01', 30, 8881, 8882),
-    (18000, '2023-12-01', 90, 8882, 8881),
-    (19000, '2024-01-01', 75, 8881, 8882),
-    (20000, '2024-02-01', 60, 8882, 8881),
-    (21000, '2024-03-01', 45, 8881, 8882),
-    (22000, '2024-04-01', 30, 8882, 8881),
-    (23000, '2024-05-01', 90, 8881, 8882),
-    (24000, '2024-06-01', 75, 8882, 8881),
-    (25000, '2024-07-01', 60, 8881, 8882),
-    (26000, '2024-08-01', 45, 8882, 8881)
-) AS new_interview_summaries (id, date, duration, candidate_id, interviewer_id)
+    (15000, '2023-11-01', 60, 8881, 'Interview with candidate 13', 'Developer', 8882, 'Great potential'),
+    (16000, '2023-12-01', 45, 8882, 'Interview with candidate 14', 'Developer', 8881, 'Needs technical training'),
+    (17000, '2023-12-01', 30, 8881, 'Interview with candidate 15', 'Developer', 8882, 'Not enough experience'),
+    (18000, '2023-12-01', 90, 8882, 'Interview with candidate 16', 'Manager', 8881, 'Great leadership qualities'),
+    (19000, '2024-01-01', 75, 8881, 'Interview with candidate 17', 'Developer', 8882, 'Technically strong'),
+    (20000, '2024-02-01', 60, 8882, 'Interview with candidate 18', 'Developer', 8881, 'Solid skills'),
+    (21000, '2024-03-01', 45, 8881, 'Interview with candidate 19', 'Tester', 8882, 'Attention to detail'),
+    (22000, '2024-04-01', 30, 8882, 'Interview with candidate 20', 'Manager', 8881, 'Lacks team coordination'),
+    (23000, '2024-05-01', 90, 8881, 'Interview with candidate 21', 'Developer', 8882, 'Excellent coding skills'),
+    (24000, '2024-06-01', 75, 8882, 'Interview with candidate 22', 'Tester', 8881, 'Could improve in testing'),
+    (25000, '2024-07-01', 60, 8881, 'Interview with candidate 23', 'Developer', 8882, 'Good problem-solving'),
+    (26000, '2024-08-01', 45, 8882, 'Interview with candidate 24', 'Developer', 8881, 'Requires further training')
+) AS new_interview_histories (id, date, duration, user_id, title, role, attendee_id, feedback)
 WHERE NOT EXISTS (
     SELECT 1
-    FROM interview_summaries
-    WHERE id = new_interview_summaries.id
+    FROM interview_histories
+    WHERE id = new_interview_histories.id
 );
 
+
 -- Associate interview summaries with user
-INSERT INTO interview_summaries_users (user_id, interview_summary_id)
+INSERT INTO interview_histories_users (user_id, interview_history_id)
 SELECT * FROM (
 VALUES
     (8881, 1000), (8881, 2000), (8881, 5000), (8881, 6000), (8881, 7000),
@@ -683,13 +685,14 @@ VALUES
     (8881, 13000), (8881, 14000), (8881, 15000), (8881, 16000), (8881, 17000),
     (8881, 18000), (8881, 19000), (8881, 20000), (8881, 21000), (8881, 22000),
     (8881, 23000), (8881, 24000), (8881, 25000), (8881, 26000)
-) AS new_interview_summaries_users (user_id, interview_summary_id)
+) AS new_interview_histories_users (user_id, interview_history_id)
 WHERE NOT EXISTS (
     SELECT 1
-    FROM interview_summaries_users
-    WHERE user_id = new_interview_summaries_users.user_id
-      AND interview_summary_id = new_interview_summaries_users.interview_summary_id
+    FROM interview_histories_users
+    WHERE user_id = new_interview_histories_users.user_id
+      AND interview_history_id = new_interview_histories_users.interview_history_id
 );
+
 
 --  Create event records
 INSERT INTO events (id, event_type_id, type, room_link, host_id, participant_id, start_time)
@@ -841,36 +844,37 @@ WHERE NOT EXISTS (
     );
 
 -- Create test data for interview_feedback_details
-INSERT INTO interview_feedback_details (id, participant_role, start_time, interview_summary_id, evaluated_mastery_id, skill_id, participant_id, owner_id)
-SELECT * FROM (
-VALUES
-    (40001, 'INTERVIEWER', '2024-09-08T09:00:00Z'::timestamptz, 3001, 10001, ARRAY[100001, 100002, 100003, 100004, 100005]::bigint[], 8882, 8881),
-    (40002, 'CANDIDATE', '2024-09-08T09:00:00Z'::timestamptz, 3001, 10001, ARRAY[100001, 100002, 100003, 100004, 100005, 100006, 100007, 100008, 100078, 100079, 100080]::bigint[], 8881, 8882)
-) AS interview_feedback_details (id, participant_role, start_time, interview_summary_id, evaluated_mastery_id, skill_id, participant_id, owner_id)
-WHERE NOT EXISTS (SELECT 1
-                  FROM interview_feedback_details
-                  WHERE id = interview_feedback_details.id);
+-- INSERT INTO interview_feedback_details (id, participant_role, start_time, interview_history_id, evaluated_mastery_id, skill_id, participant_id, owner_id)
+-- SELECT * FROM (
+-- VALUES
+--     (40001, 'INTERVIEWER', '2024-09-08T09:00:00Z'::timestamptz, 3001, 10001, ARRAY[100001, 100002, 100003, 100004, 100005]::bigint[], 8882, 8881),
+--     (40002, 'CANDIDATE', '2024-09-08T09:00:00Z'::timestamptz, 3001, 10001, ARRAY[100001, 100002, 100003, 100004, 100005, 100006, 100007, 100008, 100078, 100079, 100080]::bigint[], 8881, 8882)
+-- ) AS interview_feedback_details (id, participant_role, start_time, interview_history_id, evaluated_mastery_id, skill_id, participant_id, owner_id)
+-- WHERE NOT EXISTS (SELECT 1
+--                   FROM interview_feedback_details
+--                   WHERE id = interview_feedback_details.id);
 
--- Create test data for interview_summaries
-INSERT INTO interview_summaries (id, date, duration, candidate_id, interviewer_id)
-SELECT id, date::DATE, duration, candidate_id, interviewer_id
+-- Create test data for interview_histories
+INSERT INTO interview_histories (id, date, duration, user_id, title, role, attendee_id, feedback)
+SELECT id, date::DATE, duration, user_id, title, role, attendee_id, feedback
 FROM (
-         VALUES (3001, '2024-09-08', 60, 8881, 8882)
-     ) AS new_interview_summaries (id, date, duration, candidate_id, interviewer_id)
+    VALUES (3001, '2024-09-08', 60, 8881, 'Interview with candidate 25', 'Developer', 8882, 'Positive feedback')
+) AS new_interview_histories (id, date, duration, user_id, title, role, attendee_id, feedback)
 WHERE NOT EXISTS (
     SELECT 1
-    FROM interview_summaries
-    WHERE id = new_interview_summaries.id
+    FROM interview_histories
+    WHERE id = new_interview_histories.id
 );
 
--- Create test data interview_summaries_users relation records
-INSERT INTO interview_summaries_users (user_id, interview_summary_id)
+
+-- Create test data interview_histories_users relation records
+INSERT INTO interview_histories_users (user_id, interview_history_id)
 SELECT * FROM (
 VALUES
     (8881, 3001),
     (8882, 3001)
-) AS interview_summaries_users (user_id, interview_summary_id)
+) AS interview_histories_users (user_id, interview_history_id)
 WHERE NOT EXISTS (SELECT 1
-                  FROM interview_summaries_users
-                  WHERE user_id = interview_summaries_users.user_id
-                    AND interview_summary_id = interview_summaries_users.interview_summary_id);
+                  FROM interview_histories_users
+                  WHERE user_id = interview_histories_users.user_id
+                    AND interview_history_id = interview_histories_users.interview_history_id);

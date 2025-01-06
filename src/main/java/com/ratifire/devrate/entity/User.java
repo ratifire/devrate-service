@@ -112,11 +112,11 @@ public class User {
 
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
-      name = "interview_summaries_users",
+      name = "interview_histories_users",
       joinColumns = @JoinColumn(name = "user_id"),
-      inverseJoinColumns = @JoinColumn(name = "interview_summary_id")
+      inverseJoinColumns = @JoinColumn(name = "interview_history_id")
   )
-  private List<InterviewHistory> interviewSummaries;
+  private List<InterviewHistory> interviewHistories;
 
   @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable(
