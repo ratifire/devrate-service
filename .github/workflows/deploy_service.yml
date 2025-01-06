@@ -7,14 +7,14 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Select environment to deploy (prod, dev, dev_new)'
+        description: 'Select environment to deploy (prod, dev, dev_old)'
         required: true
-        default: 'dev_new'
+        default: 'dev'
         type: choice
         options:
           - dev
           - prod
-          - dev_new
+          - dev_old
 
 permissions:
   id-token: write
@@ -24,7 +24,7 @@ jobs:
   terraform:
     name: Terraform deploy service to AWS
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment || 'dev_new' }}
+    environment: ${{ github.event.inputs.environment || 'dev' }}
     env:
       working-directory: terraform/deploy_service
     defaults:
