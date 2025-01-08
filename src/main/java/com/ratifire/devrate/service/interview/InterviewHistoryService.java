@@ -2,16 +2,20 @@ package com.ratifire.devrate.service.interview;
 
 import com.ratifire.devrate.dto.InterviewHistoryDto;
 import com.ratifire.devrate.entity.InterviewHistory;
+import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.exception.InterviewHistoryNotFoundException;
 import com.ratifire.devrate.mapper.impl.InterviewHistoryMapper;
 import com.ratifire.devrate.repository.InterviewHistoryRepository;
+import com.ratifire.devrate.repository.UserRepository;
 import com.ratifire.devrate.security.helper.UserContextProvider;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for managing interview summaries.
@@ -23,6 +27,7 @@ public class InterviewHistoryService {
   private final InterviewHistoryRepository interviewHistoryRepository;
   private final UserContextProvider userContextProvider;
   private final InterviewHistoryMapper interviewHistoryMapper;
+  private final UserRepository userRepository;
 
   /**
    * Retrieves an InterviewSummary entity by its identifier.
@@ -55,10 +60,15 @@ public class InterviewHistoryService {
    * @param id the unique identifier of the InterviewHistory to be deleted.
    * @throws InterviewHistoryNotFoundException if no InterviewHistory is found for the given id.
    */
+  @Transactional
   public void delete(long id) {
-    if (!interviewHistoryRepository.existsById(id)) {
-      throw new InterviewHistoryNotFoundException(id);
-    }
-    interviewHistoryRepository.deleteById(id);
+    InterviewHistory interviewHistory = interviewHistoryRepository.findById(id)
+        .orElseThrow(() -> new InterviewHistoryNotFoundException(id));
+
+    List<User> users = userRepository.findAllByInterviewHistoriesContaining(interviewHistory);
+    users.forEach(user -> user.getInterviewHistories().remove(interviewHistory));
+
+    userRepository.saveAll(users);
+    interviewHistoryRepository.delete(interviewHistory);
   }
 }
