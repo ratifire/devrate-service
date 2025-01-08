@@ -450,38 +450,6 @@ public class UserService {
   }
 
   /**
-   * Retrieves all interview summaries associated with the user.
-   *
-   * @param userId the ID of the user to associate the interview summaries with
-   * @return A list of InterviewSummaryDto objects.
-   */
-  public List<InterviewHistoryDto> getInterviewSummariesByUserId(long userId) {
-    User user = findById(userId);
-    return interviewHistoryDataMapper.toDto(user.getInterviewHistories());
-  }
-
-  /**
-   * Counts the number of conducted and passed interviews for the specified user within a given date
-   * range.
-   *
-   * @param userId the ID of the user
-   * @param from   the start date of the date range (inclusive)
-   * @param to     the end date of the date range (inclusive)
-   * @return a list of InterviewConductedPassedDto objects with the count of conducted and passed
-   *         interviews per date
-   */
-  public List<InterviewStatsConductedPassedByDateDto> getInterviewStatConductedPassedByDate(
-      long userId, LocalDate from, LocalDate to) {
-
-    Map<LocalDate, InterviewStatsConductedPassedByDateDto> interviewStats = new HashMap<>();
-
-
-    return interviewStats.values().stream()
-        .sorted(Comparator.comparing(InterviewStatsConductedPassedByDateDto::getDate))
-        .toList();
-  }
-
-  /**
    * Retrieves specialization by user ID.
    *
    * @param userId the ID of the user

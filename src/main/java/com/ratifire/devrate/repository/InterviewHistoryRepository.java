@@ -9,13 +9,11 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 /**
- * Repository interface for performing CRUD operations on interview-summary entities.
+ * Repository interface for performing CRUD operations on interview-history entities.
  */
 @Repository
 @RepositoryRestResource(exported = false)
 public interface InterviewHistoryRepository extends JpaRepository<InterviewHistory, Long> {
-
-  List<InterviewHistory> getAllByUserId(long userId);
 
   Page<InterviewHistory> findAllByUserId(long userId, Pageable pageable);
 
