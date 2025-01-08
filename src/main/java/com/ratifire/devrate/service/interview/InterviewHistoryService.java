@@ -6,7 +6,6 @@ import com.ratifire.devrate.exception.InterviewHistoryNotFoundException;
 import com.ratifire.devrate.mapper.impl.InterviewHistoryMapper;
 import com.ratifire.devrate.repository.InterviewHistoryRepository;
 import com.ratifire.devrate.security.helper.UserContextProvider;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,9 +30,9 @@ public class InterviewHistoryService {
    * @return the InterviewSummary associated with the provided id.
    * @throws InterviewHistoryNotFoundException if no InterviewSummary is found for the given id.
    */
-  public InterviewHistory findById(long id) {
-    return interviewHistoryRepository.findById(id).orElseThrow(() ->
-        new InterviewHistoryNotFoundException(id));
+  public InterviewHistory findByIdAndUserId(long id) {
+    long userId = userContextProvider.getAuthenticatedUserId();
+    return interviewHistoryRepository.findByIdAndUserId(id, userId);
   }
 
   /**

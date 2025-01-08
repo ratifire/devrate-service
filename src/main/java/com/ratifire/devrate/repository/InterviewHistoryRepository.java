@@ -1,7 +1,6 @@
 package com.ratifire.devrate.repository;
 
 import com.ratifire.devrate.entity.InterviewHistory;
-import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +13,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RepositoryRestResource(exported = false)
 public interface InterviewHistoryRepository extends JpaRepository<InterviewHistory, Long> {
+
+  InterviewHistory findByIdAndUserId(Long id, Long userId);
 
   Page<InterviewHistory> findAllByUserId(long userId, Pageable pageable);
 
