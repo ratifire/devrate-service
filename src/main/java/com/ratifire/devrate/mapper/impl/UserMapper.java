@@ -23,7 +23,7 @@ public abstract class UserMapper implements DataMapper<UserDto, User> {
   @Mapping(target = "bookmarks", ignore = true)
   @Mapping(target = "specializations", ignore = true)
   @Mapping(target = "interviewRequests", ignore = true)
-  @Mapping(target = "interviewSummaries", ignore = true)
+  @Mapping(target = "interviewHistories", ignore = true)
   @Mapping(target = "feedbacks", ignore = true)
   public abstract User toEntity(UserDto dto);
 
@@ -37,7 +37,7 @@ public abstract class UserMapper implements DataMapper<UserDto, User> {
   @Mapping(target = "bookmarks", ignore = true)
   @Mapping(target = "specializations", ignore = true)
   @Mapping(target = "interviewRequests", ignore = true)
-  @Mapping(target = "interviewSummaries", ignore = true)
+  @Mapping(target = "interviewHistories", ignore = true)
   @Mapping(target = "feedbacks", ignore = true)
   public abstract User updateEntity(UserDto dto, @MappingTarget User entity);
 

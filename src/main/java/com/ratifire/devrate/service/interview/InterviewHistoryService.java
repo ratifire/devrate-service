@@ -1,11 +1,16 @@
 package com.ratifire.devrate.service.interview;
 
+import com.ratifire.devrate.dto.InterviewHistoryDto;
 import com.ratifire.devrate.entity.InterviewHistory;
 import com.ratifire.devrate.exception.InterviewHistoryNotFoundException;
+import com.ratifire.devrate.mapper.impl.InterviewHistoryMapper;
 import com.ratifire.devrate.repository.InterviewHistoryRepository;
 import com.ratifire.devrate.security.helper.UserContextProvider;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,6 +22,7 @@ public class InterviewHistoryService {
 
   private final InterviewHistoryRepository interviewHistoryRepository;
   private final UserContextProvider userContextProvider;
+  private final InterviewHistoryMapper interviewHistoryMapper;
 
   /**
    * Retrieves an InterviewSummary entity by its identifier.
@@ -35,8 +41,11 @@ public class InterviewHistoryService {
    *
    * @return a list of InterviewHistory entities linked to the current user.
    */
-  public List<InterviewHistory> getAllByUserId() {
-    return interviewHistoryRepository.getAllByUserId(userContextProvider.getAuthenticatedUserId());
+  public Page<InterviewHistoryDto> getAllByUserId(int page, int size) {
+    long userId = userContextProvider.getAuthenticatedUserId();
+    Pageable pageable = PageRequest.of(page, size);
+    return interviewHistoryRepository.findAllByUserId(userId, pageable)
+        .map(interviewHistoryMapper::toDto);
   }
 
   /**

@@ -1,6 +1,7 @@
 package com.ratifire.devrate.dto;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,9 +17,23 @@ import lombok.NoArgsConstructor;
 public class InterviewHistoryDto {
 
   private long id;
-  private LocalDate date;
+
+  private LocalDateTime date;
+
   private long duration;
-  private long candidateId;
-  private long interviewerId;
+
+  private long userId;
+
+  private Map<String, Integer> softSkills;
+
+  private Map<String, Integer> hardSkills;
+
+  private String title;
+
+  private String role;
+
+  private int attendeeId;
+
+  private String feedback;
 
 }

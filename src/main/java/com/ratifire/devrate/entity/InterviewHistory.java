@@ -10,7 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,7 +33,7 @@ public class InterviewHistory {
   private long id;
 
   @Column(nullable = false)
-  private LocalDate date;
+  private LocalDateTime date;
 
   @Column(nullable = false)
   private long duration;
@@ -45,13 +45,13 @@ public class InterviewHistory {
   @CollectionTable(name = "soft_skills", joinColumns = @JoinColumn(name = "interview_history_id"))
   @MapKeyColumn(name = "skill_name")
   @Column(name = "skill_value")
-  private Map<String, String> softSkills;
+  private Map<String, Integer> softSkills;
 
   @ElementCollection
   @CollectionTable(name = "hard_skills", joinColumns = @JoinColumn(name = "interview_history_id"))
   @MapKeyColumn(name = "skill_name")
   @Column(name = "skill_value")
-  private Map<String, String> hardSkills;
+  private Map<String, Integer> hardSkills;
 
   @Column(name = "title", nullable = false, length = 255)
   private String title;
