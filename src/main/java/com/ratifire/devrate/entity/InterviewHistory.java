@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,8 +33,8 @@ public class InterviewHistory {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @Column(nullable = false)
-  private LocalDateTime date;
+  @Column(name = "date_time", nullable = false)
+  private ZonedDateTime dateTime;
 
   @Column(nullable = false)
   private long duration;

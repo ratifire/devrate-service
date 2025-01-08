@@ -18,6 +18,7 @@ public abstract class InterviewHistoryMapper implements
   @Mapping(target = "id", ignore = true)
   public abstract InterviewHistory toEntity(InterviewHistoryDto interviewHistoryDto);
 
+  @Mapping(source = "dateTime", target = "dateTime")
   public abstract InterviewHistoryDto toDto(InterviewHistory interviewHistory);
 
 }

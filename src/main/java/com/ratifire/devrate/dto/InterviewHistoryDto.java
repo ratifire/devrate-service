@@ -1,6 +1,7 @@
 package com.ratifire.devrate.dto;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +19,7 @@ public class InterviewHistoryDto {
 
   private long id;
 
-  private LocalDateTime date;
+  private ZonedDateTime dateTime;
 
   private long duration;
 
