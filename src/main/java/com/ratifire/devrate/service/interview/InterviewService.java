@@ -143,7 +143,7 @@ public class InterviewService {
    * @param id the unique identifier of the Interview to retrieve
    * @return the Interview object associated with the given id
    */
-  public Interview getById(long id) {
+  public Interview findById(long id) {
     return interviewRepository.findById(id).orElseThrow(() -> new InterviewNotFoundException(id));
   }
 }

@@ -815,7 +815,7 @@ public class UserService {
   private EventDto mapEventToDto(Event event) {
     User host = findById(event.getHostId());
     List<User> participants = userRepository.findAllById(event.getParticipantIds());
-    Interview interview = interviewService.getById(event.getEventTypeId());
+    Interview interview = interviewService.findById(event.getEventTypeId());
 
     return eventMapper.toDto(event, host, participants,
         interview.getInterviewerRequest().getMastery(),
