@@ -144,6 +144,6 @@ public class InterviewService {
    * @return the Interview object associated with the given id
    */
   public Interview getById(long id) {
-    return interviewRepository.getReferenceById(id);
+    return interviewRepository.findById(id).orElseThrow(() -> new InterviewNotFoundException(id));
   }
 }
