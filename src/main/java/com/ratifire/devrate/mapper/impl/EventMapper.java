@@ -2,6 +2,7 @@ package com.ratifire.devrate.mapper.impl;
 
 import com.ratifire.devrate.dto.EventDto;
 import com.ratifire.devrate.entity.Event;
+import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.mapper.DataMapper;
 import java.util.List;
@@ -29,8 +30,10 @@ public abstract class EventMapper implements DataMapper<EventDto, Event> {
   @Mapping(source = "event.roomLink", target = "link")
   @Mapping(source = "event.startTime", target = "startTime")
   @Mapping(target = "host", expression = "java(participantMapper.toDto(host, "
-      + "com.ratifire.devrate.enums.InterviewRequestRole.INTERVIEWER))")
+      + "com.ratifire.devrate.enums.InterviewRequestRole.INTERVIEWER, interviewerMastery))")
   @Mapping(target = "participantDtos", expression = "java(participantMapper.mapParticipants"
-      + "(participants, com.ratifire.devrate.enums.InterviewRequestRole.CANDIDATE))")
-  public abstract EventDto toDto(Event event, User host, List<User> participants);
+      + "(participants, com.ratifire.devrate.enums.InterviewRequestRole.CANDIDATE, "
+      + "candidateMastery, event.getType()))")
+  public abstract EventDto toDto(Event event, User host, List<User> participants,
+      Mastery interviewerMastery, Mastery candidateMastery);
 }

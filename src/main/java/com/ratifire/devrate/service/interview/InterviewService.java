@@ -136,4 +136,14 @@ public class InterviewService {
         .toList()
         .getFirst();
   }
+
+  /**
+   * Retrieves an Interview object by its unique identifier.
+   *
+   * @param id the unique identifier of the Interview to retrieve
+   * @return the Interview object associated with the given id
+   */
+  public Interview getById(long id) {
+    return interviewRepository.getReferenceById(id);
+  }
 }

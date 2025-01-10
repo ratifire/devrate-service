@@ -1,5 +1,6 @@
 package com.ratifire.devrate.mapper;
 
+import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.entity.User;
 import java.util.List;
@@ -21,7 +22,8 @@ public interface DataMapper<D, E> {
 
   List<D> toDto(List<E> entity);
 
-  default D toDto(E entity, User user, List<User> users) {
+  default D toDto(E entity, User user, List<User> users, Mastery interviewerMastery,
+      Mastery candidateMastery) {
     throw new UnsupportedOperationException("This method is not supported.");
   }
 

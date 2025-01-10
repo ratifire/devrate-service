@@ -784,11 +784,7 @@ public class UserService {
 
     return user.getEvents().stream()
         .filter(event -> DateTimeUtils.isWithinRange(event.getStartTime().toLocalDate(), from, to))
-        .map(event -> {
-          User host = findById(event.getHostId());
-          List<User> participants = userRepository.findAllById(event.getParticipantIds());
-          return eventMapper.toDto(event, host, participants);
-        })
+        .map(this::mapEventToDto)
         .toList();
   }
 
@@ -806,12 +802,24 @@ public class UserService {
     return user.getEvents().stream()
         .filter(event -> !event.getStartTime().isBefore(DateTimeUtils.toUtc(from)))
         .sorted(Comparator.comparing(Event::getStartTime))
-        .map(event -> {
-          User host = findById(event.getHostId());
-          List<User> participants = userRepository.findAllById(event.getParticipantIds());
-          return eventMapper.toDto(event, host, participants);
-        })
+        .map(this::mapEventToDto)
         .toList();
+  }
+
+  /**
+   * Maps an {@link Event} to an {@link EventDto}.
+   *
+   * @param event the event to be mapped
+   * @return the mapped {@link EventDto}
+   */
+  private EventDto mapEventToDto(Event event) {
+    User host = findById(event.getHostId());
+    List<User> participants = userRepository.findAllById(event.getParticipantIds());
+    Interview interview = interviewService.getById(event.getEventTypeId());
+
+    return eventMapper.toDto(event, host, participants,
+        interview.getInterviewerRequest().getMastery(),
+        interview.getCandidateRequest().getMastery());
   }
 
   /**

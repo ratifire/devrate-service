@@ -17,6 +17,7 @@ public class ParticipantDto {
   private long id;
   private String name;
   private String surname;
-  private String status;
+  private String status;    // name of specialization for interview request
+  private String level;     // mastery level for interview request
   private InterviewRequestRole role;
 }
