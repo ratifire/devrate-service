@@ -179,13 +179,14 @@ public class SpecializationService {
    * @param id the ID of the specialization whose is to be deleted
    * @throws SpecializationLinkedToInterviewException if specialization stills linked to interview
    */
+  // TODO: Method needs to be reimplemented
   @Transactional
   public void delete(long id) {
-    Long linkedInterviewId = interviewRepository.findFirstBySpecializationId(id);
-    if (linkedInterviewId != null) {
-      throw new SpecializationLinkedToInterviewException(id, linkedInterviewId);
-    }
-    specializationRepository.deleteById(id);
+    //    Long linkedInterviewId = interviewRepository.findFirstBySpecializationId(id);
+    //    if (linkedInterviewId != null) {
+    //      throw new SpecializationLinkedToInterviewException(id, linkedInterviewId);
+    //    }
+    //    specializationRepository.deleteById(id);
   }
 
   /**
@@ -260,13 +261,15 @@ public class SpecializationService {
    * @param interview the interview from which the interviewer and candidate specializations are
    *                  derived
    */
+  //TODO Method needs to be reimplemented
   public void updateUserInterviewCounts(Interview interview) {
-    Specialization interviewer = interview.getInterviewerRequest().getMastery().getSpecialization();
-    Specialization candidate = interview.getCandidateRequest().getMastery().getSpecialization();
-
-    interviewer.setConductedInterviews(interviewer.getConductedInterviews() + 1);
-    candidate.setCompletedInterviews(candidate.getCompletedInterviews() + 1);
-
-    specializationRepository.saveAll(List.of(interviewer, candidate));
+  //    Specialization interviewer = interview.getInterviewerRequest()
+  //    .getMastery().getSpecialization();
+  //    Specialization candidate = interview.getCandidateRequest().getMastery().getSpecialization();
+  //
+  //    interviewer.setConductedInterviews(interviewer.getConductedInterviews() + 1);
+  //    candidate.setCompletedInterviews(candidate.getCompletedInterviews() + 1);
+  //
+  //    specializationRepository.saveAll(List.of(interviewer, candidate));
   }
 }

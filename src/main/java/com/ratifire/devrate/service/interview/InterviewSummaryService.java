@@ -61,20 +61,22 @@ public class InterviewSummaryService {
    * @param interview the Interview object used to retrieve details for creating the summary
    * @param endTime   the end time of the interview, used to calculate the duration
    */
+  //TODO: Method needs to be reimplemented (if needed)
   public long create(Interview interview, String endTime) {
-    User interviewer = interview.getInterviewerRequest().getUser();
-    User candidate = interview.getCandidateRequest().getUser();
-    ZonedDateTime startTime = interview.getStartTime();
-
-    InterviewSummary interviewSummary = InterviewSummary.builder()
-        .date(startTime.toLocalDate())
-        .duration(Duration.between(startTime, ZonedDateTime.parse(endTime)).toMinutes())
-        .candidateId(candidate.getId())
-        .interviewerId(interviewer.getId())
-        .build();
-
-    save(interviewSummary, List.of(interviewer, candidate));
-    return interviewSummary.getId();
+    //    User interviewer = interview.getInterviewerRequest().getUser();
+    //    User candidate = interview.getCandidateRequest().getUser();
+    //    ZonedDateTime startTime = interview.getStartTime();
+    //
+    //    InterviewSummary interviewSummary = InterviewSummary.builder()
+    //        .date(startTime.toLocalDate())
+    //        .duration(Duration.between(startTime, ZonedDateTime.parse(endTime)).toMinutes())
+    //        .candidateId(candidate.getId())
+    //        .interviewerId(interviewer.getId())
+    //        .build();
+    //
+    //    save(interviewSummary, List.of(interviewer, candidate));
+    //    return interviewSummary.getId();
+    return 1000;
   }
 
   /**
