@@ -1,139 +1,248 @@
 package com.ratifire.devrate.service.interview;
 
+import static com.ratifire.devrate.enums.InterviewRequestRole.CANDIDATE;
+import static com.ratifire.devrate.enums.InterviewRequestRole.INTERVIEWER;
+
+import com.ratifire.devrate.dto.InterviewDto;
+import com.ratifire.devrate.dto.PairedParticipantDto;
 import com.ratifire.devrate.entity.Event;
+import com.ratifire.devrate.entity.Mastery;
+import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
-import com.ratifire.devrate.enums.EventType;
-import com.ratifire.devrate.exception.InterviewNotFoundException;
+import com.ratifire.devrate.enums.InterviewRequestRole;
+import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
+import com.ratifire.devrate.security.helper.UserContextProvider;
+import com.ratifire.devrate.service.EmailService;
 import com.ratifire.devrate.service.EventService;
-import com.ratifire.devrate.util.InterviewPair;
-import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
+import com.ratifire.devrate.service.MasteryService;
+import com.ratifire.devrate.service.NotificationService;
+import com.ratifire.devrate.service.UserService;
 import com.ratifire.devrate.util.zoom.service.ZoomApiService;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for handling Interview operations.
  */
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class InterviewService {
 
-  private final ZoomApiService zoomApiService;
+  private final ZoomApiService zoomApiService; //if needed
+  private final InterviewRequestService interviewRequestService;
   private final EventService eventService;
+  private final UserService userService;
+  private final MasteryService masteryService;
+  private final EmailService emailService;
+  private final NotificationService notificationService;
   private final InterviewRepository interviewRepository;
+  private final UserContextProvider userContextProvider;
+  private final DataMapper<InterviewDto, Interview> mapper;
 
   /**
-   * Retrieves an interview by its associated Zoom meeting ID.
+   * Retrieves a list of all interviews associated with the currently authenticated user.
    *
-   * @param meetingId the Zoom meeting ID associated with the interview
-   * @return the Interview associated with the given meeting ID
-   * @throws InterviewNotFoundException if no interview is found for the provided meeting ID
+   * @return a list of InterviewDto objects representing the user's interviews
    */
-  public Interview getByMeetingId(long meetingId) {
-    return interviewRepository.findByZoomMeetingId(meetingId)
-        .orElseThrow(() -> new InterviewNotFoundException(
-            String.format("Interview with meetingId %d not found.", meetingId)));
+  public List<InterviewDto> getAll() {
+    long userId = userContextProvider.getAuthenticatedUserId();
+    List<Interview> interviews = interviewRepository.findByUserId(userId);
+
+    if (interviews.isEmpty()) {
+      return List.of();
+    }
+
+    return interviews.stream()
+        .map(interview -> {
+          Mastery mastery = masteryService.getMasteryById(interview.getMasteryId());
+          long hostId = interviewRepository.findUserIdByInterviewIdAndUserIdNot(
+              interview.getInterviewId(),
+              interview.getUserId()
+          ).orElseThrow(() -> new IllegalStateException("Host not found"));
+
+          return mapper.toDto(
+              interview,
+              mastery.getLevel(),
+              mastery.getSpecialization().getName(),
+              hostId);
+        })
+        .toList();
   }
 
   /**
-   * Creates an interview based on the matched pair of candidate and interviewer.
+   * Creates interviews and an associated event based on the given paired participant data.
    *
-   * @param interviewPair the matched pair of candidate and interviewer
-   * @return an Optional containing the created Interview if the Zoom meeting was successfully
-   *     created, otherwise an empty Optional
+   * @param matchedUsers Data transfer object containing the details of paired participant.
    */
-  public Optional<Interview> create(InterviewPair interviewPair) {
-    InterviewRequest candidate = interviewPair.candidate();
-    InterviewRequest interviewer = interviewPair.interviewer();
+  @Transactional
+  public void create(PairedParticipantDto matchedUsers) {
+    long interviewerId = matchedUsers.getInterviewerId();
+    long candidateId = matchedUsers.getCandidateId();
+    long interviewerRequestId = matchedUsers.getInterviewerParticipantId();
+    long candidateRequestId = matchedUsers.getCandidateParticipantId();
+    long interviewId = generateInterviewId();
+    ZonedDateTime date = matchedUsers.getDate();
 
-    ZonedDateTime matchedStartTime = getMatchedStartTime(candidate.getAvailableDates(),
-        interviewer.getAvailableDates());
+    //TODO: createMeeting needs to be reimplemented for using another meeting provider
+    String joinUrl = "temporary join url";
+    //    ZoomCreateMeetingResponse zoomMeeting =
+    //    zoomApiService.createMeeting("Topic", "Agenda", date)
+    //        .orElseThrow(() -> new IllegalStateException("Zoom meeting creation failed."));
+    //    String joinUrl = zoomMeeting.getJoinUrl();
 
-    return zoomApiService
-        .createMeeting("Topic", "Agenda", matchedStartTime)
-        .map(zoomMeeting -> {
-          Interview interview = Interview.builder()
-              .candidateRequest(candidate)
-              .interviewerRequest(interviewer)
-              .startTime(matchedStartTime)
-              .zoomMeetingId(zoomMeeting.id)
-              .zoomJoinUrl(zoomMeeting.getJoinUrl())
-              .build();
-          interviewRepository.save(interview);
+    Interview interviewer = buildInterview(interviewerId, interviewerRequestId, interviewId,
+        INTERVIEWER, joinUrl, date);
+    Interview candidate = buildInterview(candidateId, candidateRequestId, interviewId, CANDIDATE,
+        joinUrl, date);
+    interviewRepository.saveAll(List.of(interviewer, candidate));
 
-          Event interviewEvent = Event.builder()
-              .type(EventType.INTERVIEW)
-              .roomLink(zoomMeeting.getJoinUrl())
-              .hostId(interviewer.getUser().getId())
-              .participantIds(List.of(candidate.getUser().getId()))
-              .startTime(matchedStartTime)
-              .eventTypeId(interview.getId())
-              .build();
-          eventService.save(interviewEvent, List.of(interviewer.getUser(), candidate.getUser()));
+    Event event = eventService.buildEvent(interviewId, candidateId, interviewerId, joinUrl, date);
+    eventService.save(event, List.of(interviewerId, candidateId));
 
-          return interview;
-        })
-        .or(() -> {
-          log.debug("Interview for candidate {} and interviewer {} was not created",
-              candidate, interviewer);
-          return Optional.empty();
-        });
+    List<InterviewRequest> requests = interviewRequestService.findByIds(
+        List.of(interviewerRequestId, candidateRequestId));
+    Map<Long, InterviewRequest> requestMap = requests.stream()
+        .collect(Collectors.toMap(InterviewRequest::getId, request -> request));
+
+    sendInterviewScheduledAlerts(
+        requestMap.get(interviewerRequestId), requestMap.get(candidateRequestId), date, joinUrl);
   }
 
   /**
    * Deletes a rejected interview by its ID and returns the deleted interview.
    *
-   * @param interviewId the ID of the interview to be deleted
-   * @return the deleted Interview object
-   * @throws InterviewNotFoundException if no interview with the specified ID is found
+   * @param id the ID of the interview to be deleted
    */
   @Transactional
-  public Interview deleteRejected(long interviewId) {
-    Interview rejected = interviewRepository.findById(interviewId)
-        .orElseThrow(() -> new InterviewNotFoundException(interviewId));
+  public void deleteRejected(long id) {
+    List<Interview> interviews = interviewRepository.findInterviewPairById(id);
+    interviewRepository.deleteAll(interviews);
+    eventService.deleteAllByEventTypeId(interviews.getFirst().getInterviewId());
+    //TODO: add logic for deleting provider meeting room (if needed)
 
-    interviewRepository.deleteById(interviewId);
-    eventService.deleteByEventTypeId(interviewId);
+    long rejectorId = userContextProvider.getAuthenticatedUserId();
+    long recipientId = interviews.stream()
+        .map(Interview::getUserId)
+        .filter(userId -> userId != rejectorId)
+        .findFirst()
+        .orElseThrow(() -> new IllegalStateException(
+            "Could not find other userId in the interview pair"));
 
-    try {
-      zoomApiService.deleteMeeting(rejected.getZoomMeetingId());
-    } catch (ZoomApiException e) {
-      log.info("Zoom API exception occurred while trying to delete the meeting with meetingId: "
-              + "{}. {}", rejected.getZoomMeetingId(), e.getMessage());
-    }
+    List<User> users = userService.findByIds(List.of(rejectorId, recipientId));
+    Map<Long, User> userMap = users.stream()
+        .collect(Collectors.toMap(User::getId, user -> user));
 
-    return rejected;
+    notifyParticipants(
+        userMap.get(recipientId),
+        userMap.get(rejectorId),
+        interviews.getFirst().getStartTime());
   }
 
   /**
-   * Deletes an interview by its ID.
+   * Deletes all interview records associated with the specified ID.
    *
-   * @param id The ID of the interview to delete.
+   * @param id the identifier of the interview records to be deleted
    */
   public void delete(long id) {
-    interviewRepository.deleteById(id);
+    List<Interview> interviews = interviewRepository.findInterviewPairById(id);
+    interviewRepository.deleteAll(interviews);
   }
 
   /**
-   * Finds the matched start time from the provided candidate and interviewer dates.
+   * Builds an Interview object using the provided parameters.
    *
-   * @param candidateDates   List of dates available for the candidate.
-   * @param interviewerDates List of dates available for the interviewer.
-   * @return The matched start time agreed upon by both parties.
+   * @return the built Interview object
    */
-  private ZonedDateTime getMatchedStartTime(List<ZonedDateTime> candidateDates,
-      List<ZonedDateTime> interviewerDates) {
-    return candidateDates.stream()
-        .filter(interviewerDates::contains)
-        .toList()
-        .getFirst();
+  private Interview buildInterview(long userId, long requestId, long interviewId,
+      InterviewRequestRole role, String roomUrl, ZonedDateTime date) {
+
+    long masteryId = interviewRequestService.findMasteryId(requestId)
+        .orElseThrow(() -> new IllegalStateException(
+            "Mastery ID not found for interview request with id: " + requestId));
+
+    return Interview.builder()
+        .userId(userId)
+        .masteryId(masteryId)
+        .interviewId(interviewId)
+        .role(role)
+        .roomUrl(roomUrl)
+        .startTime(date)
+        .build();
+  }
+
+  /**
+   * Generates a unique interview ID based.
+   *
+   * @return a unique long value representing the interview ID
+   */
+  private long generateInterviewId() {
+    return UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
+  }
+
+  /**
+   * Sends alerts to both the interviewer and candidate about the scheduled interview.
+   *
+   * @param interviewerRequest the interview request object containing details about the
+   *                           interviewer
+   * @param candidateRequest   the interview request object containing details about the candidate
+   * @param date               the date and time of the scheduled interview
+   * @param roomUrl            the URL of the interview room
+   */
+  private void sendInterviewScheduledAlerts(InterviewRequest interviewerRequest,
+      InterviewRequest candidateRequest, ZonedDateTime date, String roomUrl) {
+    notifyParticipant(candidateRequest, interviewerRequest, date, roomUrl);
+    notifyParticipant(interviewerRequest, candidateRequest, date, roomUrl);
+  }
+
+  /**
+   * Sends a notification and an email to a participant of an interview about the scheduled
+   * interview.
+   *
+   * @param recipientRequest         the interview request of the recipient of the notification
+   * @param secondParticipantRequest the interview request of the other participant in the
+   *                                 interview
+   * @param interviewStartTimeInUtc  the start time of the interview in UTC
+   * @param zoomJoinUrl              the join url to the zoom meeting
+   */
+  private void notifyParticipant(InterviewRequest recipientRequest,
+      InterviewRequest secondParticipantRequest, ZonedDateTime interviewStartTimeInUtc,
+      String zoomJoinUrl) {
+
+    User recipient = recipientRequest.getUser();
+    String recipientEmail = recipient.getEmail();
+    String role = String.valueOf(recipientRequest.getRole());
+
+    notificationService.addInterviewScheduled(recipient, role,
+        interviewStartTimeInUtc, recipientEmail);
+
+    emailService.sendInterviewScheduledEmail(recipient, recipientEmail,
+        interviewStartTimeInUtc, secondParticipantRequest, zoomJoinUrl);
+  }
+
+  /**
+   * Notifies users involved in the interview rejection.
+   *
+   * @param recipient     The user for whom rejected the interview.
+   * @param rejector      The user who rejected the interview.
+   * @param scheduledTime The scheduled time of the interview.
+   */
+  private void notifyParticipants(User recipient, User rejector, ZonedDateTime scheduledTime) {
+    String recipientEmail = recipient.getEmail();
+    notificationService.addRejectInterview(recipient, rejector.getFirstName(),
+        scheduledTime, recipientEmail);
+    String rejectorEmail = rejector.getEmail();
+    notificationService.addRejectInterview(rejector, recipient.getFirstName(),
+        scheduledTime, rejectorEmail);
+
+    emailService.sendInterviewRejectionMessageEmail(
+        recipient, rejector, scheduledTime, recipientEmail);
   }
 }
