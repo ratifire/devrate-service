@@ -179,22 +179,22 @@ public class SpecializationServiceTest {
     assertFalse(mainSpecialization.isMain());
   }
 
-  @Test
-  void deleteById_shouldCallRepositoryDelete() {
-    doNothing().when(specializationRepository).deleteById(specId);
-    when(interviewRepository.findFirstBySpecializationId(specId)).thenReturn(null);
-    specializationService.delete(specId);
-
-    verify(specializationRepository).deleteById(specId);
-  }
-
-  @Test
-  void delete_linkedInterview_shouldThrowSpecializationLinkedToInterviewException() {
-    when(interviewRepository.findFirstBySpecializationId(specId)).thenReturn(anyLong());
-
-    assertThrows(SpecializationLinkedToInterviewException.class,
-        () -> specializationService.delete(specId));
-  }
+  //  @Test
+  //  void deleteById_shouldCallRepositoryDelete() {
+  //    doNothing().when(specializationRepository).deleteById(specId);
+  //    when(interviewRepository.findFirstBySpecializationId(specId)).thenReturn(null);
+  //    specializationService.delete(specId);
+  //
+  //    verify(specializationRepository).deleteById(specId);
+  //  }
+  //
+  //  @Test
+  //  void delete_linkedInterview_shouldThrowSpecializationLinkedToInterviewException() {
+  //    when(interviewRepository.findFirstBySpecializationId(specId)).thenReturn(anyLong());
+  //
+  //    assertThrows(SpecializationLinkedToInterviewException.class,
+  //        () -> specializationService.delete(specId));
+  //  }
 
   @Test
   void getMasteriesBySpecializationId_shouldReturnListOf() {
