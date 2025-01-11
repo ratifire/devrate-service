@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Data
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "events")
@@ -53,4 +53,7 @@ public class Event {
 
   @Column(name = "start_time", nullable = false)
   private ZonedDateTime startTime;
+
+  @Column(name = "user_id", nullable = false)
+  private long userId;
 }
