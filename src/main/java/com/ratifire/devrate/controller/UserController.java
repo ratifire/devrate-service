@@ -345,17 +345,6 @@ public class UserController {
   }
 
   /**
-   * Delete an interview for the specified user.
-   *
-   * @param userId      the ID of the user who rejected the interview
-   * @param eventTypeId the rejected interview ID
-   */
-  @DeleteMapping("/{userId}/interviews/{eventTypeId}")
-  public void deleteRejectedInterview(@PathVariable long userId, @PathVariable long eventTypeId) {
-    userService.deleteRejectedInterview(userId, eventTypeId);
-  }
-
-  /**
    * Retrieves a list of events for a specified user that occur within a given date range.
    *
    * @param userId the ID of the user whose events are to be retrieved

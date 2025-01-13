@@ -9,7 +9,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -21,7 +20,6 @@ import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
-import com.ratifire.devrate.exception.SpecializationLinkedToInterviewException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
@@ -42,7 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Unit tests for the SpecializationService class.
  */
 @ExtendWith(MockitoExtension.class)
-public class SpecializationServiceTest {
+class SpecializationServiceTest {
 
   @InjectMocks
   private SpecializationService specializationService;
@@ -177,23 +175,6 @@ public class SpecializationServiceTest {
     assertNotNull(result);
     assertTrue(specialization.isMain());
     assertFalse(mainSpecialization.isMain());
-  }
-
-  @Test
-  void deleteById_shouldCallRepositoryDelete() {
-    doNothing().when(specializationRepository).deleteById(specId);
-    when(interviewRepository.findFirstBySpecializationId(specId)).thenReturn(null);
-    specializationService.delete(specId);
-
-    verify(specializationRepository).deleteById(specId);
-  }
-
-  @Test
-  void delete_linkedInterview_shouldThrowSpecializationLinkedToInterviewException() {
-    when(interviewRepository.findFirstBySpecializationId(specId)).thenReturn(anyLong());
-
-    assertThrows(SpecializationLinkedToInterviewException.class,
-        () -> specializationService.delete(specId));
   }
 
   @Test

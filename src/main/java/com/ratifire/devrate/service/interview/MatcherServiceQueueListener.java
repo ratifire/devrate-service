@@ -28,5 +28,6 @@ public class MatcherServiceQueueListener {
     PairedParticipantDto pairedParticipantDto = objectMapper.readValue(message,
         PairedParticipantDto.class);
     System.out.println("Interview paired received: " + pairedParticipantDto);
+    interviewService.create(pairedParticipantDto);
   }
 }

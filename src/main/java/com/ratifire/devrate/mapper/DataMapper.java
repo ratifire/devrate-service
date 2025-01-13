@@ -29,5 +29,9 @@ public interface DataMapper<D, E> {
     throw new UnsupportedOperationException("This method is not supported.");
   }
 
+  default D toDto(E entity, int masteryLevel, String specializationName, long hostId) {
+    throw new UnsupportedOperationException("This method is not supported.");
+  }
+
   E updateEntity(D dto, @MappingTarget E entity);
 }

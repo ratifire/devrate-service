@@ -30,9 +30,7 @@ import com.ratifire.devrate.entity.Notification;
 import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewFeedbackDetail;
-import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.exception.InterviewSummaryNotFoundException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
@@ -43,7 +41,6 @@ import com.ratifire.devrate.repository.InterviewSummaryRepository;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
 import com.ratifire.devrate.service.interview.InterviewFeedbackDetailService;
-import com.ratifire.devrate.service.interview.InterviewService;
 import com.ratifire.devrate.service.interview.InterviewSummaryService;
 import com.ratifire.devrate.util.DateTimeUtils;
 import java.math.BigDecimal;
@@ -81,10 +78,8 @@ public class UserService {
   private final SpecializationService specializationService;
   private final MasteryService masteryService;
   private final SkillService skillService;
-  private final InterviewService interviewService;
   private final InterviewSummaryService interviewSummaryService;
   private final InterviewFeedbackDetailService interviewFeedbackDetailService;
-  private final EmailService emailService;
   private final NotificationService notificationService;
   private final DataMapper<UserDto, User> userMapper;
   private final DataMapper<ContactDto, Contact> contactMapper;
@@ -114,6 +109,10 @@ public class UserService {
   public User findById(long id) {
     return userRepository.findById(id)
         .orElseThrow(() -> new UserNotFoundException(id));
+  }
+
+  public List<User> findByIds(List<Long> ids) {
+    return userRepository.findByIds(ids);
   }
 
   /**
@@ -569,77 +568,6 @@ public class UserService {
     specializationService.createMasteriesForSpecialization(specialization,
         specializationDto.getMainMasteryLevel());
     return specializationDataMapper.toDto(specialization);
-  }
-
-  /**
-   * Sends alerts to both the interviewer and the candidate about the scheduled interview.
-   *
-   * @param interview the interview whose participants are sent alerts
-   */
-  private void sendInterviewScheduledAlerts(Interview interview) {
-    ZonedDateTime interviewStartTimeInUtc = DateTimeUtils.toUtc(interview.getStartTime());
-    InterviewRequest interviewer = interview.getInterviewerRequest();
-    InterviewRequest candidate = interview.getCandidateRequest();
-
-    notifyParticipant(candidate, interviewer, interviewStartTimeInUtc, interview.getZoomJoinUrl());
-    notifyParticipant(interviewer, candidate, interviewStartTimeInUtc, interview.getZoomJoinUrl());
-  }
-
-  /**
-   * Sends a notification and an email to a participant of an interview about the scheduled
-   * interview.
-   *
-   * @param recipientRequest         the interview request of the recipient of the notification
-   * @param secondParticipantRequest the interview request of the other participant in the
-   *                                 interview
-   * @param interviewStartTimeInUtc  the start time of the interview in UTC
-   * @param zoomJoinUrl              the join url to the zoom meeting
-   */
-  private void notifyParticipant(InterviewRequest recipientRequest,
-      InterviewRequest secondParticipantRequest, ZonedDateTime interviewStartTimeInUtc,
-      String zoomJoinUrl) {
-
-    User recipient = recipientRequest.getUser();
-    String recipientEmail = recipient.getEmail();
-    String role = String.valueOf(recipientRequest.getRole());
-
-    notificationService.addInterviewScheduled(recipient, role,
-        interviewStartTimeInUtc, recipientEmail);
-
-    emailService.sendInterviewScheduledEmail(recipient, recipientEmail,
-        interviewStartTimeInUtc, secondParticipantRequest, zoomJoinUrl);
-  }
-
-  /**
-   * Delete the interview that was rejected by the user.
-   *
-   * @param userId      the ID of the user who rejected the interview
-   * @param interviewId the rejected interview ID
-   */
-  @Transactional
-  public void deleteRejectedInterview(long userId, long interviewId) {
-    Interview interview = interviewService.deleteRejected(interviewId);
-    // TODO: notifyUsers(activeRequest.getUser(), user, interview.getStartTime());
-  }
-
-  /**
-   * Notifies users involved in the interview rejection.
-   *
-   * @param recipient     The user for whom rejected the interview.
-   * @param rejector      The user who rejected the interview.
-   * @param scheduledTime The scheduled time of the interview.
-   */
-  private void notifyUsers(User recipient, User rejector,
-      ZonedDateTime scheduledTime) {
-    String recipientEmail = recipient.getEmail();
-    notificationService.addRejectInterview(recipient, rejector.getFirstName(),
-        scheduledTime, recipientEmail);
-    String rejectorEmail = rejector.getEmail();
-    notificationService.addRejectInterview(rejector, recipient.getFirstName(),
-        scheduledTime, rejectorEmail);
-
-    emailService.sendInterviewRejectionMessageEmail(
-        recipient, rejector, scheduledTime, recipientEmail);
   }
 
   /**

@@ -49,7 +49,8 @@ public class ZoomWebhookService {
             HttpStatus.OK);
       case "meeting.ended":
         try {
-          interviewCompletionService.finalizeInterviewProcess(payload.getPayload().getMeeting());
+          //          interviewCompletionService.finalizeInterviewProcess(
+          //         payload.getPayload().getMeeting());
           return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception ex) {
           return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
