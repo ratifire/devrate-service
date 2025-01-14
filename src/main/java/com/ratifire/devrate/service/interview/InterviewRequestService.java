@@ -26,6 +26,14 @@ public class InterviewRequestService {
   private final MatcherServiceQueueSender matcherServiceQueueSender;
   private final UserContextProvider userContextProvider;
 
+  public Optional<Long> findMasteryId(long id) {
+    return repository.findMasteryIdById(id);
+  }
+
+  public List<InterviewRequest> findByIds(List<Long> ids) {
+    return repository.findByIds(ids);
+  }
+
   /**
    * Creates an interview request for the specified user and send it to matcher-service.
    *

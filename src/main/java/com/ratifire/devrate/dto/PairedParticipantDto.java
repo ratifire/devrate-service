@@ -1,6 +1,6 @@
 package com.ratifire.devrate.dto;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,11 +10,12 @@ import lombok.Setter;
 @Setter
 @Getter
 public class PairedParticipantDto {
+
   private Long interviewerId;
   private Long candidateId;
-  private Integer interviewerParticipantId;
-  private Integer candidateParticipantId;
-  private Date date;
+  private Long interviewerParticipantId;
+  private Long candidateParticipantId;
+  private ZonedDateTime date;
 
   @Override
   public String toString() {

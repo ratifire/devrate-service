@@ -651,7 +651,6 @@ WHERE NOT EXISTS (
     WHERE id = new_interview_histories.id
 );
 
-
 -- Insert interview summaries for each month of the year
 INSERT INTO interview_histories (id, date_time, duration, user_id, title, role, attendee_id, feedback)
 SELECT id, date_time, duration, user_id, title, role, attendee_id, feedback
@@ -746,51 +745,50 @@ WHERE NOT EXISTS (
       AND interview_history_id = new_interview_histories_users.interview_history_id
 );
 
-
---  Create event records
-INSERT INTO events (id, event_type_id, type, room_link, host_id, participant_id, start_time)
-SELECT * FROM (
-VALUES
-    (10001, 20001, 'INTERVIEW', 'https://zoom.us/j/123456701', 8881, ARRAY[8882], '2024-09-02T00:00:00Z'::timestamptz),
-    (10002, 20002, 'INTERVIEW', 'https://zoom.us/j/123456702', 8881, ARRAY[8882], '2024-09-04T12:00:00Z'::timestamptz),
-    (10003, 20003, 'INTERVIEW', 'https://zoom.us/j/123456703', 8881, ARRAY[8882], '2024-09-07T19:00:00Z'::timestamptz),
-    (10004, 20004, 'INTERVIEW', 'https://zoom.us/j/123456704', 8881, ARRAY[8882], '2024-09-09T01:00:00Z'::timestamptz),
-    (10005, 20005, 'INTERVIEW', 'https://zoom.us/j/123456705', 8881, ARRAY[8882], '2024-09-11T11:00:00Z'::timestamptz),
-    (10006, 20006, 'INTERVIEW', 'https://zoom.us/j/123456706', 8881, ARRAY[8882], '2024-09-13T20:00:00Z'::timestamptz),
-    (10007, 20007, 'INTERVIEW', 'https://zoom.us/j/123456707', 8881, ARRAY[8882], '2024-09-24T00:00:00Z'::timestamptz),
-    (10008, 20008, 'INTERVIEW', 'https://zoom.us/j/123456708', 8881, ARRAY[8882], '2024-09-26T10:00:00Z'::timestamptz),
-    (10009, 20009, 'INTERVIEW', 'https://zoom.us/j/123456709', 8881, ARRAY[8882], '2024-09-28T19:00:00Z'::timestamptz)
-) AS events (id, event_type_id, type, room_link, host_id, participant_id, start_time)
-WHERE NOT EXISTS (SELECT 1
-                  FROM events
-                  WHERE id = events.id);
-
--- Create user-event relation records
-INSERT INTO user_event (user_id, event_id)
-SELECT * FROM (
-VALUES
-    (8881, 10001),
-    (8882, 10001),
-    (8881, 10002),
-    (8882, 10002),
-    (8881, 10003),
-    (8882, 10003),
-    (8881, 10004),
-    (8882, 10004),
-    (8881, 10005),
-    (8882, 10005),
-    (8881, 10006),
-    (8882, 10006),
-    (8881, 10007),
-    (8882, 10007),
-    (8881, 10008),
-    (8882, 10008),
-    (8881, 10009),
-    (8882, 10009)
-) AS user_event (user_id, event_id)
-WHERE NOT EXISTS (SELECT 1
-                  FROM user_event
-                  WHERE user_id = user_event.user_id AND event_id = user_event.event_id);
+-- --  Create event records
+-- INSERT INTO events (id, event_type_id, type, room_link, host_id, participant_id, start_time)
+-- SELECT * FROM (
+-- VALUES
+--     (10001, 20001, 'INTERVIEW', 'https://zoom.us/j/123456701', 8881, ARRAY[8882], '2024-09-02T00:00:00Z'::timestamptz),
+--     (10002, 20002, 'INTERVIEW', 'https://zoom.us/j/123456702', 8881, ARRAY[8882], '2024-09-04T12:00:00Z'::timestamptz),
+--     (10003, 20003, 'INTERVIEW', 'https://zoom.us/j/123456703', 8881, ARRAY[8882], '2024-09-07T19:00:00Z'::timestamptz),
+--     (10004, 20004, 'INTERVIEW', 'https://zoom.us/j/123456704', 8881, ARRAY[8882], '2024-09-09T01:00:00Z'::timestamptz),
+--     (10005, 20005, 'INTERVIEW', 'https://zoom.us/j/123456705', 8881, ARRAY[8882], '2024-09-11T11:00:00Z'::timestamptz),
+--     (10006, 20006, 'INTERVIEW', 'https://zoom.us/j/123456706', 8881, ARRAY[8882], '2024-09-13T20:00:00Z'::timestamptz),
+--     (10007, 20007, 'INTERVIEW', 'https://zoom.us/j/123456707', 8881, ARRAY[8882], '2024-09-24T00:00:00Z'::timestamptz),
+--     (10008, 20008, 'INTERVIEW', 'https://zoom.us/j/123456708', 8881, ARRAY[8882], '2024-09-26T10:00:00Z'::timestamptz),
+--     (10009, 20009, 'INTERVIEW', 'https://zoom.us/j/123456709', 8881, ARRAY[8882], '2024-09-28T19:00:00Z'::timestamptz)
+-- ) AS events (id, event_type_id, type, room_link, host_id, participant_id, start_time)
+-- WHERE NOT EXISTS (SELECT 1
+--                   FROM events
+--                   WHERE id = events.id);
+--
+-- -- Create user-event relation records
+-- INSERT INTO user_event (user_id, event_id)
+-- SELECT * FROM (
+-- VALUES
+--     (8881, 10001),
+--     (8882, 10001),
+--     (8881, 10002),
+--     (8882, 10002),
+--     (8881, 10003),
+--     (8882, 10003),
+--     (8881, 10004),
+--     (8882, 10004),
+--     (8881, 10005),
+--     (8882, 10005),
+--     (8881, 10006),
+--     (8882, 10006),
+--     (8881, 10007),
+--     (8882, 10007),
+--     (8881, 10008),
+--     (8882, 10008),
+--     (8881, 10009),
+--     (8882, 10009)
+-- ) AS user_event (user_id, event_id)
+-- WHERE NOT EXISTS (SELECT 1
+--                   FROM user_event
+--                   WHERE user_id = user_event.user_id AND event_id = user_event.event_id);
 
 -- Create 50 test user records with names in Ukrainian, English, and Ukrainian transliteration
 INSERT INTO users (id, first_name, last_name, country, city, is_subscribed, picture, completed_interviews, conducted_interviews, email, password)

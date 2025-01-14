@@ -1,15 +1,12 @@
 package com.ratifire.devrate.service;
 
 import com.ratifire.devrate.entity.Event;
-import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.exception.EventByTypeIdNotFoundException;
+import com.ratifire.devrate.enums.EventType;
 import com.ratifire.devrate.repository.EventRepository;
-import com.ratifire.devrate.repository.UserRepository;
+import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for handling Event operations.
@@ -19,42 +16,48 @@ import org.springframework.transaction.annotation.Transactional;
 public class EventService {
 
   private final EventRepository eventRepository;
-  private UserRepository userRepository;
-
-  @Autowired
-  public void setUserRepository(UserRepository userRepository) {
-    this.userRepository = userRepository;
-  }
 
   /**
-   * Saves an event and updates the event list for each attendee.
+   * Saves a list of Event objects for each attendee by cloning the provided event and setting the
+   * userId for each attendee.
    *
-   * @param event       the event to be saved
-   * @param attendees   the list of users who will attend the event
+   * @param event     the Event object to be cloned for each attendee
+   * @param attendees a list of user IDs representing the attendees
    */
-  @Transactional
-  public void save(Event event, List<User> attendees) {
-    attendees.forEach(user -> user.getEvents().add(event));
+  public void save(Event event, List<Long> attendees) {
+    List<Event> eventsToSave = attendees.stream()
+        .map(userId -> event.toBuilder()
+            .userId(userId)
+            .build())
+        .toList();
 
-    userRepository.saveAll(attendees);
-    eventRepository.save(event);
+    eventRepository.saveAll(eventsToSave);
   }
 
   /**
-   * Deletes an event by its associated interview ID and updates all users who have this event.
+   * Deletes an event by its associated interview ID.
    *
    * @param eventTypeId the ID of the interview associated with the event to be deleted
-   * @throws EventByTypeIdNotFoundException if no event with the given interview ID is found
    */
-  @Transactional
-  public void deleteByEventTypeId(long eventTypeId) {
-    Event event = eventRepository.findByEventTypeId(eventTypeId)
-        .orElseThrow(() -> new EventByTypeIdNotFoundException(eventTypeId));
+  public void deleteAllByEventTypeId(long eventTypeId) {
+    eventRepository.deleteByEventTypeId(eventTypeId);
+  }
 
-    List<User> users = userRepository.findAllByEventsContaining(event);
-    users.forEach(user -> user.getEvents().remove(event));
+  /**
+   * Builds an Event object with the provided details for an interview.
+   *
+   * @return an Event object containing the specified details
+   */
+  public Event buildEvent(long interviewId, long candidateId, long interviewerId, String roomUrl,
+      ZonedDateTime date) {
+    return Event.builder()
+        .type(EventType.INTERVIEW)
+        .roomLink(roomUrl)
+        .hostId(interviewerId)
+        .participantIds(List.of(candidateId))
+        .startTime(date)
+        .eventTypeId(interviewId)
+        .build();
 
-    userRepository.saveAll(users);
-    eventRepository.delete(event);
   }
 }

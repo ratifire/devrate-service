@@ -71,16 +71,21 @@ public class InterviewFeedbackDetailService {
    * @return a map containing the IDs of the saved feedback details for the interviewer and
    *     candidate
    */
+  //TODO: Method needs to be reimplemented (if needed)
   public Map<InterviewRequestRole, Long> save(Interview interview, long interviewSummaryId) {
-    ZonedDateTime startTime = interview.getStartTime();
-    User candidate = interview.getCandidateRequest().getUser();
-    User interviewer = interview.getInterviewerRequest().getUser();
-    InterviewFeedbackDetail candidateFeedbackDetail = create(
-        candidate.getId(), interviewer, interviewSummaryId, interview.getInterviewerRequest(),
-        startTime);
-    InterviewFeedbackDetail interviewerFeedbackDetail = create(
-        interviewer.getId(), candidate, interviewSummaryId, interview.getCandidateRequest(),
-        startTime);
+    //    ZonedDateTime startTime = interview.getStartTime();
+    //    User candidate = interview.getCandidateRequest().getUser();
+    //    User interviewer = interview.getInterviewerRequest().getUser();
+    //    InterviewFeedbackDetail candidateFeedbackDetail = create(
+    //        candidate.getId(), interviewer, interviewSummaryId, interview.getInterviewerRequest(),
+    //        startTime);
+    //    InterviewFeedbackDetail interviewerFeedbackDetail = create(
+    //        interviewer.getId(), candidate, interviewSummaryId, interview.getCandidateRequest(),
+    //        startTime);
+
+    // remove during reimplementation
+    InterviewFeedbackDetail candidateFeedbackDetail = new InterviewFeedbackDetail();
+    InterviewFeedbackDetail interviewerFeedbackDetail = new InterviewFeedbackDetail();
 
     return Map.of(
         InterviewRequestRole.CANDIDATE,
