@@ -3,7 +3,6 @@ package com.ratifire.devrate.controller;
 import com.ratifire.devrate.dto.ChatMessageDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,11 +20,10 @@ public class ChatController {
    * Endpoint to communicate with websocket via messaging.
    *
    */
-  @MessageMapping("/sengMessage")
-  @SendTo("/topic/messages")
+  @MessageMapping("/chat")
   public void sendMessage(@RequestBody ChatMessageDto chatMessageDto) {
-    simpMessagingTemplate.convertAndSendToUser(chatMessageDto.getRecipient(),
-            "queue/message", chatMessageDto);
+    simpMessagingTemplate.convertAndSend(
+            String.format("topic/messages/%s", chatMessageDto.getTopicName()), chatMessageDto);
   }
 
 }

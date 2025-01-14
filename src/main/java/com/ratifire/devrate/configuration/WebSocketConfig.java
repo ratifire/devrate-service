@@ -30,13 +30,12 @@ public class WebSocketConfig extends AbstractWebSocketHandler
   @Override
   public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
     registry.addHandler(this, "/ws/notifications").setAllowedOrigins("*");
-    registry.addHandler(this, "/ws/messages").setAllowedOrigins("*");
   }
 
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
-    registry.addEndpoint("/listener").setAllowedOrigins("*").withSockJS();
-    registry.addEndpoint("/listener").setAllowedOrigins("*");
+    registry.addEndpoint("/chat").setAllowedOrigins("*").withSockJS();
+    registry.addEndpoint("/chat").setAllowedOrigins("*");
   }
 
   @Override
