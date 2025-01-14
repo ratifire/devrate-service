@@ -631,19 +631,19 @@ INSERT INTO interview_histories (id, date_time, duration, user_id, title, role, 
 SELECT id, date_time, duration, user_id, title, role, attendee_id, feedback
 FROM (
 VALUES
-    (1000, '2024-07-21T12:40:00Z'::timestamptz, 60, 8881, 'Interview with candidate 1', 'Developer', 8882, 'Great interview'),
-    (2000, '2024-07-21T12:23:00Z'::timestamptz, 45, 8882, 'Interview with candidate 2', 'Developer', 8881, 'Good communication skills'),
-    (3001, '2024-09-08T12:00:00Z'::timestamptz, 60, 8881, 'Interview with candidate 25', 'Developer', 8882, 'Positive feedback'),
-    (5000, '2024-07-23T12:00:00Z'::timestamptz, 75, 8881, 'Interview with candidate 3', 'Tester', 8882, 'Needs improvement'),
-    (6000, '2024-07-24T12:00:00Z'::timestamptz, 60, 8882, 'Interview with candidate 4', 'Developer', 8881, 'Strong technical knowledge'),
-    (7000, '2024-07-25T12:00:00Z'::timestamptz, 45, 8881, 'Interview with candidate 5', 'Developer', 8882, 'Good experience'),
-    (8000, '2024-07-26T12:00:00Z'::timestamptz, 30, 8882, 'Interview with candidate 6', 'Manager', 8881, 'Lacked leadership skills'),
-    (9000, '2024-07-26T12:00:00Z'::timestamptz, 90, 8881, 'Interview with candidate 7', 'Developer', 8882, 'Excellent problem-solving skills'),
-    (10000, '2024-07-27T12:00:00Z'::timestamptz, 75, 8882, 'Interview with candidate 8', 'Tester', 8881, 'Attention to detail'),
-    (11000, '2024-07-27T12:00:00Z'::timestamptz, 45, 8881, 'Interview with candidate 9', 'Manager', 8882, 'Strong decision making'),
-    (12000, '2024-07-27T12:00:00Z'::timestamptz, 30, 8882, 'Interview with candidate 10', 'Developer', 8881, 'Good technical understanding'),
-    (13000, '2024-07-28T12:00:00Z'::timestamptz, 90, 8881, 'Interview with candidate 11', 'Developer', 8882, 'Excellent performance'),
-    (14000, '2024-07-28T12:00:00Z'::timestamptz, 75, 8882, 'Interview with candidate 12', 'Tester', 8881, 'Experience could be improved')
+    (1000, '2024-07-21T12:40:00Z'::timestamptz, 60, 8881, 'Interview with candidate 1', 'CANDIDATE', 8882, 'Great interview'),
+    (2000, '2024-07-21T12:23:00Z'::timestamptz, 45, 8882, 'Interview with candidate 2', 'INTERVIEWER', 8881, 'Good communication skills'),
+    (3001, '2024-09-08T12:00:00Z'::timestamptz, 60, 8881, 'Interview with candidate 25', 'CANDIDATE', 8882, 'Positive feedback'),
+    (5000, '2024-07-23T12:00:00Z'::timestamptz, 75, 8881, 'Interview with candidate 3', 'CANDIDATE', 8882, 'Needs improvement'),
+    (6000, '2024-07-24T12:00:00Z'::timestamptz, 60, 8882, 'Interview with candidate 4', 'INTERVIEWER', 8881, 'Strong technical knowledge'),
+    (7000, '2024-07-25T12:00:00Z'::timestamptz, 45, 8881, 'Interview with candidate 5', 'CANDIDATE', 8882, 'Good experience'),
+    (8000, '2024-07-26T12:00:00Z'::timestamptz, 30, 8882, 'Interview with candidate 6', 'INTERVIEWER', 8881, 'Lacked leadership skills'),
+    (9000, '2024-07-26T12:00:00Z'::timestamptz, 90, 8881, 'Interview with candidate 7', 'CANDIDATE', 8882, 'Excellent problem-solving skills'),
+    (10000, '2024-07-27T12:00:00Z'::timestamptz, 75, 8882, 'Interview with candidate 8', 'INTERVIEWER', 8881, 'Attention to detail'),
+    (11000, '2024-07-27T12:00:00Z'::timestamptz, 45, 8881, 'Interview with candidate 9', 'CANDIDATE', 8882, 'Strong decision making'),
+    (12000, '2024-07-27T12:00:00Z'::timestamptz, 30, 8882, 'Interview with candidate 10', 'INTERVIEWER', 8881, 'Good technical understanding'),
+    (13000, '2024-07-28T12:00:00Z'::timestamptz, 90, 8881, 'Interview with candidate 11', 'CANDIDATE', 8882, 'Excellent performance'),
+    (14000, '2024-07-28T12:00:00Z'::timestamptz, 75, 8882, 'Interview with candidate 12', 'INTERVIEWER', 8881, 'Experience could be improved')
 ) AS new_interview_histories (id, date_time, duration, user_id, title, role, attendee_id, feedback)
 WHERE NOT EXISTS (
     SELECT 1
@@ -656,18 +656,18 @@ INSERT INTO interview_histories (id, date_time, duration, user_id, title, role, 
 SELECT id, date_time, duration, user_id, title, role, attendee_id, feedback
 FROM (
 VALUES
-    (15000, '2023-11-01T12:00:00Z'::timestamptz, 60, 8881, 'Interview with candidate 13', 'Developer', 8882, 'Great potential'),
-    (16000, '2023-12-01T12:00:00Z'::timestamptz, 45, 8882, 'Interview with candidate 14', 'Developer', 8881, 'Needs technical training'),
-    (17000, '2023-12-01T12:00:00Z'::timestamptz, 30, 8881, 'Interview with candidate 15', 'Developer', 8882, 'Not enough experience'),
-    (18000, '2023-12-01T12:00:00Z'::timestamptz, 90, 8882, 'Interview with candidate 16', 'Manager', 8881, 'Great leadership qualities'),
-    (19000, '2024-01-01T12:00:00Z'::timestamptz, 75, 8881, 'Interview with candidate 17', 'Developer', 8882, 'Technically strong'),
-    (20000, '2024-02-01T12:00:00Z'::timestamptz, 60, 8882, 'Interview with candidate 18', 'Developer', 8881, 'Solid skills'),
-    (21000, '2024-03-01T12:00:00Z'::timestamptz, 45, 8881, 'Interview with candidate 19', 'Tester', 8882, 'Attention to detail'),
-    (22000, '2024-04-01T12:00:00Z'::timestamptz, 30, 8882, 'Interview with candidate 20', 'Manager', 8881, 'Lacks team coordination'),
-    (23000, '2024-05-01T12:00:00Z'::timestamptz, 90, 8881, 'Interview with candidate 21', 'Developer', 8882, 'Excellent coding skills'),
-    (24000, '2024-06-01T12:00:00Z'::timestamptz, 75, 8882, 'Interview with candidate 22', 'Tester', 8881, 'Could improve in testing'),
-    (25000, '2024-07-01T12:00:00Z'::timestamptz, 60, 8881, 'Interview with candidate 23', 'Developer', 8882, 'Good problem-solving'),
-    (26000, '2024-08-01T12:00:00Z'::timestamptz, 45, 8882, 'Interview with candidate 24', 'Developer', 8881, 'Requires further training')
+    (15000, '2023-11-01T12:00:00Z'::timestamptz, 60, 8881, 'Interview with candidate 13', 'CANDIDATE', 8882, 'Great potential'),
+    (16000, '2023-12-01T12:00:00Z'::timestamptz, 45, 8882, 'Interview with candidate 14', 'INTERVIEWER', 8881, 'Needs technical training'),
+    (17000, '2023-12-01T12:00:00Z'::timestamptz, 30, 8881, 'Interview with candidate 15', 'CANDIDATE', 8882, 'Not enough experience'),
+    (18000, '2023-12-01T12:00:00Z'::timestamptz, 90, 8882, 'Interview with candidate 16', 'INTERVIEWER', 8881, 'Great leadership qualities'),
+    (19000, '2024-01-01T12:00:00Z'::timestamptz, 75, 8881, 'Interview with candidate 17', 'CANDIDATE', 8882, 'Technically strong'),
+    (20000, '2024-02-01T12:00:00Z'::timestamptz, 60, 8882, 'Interview with candidate 18', 'INTERVIEWER', 8881, 'Solid skills'),
+    (21000, '2024-03-01T12:00:00Z'::timestamptz, 45, 8881, 'Interview with candidate 19', 'CANDIDATE', 8882, 'Attention to detail'),
+    (22000, '2024-04-01T12:00:00Z'::timestamptz, 30, 8882, 'Interview with candidate 20', 'INTERVIEWER', 8881, 'Lacks team coordination'),
+    (23000, '2024-05-01T12:00:00Z'::timestamptz, 90, 8881, 'Interview with candidate 21', 'CANDIDATE', 8882, 'Excellent coding skills'),
+    (24000, '2024-06-01T12:00:00Z'::timestamptz, 75, 8882, 'Interview with candidate 22', 'INTERVIEWER', 8881, 'Could improve in testing'),
+    (25000, '2024-07-01T12:00:00Z'::timestamptz, 60, 8881, 'Interview with candidate 23', 'CANDIDATE', 8882, 'Good problem-solving'),
+    (26000, '2024-08-01T12:00:00Z'::timestamptz, 45, 8882, 'Interview with candidate 24', 'INTERVIEWER', 8881, 'Requires further training')
 ) AS new_interview_histories (id, date_time, duration, user_id, title, role, attendee_id, feedback)
 WHERE NOT EXISTS (
     SELECT 1

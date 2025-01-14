@@ -1,5 +1,6 @@
 package com.ratifire.devrate.dto;
 
+import com.ratifire.devrate.enums.InterviewRequestRole;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Map;
@@ -31,7 +32,7 @@ public class InterviewHistoryDto {
 
   private String title;
 
-  private String role;
+  private InterviewRequestRole role;
 
   private int attendeeId;
 

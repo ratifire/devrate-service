@@ -41,7 +41,7 @@ public class InterviewHistoryController {
    * @return the Interview history information as a DTO
    */
   @GetMapping("/{id}")
-  public Optional<InterviewHistory> getById(@PathVariable long id) {
+  public InterviewHistoryDto getById(@PathVariable long id) {
     return interviewHistoryService.findByIdAndUserId(id);
   }
 

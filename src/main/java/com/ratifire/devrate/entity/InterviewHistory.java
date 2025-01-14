@@ -1,9 +1,12 @@
 package com.ratifire.devrate.entity;
 
+import com.ratifire.devrate.enums.InterviewRequestRole;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -57,8 +60,8 @@ public class InterviewHistory {
   @Column(name = "title", nullable = false, length = 255)
   private String title;
 
-  @Column(nullable = false, length = 100)
-  private String role;
+  @Enumerated(EnumType.STRING)
+  private InterviewRequestRole role;
 
   @Column(name = "attendee_id", nullable = false)
   private int attendeeId;
