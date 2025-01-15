@@ -32,7 +32,7 @@ public class InterviewRequestService {
   }
 
   public List<InterviewRequest> findByIds(List<Long> ids) {
-    return repository.findByIds(ids).orElse(List.of());
+    return repository.findByIds(ids);
   }
 
   public void saveAll(List<InterviewRequest> requests) {
@@ -49,7 +49,6 @@ public class InterviewRequestService {
     long userId = userContextProvider.getAuthenticatedUserId();
 
     return repository.findAllByMastery_IdAndUser_Id(masteryId, userId)
-        .orElse(List.of())
         .stream()
         .map(this::convertToInterviewRequestViewDto)
         .toList();

@@ -23,7 +23,7 @@ public interface InterviewRequestRepository extends JpaRepository<InterviewReque
   Optional<Long> findMasteryIdById(@Param("id") Long id);
 
   @Query("SELECT r FROM InterviewRequest r WHERE r.id IN (:ids)")
-  Optional<List<InterviewRequest>> findByIds(@Param("ids") List<Long> ids);
+  List<InterviewRequest> findByIds(@Param("ids") List<Long> ids);
 
-  Optional<List<InterviewRequest>> findAllByMastery_IdAndUser_Id(long masteryId, long userId);
+  List<InterviewRequest> findAllByMastery_IdAndUser_Id(long masteryId, long userId);
 }
