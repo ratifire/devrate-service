@@ -1,0 +1,32 @@
+[
+  {
+    "title": "Feedback Form",
+    "date": "21/10/2024",
+    "version": "1.0",
+    "description": "A feedback form has been added where users can share their experience using the platform, suggest improvements, or report any issues found. The form allows selecting a feedback type: PROPOSITION (suggestion), ISSUE (problem), or FEEDBACK (general feedback). This will help us respond promptly to feedback, implement improvements, and maintain high service quality, focusing on your needs and preferences."
+  },
+  {
+    "title": "User Search",
+    "date": "21/10/2024",
+    "version": "1.0",
+    "description": "A user search function has been added, allowing profiles to be found by first name, last name, or a combination of both fields. The search form is located on the profile page in the top right corner, next to the theme switch and notification icon. This update makes it quick and convenient to find the users you need, providing easier access to profiles."
+  },
+  {
+    "title": "Interview Request Time Adjustment",
+    "date": "14/10/2024",
+    "version": "1.0",
+    "description": "A time adjustment function for interview requests has been added. This new feature allows users to easily change the scheduled interview time without needing to submit a new request. It significantly enhances scheduling flexibility and user convenience."
+  },
+  {
+    "title": "User Skill Search",
+    "date": "14/10/2024",
+    "version": "1.0",
+    "description": "You can now easily find users' skills, gaining a clearer understanding of their qualifications. The intuitive search form allows you to enter keywords and receive instant results, greatly simplifying access to relevant skills. This update provides a fast and convenient way to search for skills, making platform navigation more efficient. To use the skill search, simply go to a user\u2019s profile, navigate to the 'Skills' section, and enter the desired skills in the search form."
+  },
+  {
+    "title": "Main Page Design Update",
+    "date": "07/10/2024",
+    "version": "1.0",
+    "description": "We've refreshed the main page design with an improved color scheme, along with a feedback form and contact details for easier communication. Key information about the platform\u2019s features and benefits has been added to enhance understanding of how it works. A new FAQ section has been created with answers to frequently asked questions for your convenience. Additionally, the visual design of the registration, login, and email confirmation forms has been updated. All these changes are aimed at enhancing your experience and comfort on our platform."
+  }
+]

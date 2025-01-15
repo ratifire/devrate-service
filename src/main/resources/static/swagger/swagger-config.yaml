@@ -112,6 +112,8 @@ paths:
     $ref: './paths/data/data-user-filename.yaml'
   /data/specialization/{filename}:
     $ref: './paths/data/data-specialization-filename.yaml'
+  /data/faq/{filename}:
+    $ref: './paths/data/data-faq-filename.yaml'
   /users/{userId}/specializations:
     $ref: './paths/users/users-id-specializations.yaml'
   /specializations/{id}:
