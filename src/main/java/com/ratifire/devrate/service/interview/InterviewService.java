@@ -104,6 +104,9 @@ public class InterviewService {
         joinUrl, date);
     interviewRepository.saveAll(List.of(interviewer, candidate));
 
+    populateInterviewRequestAssignedDate(interviewerRequestId, candidateRequestId,
+        interviewer.getStartTime());
+
     Event event = eventService.buildEvent(interviewId, candidateId, interviewerId, joinUrl, date);
     eventService.save(event, List.of(interviewerId, candidateId));
 
@@ -114,6 +117,26 @@ public class InterviewService {
 
     sendInterviewScheduledAlerts(
         requestMap.get(interviewerRequestId), requestMap.get(candidateRequestId), date, joinUrl);
+  }
+
+  private void populateInterviewRequestAssignedDate(long interviewerRequestId,
+      long candidateRequestId, ZonedDateTime assignedDate) {
+    List<InterviewRequest> scheduledInterviewRequests = interviewRequestService.findByIds(
+        List.of(interviewerRequestId, candidateRequestId));
+
+    if (scheduledInterviewRequests.isEmpty()) {
+      return;
+    }
+
+    scheduledInterviewRequests.forEach(request -> {
+      if (request.getAssignedDates() != null) {
+        request.getAssignedDates().add(assignedDate);
+      } else {
+        request.setAssignedDates(List.of(assignedDate));
+      }
+    });
+
+    interviewRequestService.saveAll(scheduledInterviewRequests);
   }
 
   /**

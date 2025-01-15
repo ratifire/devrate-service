@@ -32,7 +32,11 @@ public class InterviewRequestService {
   }
 
   public List<InterviewRequest> findByIds(List<Long> ids) {
-    return repository.findByIds(ids);
+    return repository.findByIds(ids).orElse(List.of());
+  }
+
+  public void saveAll(List<InterviewRequest> requests) {
+    repository.saveAll(requests);
   }
 
   /**
