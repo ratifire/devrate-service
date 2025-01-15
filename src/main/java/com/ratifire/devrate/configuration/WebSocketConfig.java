@@ -9,6 +9,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
@@ -18,6 +19,7 @@ import org.springframework.web.socket.handler.AbstractWebSocketHandler;
  */
 @Configuration
 @EnableWebSocket
+@EnableWebSocketMessageBroker
 @RequiredArgsConstructor
 public class WebSocketConfig extends AbstractWebSocketHandler implements WebSocketConfigurer  {
 
