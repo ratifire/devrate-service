@@ -60,6 +60,10 @@ public class InterviewRequest {
   @Column(name = "available_dates", nullable = false)
   private List<ZonedDateTime> availableDates;
 
+  @ElementCollection(targetClass = ZonedDateTime.class, fetch = FetchType.LAZY)
+  @Column(name = "assigned_dates", nullable = false)
+  private List<ZonedDateTime> assignedDates;
+
   @ElementCollection(targetClass = Integer.class, fetch = FetchType.LAZY)
   @Column(name = "black_list", nullable = false)
   private Set<Integer> blackList = new HashSet<>();

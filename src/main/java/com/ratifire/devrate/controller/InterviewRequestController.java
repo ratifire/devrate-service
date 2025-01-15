@@ -1,10 +1,13 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.InterviewRequestDto;
+import com.ratifire.devrate.dto.InterviewRequestViewDto;
 import com.ratifire.devrate.service.interview.InterviewRequestService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,6 +24,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class InterviewRequestController {
 
   private final InterviewRequestService interviewRequestService;
+
+  /**
+   * Retrieves a list of interview requests associated with a specific mastery ID.
+   *
+   * @param masteryId the ID of the mastery to fetch interview requests for.
+   * @return a list of {@link InterviewRequestViewDto} containing the details.
+   */
+  @GetMapping("/masteries/{masteryId}")
+  public List<InterviewRequestViewDto> getByMasteryId(@PathVariable long masteryId) {
+    return interviewRequestService.getByMasteryId(masteryId);
+  }
 
   /**
    * Creates a new interview request and sends it to the matcher-service.

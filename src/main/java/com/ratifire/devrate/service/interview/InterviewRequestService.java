@@ -1,6 +1,7 @@
 package com.ratifire.devrate.service.interview;
 
 import com.ratifire.devrate.dto.InterviewRequestDto;
+import com.ratifire.devrate.dto.InterviewRequestViewDto;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.exception.InterviewRequestDoesntExistException;
@@ -32,6 +33,38 @@ public class InterviewRequestService {
 
   public List<InterviewRequest> findByIds(List<Long> ids) {
     return repository.findByIds(ids);
+  }
+
+  /**
+   * Retrieves a list of interview requests by mastery ID for the authenticated user.
+   *
+   * @param masteryId the ID of the mastery to fetch interview requests for.
+   * @return a list of {@link InterviewRequestViewDto} containing the details.
+   */
+  public List<InterviewRequestViewDto> getByMasteryId(long masteryId) {
+    long userId = userContextProvider.getAuthenticatedUserId();
+
+    return repository.findAllByMastery_IdAndUser_Id(masteryId, userId)
+        .orElse(List.of())
+        .stream()
+        .map(this::convertToInterviewRequestViewDto)
+        .toList();
+  }
+
+  /**
+   * Converts an InterviewRequest entity to an InterviewRequestViewDto.
+   *
+   * @param request the InterviewRequest entity to convert.
+   * @return the converted {@link InterviewRequestViewDto}.
+   */
+  private InterviewRequestViewDto convertToInterviewRequestViewDto(InterviewRequest request) {
+    return InterviewRequestViewDto.builder()
+        .id(request.getId())
+        .role(request.getRole())
+        .desiredInterview(request.getDesiredInterview())
+        .availableDates(request.getAvailableDates())
+        .assignedDates(request.getAssignedDates())
+        .build();
   }
 
   /**
@@ -80,15 +113,6 @@ public class InterviewRequestService {
         .filter(dates -> dates.size() >= requestDto.getDesiredInterview())
         .orElseThrow(() -> new InvalidInterviewRequestException(
             "Available dates must be greater than or equal to the desired number of interviews."));
-  }
-
-  /**
-   * Deletes interview requests by their IDs.
-   *
-   * @param ids the list of interview request IDs to be deleted.
-   */
-  public void deleteBulk(List<Long> ids) {
-    repository.deleteAllById(ids);
   }
 
   /**
