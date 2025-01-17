@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.ZonedDateTime;
+
 /**
  * Data Transfer Object (DTO) representing the chat message.
  */
@@ -15,9 +17,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class ChatMessageDto {
-  private String sender;
-  private String recipient;
-  private String message;
+  private long sender;
+  private String receiver;
+  private String payload;
   private String topicName;
-  private String timestamp;
+  private String status;
+  private ZonedDateTime dateTime;
 }

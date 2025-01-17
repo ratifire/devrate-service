@@ -1,29 +1,24 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.ChatMessageDto;
+import com.ratifire.devrate.service.ChatService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Controller to communicate with websocket's topics.
- */
-@Controller
+import java.util.List;
+
+@RestController
 @RequiredArgsConstructor
+@RequestMapping("/chat")
 public class ChatController {
 
-  private SimpMessagingTemplate simpMessagingTemplate;
+  private final ChatService chatService;
 
-  /**
-   * Endpoint to communicate with websocket via messaging.
-   *
-   */
-  @MessageMapping("/chat")
-  public void sendMessage(@RequestBody ChatMessageDto chatMessageDto) {
-    simpMessagingTemplate.convertAndSend(
-            String.format("topic/messages/%s", chatMessageDto.getTopicName()), chatMessageDto);
+  @GetMapping("/{topicName}")
+  public List<ChatMessageDto> getById(@PathVariable String topicName) {
+    return chatService.findAllMessagesByTopicName(topicName);
   }
-
 }
