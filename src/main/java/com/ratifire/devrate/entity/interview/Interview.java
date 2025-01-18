@@ -40,8 +40,8 @@ public class Interview {
   @Enumerated(EnumType.STRING)
   private InterviewRequestRole role;
 
-  @Column(name = "interview_id", nullable = false)
-  private long interviewId;
+  @Column(name = "event_id", nullable = false)
+  private long eventId;
 
   @Column(name = "room_url", nullable = false)
   private String roomUrl;
