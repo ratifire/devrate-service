@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Data
-@Builder(toBuilder = true)
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "events")
@@ -30,14 +30,6 @@ public class Event {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
-
-  /**
-   * Identifier related to the specific event type.
-   * For example, if the event type is 'interview', this field will store 'interviewId'.
-   * If the event type is 'conference', this field will store 'conferenceId', etc.
-   */
-  @Column(name = "event_type_id", nullable = false)
-  private long eventTypeId;
 
   @Enumerated(EnumType.STRING)
   private EventType type;
@@ -54,6 +46,4 @@ public class Event {
   @Column(name = "start_time", nullable = false)
   private ZonedDateTime startTime;
 
-  @Column(name = "user_id", nullable = false)
-  private long userId;
 }
