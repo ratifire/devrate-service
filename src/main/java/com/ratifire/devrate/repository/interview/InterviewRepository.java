@@ -18,13 +18,15 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
 
   List<Interview> findByUserId(long userId);
 
-  @Query("SELECT i FROM Interview i WHERE i.interviewId = "
-      + "(SELECT interviewId FROM Interview WHERE id = :id)")
+  List<Interview> findByEventId(long eventId);
+
+  @Query("SELECT i FROM Interview i WHERE i.eventId = "
+      + "(SELECT eventId FROM Interview WHERE id = :id)")
   List<Interview> findInterviewPairById(@Param("id") long id);
 
-  @Query("SELECT i.userId FROM Interview i WHERE i.interviewId ="
-      + " :interviewId AND i.userId <> :userId")
-  Optional<Long> findUserIdByInterviewIdAndUserIdNot(@Param("interviewId") long interviewId,
+  @Query("SELECT i.userId FROM Interview i WHERE i.eventId ="
+      + " :eventId AND i.userId <> :userId")
+  Optional<Long> findUserIdByInterviewIdAndUserIdNot(@Param("eventId") long eventId,
       @Param("userId") long userId);
 
   //TODO: Method needs to be reimplemented
