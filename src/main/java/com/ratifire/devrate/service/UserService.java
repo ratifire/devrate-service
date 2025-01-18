@@ -5,7 +5,6 @@ import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
-import com.ratifire.devrate.dto.EventDto;
 import com.ratifire.devrate.dto.InterviewFeedbackDto;
 import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.InterviewSummaryDto;
@@ -42,10 +41,8 @@ import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
 import com.ratifire.devrate.service.interview.InterviewFeedbackDetailService;
 import com.ratifire.devrate.service.interview.InterviewSummaryService;
-import com.ratifire.devrate.util.DateTimeUtils;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -91,7 +88,6 @@ public class UserService {
   private final DataMapper<InterviewSummaryDto, InterviewSummary> interviewSummaryMapper;
   private final DataMapper<SpecializationDto, Specialization> specializationDataMapper;
   private final DataMapper<UserMainMasterySkillDto, Specialization> userMainMasterySkillMapper;
-  private final DataMapper<EventDto, Event> eventMapper;
   private final DataMapper<UserMainHardSkillsDto, Specialization> userMainHardSkillsMapper;
 
   @Autowired
@@ -143,6 +139,14 @@ public class UserService {
    */
   public String findEmailByUserId(long userId) {
     return userRepository.findEmailByUserId(userId);
+  }
+
+  public List<User> findAllByEventsContaining(Event event) {
+    return userRepository.findAllByEventsContaining(event);
+  }
+
+  public void saveAll(List<User> users) {
+    userRepository.saveAll(users);
   }
 
   /**
@@ -568,49 +572,6 @@ public class UserService {
     specializationService.createMasteriesForSpecialization(specialization,
         specializationDto.getMainMasteryLevel());
     return specializationDataMapper.toDto(specialization);
-  }
-
-  /**
-   * Retrieves a list of events for a specified user that occur within a given time range.
-   *
-   * @param userId the ID of the user whose events are to be retrieved
-   * @param from   the start of the time range (inclusive)
-   * @param to     the end of the time range (inclusive)
-   * @return a list of {@link EventDto} objects representing the events for the user
-   */
-  public List<EventDto> findEventsBetweenDate(long userId, LocalDate from, LocalDate to) {
-    User user = findById(userId);
-
-    return user.getEvents().stream()
-        .filter(event -> DateTimeUtils.isWithinRange(event.getStartTime().toLocalDate(), from, to))
-        .map(event -> {
-          User host = findById(event.getHostId());
-          List<User> participants = userRepository.findAllById(event.getParticipantIds());
-          return eventMapper.toDto(event, host, participants);
-        })
-        .toList();
-  }
-
-  /**
-   * Retrieves a list of events for a given user that start from a specified date and time in UTC.
-   *
-   * @param userId the ID of the user whose events are to be retrieved
-   * @param from   the starting date and time from which events should be retrieved
-   * @return a list of {@link EventDto} objects representing the events starting from
-   * @throws UserNotFoundException if no user with the specified ID is found
-   */
-  public List<EventDto> findEventsFromDateTime(long userId, ZonedDateTime from) {
-    User user = findById(userId);
-
-    return user.getEvents().stream()
-        .filter(event -> !event.getStartTime().isBefore(DateTimeUtils.toUtc(from)))
-        .sorted(Comparator.comparing(Event::getStartTime))
-        .map(event -> {
-          User host = findById(event.getHostId());
-          List<User> participants = userRepository.findAllById(event.getParticipantIds());
-          return eventMapper.toDto(event, host, participants);
-        })
-        .toList();
   }
 
   /**

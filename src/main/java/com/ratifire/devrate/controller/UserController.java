@@ -344,34 +344,6 @@ public class UserController {
     return userService.getPublicMainMasterySkillsByUserId(userId);
   }
 
-  /**
-   * Retrieves a list of events for a specified user that occur within a given date range.
-   *
-   * @param userId the ID of the user whose events are to be retrieved
-   * @param from   the start of the date range (inclusive)
-   * @param to     the end of the date range (inclusive)
-   * @return a list of {@link EventDto} objects representing the events for the user
-   */
-  @GetMapping("/{userId}/events")
-  public List<EventDto> findEventsBetweenDate(@PathVariable long userId,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-    return userService.findEventsBetweenDate(userId, from, to);
-  }
-
-  /**
-   * Retrieves a list of events for a given user that start from a specified date and time.
-   *
-   * @param userId the ID of the user whose events are to be retrieved
-   * @param from   the starting date and time in ISO format (e.g., {@code 2024-08-28T12:00:00Z})
-   * @return a list of {@link EventDto} objects representing the events starting from
-   */
-  @GetMapping("/{userId}/events/closest")
-  public List<EventDto> findEventsFromDateTime(@PathVariable long userId,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime from) {
-    return userService.findEventsFromDateTime(userId, from);
-  }
-
   @PostMapping("/{reviewerId}/feedbacks")
   public void saveFeedback(@PathVariable long reviewerId,
       @Valid @RequestBody InterviewFeedbackDto interviewFeedbackDto) {
