@@ -1,9 +1,17 @@
 package com.ratifire.devrate.service;
 
+import com.ratifire.devrate.dto.EventDto;
 import com.ratifire.devrate.entity.Event;
+import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.enums.EventType;
+import com.ratifire.devrate.mapper.impl.EventMapper;
 import com.ratifire.devrate.repository.EventRepository;
+import com.ratifire.devrate.security.helper.UserContextProvider;
+import com.ratifire.devrate.util.DateTimeUtils;
+import jakarta.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +23,40 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EventService {
 
+  private final UserService userService;
+  private final UserContextProvider userContextProvider;
   private final EventRepository eventRepository;
+  private final EventMapper eventMapper;
+
+  /**
+   * Retrieves a list of events for a specified user that occur within a given time range.
+   *
+   * @param from the start of the time range (inclusive)
+   * @param to   the end of the time range (inclusive)
+   * @return a list of {@link EventDto} objects representing the events for the user
+   */
+  public List<EventDto> findBetweenDate(LocalDate from, LocalDate to) {
+    User user = userService.findById(userContextProvider.getAuthenticatedUserId());
+    return user.getEvents().stream()
+        .filter(event -> DateTimeUtils.isWithinRange(event.getStartTime().toLocalDate(), from, to))
+        .map(eventMapper::toDto)
+        .toList();
+  }
+
+  /**
+   * Retrieves a list of events for a given user that start from a specified date and time in UTC.
+   *
+   * @param from the starting date and time from which events should be retrieved
+   * @return a list of {@link EventDto} objects representing the events starting from
+   */
+  public List<EventDto> findFromDateTime(ZonedDateTime from) {
+    User user = userService.findById(userContextProvider.getAuthenticatedUserId());
+    return user.getEvents().stream()
+        .filter(event -> !event.getStartTime().isBefore(DateTimeUtils.toUtc(from)))
+        .sorted(Comparator.comparing(Event::getStartTime))
+        .map(eventMapper::toDto)
+        .toList();
+  }
 
   /**
    * Saves a list of Event objects for each attendee by cloning the provided event and setting the
@@ -24,23 +65,29 @@ public class EventService {
    * @param event     the Event object to be cloned for each attendee
    * @param attendees a list of user IDs representing the attendees
    */
-  public void save(Event event, List<Long> attendees) {
-    List<Event> eventsToSave = attendees.stream()
-        .map(userId -> event.toBuilder()
-            .userId(userId)
-            .build())
-        .toList();
+  @Transactional
+  public long save(Event event, List<Long> attendees) {
+    List<User> users = userService.findByIds(attendees);
+    users.forEach(user -> user.getEvents().add(event));
 
-    eventRepository.saveAll(eventsToSave);
+    userService.saveAll(users);
+    return eventRepository.save(event).getId();
   }
 
   /**
    * Deletes an event by its associated interview ID.
    *
-   * @param eventTypeId the ID of the interview associated with the event to be deleted
+   * @param eventId the ID of the event to be deleted
    */
-  public void deleteAllByEventTypeId(long eventTypeId) {
-    eventRepository.deleteByEventTypeId(eventTypeId);
+  @Transactional
+  public void delete(long eventId) {
+    Event event = eventRepository.findById(eventId)
+        .orElseThrow(() -> new IllegalStateException("Could not find event with id: " + eventId));
+
+    List<User> users = userService.findAllByEventsContaining(event);
+    users.forEach(user -> user.getEvents().remove(event));
+    userService.saveAll(users);
+    eventRepository.delete(event);
   }
 
   /**
@@ -48,7 +95,7 @@ public class EventService {
    *
    * @return an Event object containing the specified details
    */
-  public Event buildEvent(long interviewId, long candidateId, long interviewerId, String roomUrl,
+  public Event buildEvent(long candidateId, long interviewerId, String roomUrl,
       ZonedDateTime date) {
     return Event.builder()
         .type(EventType.INTERVIEW)
@@ -56,7 +103,6 @@ public class EventService {
         .hostId(interviewerId)
         .participantIds(List.of(candidateId))
         .startTime(date)
-        .eventTypeId(interviewId)
         .build();
 
   }
