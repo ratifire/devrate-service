@@ -17,7 +17,6 @@ public abstract class ParticipantMapper implements DataMapper<ParticipantDto, Us
 
   @Mapping(source = "user.firstName", target = "name")
   @Mapping(source = "user.lastName", target = "surname")
-  @Mapping(source = "user.status", target = "status")
   @Mapping(target = "role", source = "role")
   public abstract ParticipantDto toDto(User user, InterviewRequestRole role);
 
