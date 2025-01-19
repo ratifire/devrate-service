@@ -1,3 +1,29 @@
+get:
+  tags:
+    - Interview Request
+  summary: Retrieves all interview requests.
+  description: |
+    Retrieves all interview requests for the authenticated user.
+  operationId: getAll
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
+  responses:
+    '200':
+      description: The interview requests for the authenticated user retrieved successfully.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../components/schemas/InterviewRequestViewDto.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+
 post:
   tags:
     - Interview Request

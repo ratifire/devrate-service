@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 /**
  * Service for handling Interview operations.
@@ -105,7 +104,7 @@ public class InterviewService {
         joinUrl, date);
     interviewRepository.saveAll(List.of(interviewer, candidate));
 
-    populateInterviewRequestAssignedDate(interviewerRequestId, candidateRequestId,
+    interviewRequestService.updateAssignedDates(interviewerRequestId, candidateRequestId,
         interviewer.getStartTime());
 
     Event event = eventService.buildEvent(interviewId, candidateId, interviewerId, joinUrl, date);
@@ -118,26 +117,6 @@ public class InterviewService {
 
     sendInterviewScheduledAlerts(
         requestMap.get(interviewerRequestId), requestMap.get(candidateRequestId), date, joinUrl);
-  }
-
-  private void populateInterviewRequestAssignedDate(long interviewerRequestId,
-      long candidateRequestId, ZonedDateTime assignedDate) {
-    List<InterviewRequest> scheduledInterviewRequests = interviewRequestService.findByIds(
-        List.of(interviewerRequestId, candidateRequestId));
-
-    if (scheduledInterviewRequests.isEmpty()) {
-      return;
-    }
-
-    scheduledInterviewRequests.forEach(request -> {
-      if (CollectionUtils.isEmpty(request.getAssignedDates())) {
-        request.setAssignedDates(List.of(assignedDate));
-      } else {
-        request.getAssignedDates().add(assignedDate);
-      }
-    });
-
-    interviewRequestService.saveAll(scheduledInterviewRequests);
   }
 
   /**

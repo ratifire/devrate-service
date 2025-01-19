@@ -26,6 +26,16 @@ public class InterviewRequestController {
   private final InterviewRequestService interviewRequestService;
 
   /**
+   * Retrieves all interview requests for the authenticated user.
+   *
+   * @return a list of {@link InterviewRequestViewDto} containing the details.
+   */
+  @GetMapping
+  public List<InterviewRequestViewDto> getAll() {
+    return interviewRequestService.getAll();
+  }
+
+  /**
    * Retrieves a list of interview requests associated with a specific mastery ID.
    *
    * @param masteryId the ID of the mastery to fetch interview requests for.

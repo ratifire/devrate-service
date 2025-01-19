@@ -9,11 +9,15 @@ import com.ratifire.devrate.exception.InvalidInterviewRequestException;
 import com.ratifire.devrate.mapper.impl.InterviewRequestMapper;
 import com.ratifire.devrate.repository.interview.InterviewRequestRepository;
 import com.ratifire.devrate.security.helper.UserContextProvider;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 /**
  * Service for handling Interview Requests.
@@ -35,8 +39,45 @@ public class InterviewRequestService {
     return repository.findByIds(ids);
   }
 
-  public void saveAll(List<InterviewRequest> requests) {
-    repository.saveAll(requests);
+  /**
+   * Updates the assigned dates for the specified interview requests by adding a new assigned date.
+   *
+   * @param interviewerRequestId the ID of the interviewer's request
+   * @param candidateRequestId   the ID of the candidate's request
+   * @param assignedDate         the date to assign to the requests
+   */
+  @Transactional
+  public void updateAssignedDates(long interviewerRequestId,
+      long candidateRequestId, ZonedDateTime assignedDate) {
+    List<InterviewRequest> scheduledInterviewRequests = findByIds(
+        List.of(interviewerRequestId, candidateRequestId));
+
+    if (scheduledInterviewRequests.isEmpty()) {
+      return;
+    }
+
+    scheduledInterviewRequests.forEach(request -> {
+      List<ZonedDateTime> assignedDates = request.getAssignedDates();
+      if (CollectionUtils.isEmpty(assignedDates)) {
+        request.setAssignedDates(new ArrayList<>(List.of(assignedDate)));
+      } else {
+        assignedDates.add(assignedDate);
+      }
+    });
+    repository.saveAll(scheduledInterviewRequests);
+  }
+
+  /**
+   * Retrieves all interview requests for the authenticated user.
+   *
+   * @return a list of {@link InterviewRequestViewDto} containing the details.
+   */
+  public List<InterviewRequestViewDto> getAll() {
+    long userId = userContextProvider.getAuthenticatedUserId();
+    return repository.findAllByUser_Id(userId)
+        .stream()
+        .map(this::convertToInterviewRequestViewDto)
+        .toList();
   }
 
   /**

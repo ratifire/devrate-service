@@ -26,4 +26,6 @@ public interface InterviewRequestRepository extends JpaRepository<InterviewReque
   List<InterviewRequest> findByIds(@Param("ids") List<Long> ids);
 
   List<InterviewRequest> findAllByMastery_IdAndUser_Id(long masteryId, long userId);
+
+  List<InterviewRequest> findAllByUser_Id(long userId);
 }
