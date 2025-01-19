@@ -100,8 +100,6 @@ paths:
     $ref: './paths/users/users-id-bookmarks.yaml'
   /bookmarks/{id}:
     $ref: './paths/bookmarks/bookmarks-id.yaml'
-  /users/{userId}/interview-requests:
-    $ref: './paths/users/users-id-interview-requests.yaml'
   /users/{userId}/interview-summaries:
     $ref: './paths/users/users-id-interviewSummaries.yaml'
   /users/{userId}/interview-summaries/{id}:
@@ -168,6 +166,10 @@ paths:
     $ref: './paths/users/users-id-notification-send.yaml'
   /users/{userId}/platform-feedbacks:
     $ref: './paths/users/users-id-platform-feedbacks.yaml'
+  /interview-requests:
+    $ref: './paths/interviewRequest/interview-requests.yaml'
+  /interview-requests/masteries/{masteryId}:
+    $ref: './paths/interviewRequest/interview-requests-masteries-masteryId.yaml'
 components:
   securitySchemes:
     accessToken:
