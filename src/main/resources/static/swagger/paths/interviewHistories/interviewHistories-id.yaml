@@ -1,0 +1,88 @@
+get:
+  tags:
+    - Interview History
+  summary: Get interview history by ID
+  description: Retrieves the interview history information for the authenticated user by the specified interview ID.
+  operationId: getInterviewHistoryById
+  security:
+    - accessToken: []
+    - idToken: []
+  parameters:
+    - in: path
+      name: id
+      description: The ID of the interview history record to retrieve.
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: Interview history retrieved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/InterviewHistoryDto.yaml'
+    '400':
+      description: Bad request, e.g., invalid ID or missing required parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '404':
+      description: Interview history not found for the authenticated user.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error occurred while processing the request.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+delete:
+  tags:
+    - Interview History
+  summary: Delete interview history by ID
+  description: Deletes the interview history record for the authenticated user and the specified interview ID.
+  operationId: deleteInterviewHistory
+  security:
+    - accessToken: []
+    - idToken: []
+  parameters:
+    - in: path
+      name: id
+      description: The ID of the interview history record to delete.
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: Interview history deleted successfully.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Interview history deleted successfully."
+    '400':
+      description: Bad request, e.g., invalid ID or missing required parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '404':
+      description: Interview history not found for the authenticated user.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error occurred while processing the request.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
