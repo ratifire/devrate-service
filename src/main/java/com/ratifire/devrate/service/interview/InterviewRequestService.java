@@ -10,14 +10,12 @@ import com.ratifire.devrate.mapper.impl.InterviewRequestMapper;
 import com.ratifire.devrate.repository.interview.InterviewRequestRepository;
 import com.ratifire.devrate.security.helper.UserContextProvider;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 /**
  * Service for handling Interview Requests.
@@ -56,14 +54,7 @@ public class InterviewRequestService {
       return;
     }
 
-    scheduledInterviewRequests.forEach(request -> {
-      List<ZonedDateTime> assignedDates = request.getAssignedDates();
-      if (CollectionUtils.isEmpty(assignedDates)) {
-        request.setAssignedDates(new ArrayList<>(List.of(assignedDate)));
-      } else {
-        assignedDates.add(assignedDate);
-      }
-    });
+    scheduledInterviewRequests.forEach(request -> request.getAssignedDates().add(assignedDate));
     repository.saveAll(scheduledInterviewRequests);
   }
 
