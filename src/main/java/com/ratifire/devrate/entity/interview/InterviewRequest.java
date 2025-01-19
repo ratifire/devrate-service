@@ -4,6 +4,7 @@ import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.enums.InterviewRequestRole;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -57,8 +58,16 @@ public class InterviewRequest {
   private ZonedDateTime expiredAt;
 
   @ElementCollection(targetClass = ZonedDateTime.class, fetch = FetchType.LAZY)
+  @CollectionTable(name = "interview_request_available_dates",
+      joinColumns = @JoinColumn(name = "interview_request_id"))
   @Column(name = "available_dates", nullable = false)
   private List<ZonedDateTime> availableDates;
+
+  @ElementCollection(targetClass = ZonedDateTime.class, fetch = FetchType.LAZY)
+  @CollectionTable(name = "interview_request_assigned_dates",
+      joinColumns = @JoinColumn(name = "interview_request_id"))
+  @Column(name = "assigned_dates", nullable = false)
+  private List<ZonedDateTime> assignedDates;
 
   @ElementCollection(targetClass = Integer.class, fetch = FetchType.LAZY)
   @Column(name = "black_list", nullable = false)

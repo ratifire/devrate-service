@@ -1,25 +1,21 @@
 package com.ratifire.devrate.dto;
 
 import com.ratifire.devrate.enums.InterviewRequestRole;
-import jakarta.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 
 /**
- * Data Transfer Object (DTO) for Interview Request.
+ * Data Transfer Object (DTO) for representing interview request details to be displayed on the UI.
  */
 @Builder
 @Getter
-public class InterviewRequestDto {
+public class InterviewRequestViewDto {
 
-  @NotNull
+  private long id;
   private InterviewRequestRole role;
-  @NotNull
-  private Long masteryId;
   private int desiredInterview;
-  @NotNull
   private List<ZonedDateTime> availableDates;
-  private ZonedDateTime expiredAt;
+  private List<ZonedDateTime> assignedDates;
 }

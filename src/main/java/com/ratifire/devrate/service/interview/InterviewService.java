@@ -104,6 +104,9 @@ public class InterviewService {
         joinUrl, date);
     interviewRepository.saveAll(List.of(interviewer, candidate));
 
+    interviewRequestService.updateAssignedDates(interviewerRequestId, candidateRequestId,
+        interviewer.getStartTime());
+
     Event event = eventService.buildEvent(interviewId, candidateId, interviewerId, joinUrl, date);
     eventService.save(event, List.of(interviewerId, candidateId));
 
