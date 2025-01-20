@@ -1,0 +1,25 @@
+get:
+  tags:
+    - Interview Request
+  summary: Retrieves a list of interview requests associated with a specific mastery ID.
+  description: Retrieves a list of interview requests associated with a specific mastery ID.
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
+  parameters:
+    - in: path
+      name: masteryId
+      description: ID of the mastery from selected specialization
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: Interview requests retrieved successfully
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+             $ref: '../../components/schemas/InterviewRequestViewDto.yaml'

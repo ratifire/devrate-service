@@ -24,4 +24,8 @@ public interface InterviewRequestRepository extends JpaRepository<InterviewReque
 
   @Query("SELECT r FROM InterviewRequest r WHERE r.id IN (:ids)")
   List<InterviewRequest> findByIds(@Param("ids") List<Long> ids);
+
+  List<InterviewRequest> findAllByMastery_IdAndUser_Id(long masteryId, long userId);
+
+  List<InterviewRequest> findAllByUser_Id(long userId);
 }
