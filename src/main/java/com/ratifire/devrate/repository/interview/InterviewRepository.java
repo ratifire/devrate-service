@@ -1,6 +1,7 @@
 package com.ratifire.devrate.repository.interview;
 
 import com.ratifire.devrate.entity.interview.Interview;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,6 +29,10 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
       + " :eventId AND i.userId <> :userId")
   Optional<Long> findUserIdByInterviewIdAndUserIdNot(@Param("eventId") long eventId,
       @Param("userId") long userId);
+
+  List<Interview> findByEventIdInAndUserIdNot(List<Long> eventIds, long currentUserId);
+
+  List<Interview> findByUserIdAndStartTimeGreaterThanEqual(long userId, ZonedDateTime startTime);
 
   //TODO: Method needs to be reimplemented
 

@@ -5,6 +5,7 @@ import static com.ratifire.devrate.enums.InterviewRequestRole.INTERVIEWER;
 
 import com.ratifire.devrate.dto.InterviewDto;
 import com.ratifire.devrate.dto.InterviewEventDto;
+import com.ratifire.devrate.dto.InterviewEventShortDto;
 import com.ratifire.devrate.dto.PairedParticipantDto;
 import com.ratifire.devrate.dto.ParticipantDto;
 import com.ratifire.devrate.entity.Event;
@@ -21,8 +22,10 @@ import com.ratifire.devrate.service.EventService;
 import com.ratifire.devrate.service.MasteryService;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserService;
+import com.ratifire.devrate.util.DateTimeUtils;
 import com.ratifire.devrate.util.zoom.service.ZoomApiService;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -106,6 +109,56 @@ public class InterviewService {
         .currentUser(current)
         .counterpartUser(counterpart)
         .build();
+  }
+
+  /**
+   * Retrieves a list of interview event short details for the currently authenticated user starting
+   * from the specified date and time.
+   *
+   * @param from the starting date and time from which to retrieve interview events
+   * @return a list of InterviewEventShortDto objects containing the short details of the interview
+   *     events
+   */
+  public List<InterviewEventShortDto> getInterviewEventShortDetailsFromDateTime(
+      ZonedDateTime from) {
+    long currentUserId = userContextProvider.getAuthenticatedUserId();
+    List<Interview> currentUserInterviews =
+        interviewRepository.findByUserIdAndStartTimeGreaterThanEqual(currentUserId,
+            DateTimeUtils.toUtc(from));
+
+    List<Long> eventIds = currentUserInterviews.stream()
+        .map(Interview::getEventId)
+        .toList();
+
+    if (eventIds.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    List<Interview> oppositeInterviews = interviewRepository.findByEventIdInAndUserIdNot(eventIds,
+        currentUserId);
+    Map<Long, User> usersById = getUsersByInterviews(oppositeInterviews);
+    Map<Long, Mastery> masteriesById = getMasteriesByInterviews(oppositeInterviews);
+
+    Map<Long, ParticipantDto> eventIdToParticipant = oppositeInterviews.stream()
+        .collect(Collectors.toMap(
+            Interview::getEventId,
+            interview -> buildParticipant(
+                usersById.get(interview.getUserId()),
+                interview,
+                masteriesById
+            )
+        ));
+
+    return currentUserInterviews.stream()
+        .map(currentInterview -> {
+          ParticipantDto counterpart = eventIdToParticipant.get(currentInterview.getEventId());
+          return InterviewEventShortDto.builder()
+              .startTime(currentInterview.getStartTime())
+              .roomUrl(currentInterview.getRoomUrl())
+              .counterpartUser(counterpart)
+              .build();
+        })
+        .toList();
   }
 
   /**
