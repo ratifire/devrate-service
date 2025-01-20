@@ -100,10 +100,10 @@ paths:
     $ref: './paths/users/users-id-bookmarks.yaml'
   /bookmarks/{id}:
     $ref: './paths/bookmarks/bookmarks-id.yaml'
-  /interview_histories?page=1&size=10:
-    $ref: './paths/interviewHistories/interviewHistories.yaml'
-  /interview_histories/{id}:
-    $ref: './paths/interviewHistories/interviewHistories-id.yaml'
+  /interview-histories?page=1&size=10:
+    $ref: './paths/interviewHistories/interview-histories.yaml'
+  /interview-histories/{id}:
+    $ref: './paths/interviewHistories/interview-histories-id.yaml'
   /data/languageproficiency/{filename}:
     $ref: './paths/data/data-languageproficiency-filename.yaml'
   /data/user/{filename}:

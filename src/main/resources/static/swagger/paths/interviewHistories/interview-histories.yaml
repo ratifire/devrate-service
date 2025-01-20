@@ -1,6 +1,6 @@
 get:
   tags:
-    - Interview Histories
+    - Interview History
   summary: Get paginated interview histories
   description: Retrieves a paginated list of interview histories for the authenticated user.
   operationId: getPaginatedInterviewHistories

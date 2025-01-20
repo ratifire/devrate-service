@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/interview_histories")
+@RequestMapping("/interview-histories")
 public class InterviewHistoryController {
 
   private final InterviewHistoryService interviewHistoryService;
