@@ -24,7 +24,7 @@ public class InterviewCompletionService {
 
   private final InterviewService interviewService;
   private final InterviewRequestService interviewRequestService;
-  private final InterviewSummaryService interviewSummaryService;
+  private final InterviewHistoryService interviewHistoryService;
   private final InterviewFeedbackDetailService interviewFeedbackDetailService;
   private final SpecializationService specializationService;
   private final UserService userService;

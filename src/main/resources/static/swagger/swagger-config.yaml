@@ -37,8 +37,8 @@ tags:
     description: Endpoints for user bookmark management
   - name: Interview Request
     description: Endpoints for interview request management
-  - name: Interview Summary
-    description: Endpoints for interview summary management
+  - name: Interview History
+    description: Endpoints for interview history management
   - name: Interview Feedback
     description: Endpoints for interview feedback management
   - name: Static Data
@@ -100,10 +100,10 @@ paths:
     $ref: './paths/users/users-id-bookmarks.yaml'
   /bookmarks/{id}:
     $ref: './paths/bookmarks/bookmarks-id.yaml'
-  /users/{userId}/interview-summaries:
-    $ref: './paths/users/users-id-interviewSummaries.yaml'
-  /users/{userId}/interview-summaries/{id}:
-    $ref: './paths/users/users-id-interviewSummaries-id.yaml'
+  /interview-histories?page=1&size=10:
+    $ref: './paths/interviewHistories/interview-histories.yaml'
+  /interview-histories/{id}:
+    $ref: './paths/interviewHistories/interview-histories-id.yaml'
   /data/languageproficiency/{filename}:
     $ref: './paths/data/data-languageproficiency-filename.yaml'
   /data/user/{filename}:
@@ -144,8 +144,6 @@ paths:
     $ref: './paths/skills/skills-id-hide-hide.yaml'
   /masteries/{masteryId}/history:
     $ref: './paths/masteries/masteries-id-mastery-history.yaml'
-  /users/{userId}/interview-summaries/statistics:
-    $ref: './paths/users/users-id-interviewSummaries-statistics.yaml'
   /users/{userId}/events:
     $ref: './paths/users/users-id-events.yaml'
   /users/{userId}/events/closest:
