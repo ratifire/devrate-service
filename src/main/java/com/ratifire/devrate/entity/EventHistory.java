@@ -12,15 +12,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Entity class representing an entity for storing calendar completed event information.
+ * Entity class representing an entity for storing event history information.
  */
 @Entity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "completed_events")
-public class CompletedEvent {
+@Table(name = "event_histories")
+public class EventHistory {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

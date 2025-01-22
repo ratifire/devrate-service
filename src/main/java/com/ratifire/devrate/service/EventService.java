@@ -11,7 +11,6 @@ import com.ratifire.devrate.util.DateTimeUtils;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,21 +38,6 @@ public class EventService {
     User user = userService.findById(userContextProvider.getAuthenticatedUserId());
     return user.getEvents().stream()
         .filter(event -> DateTimeUtils.isWithinRange(event.getStartTime().toLocalDate(), from, to))
-        .map(eventMapper::toDto)
-        .toList();
-  }
-
-  /**
-   * Retrieves a list of events for a given user that start from a specified date and time in UTC.
-   *
-   * @param from the starting date and time from which events should be retrieved
-   * @return a list of {@link EventDto} objects representing the events starting from
-   */
-  public List<EventDto> findFromDateTime(ZonedDateTime from) {
-    User user = userService.findById(userContextProvider.getAuthenticatedUserId());
-    return user.getEvents().stream()
-        .filter(event -> !event.getStartTime().isBefore(DateTimeUtils.toUtc(from)))
-        .sorted(Comparator.comparing(Event::getStartTime))
         .map(eventMapper::toDto)
         .toList();
   }

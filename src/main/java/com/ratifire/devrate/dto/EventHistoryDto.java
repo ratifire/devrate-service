@@ -7,13 +7,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Data Transfer Object representing the calendar completed event.
+ * Data Transfer Object representing the event history.
  */
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompletedEventDto {
+public class EventHistoryDto {
 
   private long id;
   private long eventId;

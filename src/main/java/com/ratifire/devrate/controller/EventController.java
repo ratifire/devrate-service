@@ -3,7 +3,6 @@ package com.ratifire.devrate.controller;
 import com.ratifire.devrate.dto.EventDto;
 import com.ratifire.devrate.service.EventService;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -34,17 +33,5 @@ public class EventController {
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
     return eventService.findBetweenDate(from, to);
-  }
-
-  /**
-   * Retrieves a list of events for a given user that start from a specified date and time.
-   *
-   * @param from the starting date and time in ISO format (e.g., {@code 2024-08-28T12:00:00Z})
-   * @return a list of {@link EventDto} objects representing the events starting from
-   */
-  @GetMapping("/closest")
-  public List<EventDto> findEventsFromDateTime(
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime from) {
-    return eventService.findFromDateTime(from);
   }
 }
