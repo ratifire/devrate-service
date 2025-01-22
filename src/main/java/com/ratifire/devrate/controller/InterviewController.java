@@ -31,8 +31,8 @@ public class InterviewController {
    * @return a list of InterviewDto objects
    */
   @GetMapping()
-  public List<InterviewDto> getAll() {
-    return interviewService.getAll();
+  public List<InterviewDto> findAll() {
+    return interviewService.findAll();
   }
 
   /**

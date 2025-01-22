@@ -56,7 +56,7 @@ public class InterviewService {
    *
    * @return a list of InterviewDto objects representing the user's interviews
    */
-  public List<InterviewDto> getAll() {
+  public List<InterviewDto> findAll() {
     long userId = userContextProvider.getAuthenticatedUserId();
     List<Interview> interviews = interviewRepository.findByUserId(userId);
 

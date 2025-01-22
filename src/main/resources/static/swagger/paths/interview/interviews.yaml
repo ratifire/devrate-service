@@ -1,9 +1,9 @@
 get:
   tags:
     - Interview
-  summary: Get all interviews
+  summary: Find all interviews
   description: Retrieve a list of all interviews for current user.
-  operationId: getAll
+  operationId: findAll
   security:
     - accessToken: [ ]
     - idToken: [ ]

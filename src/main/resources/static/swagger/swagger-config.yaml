@@ -35,6 +35,8 @@ tags:
     description: Endpoints for user achievement management
   - name: Bookmark
     description: Endpoints for user bookmark management
+  - name: Interview
+    description: Endpoints for interview management
   - name: Interview Request
     description: Endpoints for interview request management
   - name: Interview History
