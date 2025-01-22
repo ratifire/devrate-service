@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequiredArgsConstructor
 public class ChatController {
 
-  private SimpMessagingTemplate simpMessagingTemplate;
+  private final SimpMessagingTemplate simpMessagingTemplate;
 
   /**
    * Endpoint to communicate with websocket via messaging.
