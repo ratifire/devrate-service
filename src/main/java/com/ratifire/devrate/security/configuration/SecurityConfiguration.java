@@ -43,6 +43,8 @@ public class SecurityConfiguration {
       "/actuator/**",
       // -- authentication
       "/auth/**",
+      // -- sockJS
+      "/chat/**",
       // -- swagger ui
       "/swagger/**",
       "/swagger-ui/**",
