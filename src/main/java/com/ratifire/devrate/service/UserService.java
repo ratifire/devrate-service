@@ -6,8 +6,6 @@ import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.InterviewFeedbackDto;
-import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
-import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.NotificationDto;
 import com.ratifire.devrate.dto.SkillFeedbackDto;
@@ -23,31 +21,26 @@ import com.ratifire.devrate.entity.Contact;
 import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.Event;
-import com.ratifire.devrate.entity.InterviewSummary;
 import com.ratifire.devrate.entity.LanguageProficiency;
 import com.ratifire.devrate.entity.Notification;
 import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.InterviewFeedbackDetail;
-import com.ratifire.devrate.enums.InterviewRequestRole;
-import com.ratifire.devrate.exception.InterviewSummaryNotFoundException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.exception.UserSearchInvalidInputException;
 import com.ratifire.devrate.mapper.DataMapper;
-import com.ratifire.devrate.repository.InterviewSummaryRepository;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
 import com.ratifire.devrate.service.interview.InterviewFeedbackDetailService;
+import com.ratifire.devrate.util.DateTimeUtils;
 import com.ratifire.devrate.service.interview.InterviewSummaryService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -71,11 +64,8 @@ public class UserService {
 
   private UserRepository userRepository;
   private final SpecializationRepository specializationRepository;
-  private final InterviewSummaryRepository interviewSummaryRepository;
   private final SpecializationService specializationService;
-  private final MasteryService masteryService;
   private final SkillService skillService;
-  private final InterviewSummaryService interviewSummaryService;
   private final InterviewFeedbackDetailService interviewFeedbackDetailService;
   private final NotificationService notificationService;
   private final DataMapper<UserDto, User> userMapper;
@@ -85,7 +75,6 @@ public class UserService {
   private final DataMapper<EmploymentRecordDto, EmploymentRecord> employmentRecordMapper;
   private final DataMapper<LanguageProficiencyDto, LanguageProficiency> languageProficiencyMapper;
   private final DataMapper<BookmarkDto, Bookmark> bookmarkMapper;
-  private final DataMapper<InterviewSummaryDto, InterviewSummary> interviewSummaryMapper;
   private final DataMapper<SpecializationDto, Specialization> specializationDataMapper;
   private final DataMapper<UserMainMasterySkillDto, Specialization> userMainMasterySkillMapper;
   private final DataMapper<UserMainHardSkillsDto, Specialization> userMainHardSkillsMapper;
@@ -229,8 +218,7 @@ public class UserService {
   public void recalculateInterviewCounts(List<User> users) {
     users.forEach(user -> {
       long userId = user.getId();
-      user.setConductedInterviews(interviewSummaryRepository.countByInterviewerId(userId));
-      user.setCompletedInterviews(interviewSummaryRepository.countByCandidateId(userId));
+
       updateByEntity(user);
     });
   }
@@ -456,66 +444,6 @@ public class UserService {
   }
 
   /**
-   * Retrieves all interview summaries associated with the user.
-   *
-   * @param userId the ID of the user to associate the interview summaries with
-   * @return A list of InterviewSummaryDto objects.
-   */
-  public List<InterviewSummaryDto> getInterviewSummariesByUserId(long userId) {
-    User user = findById(userId);
-    return interviewSummaryMapper.toDto(user.getInterviewSummaries());
-  }
-
-  /**
-   * Counts the number of conducted and passed interviews for the specified user within a given date
-   * range.
-   *
-   * @param userId the ID of the user
-   * @param from   the start date of the date range (inclusive)
-   * @param to     the end date of the date range (inclusive)
-   * @return a list of InterviewConductedPassedDto objects with the count of conducted and passed
-   *         interviews per date
-   */
-  public List<InterviewStatsConductedPassedByDateDto> getInterviewStatConductedPassedByDate(
-      long userId, LocalDate from, LocalDate to) {
-    List<InterviewSummary> interviewSummaries = interviewSummaryRepository
-        .findByCandidateOrInterviewerAndDateBetween(userId, from, to);
-
-    Map<LocalDate, InterviewStatsConductedPassedByDateDto> interviewStats = new HashMap<>();
-
-    for (InterviewSummary summary : interviewSummaries) {
-      LocalDate date = summary.getDate();
-      interviewStats.putIfAbsent(date, new InterviewStatsConductedPassedByDateDto(date, 0, 0));
-
-      if (summary.getCandidateId() == userId) {
-        interviewStats.get(date).setPassed(interviewStats.get(date).getPassed() + 1);
-      }
-
-      if (summary.getInterviewerId() == userId) {
-        interviewStats.get(date).setConducted(interviewStats.get(date).getConducted() + 1);
-      }
-    }
-
-    return interviewStats.values().stream()
-        .sorted(Comparator.comparing(InterviewStatsConductedPassedByDateDto::getDate))
-        .toList();
-  }
-
-  /**
-   * Deletes the association between a user and an interview summary.
-   *
-   * @param userId the ID of the user whose association with the interview summary is to be deleted
-   * @param id     the ID of the interview summary to be removed from the user's associations
-   */
-  public void deleteInterviewSummary(long userId, long id) {
-    User user = findById(userId);
-    InterviewSummary interviewSummary = interviewSummaryRepository.findById(id)
-        .orElseThrow(() -> new InterviewSummaryNotFoundException(id));
-    user.getInterviewSummaries().remove(interviewSummary);
-    userRepository.save(user);
-  }
-
-  /**
    * Retrieves specialization by user ID.
    *
    * @param userId the ID of the user
@@ -593,13 +521,7 @@ public class UserService {
       throw new ResourceNotFoundException("Input invalid skills");
     }
 
-    InterviewRequestRole reviewerRole = interviewSummaryService.addComment(
-        feedbackDetail.getInterviewSummaryId(), reviewerId, interviewFeedbackDto.getComment());
-
     skillService.updateMarks(interviewFeedbackDto.getSkills());
-
-    masteryService.updateAverageMarks(
-        feedbackDetail.getEvaluatedMasteryId(), reviewerRole);
 
     interviewFeedbackDetailService.delete(feedbackDetail.getId());
   }
