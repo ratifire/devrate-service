@@ -174,8 +174,8 @@ paths:
     $ref: './paths/interview/interviews-id.yaml'
   /interviews/events/{id}:
     $ref: './paths/interview/interviews-events-id.yaml'
-  /interviews/closest:
-    $ref: './paths/interview/interviews-closest.yaml'
+  /interviews/events/closest:
+    $ref: './paths/interview/interviews-events-closest.yaml'
 components:
   securitySchemes:
     accessToken:

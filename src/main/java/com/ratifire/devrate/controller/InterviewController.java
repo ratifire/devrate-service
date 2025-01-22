@@ -63,7 +63,7 @@ public class InterviewController {
    * @return a list of InterviewEventShortDto objects containing the short details of the interview
    *     events
    */
-  @GetMapping("/closest")
+  @GetMapping("/events/closest")
   public List<InterviewEventShortDto> getInterviewEventShortDetailsFromDateTime(
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime from) {
     return interviewService.getInterviewEventShortDetailsFromDateTime(from);
