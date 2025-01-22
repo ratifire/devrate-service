@@ -1,0 +1,11 @@
+type: object
+properties:
+  startTime:
+    type: string
+    format: date-time
+    description: The start time of the interview event.
+  roomUrl:
+    type: string
+    description: The URL of the interview.
+  counterpartUser:
+    $ref: '../../components/schemas/ParticipantDto.yaml'
