@@ -1,0 +1,13 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+    description: The unique identifier of the event history.
+  eventId:
+    type: integer
+    format: int64
+    description: The ID of the completed event associated with the event history.
+required:
+  - id
+  - eventId

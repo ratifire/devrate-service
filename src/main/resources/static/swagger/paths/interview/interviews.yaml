@@ -1,0 +1,24 @@
+get:
+  tags:
+    - Interview
+  summary: Find all interviews
+  description: Retrieve a list of all interviews for current user.
+  operationId: findAll
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
+  responses:
+    '200':
+      description: A list of interviews for the user.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../components/schemas/InterviewDto.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

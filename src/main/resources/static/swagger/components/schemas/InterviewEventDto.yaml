@@ -1,0 +1,6 @@
+type: object
+properties:
+  currentUser:
+    $ref: '../../components/schemas/ParticipantDto.yaml'
+  counterpartUser:
+    $ref: '../../components/schemas/ParticipantDto.yaml'

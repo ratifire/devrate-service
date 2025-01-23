@@ -35,10 +35,12 @@ tags:
     description: Endpoints for user achievement management
   - name: Bookmark
     description: Endpoints for user bookmark management
+  - name: Interview
+    description: Endpoints for interview management
   - name: Interview Request
     description: Endpoints for interview request management
-  - name: Interview Summary
-    description: Endpoints for interview summary management
+  - name: Interview History
+    description: Endpoints for interview history management
   - name: Interview Feedback
     description: Endpoints for interview feedback management
   - name: Static Data
@@ -51,6 +53,8 @@ tags:
     description: Endpoints for user Skill management
   - name: Event
     description: Endpoints for managing calendar events
+  - name: Event History
+    description: Endpoints for managing calendar event histories
 paths:
   /auth/signup:
     $ref: './paths/auth/signup.yaml'
@@ -100,12 +104,10 @@ paths:
     $ref: './paths/users/users-id-bookmarks.yaml'
   /bookmarks/{id}:
     $ref: './paths/bookmarks/bookmarks-id.yaml'
-  /users/{userId}/interview-requests:
-    $ref: './paths/users/users-id-interview-requests.yaml'
-  /users/{userId}/interview-summaries:
-    $ref: './paths/users/users-id-interviewSummaries.yaml'
-  /users/{userId}/interview-summaries/{id}:
-    $ref: './paths/users/users-id-interviewSummaries-id.yaml'
+  /interview-histories?page=1&size=10:
+    $ref: './paths/interviewHistories/interview-histories.yaml'
+  /interview-histories/{id}:
+    $ref: './paths/interviewHistories/interview-histories-id.yaml'
   /data/languageproficiency/{filename}:
     $ref: './paths/data/data-languageproficiency-filename.yaml'
   /data/user/{filename}:
@@ -148,14 +150,6 @@ paths:
     $ref: './paths/skills/skills-id-hide-hide.yaml'
   /masteries/{masteryId}/history:
     $ref: './paths/masteries/masteries-id-mastery-history.yaml'
-  /users/{userId}/interview-summaries/statistics:
-    $ref: './paths/users/users-id-interviewSummaries-statistics.yaml'
-  /users/{userId}/events:
-    $ref: './paths/users/users-id-events.yaml'
-  /users/{userId}/events/closest:
-    $ref: './paths/users/users-id-events-closest.yaml'
-  /users/{userId}/interviews/{eventTypeId}:
-    $ref: './paths/users/users-id-interviews-id.yaml'
   /users/{reviewerId}/feedbacks:
     $ref: './paths/users/users-id-feedbacks.yaml'
   /feedback-details/{id}:
@@ -170,6 +164,20 @@ paths:
     $ref: './paths/users/users-id-notification-send.yaml'
   /users/{userId}/platform-feedbacks:
     $ref: './paths/users/users-id-platform-feedbacks.yaml'
+  /interview-requests:
+    $ref: './paths/interviewRequest/interview-requests.yaml'
+  /interview-requests/masteries/{masteryId}:
+    $ref: './paths/interviewRequest/interview-requests-masteries-masteryId.yaml'
+  /events:
+    $ref: './paths/events/events.yaml'
+  /event-histories/events/{id}:
+    $ref: './paths/events/event-history.yaml'
+  /interviews:
+    $ref: './paths/interview/interviews.yaml'
+  /interviews/{id}:
+    $ref: './paths/interview/interviews-id.yaml'
+  /interviews/events/{id}:
+    $ref: './paths/interview/interviews-events-id.yaml'
 components:
   securitySchemes:
     accessToken:

@@ -32,4 +32,21 @@ public enum MasteryLevel {
   public static boolean containsLevel(int level) {
     return Stream.of(values()).anyMatch(e -> e.getLevel() == level);
   }
+
+  /**
+   * Retrieves the normalized string representation of the Mastery corresponding to the given
+   * level.
+   *
+   * @param level the numeric level
+   * @return the normalized string representation of the Mastery
+   */
+  public static String fromLevel(int level) {
+    return Stream.of(values())
+        .filter(e -> e.getLevel() == level)
+        .findFirst()
+        .map(e -> e.name().substring(0, 1).toUpperCase()
+            + e.name().substring(1).toLowerCase())
+        .orElseThrow(() ->
+            new IllegalArgumentException("No Mastery found for level: " + level));
+  }
 }

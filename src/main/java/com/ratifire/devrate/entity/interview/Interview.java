@@ -1,13 +1,14 @@
 package com.ratifire.devrate.entity.interview;
 
 
+import com.ratifire.devrate.enums.InterviewRequestRole;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.ZonedDateTime;
 import lombok.AllArgsConstructor;
@@ -30,17 +31,21 @@ public class Interview {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "candidate_request_id", nullable = false)
-  private InterviewRequest candidateRequest;
+  @Column(name = "user_id", nullable = false)
+  private long userId;
 
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "interviewer_request_id", nullable = false)
-  private InterviewRequest interviewerRequest;
+  @Column(name = "mastery_id", nullable = false)
+  private long masteryId;
 
-  private long zoomMeetingId;
+  @Enumerated(EnumType.STRING)
+  private InterviewRequestRole role;
 
-  private String zoomJoinUrl;
+  @Column(name = "event_id", nullable = false)
+  private long eventId;
 
+  @Column(name = "room_url", nullable = false)
+  private String roomUrl;
+
+  @Column(name = "start_time", nullable = false)
   private ZonedDateTime startTime;
 }

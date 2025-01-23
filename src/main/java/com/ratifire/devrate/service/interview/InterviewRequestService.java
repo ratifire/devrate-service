@@ -1,14 +1,21 @@
 package com.ratifire.devrate.service.interview;
 
+import com.ratifire.devrate.dto.InterviewRequestDto;
+import com.ratifire.devrate.dto.InterviewRequestViewDto;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
-import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.exception.InterviewRequestDoesntExistException;
-import com.ratifire.devrate.exception.InterviewRequestNotFoundException;
+import com.ratifire.devrate.exception.InvalidInterviewRequestException;
+import com.ratifire.devrate.mapper.impl.InterviewRequestMapper;
 import com.ratifire.devrate.repository.interview.InterviewRequestRepository;
+import com.ratifire.devrate.security.helper.UserContextProvider;
+import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for handling Interview Requests.
@@ -18,108 +25,138 @@ import org.springframework.stereotype.Service;
 public class InterviewRequestService {
 
   private final InterviewRequestRepository repository;
+  private final InterviewRequestMapper mapper;
+  private final MatcherServiceQueueSender matcherServiceQueueSender;
+  private final UserContextProvider userContextProvider;
 
-  /**
-   * Saves the given interview request.
-   *
-   * @param interviewRequest the interview request to be saved
-   * @return the saved interview request
-   */
-  public InterviewRequest save(InterviewRequest interviewRequest) {
-    return repository.save(interviewRequest);
+  public Optional<Long> findMasteryId(long id) {
+    return repository.findMasteryIdById(id);
+  }
+
+  public List<InterviewRequest> findByIds(List<Long> ids) {
+    return repository.findByIds(ids);
   }
 
   /**
-   * Finds an interview request for the given userId, role and mastery. Throw error if not found.
+   * Updates the assigned dates for the specified interview requests by adding a new assigned date.
    *
-   * @param userId    the ID of the user associated with the interview request
-   * @param role      the role of the interview request
-   * @param masteryId the mastery id of the interview request
-   * @return the found InterviewRequest or an empty InterviewRequest if not found
+   * @param interviewerRequestId the ID of the interviewer's request
+   * @param candidateRequestId   the ID of the candidate's request
+   * @param assignedDate         the date to assign to the requests
    */
-  public InterviewRequest findByUserIdRoleMasteryId(long userId, InterviewRequestRole role,
-      long masteryId) {
-    return repository.findByUserIdAndRoleAndMastery_Id(userId, role, masteryId)
-        .orElseThrow(
-            () -> new InterviewRequestDoesntExistException(userId, role.name(), masteryId));
+  @Transactional
+  public void updateAssignedDates(long interviewerRequestId,
+      long candidateRequestId, ZonedDateTime assignedDate) {
+    List<InterviewRequest> scheduledInterviewRequests = findByIds(
+        List.of(interviewerRequestId, candidateRequestId));
+
+    if (scheduledInterviewRequests.isEmpty()) {
+      return;
+    }
+
+    scheduledInterviewRequests.forEach(request -> request.getAssignedDates().add(assignedDate));
+    repository.saveAll(scheduledInterviewRequests);
   }
 
   /**
-   * Finds matched candidates for the given interview request with an ignore list.
+   * Retrieves all interview requests for the authenticated user.
    *
-   * @param request the interview request specifying criteria for matching
-   * @return a list of matched InterviewRequest entities
+   * @return a list of {@link InterviewRequestViewDto} containing the details.
    */
-  public List<InterviewRequest> findMatchedCandidates(InterviewRequest request,
-      List<User> ignoreList) {
-    return repository.findMatchedCandidates(request, ignoreList);
+  public List<InterviewRequestViewDto> getAll() {
+    long userId = userContextProvider.getAuthenticatedUserId();
+    return repository.findAllByUser_Id(userId)
+        .stream()
+        .map(this::convertToInterviewRequestViewDto)
+        .toList();
   }
 
   /**
-   * Finds matched interviewers for the given interview request with an ignore list.
+   * Retrieves a list of interview requests by mastery ID for the authenticated user.
    *
-   * @param request the interview request specifying criteria for matching
-   * @return a list of matched InterviewRequest entities
+   * @param masteryId the ID of the mastery to fetch interview requests for.
+   * @return a list of {@link InterviewRequestViewDto} containing the details.
    */
-  public List<InterviewRequest> findMatchedInterviewers(InterviewRequest request,
-      List<User> ignoreList) {
-    return repository.findMatchedInterviewers(request, ignoreList);
+  public List<InterviewRequestViewDto> getByMasteryId(long masteryId) {
+    long userId = userContextProvider.getAuthenticatedUserId();
+
+    return repository.findAllByMastery_IdAndUser_Id(masteryId, userId)
+        .stream()
+        .map(this::convertToInterviewRequestViewDto)
+        .toList();
   }
 
   /**
-   * Marks the given interview request as non-active.
+   * Converts an InterviewRequest entity to an InterviewRequestViewDto.
    *
-   * @param request the interview request to mark as non-active
+   * @param request the InterviewRequest entity to convert.
+   * @return the converted {@link InterviewRequestViewDto}.
    */
-  public void markAsNonActive(InterviewRequest request) {
-    request.setActive(false);
-    repository.save(request);
+  private InterviewRequestViewDto convertToInterviewRequestViewDto(InterviewRequest request) {
+    return InterviewRequestViewDto.builder()
+        .id(request.getId())
+        .role(request.getRole())
+        .desiredInterview(request.getDesiredInterview())
+        .availableDates(request.getAvailableDates())
+        .assignedDates(request.getAssignedDates())
+        .build();
   }
 
   /**
-   * Handles the actions required after an interview is rejected.
+   * Creates an interview request for the specified user and send it to matcher-service.
    *
-   * @param activeRequest The active interview request.
-   * @param rejectedRequest The rejected interview request.
+   * @param requestDto the DTO containing the interview request details
    */
-  public void handleRejectedInterview(InterviewRequest activeRequest,
-      InterviewRequest rejectedRequest) {
-    activeRequest.setActive(true);
-    rejectedRequest.setActive(true);
-    repository.save(activeRequest);
-    repository.save(rejectedRequest);
+  public void create(InterviewRequestDto requestDto) {
+    validateRequest(requestDto);
+
+    long userId = userContextProvider.getAuthenticatedUserId();
+
+    InterviewRequest interviewRequest = mapper.toEntity(requestDto);
+    interviewRequest.setUser(User.builder().id(userId).build());
+    interviewRequest.setBlackList(new HashSet<>());
+    repository.save(interviewRequest);
+
+    matcherServiceQueueSender.create(interviewRequest);
   }
 
   /**
-   * Deletes interview requests by their IDs.
+   * Updates the interview request for the specified user based on the provided request DTO.
    *
-   * @param ids the list of interview request IDs to be deleted.
+   * @param requestDto the interview request details
    */
-  public void deleteBulk(List<Long> ids) {
-    repository.deleteAllById(ids);
+  public void update(long id, InterviewRequestDto requestDto) {
+    validateRequest(requestDto);
+
+    long userId = userContextProvider.getAuthenticatedUserId();
+
+    InterviewRequest interviewRequest = repository.findByIdAndUser_Id(id, userId)
+        .orElseThrow(() -> new InterviewRequestDoesntExistException(id, userId));
+    mapper.updateEntity(requestDto, interviewRequest);
+    repository.save(interviewRequest);
+
+    matcherServiceQueueSender.update(interviewRequest);
   }
 
   /**
-   * Deletes an interview request by its ID if the request is active.
+   * Validates the interview request details.
+   *
+   * @param requestDto the interview request to validate
+   */
+  private void validateRequest(InterviewRequestDto requestDto) {
+    Optional.ofNullable(requestDto.getAvailableDates())
+        .filter(dates -> dates.size() >= requestDto.getDesiredInterview())
+        .orElseThrow(() -> new InvalidInterviewRequestException(
+            "Available dates must be greater than or equal to the desired number of interviews."));
+  }
+
+  /**
+   * Deletes an interview request by its ID and user ID.
    *
    * @param id the ID of the interview request to be deleted
    */
   public void delete(long id) {
-    InterviewRequest interviewRequest = findById(id);
-    if (interviewRequest.isActive()) {
-      repository.delete(interviewRequest);
-    }
-  }
-
-  /**
-   * Finds an interview request by its ID. Throws an exception if not found.
-   *
-   * @param id the ID of the interview request
-   * @return the found InterviewRequest
-   * @throws InterviewRequestNotFoundException if no interview request is found with the given ID
-   */
-  private InterviewRequest findById(long id) {
-    return repository.findById(id)
-        .orElseThrow(() -> new InterviewRequestNotFoundException(id));
+    long userId = userContextProvider.getAuthenticatedUserId();
+    repository.deleteByIdAndUser_Id(id, userId);
   }
 }
