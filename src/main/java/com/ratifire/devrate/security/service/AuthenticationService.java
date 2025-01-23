@@ -11,6 +11,7 @@ import com.ratifire.devrate.security.exception.LogoutException;
 import com.ratifire.devrate.security.helper.RefreshTokenCookieHelper;
 import com.ratifire.devrate.security.model.dto.LoginDto;
 import com.ratifire.devrate.security.util.TokenUtil;
+import com.ratifire.devrate.service.ChatService;
 import com.ratifire.devrate.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,6 +34,7 @@ public class AuthenticationService {
   private final UserService userService;
   private final RefreshTokenCookieHelper refreshTokenCookieHelper;
   private final DataMapper<UserDto, User> userMapper;
+  private final ChatService chatService;
 
   /**
    * Authenticates a user based on the provided login credentials.
@@ -48,6 +50,9 @@ public class AuthenticationService {
       TokenUtil.setAuthTokensToHeaders(response, result.getAccessToken(), result.getIdToken());
       refreshTokenCookieHelper.setRefreshTokenToCookie(response, result.getRefreshToken());
       User user = userService.findByEmail(email);
+
+      chatService.createAuthTopic(user.getId(), user);
+
       return userMapper.toDto(user);
 
     } catch (Exception e) {

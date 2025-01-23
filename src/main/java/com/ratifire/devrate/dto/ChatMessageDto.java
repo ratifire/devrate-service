@@ -1,5 +1,6 @@
 package com.ratifire.devrate.dto;
 
+import java.time.ZonedDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -15,9 +16,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class ChatMessageDto {
-  private String sender;
-  private String recipient;
-  private String message;
-  private String topicName;
-  private String timestamp;
+  private long senderId;
+  private long receiverId;
+  private String payload;
+  private long topicName;    // this is a combined topic created by two users
+  private String status;
+  private ZonedDateTime dateTime;
 }
