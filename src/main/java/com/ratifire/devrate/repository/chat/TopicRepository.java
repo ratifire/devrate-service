@@ -19,7 +19,7 @@ public interface TopicRepository extends JpaRepository<Topic, Long> {
   @Query("SELECT t FROM Topic t JOIN t.users u WHERE u.id = :userId")
   List<Topic> findTopicsByUserId(@Param("userId") Long userId);
 
-  @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END "
+  @Query("SELECT COUNT(t) > 0 "
       + "FROM Topic t JOIN t.users u "
       + "WHERE t.topicName = :topicName AND u.id = :userId")
   boolean existsByTopicNameAndUserId(@Param("topicName") Long topicName,
