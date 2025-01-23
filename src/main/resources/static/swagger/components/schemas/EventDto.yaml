@@ -7,9 +7,15 @@ properties:
   type:
     type: string
     description: Event type, such as 'Interview', 'Webinar', 'Conference'
+  hostId:
+    type: integer
+    description: The host ID
   roomLink:
     type: string
     description: Generated link for the event
   startTime:
     type: string
     description: Date and time when the event process
+  title:
+    type: string
+    description: Interview title

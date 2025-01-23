@@ -4,12 +4,11 @@ import com.ratifire.devrate.dto.EventDto;
 import com.ratifire.devrate.entity.Event;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.enums.EventType;
-import com.ratifire.devrate.mapper.impl.EventMapper;
+import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.EventRepository;
 import com.ratifire.devrate.security.helper.UserContextProvider;
 import com.ratifire.devrate.util.DateTimeUtils;
 import jakarta.transaction.Transactional;
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,7 @@ public class EventService {
   private final UserService userService;
   private final UserContextProvider userContextProvider;
   private final EventRepository eventRepository;
-  private final EventMapper eventMapper;
+  private final DataMapper<EventDto, Event> eventMapper;
 
   /**
    * Retrieves a list of events for a specified user that occur within a given time range.
@@ -34,10 +33,10 @@ public class EventService {
    * @param to   the end of the time range (inclusive)
    * @return a list of {@link EventDto} objects representing the events for the user
    */
-  public List<EventDto> findBetweenDate(LocalDate from, LocalDate to) {
+  public List<EventDto> findBetweenDateTime(ZonedDateTime from, ZonedDateTime to) {
     User user = userService.findById(userContextProvider.getAuthenticatedUserId());
     return user.getEvents().stream()
-        .filter(event -> DateTimeUtils.isWithinRange(event.getStartTime().toLocalDate(), from, to))
+        .filter(event -> DateTimeUtils.isWithinRange(event.getStartTime(), from, to))
         .map(eventMapper::toDto)
         .toList();
   }
@@ -80,13 +79,14 @@ public class EventService {
    * @return an Event object containing the specified details
    */
   public Event buildEvent(long candidateId, long interviewerId, String roomUrl,
-      ZonedDateTime date) {
+      ZonedDateTime date, String title) {
     return Event.builder()
         .type(EventType.INTERVIEW)
         .roomLink(roomUrl)
         .hostId(interviewerId)
         .participantIds(List.of(candidateId))
         .startTime(date)
+        .title(title)
         .build();
 
   }

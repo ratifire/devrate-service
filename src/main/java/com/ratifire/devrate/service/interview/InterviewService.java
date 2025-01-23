@@ -5,7 +5,6 @@ import static com.ratifire.devrate.enums.InterviewRequestRole.INTERVIEWER;
 
 import com.ratifire.devrate.dto.InterviewDto;
 import com.ratifire.devrate.dto.InterviewEventDto;
-import com.ratifire.devrate.dto.InterviewEventShortDto;
 import com.ratifire.devrate.dto.PairedParticipantDto;
 import com.ratifire.devrate.dto.ParticipantDto;
 import com.ratifire.devrate.entity.Event;
@@ -14,6 +13,7 @@ import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.InterviewRequestRole;
+import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
 import com.ratifire.devrate.security.helper.UserContextProvider;
@@ -22,10 +22,8 @@ import com.ratifire.devrate.service.EventService;
 import com.ratifire.devrate.service.MasteryService;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserService;
-import com.ratifire.devrate.util.DateTimeUtils;
 import com.ratifire.devrate.util.zoom.service.ZoomApiService;
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -112,56 +110,6 @@ public class InterviewService {
   }
 
   /**
-   * Retrieves a list of interview event short details for the currently authenticated user starting
-   * from the specified date and time.
-   *
-   * @param from the starting date and time from which to retrieve interview events
-   * @return a list of InterviewEventShortDto objects containing the short details of the interview
-   *     events
-   */
-  public List<InterviewEventShortDto> getInterviewEventShortDetailsFromDateTime(
-      ZonedDateTime from) {
-    long currentUserId = userContextProvider.getAuthenticatedUserId();
-    List<Interview> currentUserInterviews =
-        interviewRepository.findByUserIdAndStartTimeGreaterThanEqual(currentUserId,
-            DateTimeUtils.toUtc(from));
-
-    List<Long> eventIds = currentUserInterviews.stream()
-        .map(Interview::getEventId)
-        .toList();
-
-    if (eventIds.isEmpty()) {
-      return Collections.emptyList();
-    }
-
-    List<Interview> oppositeInterviews = interviewRepository.findByEventIdInAndUserIdNot(eventIds,
-        currentUserId);
-    Map<Long, User> usersById = getUsersByInterviews(oppositeInterviews);
-    Map<Long, Mastery> masteriesById = getMasteriesByInterviews(oppositeInterviews);
-
-    Map<Long, ParticipantDto> eventIdToParticipant = oppositeInterviews.stream()
-        .collect(Collectors.toMap(
-            Interview::getEventId,
-            interview -> buildParticipant(
-                usersById.get(interview.getUserId()),
-                interview,
-                masteriesById
-            )
-        ));
-
-    return currentUserInterviews.stream()
-        .map(currentInterview -> {
-          ParticipantDto counterpart = eventIdToParticipant.get(currentInterview.getEventId());
-          return InterviewEventShortDto.builder()
-              .startTime(currentInterview.getStartTime())
-              .roomUrl(currentInterview.getRoomUrl())
-              .counterpartUser(counterpart)
-              .build();
-        })
-        .toList();
-  }
-
-  /**
    * Creates interviews and an associated event based on the given paired participant data.
    *
    * @param matchedUsers Data transfer object containing the details of paired participant.
@@ -181,7 +129,14 @@ public class InterviewService {
     //        .orElseThrow(() -> new IllegalStateException("Zoom meeting creation failed."));
     //    String joinUrl = zoomMeeting.getJoinUrl();
 
-    Event event = eventService.buildEvent(candidateId, interviewerId, joinUrl, date);
+    Mastery mastery =
+        masteryService.getMasteryById(interviewRequestService.findMasteryId(candidateRequestId)
+            .orElseThrow(() -> new IllegalStateException(
+                "Mastery ID not found for interview request with id: " + candidateRequestId)));
+
+    String title = MasteryLevel.fromLevel(mastery.getLevel())
+        + " " + mastery.getSpecialization().getName();
+    Event event = eventService.buildEvent(candidateId, interviewerId, joinUrl, date, title);
     long eventId = eventService.save(event, List.of(interviewerId, candidateId));
 
     Interview interviewer = buildInterview(interviewerId, interviewerRequestId, eventId,

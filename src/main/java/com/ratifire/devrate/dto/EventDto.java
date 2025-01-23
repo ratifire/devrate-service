@@ -18,7 +18,9 @@ public class EventDto {
 
   private long id;
   private EventType type;
+  private long hostId;
   private String roomLink;
   private ZonedDateTime startTime;
+  private String title;
 
 }

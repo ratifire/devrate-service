@@ -1,30 +1,30 @@
 get:
   tags:
     - Event
-  summary: Get events of current user by date range
-  description: Retrieve events of current user by date range
-  operationId: findEventsBetweenDate
+  summary: Get events of current user by date time range
+  description: Retrieve events of current user by date time range
+  operationId: findEventsBetweenDateTime
   security:
     - accessToken: [ ]
     - idToken: [ ]
   parameters:
     - in: query
       name: from
-      description: The start of the date range (inclusive)
+      description: The start of the date time range (inclusive)
       required: true
       schema:
         type: string
-        format: date
+        format: date-time
     - in: query
       name: to
-      description: The end of the date range (inclusive)
+      description: The end of the date time range (inclusive)
       required: true
       schema:
         type: string
-        format: date
+        format: date-time
   responses:
     '200':
-      description: The events of current user corresponding to the provided date range
+      description: The events of current user corresponding to the provided date time range
       content:
         application/json:
           schema:

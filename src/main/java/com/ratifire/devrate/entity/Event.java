@@ -46,4 +46,7 @@ public class Event {
   @Column(name = "start_time", nullable = false)
   private ZonedDateTime startTime;
 
+  @Column(name = "title", nullable = false)
+  private String title;
+
 }
