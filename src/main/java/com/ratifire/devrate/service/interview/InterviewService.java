@@ -4,13 +4,16 @@ import static com.ratifire.devrate.enums.InterviewRequestRole.CANDIDATE;
 import static com.ratifire.devrate.enums.InterviewRequestRole.INTERVIEWER;
 
 import com.ratifire.devrate.dto.InterviewDto;
+import com.ratifire.devrate.dto.InterviewEventDto;
 import com.ratifire.devrate.dto.PairedParticipantDto;
+import com.ratifire.devrate.dto.ParticipantDto;
 import com.ratifire.devrate.entity.Event;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.InterviewRequestRole;
+import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
 import com.ratifire.devrate.security.helper.UserContextProvider;
@@ -23,7 +26,6 @@ import com.ratifire.devrate.util.zoom.service.ZoomApiService;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -52,7 +54,7 @@ public class InterviewService {
    *
    * @return a list of InterviewDto objects representing the user's interviews
    */
-  public List<InterviewDto> getAll() {
+  public List<InterviewDto> findAll() {
     long userId = userContextProvider.getAuthenticatedUserId();
     List<Interview> interviews = interviewRepository.findByUserId(userId);
 
@@ -64,7 +66,7 @@ public class InterviewService {
         .map(interview -> {
           Mastery mastery = masteryService.getMasteryById(interview.getMasteryId());
           long hostId = interviewRepository.findUserIdByInterviewIdAndUserIdNot(
-              interview.getInterviewId(),
+              interview.getEventId(),
               interview.getUserId()
           ).orElseThrow(() -> new IllegalStateException("Host not found"));
 
@@ -78,6 +80,36 @@ public class InterviewService {
   }
 
   /**
+   * Retrieves the details of an interview event for the given event ID.
+   *
+   * @param id the ID of the event for which interview details are to be retrieved
+   * @return an InterviewEventDto containing the details of the interview event
+   */
+  public InterviewEventDto getInterviewEventDetails(long id) {
+    long currentUserId = userContextProvider.getAuthenticatedUserId();
+    List<Interview> interviews = interviewRepository.findByEventId(id);
+    Map<Long, User> usersById = getUsersByInterviews(interviews);
+    Map<Long, Mastery> masterysById = getMasteriesByInterviews(interviews);
+
+    Map<Long, ParticipantDto> participantsById = interviews.stream()
+        .map(interview -> buildParticipant(usersById.get(interview.getUserId()), interview,
+            masterysById))
+        .collect(Collectors.toMap(ParticipantDto::getId, participant -> participant));
+
+    ParticipantDto current = participantsById.get(currentUserId);
+    ParticipantDto counterpart = participantsById.values().stream()
+        .filter(participant -> participant.getId() != currentUserId)
+        .findFirst()
+        .orElseThrow(() -> new IllegalStateException(
+            "Counterpart participant not found for id: " + id));
+
+    return InterviewEventDto.builder()
+        .currentUser(current)
+        .counterpartUser(counterpart)
+        .build();
+  }
+
+  /**
    * Creates interviews and an associated event based on the given paired participant data.
    *
    * @param matchedUsers Data transfer object containing the details of paired participant.
@@ -88,7 +120,6 @@ public class InterviewService {
     long candidateId = matchedUsers.getCandidateId();
     long interviewerRequestId = matchedUsers.getInterviewerParticipantId();
     long candidateRequestId = matchedUsers.getCandidateParticipantId();
-    long interviewId = generateInterviewId();
     ZonedDateTime date = matchedUsers.getDate();
 
     //TODO: createMeeting needs to be reimplemented for using another meeting provider
@@ -98,17 +129,24 @@ public class InterviewService {
     //        .orElseThrow(() -> new IllegalStateException("Zoom meeting creation failed."));
     //    String joinUrl = zoomMeeting.getJoinUrl();
 
-    Interview interviewer = buildInterview(interviewerId, interviewerRequestId, interviewId,
+    Mastery mastery =
+        masteryService.getMasteryById(interviewRequestService.findMasteryId(candidateRequestId)
+            .orElseThrow(() -> new IllegalStateException(
+                "Mastery ID not found for interview request with id: " + candidateRequestId)));
+
+    String title = MasteryLevel.fromLevel(mastery.getLevel())
+        + " " + mastery.getSpecialization().getName();
+    Event event = eventService.buildEvent(candidateId, interviewerId, joinUrl, date, title);
+    long eventId = eventService.save(event, List.of(interviewerId, candidateId));
+
+    Interview interviewer = buildInterview(interviewerId, interviewerRequestId, eventId,
         INTERVIEWER, joinUrl, date);
-    Interview candidate = buildInterview(candidateId, candidateRequestId, interviewId, CANDIDATE,
+    Interview candidate = buildInterview(candidateId, candidateRequestId, eventId, CANDIDATE,
         joinUrl, date);
     interviewRepository.saveAll(List.of(interviewer, candidate));
 
     interviewRequestService.updateAssignedDates(interviewerRequestId, candidateRequestId,
         interviewer.getStartTime());
-
-    Event event = eventService.buildEvent(interviewId, candidateId, interviewerId, joinUrl, date);
-    eventService.save(event, List.of(interviewerId, candidateId));
 
     List<InterviewRequest> requests = interviewRequestService.findByIds(
         List.of(interviewerRequestId, candidateRequestId));
@@ -128,7 +166,7 @@ public class InterviewService {
   public void deleteRejected(long id) {
     List<Interview> interviews = interviewRepository.findInterviewPairById(id);
     interviewRepository.deleteAll(interviews);
-    eventService.deleteAllByEventTypeId(interviews.getFirst().getInterviewId());
+    eventService.delete(interviews.getFirst().getEventId());
     //TODO: add logic for deleting provider meeting room (if needed)
 
     long rejectorId = userContextProvider.getAuthenticatedUserId();
@@ -164,7 +202,7 @@ public class InterviewService {
    *
    * @return the built Interview object
    */
-  private Interview buildInterview(long userId, long requestId, long interviewId,
+  private Interview buildInterview(long userId, long requestId, long eventId,
       InterviewRequestRole role, String roomUrl, ZonedDateTime date) {
 
     long masteryId = interviewRequestService.findMasteryId(requestId)
@@ -174,7 +212,7 @@ public class InterviewService {
     return Interview.builder()
         .userId(userId)
         .masteryId(masteryId)
-        .interviewId(interviewId)
+        .eventId(eventId)
         .role(role)
         .roomUrl(roomUrl)
         .startTime(date)
@@ -182,12 +220,49 @@ public class InterviewService {
   }
 
   /**
-   * Generates a unique interview ID based.
+   * Builds a ParticipantDto object based on the given User, Interview, and Mastery data.
    *
-   * @return a unique long value representing the interview ID
+   * @return a ParticipantDto containing participant details
    */
-  private long generateInterviewId() {
-    return UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
+  private ParticipantDto buildParticipant(User user, Interview interview,
+      Map<Long, Mastery> masterysById) {
+    Mastery mastery = masterysById.get(interview.getMasteryId());
+    return ParticipantDto.builder()
+        .id(user.getId())
+        .name(user.getFirstName())
+        .surname(user.getLastName())
+        .masteryLevel(mastery.getLevel())
+        .specializationName(mastery.getSpecialization().getName())
+        .role(interview.getRole())
+        .build();
+  }
+
+  /**
+   * Retrieves a map of User objects indexed by their IDs, based on a list of interviews.
+   *
+   * @param interviews the list of Interview objects
+   * @return a map where the key is the user ID and the value is the corresponding User object
+   */
+  private Map<Long, User> getUsersByInterviews(List<Interview> interviews) {
+    List<Long> userIds = interviews.stream()
+        .map(Interview::getUserId)
+        .toList();
+    return userService.findByIds(userIds).stream()
+        .collect(Collectors.toMap(User::getId, user -> user));
+  }
+
+  /**
+   * Retrieves a map of Mastery objects indexed by their IDs, based on a list of interviews.
+   *
+   * @param interviews the list of Interview objects
+   * @return a map where the key is the mastery ID and the value is the corresponding Mastery object
+   */
+  private Map<Long, Mastery> getMasteriesByInterviews(List<Interview> interviews) {
+    List<Long> masteryIds = interviews.stream()
+        .map(Interview::getMasteryId)
+        .toList();
+    return masteryService.findByIds(masteryIds).stream()
+        .collect(Collectors.toMap(Mastery::getId, mastery -> mastery));
   }
 
   /**

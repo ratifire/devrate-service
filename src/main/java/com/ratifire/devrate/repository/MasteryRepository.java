@@ -1,6 +1,7 @@
 package com.ratifire.devrate.repository;
 
 import com.ratifire.devrate.entity.Mastery;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,6 +16,9 @@ import org.springframework.stereotype.Repository;
 public interface MasteryRepository extends JpaRepository<Mastery, Long> {
 
   boolean existsByIdAndSkills_Name(Long id, String name);
+
+  @Query("SELECT u FROM Mastery u WHERE u.id IN (:ids)")
+  List<Mastery> findByIds(@Param("ids") List<Long> ids);
 
   @Query(value = "SELECT m.* FROM masteries m JOIN skills s ON m.id = s.mastery_id "
       + "WHERE s.id = :skillId", nativeQuery = true)

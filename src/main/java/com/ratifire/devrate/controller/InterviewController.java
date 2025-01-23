@@ -1,6 +1,7 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.InterviewDto;
+import com.ratifire.devrate.dto.InterviewEventDto;
 import com.ratifire.devrate.service.interview.InterviewService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +27,8 @@ public class InterviewController {
    * @return a list of InterviewDto objects
    */
   @GetMapping()
-  public List<InterviewDto> getAll() {
-    return interviewService.getAll();
+  public List<InterviewDto> findAll() {
+    return interviewService.findAll();
   }
 
   /**
@@ -38,5 +39,16 @@ public class InterviewController {
   @DeleteMapping("/{id}")
   public void deleteRejected(@PathVariable long id) {
     interviewService.deleteRejected(id);
+  }
+
+  /**
+   * Retrieves the details of a specific interview event by its ID.
+   *
+   * @param id the ID of the event
+   * @return an InterviewEventDto containing the event details
+   */
+  @GetMapping("/events/{id}")
+  public InterviewEventDto getInterviewEventDetails(@PathVariable long id) {
+    return interviewService.getInterviewEventDetails(id);
   }
 }

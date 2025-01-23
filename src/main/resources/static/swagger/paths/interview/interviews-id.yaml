@@ -1,22 +1,15 @@
 delete:
   tags:
-    - Event
+    - Interview
   summary: Reject interview By ID
-  description: Reject the interview by its ID and apply the matching logic for the interview participants.
-  operationId: deleteRejectedInterview
+  description: Reject the interview by its ID.
+  operationId: deleteRejected
   security:
     - accessToken: [ ]
     - idToken: [ ]
   parameters:
     - in: path
-      name: userId
-      description: The ID of the user who rejected the interview.
-      required: true
-      schema:
-        type: integer
-        format: int64
-    - in: path
-      name: eventTypeId
+      name: id
       description: The ID of the interview that will be rejected.
       required: true
       schema:

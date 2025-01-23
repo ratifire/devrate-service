@@ -1,0 +1,36 @@
+get:
+  tags:
+    - Event History
+  summary: Get event history by event ID
+  description: Retrieve the event history information by its event ID.
+  operationId: findByEventId
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
+  parameters:
+    - in: path
+      name: id
+      description: The ID of the completed event.
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: Event history information retrieved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/EventHistoryDto.yaml'
+    '400':
+      description: Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
