@@ -10,14 +10,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.ZonedDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-
+/**
+ * Entity class representing a message.
+ */
 @Data
 @Entity
 @Builder
@@ -27,14 +28,14 @@ import java.time.ZonedDateTime;
 public class Message {
 
   @Id
-//  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
   @Column(name = "payload", nullable = false)
   private String payload;
 
   @Column(name = "sent_at", nullable = false)
-  private LocalDateTime sentAt;
+  private ZonedDateTime sentAt;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "sender_id", nullable = false)

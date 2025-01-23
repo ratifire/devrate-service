@@ -101,7 +101,8 @@ public class HandlerException {
    */
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(ResourceNotFoundException.class)
-  public void handleNoFoundExceptions() {
+  public void handleNoFoundExceptions(ResourceNotFoundException ex) {
+    log.error(ex.getMessage());
   }
 
   /**

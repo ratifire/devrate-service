@@ -12,6 +12,7 @@ import com.ratifire.devrate.security.model.dto.LoginDto;
 import com.ratifire.devrate.security.model.dto.PasswordResetDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import com.ratifire.devrate.security.util.TokenUtil;
+import com.ratifire.devrate.service.ChatService;
 import com.ratifire.devrate.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -57,6 +58,7 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
   private final UserService userService;
   private final DataMapper<UserDto, User> userMapper;
   private final RefreshTokenCookieHelper refreshTokenCookieHelper;
+  private final ChatService chatService;
 
   @Override
   public UserDto login(LoginDto loginDto, HttpServletResponse response) {
@@ -66,6 +68,9 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
       String encodedUserId =
               Base64.getEncoder().encodeToString(String.valueOf(user.getId()).getBytes());
       TokenUtil.setAuthTokensToHeaders(response, encodedUserId, encodedUserId);
+
+      chatService.createAuthTopic(user.getId(), user);
+
       return userMapper.toDto(user);
 
     } catch (Exception e) {
@@ -220,11 +225,11 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
         filterChain.doFilter(request, response);
         return;
       }
-      setUpAuthenticationContext(new String(Base64.getDecoder().decode(userId)));
+      setUpAuthenticationContext(Long.parseLong(new String(Base64.getDecoder().decode(userId))));
       filterChain.doFilter(request, response);
     }
 
-    private void setUpAuthenticationContext(String userId) {
+    private void setUpAuthenticationContext(Long userId) {
       UsernamePasswordAuthenticationToken authentication =
               new UsernamePasswordAuthenticationToken(userId, null, List.of());
       SecurityContextHolder.getContext().setAuthentication(authentication);
