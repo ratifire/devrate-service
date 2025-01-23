@@ -627,114 +627,168 @@ WHERE NOT EXISTS (
 );
 
 -- Insert interview summaries for 10 days
-INSERT INTO interview_summaries (id, date, duration, candidate_id, interviewer_id)
-SELECT id, date::DATE, duration, candidate_id, interviewer_id
+INSERT INTO interview_histories (id, date_time, duration, user_id, title, role, attendee_id, feedback)
+SELECT id, date_time, duration, user_id, title, role, attendee_id, feedback
 FROM (
 VALUES
-    (1000, '2024-07-21', 60, 8881, 8882),
-    (2000, '2024-07-21', 45, 8882, 8881),
-    (5000, '2024-07-23', 75, 8881, 8882),
-    (6000, '2024-07-24', 60, 8882, 8881),
-    (7000, '2024-07-25', 45, 8881, 8882),
-    (8000, '2024-07-26', 30, 8882, 8881),
-    (9000, '2024-07-26', 90, 8881, 8882),
-    (10000, '2024-07-27', 75, 8882, 8881),
-    (11000, '2024-07-27', 45, 8881, 8882),
-    (12000, '2024-07-27', 30, 8882, 8881),
-    (13000, '2024-07-28', 90, 8881, 8882),
-    (14000, '2024-07-28', 75, 8882, 8881)
-) AS new_interview_summaries (id, date, duration, candidate_id, interviewer_id)
+    (1000, '2024-07-21T12:40:00Z'::timestamptz, 60, 8881, 'Interview with candidate 1', 'CANDIDATE', 8882, 'Great interview'),
+    (2000, '2024-07-21T12:23:00Z'::timestamptz, 45, 8882, 'Interview with candidate 2', 'INTERVIEWER', 8881, 'Good communication skills'),
+    (3001, '2024-09-08T12:00:00Z'::timestamptz, 60, 8881, 'Interview with candidate 25', 'CANDIDATE', 8882, 'Positive feedback'),
+    (5000, '2024-07-23T12:00:00Z'::timestamptz, 75, 8881, 'Interview with candidate 3', 'CANDIDATE', 8882, 'Needs improvement'),
+    (6000, '2024-07-24T12:00:00Z'::timestamptz, 60, 8882, 'Interview with candidate 4', 'INTERVIEWER', 8881, 'Strong technical knowledge'),
+    (7000, '2024-07-25T12:00:00Z'::timestamptz, 45, 8881, 'Interview with candidate 5', 'CANDIDATE', 8882, 'Good experience'),
+    (8000, '2024-07-26T12:00:00Z'::timestamptz, 30, 8882, 'Interview with candidate 6', 'INTERVIEWER', 8881, 'Lacked leadership skills'),
+    (9000, '2024-07-26T12:00:00Z'::timestamptz, 90, 8881, 'Interview with candidate 7', 'CANDIDATE', 8882, 'Excellent problem-solving skills'),
+    (10000, '2024-07-27T12:00:00Z'::timestamptz, 75, 8882, 'Interview with candidate 8', 'INTERVIEWER', 8881, 'Attention to detail'),
+    (11000, '2024-07-27T12:00:00Z'::timestamptz, 45, 8881, 'Interview with candidate 9', 'CANDIDATE', 8882, 'Strong decision making'),
+    (12000, '2024-07-27T12:00:00Z'::timestamptz, 30, 8882, 'Interview with candidate 10', 'INTERVIEWER', 8881, 'Good technical understanding'),
+    (13000, '2024-07-28T12:00:00Z'::timestamptz, 90, 8881, 'Interview with candidate 11', 'CANDIDATE', 8882, 'Excellent performance'),
+    (14000, '2024-07-28T12:00:00Z'::timestamptz, 75, 8882, 'Interview with candidate 12', 'INTERVIEWER', 8881, 'Experience could be improved')
+) AS new_interview_histories (id, date_time, duration, user_id, title, role, attendee_id, feedback)
 WHERE NOT EXISTS (
     SELECT 1
-    FROM interview_summaries
-    WHERE id = new_interview_summaries.id
+    FROM interview_histories
+    WHERE id = new_interview_histories.id
 );
 
 -- Insert interview summaries for each month of the year
-INSERT INTO interview_summaries (id, date, duration, candidate_id, interviewer_id)
-SELECT id, date::DATE, duration, candidate_id, interviewer_id
+INSERT INTO interview_histories (id, date_time, duration, user_id, title, role, attendee_id, feedback)
+SELECT id, date_time, duration, user_id, title, role, attendee_id, feedback
 FROM (
 VALUES
-    (15000, '2023-11-01', 60, 8881, 8882),
-    (16000, '2023-12-01', 45, 8882, 8881),
-    (17000, '2023-12-01', 30, 8881, 8882),
-    (18000, '2023-12-01', 90, 8882, 8881),
-    (19000, '2024-01-01', 75, 8881, 8882),
-    (20000, '2024-02-01', 60, 8882, 8881),
-    (21000, '2024-03-01', 45, 8881, 8882),
-    (22000, '2024-04-01', 30, 8882, 8881),
-    (23000, '2024-05-01', 90, 8881, 8882),
-    (24000, '2024-06-01', 75, 8882, 8881),
-    (25000, '2024-07-01', 60, 8881, 8882),
-    (26000, '2024-08-01', 45, 8882, 8881)
-) AS new_interview_summaries (id, date, duration, candidate_id, interviewer_id)
+    (15000, '2023-11-01T12:00:00Z'::timestamptz, 60, 8881, 'Interview with candidate 13', 'CANDIDATE', 8882, 'Great potential'),
+    (16000, '2023-12-01T12:00:00Z'::timestamptz, 45, 8882, 'Interview with candidate 14', 'INTERVIEWER', 8881, 'Needs technical training'),
+    (17000, '2023-12-01T12:00:00Z'::timestamptz, 30, 8881, 'Interview with candidate 15', 'CANDIDATE', 8882, 'Not enough experience'),
+    (18000, '2023-12-01T12:00:00Z'::timestamptz, 90, 8882, 'Interview with candidate 16', 'INTERVIEWER', 8881, 'Great leadership qualities'),
+    (19000, '2024-01-01T12:00:00Z'::timestamptz, 75, 8881, 'Interview with candidate 17', 'CANDIDATE', 8882, 'Technically strong'),
+    (20000, '2024-02-01T12:00:00Z'::timestamptz, 60, 8882, 'Interview with candidate 18', 'INTERVIEWER', 8881, 'Solid skills'),
+    (21000, '2024-03-01T12:00:00Z'::timestamptz, 45, 8881, 'Interview with candidate 19', 'CANDIDATE', 8882, 'Attention to detail'),
+    (22000, '2024-04-01T12:00:00Z'::timestamptz, 30, 8882, 'Interview with candidate 20', 'INTERVIEWER', 8881, 'Lacks team coordination'),
+    (23000, '2024-05-01T12:00:00Z'::timestamptz, 90, 8881, 'Interview with candidate 21', 'CANDIDATE', 8882, 'Excellent coding skills'),
+    (24000, '2024-06-01T12:00:00Z'::timestamptz, 75, 8882, 'Interview with candidate 22', 'INTERVIEWER', 8881, 'Could improve in testing'),
+    (25000, '2024-07-01T12:00:00Z'::timestamptz, 60, 8881, 'Interview with candidate 23', 'CANDIDATE', 8882, 'Good problem-solving'),
+    (26000, '2024-08-01T12:00:00Z'::timestamptz, 45, 8882, 'Interview with candidate 24', 'INTERVIEWER', 8881, 'Requires further training')
+) AS new_interview_histories (id, date_time, duration, user_id, title, role, attendee_id, feedback)
 WHERE NOT EXISTS (
     SELECT 1
-    FROM interview_summaries
-    WHERE id = new_interview_summaries.id
+    FROM interview_histories
+    WHERE id = new_interview_histories.id
 );
 
+INSERT INTO soft_skills (interview_history_id, skill_name, skill_value)
+SELECT interview_history_id, skill_name, skill_value
+FROM (
+VALUES
+    (1000, 'Communication', 8),
+    (3001, 'Communication', 8),
+    (1000, 'Teamwork', 7),
+    (2000, 'Leadership', 6),
+    (5000, 'Critical Thinking', 5),
+    (6000, 'Adaptability', 9),
+    (7000, 'Time Management', 8),
+    (8000, 'Problem-Solving', 4),
+    (9000, 'Creativity', 10),
+    (10000, 'Work Ethic', 7),
+    (11000, 'Conflict Resolution', 6),
+    (12000, 'Empathy', 7),
+    (13000, 'Attention to Detail', 9),
+    (14000, 'Networking', 8)
+) AS new_soft_skills (interview_history_id, skill_name, skill_value)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM soft_skills
+    WHERE interview_history_id = new_soft_skills.interview_history_id
+      AND skill_name = new_soft_skills.skill_name
+);
+
+INSERT INTO hard_skills (interview_history_id, skill_name, skill_value)
+SELECT interview_history_id, skill_name, skill_value
+FROM (
+VALUES
+    (1000, 'Java', 9),
+    (3001, 'Java', 6),
+    (1000, 'Spring Boot', 8),
+    (2000, 'React', 7),
+    (5000, 'SQL', 6),
+    (6000, 'AWS', 8),
+    (7000, 'Docker', 7),
+    (8000, 'Kubernetes', 5),
+    (9000, 'Python', 10),
+    (10000, 'Node.js', 8),
+    (11000, 'Terraform', 7),
+    (12000, 'CI/CD', 6),
+    (13000, 'Testing', 9),
+    (14000, 'Machine Learning', 8)
+) AS new_hard_skills (interview_history_id, skill_name, skill_value)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM hard_skills
+    WHERE interview_history_id = new_hard_skills.interview_history_id
+      AND skill_name = new_hard_skills.skill_name
+);
+
+
 -- Associate interview summaries with user
-INSERT INTO interview_summaries_users (user_id, interview_summary_id)
+INSERT INTO interview_histories_users (user_id, interview_history_id)
 SELECT * FROM (
 VALUES
     (8881, 1000), (8881, 2000), (8881, 5000), (8881, 6000), (8881, 7000),
     (8881, 8000), (8881, 9000), (8881, 10000), (8881, 11000), (8881, 12000),
     (8881, 13000), (8881, 14000), (8881, 15000), (8881, 16000), (8881, 17000),
     (8881, 18000), (8881, 19000), (8881, 20000), (8881, 21000), (8881, 22000),
-    (8881, 23000), (8881, 24000), (8881, 25000), (8881, 26000)
-) AS new_interview_summaries_users (user_id, interview_summary_id)
+    (8881, 23000), (8881, 24000), (8881, 25000), (8881, 26000), (8881, 3001), (8882, 3001)
+) AS new_interview_histories_users (user_id, interview_history_id)
 WHERE NOT EXISTS (
     SELECT 1
-    FROM interview_summaries_users
-    WHERE user_id = new_interview_summaries_users.user_id
-      AND interview_summary_id = new_interview_summaries_users.interview_summary_id
+    FROM interview_histories_users
+    WHERE user_id = new_interview_histories_users.user_id
+      AND interview_history_id = new_interview_histories_users.interview_history_id
 );
 
---  Create event records
-INSERT INTO events (id, event_type_id, type, room_link, host_id, participant_id, start_time)
-SELECT * FROM (
-VALUES
-    (10001, 20001, 'INTERVIEW', 'https://zoom.us/j/123456701', 8881, ARRAY[8882], '2024-09-02T00:00:00Z'::timestamptz),
-    (10002, 20002, 'INTERVIEW', 'https://zoom.us/j/123456702', 8881, ARRAY[8882], '2024-09-04T12:00:00Z'::timestamptz),
-    (10003, 20003, 'INTERVIEW', 'https://zoom.us/j/123456703', 8881, ARRAY[8882], '2024-09-07T19:00:00Z'::timestamptz),
-    (10004, 20004, 'INTERVIEW', 'https://zoom.us/j/123456704', 8881, ARRAY[8882], '2024-09-09T01:00:00Z'::timestamptz),
-    (10005, 20005, 'INTERVIEW', 'https://zoom.us/j/123456705', 8881, ARRAY[8882], '2024-09-11T11:00:00Z'::timestamptz),
-    (10006, 20006, 'INTERVIEW', 'https://zoom.us/j/123456706', 8881, ARRAY[8882], '2024-09-13T20:00:00Z'::timestamptz),
-    (10007, 20007, 'INTERVIEW', 'https://zoom.us/j/123456707', 8881, ARRAY[8882], '2024-09-24T00:00:00Z'::timestamptz),
-    (10008, 20008, 'INTERVIEW', 'https://zoom.us/j/123456708', 8881, ARRAY[8882], '2024-09-26T10:00:00Z'::timestamptz),
-    (10009, 20009, 'INTERVIEW', 'https://zoom.us/j/123456709', 8881, ARRAY[8882], '2024-09-28T19:00:00Z'::timestamptz)
-) AS events (id, event_type_id, type, room_link, host_id, participant_id, start_time)
-WHERE NOT EXISTS (SELECT 1
-                  FROM events
-                  WHERE id = events.id);
-
--- Create user-event relation records
-INSERT INTO user_event (user_id, event_id)
-SELECT * FROM (
-VALUES
-    (8881, 10001),
-    (8882, 10001),
-    (8881, 10002),
-    (8882, 10002),
-    (8881, 10003),
-    (8882, 10003),
-    (8881, 10004),
-    (8882, 10004),
-    (8881, 10005),
-    (8882, 10005),
-    (8881, 10006),
-    (8882, 10006),
-    (8881, 10007),
-    (8882, 10007),
-    (8881, 10008),
-    (8882, 10008),
-    (8881, 10009),
-    (8882, 10009)
-) AS user_event (user_id, event_id)
-WHERE NOT EXISTS (SELECT 1
-                  FROM user_event
-                  WHERE user_id = user_event.user_id AND event_id = user_event.event_id);
+-- --  Create event records
+-- INSERT INTO events (id, event_type_id, type, room_link, host_id, participant_id, start_time)
+-- SELECT * FROM (
+-- VALUES
+--     (10001, 20001, 'INTERVIEW', 'https://zoom.us/j/123456701', 8881, ARRAY[8882], '2024-09-02T00:00:00Z'::timestamptz),
+--     (10002, 20002, 'INTERVIEW', 'https://zoom.us/j/123456702', 8881, ARRAY[8882], '2024-09-04T12:00:00Z'::timestamptz),
+--     (10003, 20003, 'INTERVIEW', 'https://zoom.us/j/123456703', 8881, ARRAY[8882], '2024-09-07T19:00:00Z'::timestamptz),
+--     (10004, 20004, 'INTERVIEW', 'https://zoom.us/j/123456704', 8881, ARRAY[8882], '2024-09-09T01:00:00Z'::timestamptz),
+--     (10005, 20005, 'INTERVIEW', 'https://zoom.us/j/123456705', 8881, ARRAY[8882], '2024-09-11T11:00:00Z'::timestamptz),
+--     (10006, 20006, 'INTERVIEW', 'https://zoom.us/j/123456706', 8881, ARRAY[8882], '2024-09-13T20:00:00Z'::timestamptz),
+--     (10007, 20007, 'INTERVIEW', 'https://zoom.us/j/123456707', 8881, ARRAY[8882], '2024-09-24T00:00:00Z'::timestamptz),
+--     (10008, 20008, 'INTERVIEW', 'https://zoom.us/j/123456708', 8881, ARRAY[8882], '2024-09-26T10:00:00Z'::timestamptz),
+--     (10009, 20009, 'INTERVIEW', 'https://zoom.us/j/123456709', 8881, ARRAY[8882], '2024-09-28T19:00:00Z'::timestamptz)
+-- ) AS events (id, event_type_id, type, room_link, host_id, participant_id, start_time)
+-- WHERE NOT EXISTS (SELECT 1
+--                   FROM events
+--                   WHERE id = events.id);
+--
+-- -- Create user-event relation records
+-- INSERT INTO user_event (user_id, event_id)
+-- SELECT * FROM (
+-- VALUES
+--     (8881, 10001),
+--     (8882, 10001),
+--     (8881, 10002),
+--     (8882, 10002),
+--     (8881, 10003),
+--     (8882, 10003),
+--     (8881, 10004),
+--     (8882, 10004),
+--     (8881, 10005),
+--     (8882, 10005),
+--     (8881, 10006),
+--     (8882, 10006),
+--     (8881, 10007),
+--     (8882, 10007),
+--     (8881, 10008),
+--     (8882, 10008),
+--     (8881, 10009),
+--     (8882, 10009)
+-- ) AS user_event (user_id, event_id)
+-- WHERE NOT EXISTS (SELECT 1
+--                   FROM user_event
+--                   WHERE user_id = user_event.user_id AND event_id = user_event.event_id);
 
 -- Create 50 test user records with names in Ukrainian, English, and Ukrainian transliteration
 INSERT INTO users (id, first_name, last_name, country, city, is_subscribed, picture, completed_interviews, conducted_interviews, email, password)
@@ -841,36 +895,12 @@ WHERE NOT EXISTS (
     );
 
 -- Create test data for interview_feedback_details
-INSERT INTO interview_feedback_details (id, participant_role, start_time, interview_summary_id, evaluated_mastery_id, skill_id, participant_id, owner_id)
-SELECT * FROM (
-VALUES
-    (40001, 'INTERVIEWER', '2024-09-08T09:00:00Z'::timestamptz, 3001, 10001, ARRAY[100001, 100002, 100003, 100004, 100005]::bigint[], 8882, 8881),
-    (40002, 'CANDIDATE', '2024-09-08T09:00:00Z'::timestamptz, 3001, 10001, ARRAY[100001, 100002, 100003, 100004, 100005, 100006, 100007, 100008, 100078, 100079, 100080]::bigint[], 8881, 8882)
-) AS interview_feedback_details (id, participant_role, start_time, interview_summary_id, evaluated_mastery_id, skill_id, participant_id, owner_id)
-WHERE NOT EXISTS (SELECT 1
-                  FROM interview_feedback_details
-                  WHERE id = interview_feedback_details.id);
-
--- Create test data for interview_summaries
-INSERT INTO interview_summaries (id, date, duration, candidate_id, interviewer_id)
-SELECT id, date::DATE, duration, candidate_id, interviewer_id
-FROM (
-         VALUES (3001, '2024-09-08', 60, 8881, 8882)
-     ) AS new_interview_summaries (id, date, duration, candidate_id, interviewer_id)
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM interview_summaries
-    WHERE id = new_interview_summaries.id
-);
-
--- Create test data interview_summaries_users relation records
-INSERT INTO interview_summaries_users (user_id, interview_summary_id)
-SELECT * FROM (
-VALUES
-    (8881, 3001),
-    (8882, 3001)
-) AS interview_summaries_users (user_id, interview_summary_id)
-WHERE NOT EXISTS (SELECT 1
-                  FROM interview_summaries_users
-                  WHERE user_id = interview_summaries_users.user_id
-                    AND interview_summary_id = interview_summaries_users.interview_summary_id);
+-- INSERT INTO interview_feedback_details (id, participant_role, start_time, interview_history_id, evaluated_mastery_id, skill_id, participant_id, owner_id)
+-- SELECT * FROM (
+-- VALUES
+--     (40001, 'INTERVIEWER', '2024-09-08T09:00:00Z'::timestamptz, 3001, 10001, ARRAY[100001, 100002, 100003, 100004, 100005]::bigint[], 8882, 8881),
+--     (40002, 'CANDIDATE', '2024-09-08T09:00:00Z'::timestamptz, 3001, 10001, ARRAY[100001, 100002, 100003, 100004, 100005, 100006, 100007, 100008, 100078, 100079, 100080]::bigint[], 8881, 8882)
+-- ) AS interview_feedback_details (id, participant_role, start_time, interview_history_id, evaluated_mastery_id, skill_id, participant_id, owner_id)
+-- WHERE NOT EXISTS (SELECT 1
+--                   FROM interview_feedback_details
+--                   WHERE id = interview_feedback_details.id);

@@ -1,5 +1,5 @@
 type: object
-description: The object representing the event participants
+description: The object representing the event participant
 properties:
   id:
     type: integer
@@ -10,12 +10,15 @@ properties:
   surname:
     type: string
     description: Participant surname
-  status:
+  masteryLevel:
+    type: integer
+    description: The mastery level of the participant.
+  specializationName:
     type: string
-    description: Participant status (from the profile like Junior Frontend Dev etc.)
+    description: The specialization name of the participant.
   role:
     type: string
-    description: Role of the event participant. Role must be "CANDIDATE" in the context of participants, and "INTERVIEWER" for the host.
+    description: Role of the event participant.
     enum:
       - INTERVIEWER
       - CANDIDATE

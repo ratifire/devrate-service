@@ -62,6 +62,10 @@ public class MasteryService {
     return masteryMapper.toDto(getMasteryById(id));
   }
 
+  public List<Mastery> findByIds(List<Long> ids) {
+    return masteryRepository.findByIds(ids);
+  }
+
   /**
    * Retrieves Mastery by Skill ID.
    *

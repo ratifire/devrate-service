@@ -1,0 +1,65 @@
+get:
+  tags:
+    - Interview History
+  summary: Get paginated interview histories
+  description: Retrieves a paginated list of interview histories for the authenticated user.
+  operationId: getPaginatedInterviewHistories
+  security:
+    - accessToken: []
+    - idToken: []
+  parameters:
+    - in: query
+      name: page
+      description: The page number to retrieve. Defaults to 0.
+      required: false
+      schema:
+        type: integer
+        format: int32
+        default: 0
+    - in: query
+      name: size
+      description: The number of records per page. Defaults to 10.
+      required: false
+      schema:
+        type: integer
+        format: int32
+        default: 10
+  responses:
+    '200':
+      description: Paginated list of interview histories retrieved successfully.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              content:
+                type: array
+                items:
+                  $ref: '../../components/schemas/InterviewHistoryDto.yaml'
+              pageable:
+                type: object
+                properties:
+                  pageNumber:
+                    type: integer
+                    description: The current page number.
+                  pageSize:
+                    type: integer
+                    description: The size of each page.
+              totalElements:
+                type: integer
+                description: The total number of interview histories available.
+              totalPages:
+                type: integer
+                description: The total number of pages available.
+    '400':
+      description: Bad request, e.g., invalid query parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

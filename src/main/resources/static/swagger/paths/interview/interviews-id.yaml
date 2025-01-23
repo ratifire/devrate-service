@@ -1,0 +1,32 @@
+delete:
+  tags:
+    - Interview
+  summary: Reject interview By ID
+  description: Reject the interview by its ID.
+  operationId: deleteRejected
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
+  parameters:
+    - in: path
+      name: id
+      description: The ID of the interview that will be rejected.
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: Successful operation
+    '400':
+      description: Bad request, e.g., missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

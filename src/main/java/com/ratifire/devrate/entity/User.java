@@ -110,13 +110,13 @@ public class User {
       orphanRemoval = true)
   private List<InterviewRequest> interviewRequests;
 
-  @ManyToMany(fetch = FetchType.LAZY)
+  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable(
-      name = "interview_summaries_users",
+      name = "interview_histories_users",
       joinColumns = @JoinColumn(name = "user_id"),
-      inverseJoinColumns = @JoinColumn(name = "interview_summary_id")
+      inverseJoinColumns = @JoinColumn(name = "interview_history_id")
   )
-  private List<InterviewSummary> interviewSummaries;
+  private List<InterviewHistory> interviewHistories;
 
   @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable(

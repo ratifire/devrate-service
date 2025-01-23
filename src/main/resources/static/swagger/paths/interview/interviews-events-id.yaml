@@ -1,0 +1,36 @@
+get:
+  tags:
+    - Interview
+  summary: Get interview event details
+  description: Retrieve the details of a specific interview event by event ID.
+  operationId: getInterviewEventDetails
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
+  parameters:
+    - in: path
+      name: id
+      description: The ID of the event.
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: Interview event details retrieved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/InterviewEventDto.yaml'
+    '400':
+      description: Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
