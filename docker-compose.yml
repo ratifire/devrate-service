@@ -56,5 +56,14 @@ services:
     volumes:
       - ./src/main/resources/wiremock/mappings:/home/wiremock/mappings:ro
     entrypoint: [ "/docker-entrypoint.sh", "--global-response-templating", "--disable-gzip", "--verbose" ]
+  elasticmq:
+    image: softwaremill/elasticmq-native
+    container_name: elasticmq
+    ports:
+      - "9324:9324" # REST API
+      - "9325:9325" # Web interface
+    volumes:
+      - ./src/main/resources/elasticmq.conf:/opt/elasticmq.conf
+    command: -Dconfig.file=/opt/elasticmq.conf
 volumes:
   postgres_data:
