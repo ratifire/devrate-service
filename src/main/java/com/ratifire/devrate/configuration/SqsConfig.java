@@ -25,7 +25,7 @@ public class SqsConfig {
   @Bean
   public SqsAsyncClient sqsAsyncClient() {
     return SqsAsyncClient.builder()
-        .endpointOverride(URI.create("http://localhost:9324"))
+        .endpointOverride(URI.create("http://elasticmq:9324"))
         .credentialsProvider(
             StaticCredentialsProvider.create(
                 AwsBasicCredentials.create("accessKey", "secretKey")
