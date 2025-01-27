@@ -1,0 +1,27 @@
+get:
+  tags:
+    - Chat
+  summary: Retrieves all topics for the authenticated user.
+  description: |
+    Retrieves all chat topics associated with the authenticated user.
+  operationId: getAllTopics
+  security:
+    - accessToken: []
+    - idToken: []
+  responses:
+    '200':
+      description: Successfully retrieved chat topics.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../components/schemas/TopicDto.yaml'
+    '400':
+      description: If topic doesn't have related users.
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

@@ -55,6 +55,8 @@ tags:
     description: Endpoints for managing calendar events
   - name: Event History
     description: Endpoints for managing calendar event histories
+  - name: Chat
+    description: Endpoints for managing chat messaging
 paths:
   /auth/signup:
     $ref: './paths/auth/signup.yaml'
@@ -178,6 +180,14 @@ paths:
     $ref: './paths/interview/interviews-id.yaml'
   /interviews/events/{id}:
     $ref: './paths/interview/interviews-events-id.yaml'
+  /chats:
+    $ref: './paths/chats/chats.yaml'
+  /chats/{topicName}:
+    $ref: './paths/chats/chats-topicName.yaml'
+  /chats/{topicName}/{opponentUserId}:
+    $ref: './paths/chats/chats-topicName-opponentUserId.yaml'
+  /chat:
+    $ref: './paths/chats/ws-chats.yaml'
 components:
   securitySchemes:
     accessToken:

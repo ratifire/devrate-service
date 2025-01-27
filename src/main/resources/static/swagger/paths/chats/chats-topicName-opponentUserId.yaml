@@ -1,0 +1,32 @@
+post:
+  tags:
+    - Chat
+  summary: Create a new combined chat topic.
+  description: |
+    Creates a new combined chat topic for the authenticated user and opponent.
+  operationId: createTopic
+  security:
+    - accessToken: []
+    - idToken: []
+  parameters:
+    - in: path
+      name: topicName
+      description: The name of the topic to create.
+      required: true
+      schema:
+        type: integer
+        format: int64
+    - in: path
+      name: opponentUserId
+      description: The ID of the opponent user in the topic.
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: Topic created successfully.
+    '400':
+      description: Bad Request. Invalid topic name or opponent user ID or users(auth or opponent) not found.
+    '500':
+      description: Internal server error.
