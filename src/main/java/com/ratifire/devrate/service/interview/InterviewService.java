@@ -28,6 +28,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,33 +54,28 @@ public class InterviewService {
   private final DataMapper<InterviewDto, Interview> mapper;
 
   /**
-   * Retrieves a list of all interviews associated with the currently authenticated user.
+   * Retrieves a all interviews associated with the currently authenticated user.
    *
-   * @return a list of InterviewDto objects representing the user's interviews
+   * @return an InterviewDto objects representing the user's interviews
    */
-  public List<InterviewDto> findAll() {
+  public Page<InterviewDto> findAll(int page, int size) {
     long userId = userContextProvider.getAuthenticatedUserId();
-    List<Interview> interviews = interviewRepository.findByUserId(userId);
+    Pageable pageable = PageRequest.of(page, size, Sort.by("startTime").ascending());
+    Page<Interview> interviews = interviewRepository.findByUserId(userId, pageable);
 
-    if (interviews.isEmpty()) {
-      return List.of();
-    }
+    return interviews.map(interview -> {
+      Mastery mastery = masteryService.getMasteryById(interview.getMasteryId());
+      long hostId = interviewRepository.findUserIdByInterviewIdAndUserIdNot(
+          interview.getEventId(),
+          interview.getUserId()
+      ).orElseThrow(() -> new IllegalStateException("Host not found"));
 
-    return interviews.stream()
-        .map(interview -> {
-          Mastery mastery = masteryService.getMasteryById(interview.getMasteryId());
-          long hostId = interviewRepository.findUserIdByInterviewIdAndUserIdNot(
-              interview.getEventId(),
-              interview.getUserId()
-          ).orElseThrow(() -> new IllegalStateException("Host not found"));
-
-          return mapper.toDto(
-              interview,
-              mastery.getLevel(),
-              mastery.getSpecialization().getName(),
-              hostId);
-        })
-        .toList();
+      return mapper.toDto(
+          interview,
+          mastery.getLevel(),
+          mastery.getSpecialization().getName(),
+          hostId);
+    });
   }
 
   /**
