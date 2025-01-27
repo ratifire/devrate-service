@@ -174,7 +174,7 @@ paths:
     $ref: './paths/events/events.yaml'
   /event-histories/events/{id}:
     $ref: './paths/events/event-history.yaml'
-  /interviews:
+  /interviews?page=1&size=5:
     $ref: './paths/interview/interviews.yaml'
   /interviews/{id}:
     $ref: './paths/interview/interviews-id.yaml'

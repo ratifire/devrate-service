@@ -3,6 +3,8 @@ package com.ratifire.devrate.repository.interview;
 import com.ratifire.devrate.entity.interview.Interview;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,7 +18,7 @@ import org.springframework.stereotype.Repository;
 @RepositoryRestResource(exported = false)
 public interface InterviewRepository extends JpaRepository<Interview, Long> {
 
-  List<Interview> findByUserId(long userId);
+  Page<Interview> findByUserId(long userId, Pageable pageable);
 
   List<Interview> findByEventId(long eventId);
 
