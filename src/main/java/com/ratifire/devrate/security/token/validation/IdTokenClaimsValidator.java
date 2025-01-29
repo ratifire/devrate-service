@@ -1,5 +1,8 @@
 package com.ratifire.devrate.security.token.validation;
 
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_AUDIENCE;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_EMAIL_VERIFIED;
+
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.ratifire.devrate.security.configuration.properties.CognitoProviderProperties;
 import com.ratifire.devrate.security.configuration.properties.CognitoRegistrationProperties;
@@ -37,13 +40,13 @@ public class IdTokenClaimsValidator extends BaseTokenClaimsValidator {
   }
 
   private boolean isAudienceValid(JWTClaimsSet claimsSet) {
-    String audience = TokenUtil.extractArrayClaim(claimsSet, "aud")
+    String audience = TokenUtil.extractArrayClaim(claimsSet, ATTRIBUTE_AUDIENCE)
         .flatMap(audList -> audList.stream().findFirst())
         .orElse(null);
     return cognitoRegistrationProperties.getClientId().equals(audience);
   }
 
   private boolean isEmailVerified(JWTClaimsSet claimsSet) {
-    return TokenUtil.extractBooleanClaim(claimsSet, "email_verified").orElse(false);
+    return TokenUtil.extractBooleanClaim(claimsSet, ATTRIBUTE_EMAIL_VERIFIED).orElse(false);
   }
 }

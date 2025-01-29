@@ -1,5 +1,9 @@
 package com.ratifire.devrate.security.token.validation;
 
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_EXPIRATION_TIME;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_ISSUER;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_TOKEN_USE;
+
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.ratifire.devrate.security.configuration.properties.CognitoProviderProperties;
 import com.ratifire.devrate.security.configuration.properties.CognitoRegistrationProperties;
@@ -30,7 +34,7 @@ public abstract class BaseTokenClaimsValidator implements TokenClaimsValidator {
    * Validates the "iss" (issuer) claim in the token.
    */
   private boolean isIssuerValid(JWTClaimsSet claimsSet) {
-    return TokenUtil.extractStringClaim(claimsSet, "iss")
+    return TokenUtil.extractStringClaim(claimsSet, ATTRIBUTE_ISSUER)
         .map(cognitoProviderProperties.getIssuerUri()::equals)
         .orElse(false);
   }
@@ -39,7 +43,7 @@ public abstract class BaseTokenClaimsValidator implements TokenClaimsValidator {
    * Validates the expiration time ("exp") claim in the token.
    */
   private boolean isExpirationTimeValid(JWTClaimsSet claimsSet) {
-    return TokenUtil.extractDateClaim(claimsSet, "exp")
+    return TokenUtil.extractDateClaim(claimsSet, ATTRIBUTE_EXPIRATION_TIME)
         .map(this::verifyTokenExpiration)
         .orElse(false);
   }
@@ -48,7 +52,7 @@ public abstract class BaseTokenClaimsValidator implements TokenClaimsValidator {
    * Validates the "token_use" claim in the token.
    */
   private boolean isTokenUseValid(JWTClaimsSet claimsSet, String expectedTokenUse) {
-    return TokenUtil.extractStringClaim(claimsSet, "token_use")
+    return TokenUtil.extractStringClaim(claimsSet, ATTRIBUTE_TOKEN_USE)
         .map(expectedTokenUse::equals)
         .orElse(false);
   }

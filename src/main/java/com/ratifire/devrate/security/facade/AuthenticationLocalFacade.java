@@ -1,5 +1,8 @@
 package com.ratifire.devrate.security.facade;
 
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_AUTHORIZATION;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_ID_TOKEN;
+
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.mapper.DataMapper;
@@ -9,6 +12,7 @@ import com.ratifire.devrate.security.exception.UserRegistrationException;
 import com.ratifire.devrate.security.helper.RefreshTokenCookieHelper;
 import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.LoginDto;
+import com.ratifire.devrate.security.model.dto.OauthAuthorizationDto;
 import com.ratifire.devrate.security.model.dto.PasswordResetDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import com.ratifire.devrate.security.util.TokenUtil;
@@ -18,12 +22,12 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
@@ -50,11 +54,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /**
  * Local implementation facade class.
  */
+@Slf4j
 @RequiredArgsConstructor
 @Component
 @Profile("local")
 public class AuthenticationLocalFacade implements AuthenticationFacade {
-  private static final Logger log = LoggerFactory.getLogger(AuthenticationLocalFacade.class);
+
   private final UserService userService;
   private final DataMapper<UserDto, User> userMapper;
   private final RefreshTokenCookieHelper refreshTokenCookieHelper;
@@ -66,7 +71,7 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
     try {
       User user = userService.findByEmail(email);
       String encodedUserId =
-              Base64.getEncoder().encodeToString(String.valueOf(user.getId()).getBytes());
+          Base64.getEncoder().encodeToString(String.valueOf(user.getId()).getBytes());
       TokenUtil.setAuthTokensToHeaders(response, encodedUserId, encodedUserId);
 
       chatService.createAuthTopic(user.getId(), user);
@@ -80,6 +85,22 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
   }
 
   @Override
+  public void redirectToLinkedIn(HttpServletResponse response, HttpSession session) {
+    throw new UnsupportedOperationException("Unsupported operation locally.");
+  }
+
+  @Override
+  public void redirectToGoogle(HttpServletResponse response, HttpSession session) {
+    throw new UnsupportedOperationException("Unsupported operation locally.");
+  }
+
+  @Override
+  public UserDto handleOauthAuthorization(HttpServletResponse response,
+      OauthAuthorizationDto request) {
+    throw new UnsupportedOperationException("Unsupported operation locally.");
+  }
+
+  @Override
   public String logout(HttpServletRequest request, HttpServletResponse response) {
     refreshTokenCookieHelper.deleteRefreshTokenFromCookie(response);
     return "Logout process was successfully completed.";
@@ -90,11 +111,11 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
     String email = userRegistrationDto.getEmail();
     String password = userRegistrationDto.getPassword();
     UserDto userDto = UserDto.builder()
-            .firstName(userRegistrationDto.getFirstName())
-            .lastName(userRegistrationDto.getLastName())
-            .country(userRegistrationDto.getCountry())
-            .subscribed(userRegistrationDto.isSubscribed())
-            .build();
+        .firstName(userRegistrationDto.getFirstName())
+        .lastName(userRegistrationDto.getLastName())
+        .country(userRegistrationDto.getCountry())
+        .subscribed(userRegistrationDto.isSubscribed())
+        .build();
 
     if (userService.existsByEmail(email)) {
       log.error("User with email {} already exists.", email);
@@ -105,7 +126,7 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
       userService.create(userDto, email, new BCryptPasswordEncoder().encode(password));
     } catch (Exception e) {
       log.error("Initiate registration process was failed for email {}: {}",
-              userRegistrationDto.getEmail(), e.getMessage(), e);
+          userRegistrationDto.getEmail(), e.getMessage(), e);
       throw new UserRegistrationException("Initiate registration process was failed.");
     }
   }
@@ -153,21 +174,21 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
       return http
-              .csrf(AbstractHttpConfigurer::disable)
-              .cors(Customizer.withDefaults())
-              .sessionManagement(session -> session
-                      .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-              .authorizeHttpRequests(authorize -> authorize
-                      .anyRequest().permitAll()
-              )
-              .addFilterBefore(localAuthenticationFilter,
-                               UsernamePasswordAuthenticationFilter.class)
-              .build();
+          .csrf(AbstractHttpConfigurer::disable)
+          .cors(Customizer.withDefaults())
+          .sessionManagement(session -> session
+              .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+          .authorizeHttpRequests(authorize -> authorize
+              .anyRequest().permitAll()
+          )
+          .addFilterBefore(localAuthenticationFilter,
+              UsernamePasswordAuthenticationFilter.class)
+          .build();
     }
 
     /**
-     * Configures a {@link org.springframework.boot.web.servlet.ServletContextInitializer}
-     * bean to set up session cookie settings for the application.
+     * Configures a {@link org.springframework.boot.web.servlet.ServletContextInitializer} bean to
+     * set up session cookie settings for the application.
      *
      * @param domain The domain value for the session cookie, injected from the application
      *               properties.
@@ -175,7 +196,7 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
      */
     @Bean
     public ServletContextInitializer servletContextInitializer(
-            @Value("${server.servlet.session.cookie.domain}") String domain) {
+        @Value("${server.servlet.session.cookie.domain}") String domain) {
       return servletContext -> {
         servletContext.getSessionCookieConfig().setDomain(domain);
         servletContext.getSessionCookieConfig().setPath("/");
@@ -195,7 +216,7 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
       configuration.setAllowedOrigins(allowedOrigins);
       configuration.setAllowedMethods(List.of("*"));
       configuration.setAllowedHeaders(List.of("*"));
-      configuration.setExposedHeaders(List.of("Authorization", "ID-Token"));
+      configuration.setExposedHeaders(List.of(HEADER_AUTHORIZATION, HEADER_ID_TOKEN));
       configuration.setAllowCredentials(true);
       UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
       source.registerCorsConfiguration("/**", configuration);
@@ -219,8 +240,8 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
-      String userId = request.getHeader("ID-Token");
+        FilterChain filterChain) throws ServletException, IOException {
+      String userId = request.getHeader(HEADER_ID_TOKEN);
       if (userId == null) {
         filterChain.doFilter(request, response);
         return;
@@ -231,7 +252,7 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
 
     private void setUpAuthenticationContext(Long userId) {
       UsernamePasswordAuthenticationToken authentication =
-              new UsernamePasswordAuthenticationToken(userId, null, List.of());
+          new UsernamePasswordAuthenticationToken(userId, null, List.of());
       SecurityContextHolder.getContext().setAuthentication(authentication);
     }
   }
