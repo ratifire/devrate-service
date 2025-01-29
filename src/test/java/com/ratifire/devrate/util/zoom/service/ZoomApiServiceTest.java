@@ -61,10 +61,9 @@ class ZoomApiServiceTest {
     when(zoomApiClient.post(any(), any(), any())).thenReturn(
         Optional.ofNullable(createMeetingResponse));
 
-    Optional<ZoomCreateMeetingResponse> response = zoomApiService.createMeeting(topic, description,
-        time);
+    String joinUrl = zoomApiService.createMeeting(topic, description, time);
 
-    assertEquals(createMeetingResponse.getJoinUrl(), response.get().getJoinUrl());
+    assertEquals(createMeetingResponse.getJoinUrl(), joinUrl);
     verify(zoomApiClient, times(1)).post(any(), any(), any());
   }
 

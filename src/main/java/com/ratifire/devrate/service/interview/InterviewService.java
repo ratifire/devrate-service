@@ -20,9 +20,10 @@ import com.ratifire.devrate.security.helper.UserContextProvider;
 import com.ratifire.devrate.service.EmailService;
 import com.ratifire.devrate.service.EventService;
 import com.ratifire.devrate.service.MasteryService;
+import com.ratifire.devrate.service.MeetingService;
+import com.ratifire.devrate.service.MeetingServiceFactory;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserService;
-import com.ratifire.devrate.util.zoom.service.ZoomApiService;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class InterviewService {
 
-  private final ZoomApiService zoomApiService; //if needed
+  private final MeetingServiceFactory meetingServiceFactory;
   private final InterviewRequestService interviewRequestService;
   private final EventService eventService;
   private final UserService userService;
@@ -121,12 +122,8 @@ public class InterviewService {
     long candidateRequestId = matchedUsers.getCandidateParticipantId();
     ZonedDateTime date = matchedUsers.getDate();
 
-    //TODO: createMeeting needs to be reimplemented for using another meeting provider
-    String joinUrl = "temporary join url";
-    //    ZoomCreateMeetingResponse zoomMeeting =
-    //    zoomApiService.createMeeting("Topic", "Agenda", date)
-    //        .orElseThrow(() -> new IllegalStateException("Zoom meeting creation failed."));
-    //    String joinUrl = zoomMeeting.getJoinUrl();
+    MeetingService meetingService = meetingServiceFactory.getMeetingService();
+    String joinUrl = meetingService.createMeeting("Topic", "Agenda", date);
 
     Mastery mastery =
         masteryService.getMasteryById(interviewRequestService.findMasteryId(candidateRequestId)
