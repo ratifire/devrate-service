@@ -21,7 +21,6 @@ import com.ratifire.devrate.service.EmailService;
 import com.ratifire.devrate.service.EventService;
 import com.ratifire.devrate.service.MasteryService;
 import com.ratifire.devrate.service.MeetingService;
-import com.ratifire.devrate.service.MeetingServiceFactory;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserService;
 import java.time.ZonedDateTime;
@@ -43,7 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class InterviewService {
 
-  private final MeetingServiceFactory meetingServiceFactory;
+  private final MeetingService meetingService;
   private final InterviewRequestService interviewRequestService;
   private final EventService eventService;
   private final UserService userService;
@@ -122,7 +121,6 @@ public class InterviewService {
     long candidateRequestId = matchedUsers.getCandidateParticipantId();
     ZonedDateTime date = matchedUsers.getDate();
 
-    MeetingService meetingService = meetingServiceFactory.getMeetingService();
     String joinUrl = meetingService.createMeeting("Topic", "Agenda", date);
 
     Mastery mastery =

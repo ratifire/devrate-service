@@ -4,8 +4,8 @@ import com.ratifire.devrate.service.MeetingService;
 import java.time.ZonedDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Qualifier("miroTalkMeetingService")
+@ConditionalOnProperty(name = "meeting.service.type", havingValue = "MiroTalk")
 public class MiroTalkMeetingService implements MeetingService {
 
   @Value("${mirotalk.api.url}")

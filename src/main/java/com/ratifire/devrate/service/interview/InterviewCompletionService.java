@@ -1,10 +1,10 @@
 package com.ratifire.devrate.service.interview;
 
+import com.ratifire.devrate.service.MeetingService;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.SpecializationService;
 import com.ratifire.devrate.service.UserService;
 import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
-import com.ratifire.devrate.util.zoom.service.ZoomApiService;
 import com.ratifire.devrate.util.zoom.webhook.exception.ZoomWebhookException;
 import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest.Payload.Meeting;
 import jakarta.transaction.Transactional;
@@ -29,7 +29,7 @@ public class InterviewCompletionService {
   private final SpecializationService specializationService;
   private final UserService userService;
   private final NotificationService notificationService;
-  private final ZoomApiService zoomApiService;
+  private final MeetingService meetingService;
 
   //TODO: Methods needs to be reimplemented regarding to using another meeting provider
   @Transactional
