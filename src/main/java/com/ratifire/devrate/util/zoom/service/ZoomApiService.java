@@ -2,18 +2,19 @@ package com.ratifire.devrate.util.zoom.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ratifire.devrate.service.MeetingService;
 import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
 import com.ratifire.devrate.util.zoom.network.ZoomApiClient;
 import com.ratifire.devrate.util.zoom.payloads.ZoomCreateMeetingRequest;
 import com.ratifire.devrate.util.zoom.payloads.ZoomCreateMeetingRequest.Settings;
 import com.ratifire.devrate.util.zoom.payloads.ZoomCreateMeetingResponse;
 import java.time.ZonedDateTime;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 /**
@@ -21,7 +22,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-public class ZoomApiService {
+@ConditionalOnProperty(name = "meeting.service.type", havingValue = "Zoom")
+public class ZoomApiService implements MeetingService {
 
   @Value("${zoom.oauth2.api.url}")
   private String zoomApiUrl;
@@ -40,12 +42,14 @@ public class ZoomApiService {
    * @param startTime       the start time of the meeting.
    * @return the join URL for the created meeting.
    */
-  public Optional<ZoomCreateMeetingResponse> createMeeting(String topic, String meetDescription,
+  public String createMeeting(String topic, String meetDescription,
       ZonedDateTime startTime) {
     String jsonRequest = buildJsonCreateMeetingRequest(topic, meetDescription, startTime);
     String url = zoomApiUrl + ZOOM_USER_BASE_URL + "/me/meetings";
 
-    return zoomApiClient.post(url, jsonRequest, ZoomCreateMeetingResponse.class);
+    return zoomApiClient.post(url, jsonRequest, ZoomCreateMeetingResponse.class)
+        .map(ZoomCreateMeetingResponse::getJoinUrl)
+        .orElseThrow(() -> new ZoomApiException("Cannot create meeting by URL" + url));
   }
 
   private String buildJsonCreateMeetingRequest(String topic, String meetDescription,
