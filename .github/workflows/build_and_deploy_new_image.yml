@@ -68,6 +68,9 @@ jobs:
           sed -i 's|<REGISTRATION_COGNITO_CLIENT_SECRET>|'${{ secrets.REGISTRATION_COGNITO_CLIENT_SECRET }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<PROVIDER_COGNITO_ISSUER_URI>|'${{ secrets.PROVIDER_COGNITO_ISSUER_URI }}'|g' src/main/resources/application-dev.properties
           sed -i 's|<PROVIDER_COGNITO_JWK_SET_URI>|'${{ secrets.PROVIDER_COGNITO_JWK_SET_URI }}'|g' src/main/resources/application-dev.properties
+          sed -i 's|<AWS_MIROTALK_API_URL>|'${{ secrets.AWS_MIROTALK_API_URL }}'|g' src/main/resources/application-dev.properties
+          sed -i 's|<AWS_MIROTALK_API_KEY>|'${{ secrets.AWS_MIROTALK_API_KEY }}'|g' src/main/resources/application-dev.properties
+
 
       - name: Run tests
         run: mvn test
