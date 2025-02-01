@@ -1,0 +1,63 @@
+get:
+  tags:
+    - Chat
+  summary: Retrieves paginated conversation messages between the authenticated user and the opponent.
+  description: |
+    Retrieves paginated conversation messages between the authenticated user and the opponent.
+  operationId: getConversationMessages
+  security:
+    - accessToken: []
+    - idToken: []
+  parameters:
+    - in: path
+      name: opponentUserId
+      description: The ID of the opponent user.
+      required: true
+      schema:
+        type: integer
+        format: int64
+    - in: query
+      name: page
+      description: The page number to retrieve. Defaults to 0.
+      required: false
+      schema:
+        type: integer
+        format: int32
+        default: 0
+    - in: query
+      name: size
+      description: The number of records per page. Defaults to 5.
+      required: false
+      schema:
+        type: integer
+        format: int32
+        default: 10
+  responses:
+    '200':
+      description: Successfully retrieved a paginated list messages for the conversation.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              content:
+                type: array
+                items:
+                  $ref: '../../components/schemas/ChatMessageDto.yaml'
+              pageable:
+                type: object
+                properties:
+                  pageNumber:
+                    type: integer
+                    description: The current page number.
+                  pageSize:
+                    type: integer
+                    description: The size of each page.
+              totalElements:
+                type: integer
+                description: The total number of interview available.
+              totalPages:
+                type: integer
+                description: The total number of pages available.
+    '500':
+      description: Internal server error.

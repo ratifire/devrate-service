@@ -45,10 +45,6 @@ public class Message {
   @JoinColumn(name = "receiver_id", nullable = false)
   private User receiver;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "topic_id", nullable = false)
-  private Topic topic;
-
   @Column(name = "status")
   private String status;
 }
