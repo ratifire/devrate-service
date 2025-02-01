@@ -745,50 +745,130 @@ WHERE NOT EXISTS (
       AND interview_history_id = new_interview_histories_users.interview_history_id
 );
 
--- --  Create event records
--- INSERT INTO events (id, event_type_id, type, room_link, host_id, participant_id, start_time)
--- SELECT * FROM (
--- VALUES
---     (10001, 20001, 'INTERVIEW', 'https://zoom.us/j/123456701', 8881, ARRAY[8882], '2024-09-02T00:00:00Z'::timestamptz),
---     (10002, 20002, 'INTERVIEW', 'https://zoom.us/j/123456702', 8881, ARRAY[8882], '2024-09-04T12:00:00Z'::timestamptz),
---     (10003, 20003, 'INTERVIEW', 'https://zoom.us/j/123456703', 8881, ARRAY[8882], '2024-09-07T19:00:00Z'::timestamptz),
---     (10004, 20004, 'INTERVIEW', 'https://zoom.us/j/123456704', 8881, ARRAY[8882], '2024-09-09T01:00:00Z'::timestamptz),
---     (10005, 20005, 'INTERVIEW', 'https://zoom.us/j/123456705', 8881, ARRAY[8882], '2024-09-11T11:00:00Z'::timestamptz),
---     (10006, 20006, 'INTERVIEW', 'https://zoom.us/j/123456706', 8881, ARRAY[8882], '2024-09-13T20:00:00Z'::timestamptz),
---     (10007, 20007, 'INTERVIEW', 'https://zoom.us/j/123456707', 8881, ARRAY[8882], '2024-09-24T00:00:00Z'::timestamptz),
---     (10008, 20008, 'INTERVIEW', 'https://zoom.us/j/123456708', 8881, ARRAY[8882], '2024-09-26T10:00:00Z'::timestamptz),
---     (10009, 20009, 'INTERVIEW', 'https://zoom.us/j/123456709', 8881, ARRAY[8882], '2024-09-28T19:00:00Z'::timestamptz)
--- ) AS events (id, event_type_id, type, room_link, host_id, participant_id, start_time)
--- WHERE NOT EXISTS (SELECT 1
---                   FROM events
---                   WHERE id = events.id);
---
--- -- Create user-event relation records
--- INSERT INTO user_event (user_id, event_id)
--- SELECT * FROM (
--- VALUES
---     (8881, 10001),
---     (8882, 10001),
---     (8881, 10002),
---     (8882, 10002),
---     (8881, 10003),
---     (8882, 10003),
---     (8881, 10004),
---     (8882, 10004),
---     (8881, 10005),
---     (8882, 10005),
---     (8881, 10006),
---     (8882, 10006),
---     (8881, 10007),
---     (8882, 10007),
---     (8881, 10008),
---     (8882, 10008),
---     (8881, 10009),
---     (8882, 10009)
--- ) AS user_event (user_id, event_id)
--- WHERE NOT EXISTS (SELECT 1
---                   FROM user_event
---                   WHERE user_id = user_event.user_id AND event_id = user_event.event_id);
+INSERT INTO interviews (id, user_id, mastery_id, role, event_id, room_url, start_time)
+SELECT * FROM (
+                  VALUES
+                      (20001,8881, 10001, 'CANDIDATE', 10001, 'https://testlink/1', '2025-02-21T12:00:00Z'::timestamptz),
+                      (20002,8882, 10009, 'INTERVIEWER', 10001, 'https://testlink/1', '2025-02-21T12:00:00Z'::timestamptz),
+                      (20003,8881, 10001, 'CANDIDATE', 10002, 'https://testlink/2', '2025-02-21T14:00:00Z'::timestamptz),
+                      (20004,8882, 10009, 'INTERVIEWER', 10002, 'https://testlink/2', '2025-02-21T14:00:00Z'::timestamptz),
+                      (20005,8881, 10001, 'CANDIDATE', 10003, 'https://testlink/3', '2025-02-21T16:00:00Z'::timestamptz),
+                      (20006,8882, 10009, 'INTERVIEWER', 10003, 'https://testlink/3', '2025-02-21T16:00:00Z'::timestamptz),
+                      (20007,8881, 10001, 'CANDIDATE', 10004, 'https://testlink/4', '2025-02-21T18:00:00Z'::timestamptz),
+                      (20008,8882, 10009, 'INTERVIEWER', 10004, 'https://testlink/4', '2025-02-21T18:00:00Z'::timestamptz),
+                      (20009,8881, 10001, 'CANDIDATE', 10005, 'https://testlink/5', '2025-02-21T20:00:00Z'::timestamptz),
+                      (20010,8882, 10009, 'INTERVIEWER', 10005, 'https://testlink/5', '2025-02-21T20:00:00Z'::timestamptz),
+                      (20011,8881, 10001, 'CANDIDATE', 10006, 'https://testlink/6', '2025-02-21T22:00:00Z'::timestamptz),
+                      (20012,8882, 10009, 'INTERVIEWER', 10006, 'https://testlink/6', '2025-02-21T22:00:00Z'::timestamptz),
+                      (20013,8881, 10001, 'CANDIDATE', 10007, 'https://testlink/7', '2025-02-22T10:00:00Z'::timestamptz),
+                      (20014,8882, 10009, 'INTERVIEWER', 10007, 'https://testlink/7', '2025-02-22T10:00:00Z'::timestamptz),
+                      (20015,8881, 10001, 'CANDIDATE', 10008, 'https://testlink/8', '2025-02-22T15:00:00Z'::timestamptz),
+                      (20016,8882, 10009, 'INTERVIEWER', 10008, 'https://testlink/8', '2025-02-22T15:00:00Z'::timestamptz),
+                      (20017,8881, 10001, 'CANDIDATE', 10009, 'https://testlink/9', '2025-02-22T18:00:00Z'::timestamptz),
+                      (20018,8882, 10009, 'INTERVIEWER', 10009, 'https://testlink/9', '2025-02-22T18:00:00Z'::timestamptz),
+                      (20019,8881, 10001, 'CANDIDATE', 10010, 'https://testlink/10', '2025-02-23T11:00:00Z'::timestamptz),
+                      (20020,8882, 10009, 'INTERVIEWER', 10010, 'https://testlink/10', '2025-02-23T11:00:00Z'::timestamptz),
+                      (20021,8881, 10001, 'CANDIDATE', 10011, 'https://testlink/11', '2025-02-24T14:00:00Z'::timestamptz),
+                      (20022,8882, 10009, 'INTERVIEWER', 10011, 'https://testlink/11', '2025-02-24T14:00:00Z'::timestamptz),
+                      (20023,8881, 10001, 'CANDIDATE', 10012, 'https://testlink/12', '2025-02-05T10:00:00Z'::timestamptz),
+                      (20024,8882, 10009, 'INTERVIEWER', 10012, 'https://testlink/12', '2025-02-05T10:00:00Z'::timestamptz),
+                      (20025, 8881, 10001, 'CANDIDATE', 10013, 'https://testlink/13', '2025-03-01T09:00:00Z'::timestamptz),
+                      (20026, 8882, 10009, 'INTERVIEWER', 10013, 'https://testlink/13', '2025-03-01T09:00:00Z'::timestamptz),
+                      (20027, 8881, 10001, 'CANDIDATE', 10014, 'https://testlink/14', '2025-03-01T11:00:00Z'::timestamptz),
+                      (20028, 8882, 10009, 'INTERVIEWER', 10014, 'https://testlink/14', '2025-03-01T11:00:00Z'::timestamptz),
+                      (20029, 8881, 10001, 'CANDIDATE', 10015, 'https://testlink/15', '2025-03-01T13:00:00Z'::timestamptz),
+                      (20030, 8882, 10009, 'INTERVIEWER', 10015, 'https://testlink/15', '2025-03-01T13:00:00Z'::timestamptz),
+                      (20031, 8881, 10001, 'CANDIDATE', 10016, 'https://testlink/16', '2025-03-01T15:00:00Z'::timestamptz),
+                      (20032, 8882, 10009, 'INTERVIEWER', 10016, 'https://testlink/16', '2025-03-01T15:00:00Z'::timestamptz),
+                      (20033, 8881, 10001, 'CANDIDATE', 10017, 'https://testlink/17', '2025-02-06T17:00:00Z'::timestamptz),
+                      (20034, 8882, 10009, 'INTERVIEWER', 10017, 'https://testlink/17', '2025-02-06T17:00:00Z'::timestamptz),
+                      (20035, 8881, 10001, 'CANDIDATE', 10018, 'https://testlink/18', '2025-02-06T19:00:00Z'::timestamptz),
+                      (20036, 8882, 10009, 'INTERVIEWER', 10018, 'https://testlink/18', '2025-02-06T19:00:00Z'::timestamptz),
+                      (20037, 8881, 10001, 'CANDIDATE', 10019, 'https://testlink/19', '2025-03-02T09:00:00Z'::timestamptz),
+                      (20038, 8882, 10009, 'INTERVIEWER', 10019, 'https://testlink/19', '2025-03-02T09:00:00Z'::timestamptz),
+                      (20039, 8881, 10001, 'CANDIDATE', 10020, 'https://testlink/20', '2025-03-02T11:00:00Z'::timestamptz),
+                      (20040, 8882, 10009, 'INTERVIEWER', 10020, 'https://testlink/20', '2025-03-02T11:00:00Z'::timestamptz),
+                      (20041, 8881, 10001, 'CANDIDATE', 10021, 'https://testlink/21', '2025-03-02T13:00:00Z'::timestamptz),
+                      (20042, 8882, 10009, 'INTERVIEWER', 10021, 'https://testlink/21', '2025-03-02T13:00:00Z'::timestamptz),
+                      (20043, 8881, 10001, 'CANDIDATE', 10022, 'https://testlink/22', '2025-03-02T15:00:00Z'::timestamptz),
+                      (20044, 8882, 10009, 'INTERVIEWER', 10022, 'https://testlink/22', '2025-03-02T15:00:00Z'::timestamptz),
+                      (20045, 8881, 10001, 'CANDIDATE', 10023, 'https://testlink/23', '2025-03-02T17:00:00Z'::timestamptz),
+                      (20046, 8882, 10009, 'INTERVIEWER', 10023, 'https://testlink/23', '2025-03-02T17:00:00Z'::timestamptz),
+                      (20047, 8881, 10001, 'CANDIDATE', 10024, 'https://testlink/24', '2025-03-02T19:00:00Z'::timestamptz),
+                      (20048, 8882, 10009, 'INTERVIEWER', 10024, 'https://testlink/24', '2025-03-02T19:00:00Z'::timestamptz)
+) AS new_interviews (id, user_id, mastery_id, role, event_id, room_url, start_time)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM interviews
+    WHERE id = new_interviews.id
+);
+
+--  Create event records
+INSERT INTO events (id, type, room_link, host_id, participant_id, start_time, title)
+SELECT * FROM (
+VALUES
+    (10001, 'INTERVIEW', 'https://testlink/1', 8882, ARRAY[8881], '2025-02-21T12:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10002, 'INTERVIEW', 'https://testlink/2', 8882, ARRAY[8881], '2025-02-21T14:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10003, 'INTERVIEW', 'https://testlink/3', 8882, ARRAY[8881], '2025-02-21T16:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10004, 'INTERVIEW', 'https://testlink/4', 8882, ARRAY[8881], '2025-02-21T18:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10005, 'INTERVIEW', 'https://testlink/5', 8882, ARRAY[8881], '2025-02-21T20:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10006, 'INTERVIEW', 'https://testlink/6', 8882, ARRAY[8881], '2025-02-21T22:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10007, 'INTERVIEW', 'https://testlink/7', 8882, ARRAY[8881], '2025-02-22T10:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10008, 'INTERVIEW', 'https://testlink/8', 8882, ARRAY[8881], '2025-02-22T15:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10009, 'INTERVIEW', 'https://testlink/9', 8882, ARRAY[8881], '2025-02-22T18:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10010, 'INTERVIEW', 'https://testlink/10', 8882, ARRAY[8881], '2025-02-23T11:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10011, 'INTERVIEW', 'https://testlink/11', 8882, ARRAY[8881], '2025-02-24T14:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10012, 'INTERVIEW', 'https://testlink/12', 8882, ARRAY[8881], '2025-02-05T10:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10013, 'INTERVIEW', 'https://testlink/13', 8882, ARRAY[8881], '2025-03-01T09:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10014, 'INTERVIEW', 'https://testlink/14', 8882, ARRAY[8881], '2025-03-01T11:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10015, 'INTERVIEW', 'https://testlink/15', 8882, ARRAY[8881], '2025-03-01T13:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10016, 'INTERVIEW', 'https://testlink/16', 8882, ARRAY[8881], '2025-03-01T15:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10017, 'INTERVIEW', 'https://testlink/17', 8882, ARRAY[8881], '2025-02-06T17:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10018, 'INTERVIEW', 'https://testlink/18', 8882, ARRAY[8881], '2025-02-06T19:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10019, 'INTERVIEW', 'https://testlink/19', 8882, ARRAY[8881], '2025-03-02T09:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10020, 'INTERVIEW', 'https://testlink/20', 8882, ARRAY[8881], '2025-03-02T11:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10021, 'INTERVIEW', 'https://testlink/21', 8882, ARRAY[8881], '2025-03-02T13:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10022, 'INTERVIEW', 'https://testlink/22', 8882, ARRAY[8881], '2025-03-02T15:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10023, 'INTERVIEW', 'https://testlink/23', 8882, ARRAY[8881], '2025-03-02T17:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10024, 'INTERVIEW', 'https://testlink/24', 8882, ARRAY[8881], '2025-03-02T19:00:00Z'::timestamptz, 'Junior Frontend Developer')
+) AS new_events (id, type, room_link, host_id, participant_id, start_time, title)
+WHERE NOT EXISTS (SELECT 1
+                  FROM events
+                  WHERE id = new_events.id);
+
+-- Create user-event relation records
+INSERT INTO user_event (user_id, event_id)
+SELECT * FROM (
+VALUES
+    (8881, 10001), (8882, 10001),
+    (8881, 10002), (8882, 10002),
+    (8881, 10003), (8882, 10003),
+    (8881, 10004), (8882, 10004),
+    (8881, 10005), (8882, 10005),
+    (8881, 10006), (8882, 10006),
+    (8881, 10007), (8882, 10007),
+    (8881, 10008), (8882, 10008),
+    (8881, 10009), (8882, 10009),
+    (8881, 10010), (8882, 10010),
+    (8881, 10011), (8882, 10011),
+    (8881, 10012), (8882, 10012),
+    (8881, 10013), (8882, 10013),
+    (8881, 10014), (8882, 10014),
+    (8881, 10015), (8882, 10015),
+    (8881, 10016), (8882, 10016),
+    (8881, 10017), (8882, 10017),
+    (8881, 10018), (8882, 10018),
+    (8881, 10019), (8882, 10019),
+    (8881, 10020), (8882, 10020),
+    (8881, 10021), (8882, 10021),
+    (8881, 10022), (8882, 10022),
+    (8881, 10023), (8882, 10023),
+    (8881, 10024), (8882, 10024)
+) AS new_user_event (user_id, event_id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM user_event
+                  WHERE user_id = new_user_event.user_id
+                  AND event_id = new_user_event.event_id);
 
 -- Create 50 test user records with names in Ukrainian, English, and Ukrainian transliteration
 INSERT INTO users (id, first_name, last_name, country, city, is_subscribed, picture, completed_interviews, conducted_interviews, email, password)
