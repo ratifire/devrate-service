@@ -21,3 +21,9 @@ properties:
     type: integer
     format: int64
     description: The ID of counterpart user.
+  hostFirstName:
+    type: string
+    description: The first name of host user.
+  hostLastName:
+    type: string
+    description: The last name of host user.
