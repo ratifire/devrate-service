@@ -16,6 +16,8 @@ public abstract class InterviewMapper implements DataMapper<InterviewDto, Interv
   @Mapping(source = "interview.startTime", target = "startTime")
   @Mapping(source = "interview.role", target = "role")
   @Mapping(source = "hostId", target = "hostId")
+  @Mapping(source = "hostFirstName", target = "hostFirstName")
+  @Mapping(source = "hostLastName", target = "hostLastName")
   @Mapping(source = "masteryLevel", target = "masteryLevel")
   @Mapping(source = "specializationName", target = "specializationName")
   @Mapping(target = "interview.userId", ignore = true)
@@ -26,7 +28,9 @@ public abstract class InterviewMapper implements DataMapper<InterviewDto, Interv
       Interview interview,
       int masteryLevel,
       String specializationName,
-      long hostId
+      long hostId,
+      String hostFirstName,
+      String hostLastName
   );
 
 }

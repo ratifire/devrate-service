@@ -25,4 +25,6 @@ public class InterviewDto {
   private ZonedDateTime startTime;
   private InterviewRequestRole role;
   private long hostId;
+  private String hostFirstName;
+  private String hostLastName;
 }

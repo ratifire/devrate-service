@@ -69,12 +69,15 @@ public class InterviewService {
           interview.getEventId(),
           interview.getUserId()
       ).orElseThrow(() -> new IllegalStateException("Host not found"));
+      User host = userService.findById(hostId);
 
       return mapper.toDto(
           interview,
           mastery.getLevel(),
           mastery.getSpecialization().getName(),
-          hostId);
+          hostId,
+          host.getFirstName(),
+          host.getLastName());
     });
   }
 
