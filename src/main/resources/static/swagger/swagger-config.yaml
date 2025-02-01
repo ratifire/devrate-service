@@ -182,10 +182,8 @@ paths:
     $ref: './paths/interview/interviews-events-id.yaml'
   /chats:
     $ref: './paths/chats/chats.yaml'
-  /chats/{topicName}:
-    $ref: './paths/chats/chats-topicName.yaml'
-  /chats/{topicName}/{opponentUserId}:
-    $ref: './paths/chats/chats-topicName-opponentUserId.yaml'
+  /chats/{opponentUserId}:
+    $ref: './paths/chats/chats-opponentUserId.yaml'
   /chat:
     $ref: './paths/chats/ws-chats.yaml'
 components:

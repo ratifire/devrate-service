@@ -13,11 +13,6 @@ properties:
   payload:
     type: string
     description: The content of the chat message
-  topicName:
-    type: integer
-    format: int64
-    description: The combined topic name created by two users
-    required: true
   status:
     type: string
     description: The current status of the chat message

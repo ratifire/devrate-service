@@ -19,7 +19,7 @@ public class ChatMessageDto {
   private long senderId;
   private long receiverId;
   private String payload;
-  private long topicName;    // this is a combined topic created by two users
   private String status;
   private ZonedDateTime dateTime;
+  private Long readMessageId;    // TODO: will be used
 }

@@ -1,10 +1,10 @@
 get:
   tags:
     - Chat
-  summary: Retrieves all topics for the authenticated user.
+  summary: Retrieves the latest message from each conversation for the authenticated user.
   description: |
-    Retrieves all chat topics associated with the authenticated user.
-  operationId: getAllTopics
+    Retrieves the latest message from each conversation for the authenticated user.
+  operationId: getUserChatTopics
   security:
     - accessToken: []
     - idToken: []
@@ -17,8 +17,6 @@ get:
             type: array
             items:
               $ref: '../../components/schemas/TopicDto.yaml'
-    '400':
-      description: If topic doesn't have related users.
     '500':
       description: Internal server error.
       content:

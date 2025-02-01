@@ -5,10 +5,12 @@ import com.ratifire.devrate.dto.TopicDto;
 import com.ratifire.devrate.service.ChatService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -22,33 +24,27 @@ public class ChatController {
   private final ChatService chatService;
 
   /**
-   * Retrieves all topics for the authenticated user.
+   * Retrieves the latest message from each conversation for the authenticated user.
    *
-   * @return a list of TopicDto objects representing the topics.
+   * @return a list of {@link TopicDto} representing the chat topics.
    */
   @GetMapping
-  public List<TopicDto> getAllTopics() {
-    return chatService.getAllTopics();
+  public List<TopicDto> getUserChatTopics() {
+    return chatService.getUserChatTopics();
   }
 
   /**
-   * Creates a new topic for the authenticated user.
+   * Retrieves paginated conversation messages between the authenticated user and the opponent.
    *
-   * @param topicName the name of the topic to create.
+   * @param opponentUserId the ID of the opponent user.
+   * @param page the page number (starting from 0)
+   * @param size the number of records per page
+   * @return a page of {@link ChatMessageDto} objects representing the conversation.
    */
-  @PostMapping("/{topicName}/{opponentUserId}")
-  public void createTopic(@PathVariable long topicName, @PathVariable long opponentUserId) {
-    chatService.createTopic(topicName, opponentUserId);
-  }
-
-  /**
-   * Retrieves all messages for a specific topic.
-   *
-   * @param topicName the name of the topic to retrieve messages from.
-   * @return a list of ChatMessageDto objects representing the messages.
-   */
-  @GetMapping("/{topicName}")
-  public List<ChatMessageDto> getAllMessagesByTopicId(@PathVariable long topicName) {
-    return chatService.findAllMessagesByTopicId(topicName);
+  @GetMapping("/{opponentUserId}")
+  public Page<ChatMessageDto> getConversationMessages(@PathVariable long opponentUserId,
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "10") int size) {
+    return chatService.getConversationMessages(opponentUserId, PageRequest.of(page, size));
   }
 }

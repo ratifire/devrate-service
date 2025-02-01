@@ -1,14 +1,9 @@
 type: object
 properties:
-  topicName:
+  opponentUserId:
     type: integer
     format: int64
-    description: The unique identifier for the chat topic
-    required: true
-  userId:
-    type: integer
-    format: int64
-    description: The ID of the user associated with the chat topic
+    description: The ID of the opponent user
     required: true
   lastMessage:
     type: string
