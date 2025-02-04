@@ -50,8 +50,7 @@ properties:
     format: int64
     description: The mastery level of the attendee (e.g., candidate or interviewer)
   attendeeSpecialization:
-    type: integer
-    format: int64
+    type: string
     description: The specialization name of the attendee (e.g., candidate or interviewer)
   feedback:
     type: string
