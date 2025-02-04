@@ -28,9 +28,13 @@ properties:
       type: integer
       format: int32
     description: A map of hard skills and their respective ratings
-  title:
+  specialization:
     type: string
-    description: The title of the interview
+    description: The specialization name of the interview
+  masteryLevel:
+    type: integer
+    format: int64
+    description: The mastery level of the interview
   role:
     type: string
     enum:
@@ -41,6 +45,14 @@ properties:
     type: integer
     format: int64
     description: The ID of the attendee (e.g., candidate or interviewer)
+  attendeeMasteryLevel:
+    type: integer
+    format: int64
+    description: The mastery level of the attendee (e.g., candidate or interviewer)
+  attendeeSpecialization:
+    type: integer
+    format: int64
+    description: The specialization name of the attendee (e.g., candidate or interviewer)
   feedback:
     type: string
     description: The feedback for the interview
