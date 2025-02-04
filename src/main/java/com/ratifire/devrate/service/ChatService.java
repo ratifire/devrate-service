@@ -34,7 +34,12 @@ public class ChatService {
     long authUserId = userContextProvider.getAuthenticatedUserId();
     return messageRepository.findLastMessagesByUserId(authUserId)
         .stream()
-        .map(message -> toTopicDto(message, authUserId))
+        .map(message -> {
+          User opponent = message.getSender().getId() == authUserId
+              ? message.getReceiver()
+              : message.getSender();
+          return toTopicDto(message, opponent);
+        })
         .toList();
   }
 
@@ -84,13 +89,12 @@ public class ChatService {
         .build();
   }
 
-  private TopicDto toTopicDto(Message message, long authUserId) {
-    long opponentUserId = message.getSender().getId() == authUserId
-        ? message.getReceiver().getId()
-        : message.getSender().getId();
-
+  private TopicDto toTopicDto(Message message, User opponent) {
     return TopicDto.builder()
-        .opponentUserId(opponentUserId)
+        .opponentUserId(opponent.getId())
+        .opponentFirstName(opponent.getFirstName())
+        .opponentLastName(opponent.getLastName())
+        .opponentPicture(opponent.getPicture())
         .lastMessage(message.getPayload())
         .lastMessageDate(message.getSentAt())
         .build();

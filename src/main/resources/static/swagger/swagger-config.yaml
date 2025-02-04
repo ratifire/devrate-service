@@ -182,7 +182,7 @@ paths:
     $ref: './paths/interview/interviews-events-id.yaml'
   /chats:
     $ref: './paths/chats/chats.yaml'
-  /chats/{opponentUserId}:
+  /chats/{opponentUserId}?page=1&size=10:
     $ref: './paths/chats/chats-opponentUserId.yaml'
   /chat:
     $ref: './paths/chats/ws-chats.yaml'
