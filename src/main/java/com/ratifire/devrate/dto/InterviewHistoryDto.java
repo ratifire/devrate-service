@@ -1,7 +1,6 @@
 package com.ratifire.devrate.dto;
 
 import com.ratifire.devrate.enums.InterviewRequestRole;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -30,11 +29,17 @@ public class InterviewHistoryDto {
 
   private Map<String, Integer> hardSkills;
 
-  private String title;
+  private String specialization;
+
+  private int masteryLevel;
 
   private InterviewRequestRole role;
 
   private int attendeeId;
+
+  private int attendeeMasteryLevel;
+
+  private String attendeeSpecialization;
 
   private String feedback;
 
