@@ -17,6 +17,9 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 public class TopicDto {
   private long opponentUserId;
+  private String opponentFirstName;
+  private String opponentLastName;
+  private String opponentPicture;
   private String lastMessage;
   private ZonedDateTime lastMessageDate;
 }
