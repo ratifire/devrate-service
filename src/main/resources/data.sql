@@ -627,24 +627,28 @@ WHERE NOT EXISTS (
 );
 
 -- Insert interview summaries for 10 days
-INSERT INTO interview_histories (id, date_time, duration, user_id, specialization, mastery_level, role, attendee_id, attendee_mastery_level, attendee_specialization, feedback)
-SELECT id, date_time, duration, user_id, specialization, mastery_level, role, attendee_id, attendee_mastery_level, attendee_specialization, feedback
+INSERT INTO interview_histories (id, date_time, duration, user_id, specialization, mastery_level, role,
+                                 attendee_id, attendee_first_name, attendee_last_name, attendee_mastery_level,
+                                 attendee_specialization, feedback)
+SELECT id, date_time, duration, user_id, specialization, mastery_level, role, attendee_id, attendee_first_name,
+       attendee_last_name, attendee_mastery_level, attendee_specialization, feedback
 FROM (
 VALUES
-    (1000, '2024-07-21T12:40:00Z'::timestamptz, 60, 8881, 'Frontend Developer', 1, 'CANDIDATE', 8882, 3, 'Full stack Developer', 'Great interview'),
-    (2000, '2024-07-21T12:23:00Z'::timestamptz, 60, 8882, 'Frontend Developer', 1, 'INTERVIEWER', 8881, 1, 'JavaScript Developer', 'Good communication skills'),
-    (3001, '2024-09-08T12:00:00Z'::timestamptz, 45, 8881, 'Backend Developer', 2, 'CANDIDATE', 8882, 2, 'Java Developer', 'Positive feedback'),
-    (5000, '2024-07-23T12:00:00Z'::timestamptz, 45, 8881, 'Backend Developer', 2, 'CANDIDATE', 8882, 2, 'Java Developer', 'Needs improvement'),
-    (6000, '2024-07-24T12:00:00Z'::timestamptz, 45, 8882, 'Backend Developer', 2, 'INTERVIEWER', 8881, 2, 'Backend full stack', 'Strong technical knowledge'),
-    (7000, '2024-07-25T12:00:00Z'::timestamptz, 50, 8881, 'PHP Developer', 1, 'CANDIDATE', 8882, 2, 'PHP Dev', 'Good experience'),
-    (8000, '2024-07-26T12:00:00Z'::timestamptz, 45, 8882, 'Backend Developer', 2, 'INTERVIEWER', 8881, 2, 'Backend full stack', 'Lacked leadership skills'),
-    (9000, '2024-07-26T12:00:00Z'::timestamptz, 90, 8881, 'Interview with candidate 7', 1, 'CANDIDATE', 8882, 2, 'JS Developer', 'Excellent problem-solving skills'),
-    (10000, '2024-07-27T12:00:00Z'::timestamptz, 50, 8882, 'PHP Developer', 1, 'INTERVIEWER', 8881, 1, 'Frontend developer', 'Attention to detail'),
-    (11000, '2024-07-27T12:00:00Z'::timestamptz, 45, 8881, 'Interview with candidate 9', 2, 'CANDIDATE', 8882, 2, 'C# Developer', 'Strong decision making'),
-    (12000, '2024-07-27T12:00:00Z'::timestamptz, 30, 8882, 'Interview with candidate 10', 3, 'INTERVIEWER', 8881, 1, 'Node Developer', 'Good technical understanding'),
-    (13000, '2024-07-28T12:00:00Z'::timestamptz, 90, 8881, 'Interview with candidate 11', 3, 'CANDIDATE', 8882, 3, 'ADA Developer', 'Excellent performance'),
-    (14000, '2024-07-28T12:00:00Z'::timestamptz, 75, 8882, 'Interview with candidate 12', 3, 'INTERVIEWER', 8881, 3, 'ADA Developer', 'Experience could be improved')
-) AS new_interview_histories (id, date_time, duration, user_id, specialization, mastery_level, role, attendee_id, attendee_mastery_level, attendee_specialization, feedback)
+    (1000, '2024-07-21T12:40:00Z'::timestamptz, 60, 8881, 'Frontend Developer', 1, 'CANDIDATE', 8882, 'Ratifire', 'First', 3, 'Full stack Developer', 'Great interview'),
+    (2000, '2024-07-21T12:23:00Z'::timestamptz, 60, 8882, 'Frontend Developer', 1, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'JavaScript Developer', 'Good communication skills'),
+    (3001, '2024-09-08T12:00:00Z'::timestamptz, 45, 8881, 'Backend Developer', 2, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'Java Developer', 'Positive feedback'),
+    (5000, '2024-07-23T12:00:00Z'::timestamptz, 45, 8881, 'Backend Developer', 2, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'Java Developer', 'Needs improvement'),
+    (6000, '2024-07-24T12:00:00Z'::timestamptz, 45, 8882, 'Backend Developer', 2, 'INTERVIEWER', 8881, 'John', 'Rate', 2, 'Backend full stack', 'Strong technical knowledge'),
+    (7000, '2024-07-25T12:00:00Z'::timestamptz, 50, 8881, 'PHP Developer', 1, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'PHP Dev', 'Good experience'),
+    (8000, '2024-07-26T12:00:00Z'::timestamptz, 45, 8882, 'Backend Developer', 2, 'INTERVIEWER', 8881, 'John', 'Rate', 2, 'Backend full stack', 'Lacked leadership skills'),
+    (9000, '2024-07-26T12:00:00Z'::timestamptz, 90, 8881, 'Interview with candidate 7', 1, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'JS Developer', 'Excellent problem-solving skills'),
+    (10000, '2024-07-27T12:00:00Z'::timestamptz, 50, 8882, 'PHP Developer', 1, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'Frontend developer', 'Attention to detail'),
+    (11000, '2024-07-27T12:00:00Z'::timestamptz, 45, 8881, 'Interview with candidate 9', 2, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'C# Developer', 'Strong decision making'),
+    (12000, '2024-07-27T12:00:00Z'::timestamptz, 30, 8882, 'Interview with candidate 10', 3, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'Node Developer', 'Good technical understanding'),
+    (13000, '2024-07-28T12:00:00Z'::timestamptz, 90, 8881, 'Interview with candidate 11', 3, 'CANDIDATE', 8882, 'Ratifire', 'First', 3, 'ADA Developer', 'Excellent performance'),
+    (14000, '2024-07-28T12:00:00Z'::timestamptz, 75, 8882, 'Interview with candidate 12', 3, 'INTERVIEWER', 8881, 'John', 'Rate', 3, 'ADA Developer', 'Experience could be improved')
+) AS new_interview_histories (id, date_time, duration, user_id, specialization, mastery_level, role, attendee_id,
+    attendee_first_name, attendee_last_name, attendee_mastery_level, attendee_specialization, feedback)
 WHERE NOT EXISTS (
     SELECT 1
     FROM interview_histories
@@ -652,23 +656,27 @@ WHERE NOT EXISTS (
 );
 
 -- Insert interview summaries for each month of the year
-INSERT INTO interview_histories (id, date_time, duration, user_id, specialization, mastery_level, role, attendee_id, attendee_mastery_level, attendee_specialization, feedback)
-SELECT id, date_time, duration, user_id, specialization, mastery_level, role, attendee_id, attendee_mastery_level, attendee_specialization, feedback
+INSERT INTO interview_histories (id, date_time, duration, user_id, specialization, mastery_level, role,
+                                 attendee_id, attendee_first_name, attendee_last_name, attendee_mastery_level,
+                                 attendee_specialization, feedback)
+SELECT id, date_time, duration, user_id, specialization, mastery_level, role, attendee_id, attendee_first_name,
+       attendee_last_name, attendee_mastery_level, attendee_specialization, feedback
 FROM (
 VALUES
-    (15000, '2023-11-01T12:00:00Z'::timestamptz, 60, 8881, 'Interview with candidate 13', 1, 'CANDIDATE', 8882, 2, 'Full Stack Developer', 'Great potential'),
-    (16000, '2023-12-01T12:00:00Z'::timestamptz, 45, 8882, 'Interview with candidate 14', 1, 'INTERVIEWER', 8881, 1, 'JavaScript Developer', 'Needs technical training'),
-    (17000, '2023-12-01T12:00:00Z'::timestamptz, 30, 8881, 'Interview with candidate 15', 2, 'CANDIDATE', 8882, 2, 'Java Developer', 'Not enough experience'),
-    (18000, '2023-12-01T12:00:00Z'::timestamptz, 90, 8882, 'Interview with candidate 16', 2, 'INTERVIEWER', 8881, 1, 'Backend Developer', 'Great leadership qualities'),
-    (19000, '2024-01-01T12:00:00Z'::timestamptz, 75, 8881, 'Interview with candidate 17', 1, 'CANDIDATE', 8882, 2, 'PHP Developer', 'Technically strong'),
-    (20000, '2024-02-01T12:00:00Z'::timestamptz, 60, 8882, 'Interview with candidate 18', 1, 'INTERVIEWER', 8881, 1, 'Frontend Developer', 'Solid skills'),
-    (21000, '2024-03-01T12:00:00Z'::timestamptz, 45, 8881, 'Interview with candidate 19', 2, 'CANDIDATE', 8882, 2, 'C# Developer', 'Attention to detail'),
-    (22000, '2024-04-01T12:00:00Z'::timestamptz, 30, 8882, 'Interview with candidate 20', 2, 'INTERVIEWER', 8881, 1, 'Node Developer', 'Lacks team coordination'),
-    (23000, '2024-05-01T12:00:00Z'::timestamptz, 90, 8881, 'Interview with candidate 21', 1, 'CANDIDATE', 8882, 2, 'React Developer', 'Excellent coding skills'),
-    (24000, '2024-06-01T12:00:00Z'::timestamptz, 75, 8882, 'Interview with candidate 22', 1, 'INTERVIEWER', 8881, 1, 'Angular Developer', 'Could improve in testing'),
-    (25000, '2024-07-01T12:00:00Z'::timestamptz, 60, 8881, 'Interview with candidate 23', 2, 'CANDIDATE', 8882, 2, 'Vue Developer', 'Good problem-solving'),
-    (26000, '2024-08-01T12:00:00Z'::timestamptz, 45, 8882, 'Interview with candidate 24', 1, 'INTERVIEWER', 8881, 1, 'Svelte Developer', 'Requires further training')
-) AS new_interview_histories (id, date_time, duration, user_id, specialization, mastery_level, role, attendee_id, attendee_mastery_level, attendee_specialization, feedback)
+    (15000, '2023-11-01T12:00:00Z'::timestamptz, 60, 8881, 'Interview with candidate 13', 1, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'Full Stack Developer', 'Great potential'),
+    (16000, '2023-12-01T12:00:00Z'::timestamptz, 45, 8882, 'Interview with candidate 14', 1, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'JavaScript Developer', 'Needs technical training'),
+    (17000, '2023-12-01T12:00:00Z'::timestamptz, 30, 8881, 'Interview with candidate 15', 2, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'Java Developer', 'Not enough experience'),
+    (18000, '2023-12-01T12:00:00Z'::timestamptz, 90, 8882, 'Interview with candidate 16', 2, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'Backend Developer', 'Great leadership qualities'),
+    (19000, '2024-01-01T12:00:00Z'::timestamptz, 75, 8881, 'Interview with candidate 17', 1, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'PHP Developer', 'Technically strong'),
+    (20000, '2024-02-01T12:00:00Z'::timestamptz, 60, 8882, 'Interview with candidate 18', 1, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'Frontend Developer', 'Solid skills'),
+    (21000, '2024-03-01T12:00:00Z'::timestamptz, 45, 8881, 'Interview with candidate 19', 2, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'C# Developer', 'Attention to detail'),
+    (22000, '2024-04-01T12:00:00Z'::timestamptz, 30, 8882, 'Interview with candidate 20', 2, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'Node Developer', 'Lacks team coordination'),
+    (23000, '2024-05-01T12:00:00Z'::timestamptz, 90, 8881, 'Interview with candidate 21', 1, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'React Developer', 'Excellent coding skills'),
+    (24000, '2024-06-01T12:00:00Z'::timestamptz, 75, 8882, 'Interview with candidate 22', 1, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'Angular Developer', 'Could improve in testing'),
+    (25000, '2024-07-01T12:00:00Z'::timestamptz, 60, 8881, 'Interview with candidate 23', 2, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'Vue Developer', 'Good problem-solving'),
+    (26000, '2024-08-01T12:00:00Z'::timestamptz, 45, 8882, 'Interview with candidate 24', 1, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'Svelte Developer', 'Requires further training')
+) AS new_interview_histories (id, date_time, duration, user_id, specialization, mastery_level, role, attendee_id, attendee_first_name,
+                              attendee_last_name, attendee_mastery_level, attendee_specialization, feedback)
 WHERE NOT EXISTS (
     SELECT 1
     FROM interview_histories
