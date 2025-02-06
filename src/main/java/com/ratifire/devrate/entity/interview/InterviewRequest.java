@@ -57,6 +57,9 @@ public class InterviewRequest {
 
   private ZonedDateTime expiredAt;
 
+  @Column(name = "comment", length = 1000)
+  private String comment;
+
   @ElementCollection(targetClass = ZonedDateTime.class, fetch = FetchType.LAZY)
   @CollectionTable(name = "interview_request_available_dates",
       joinColumns = @JoinColumn(name = "interview_request_id"))
