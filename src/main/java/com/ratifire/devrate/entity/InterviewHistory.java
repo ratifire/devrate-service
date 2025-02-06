@@ -68,6 +68,12 @@ public class InterviewHistory {
   @Column(name = "attendee_id", nullable = false)
   private int attendeeId;
 
+  @Column(name = "attendee_first_name", nullable = false)
+  private String attendeeFirstName;
+
+  @Column(name = "attendee_last_name", nullable = false)
+  private String attendeeLastName;
+
   @Column(name = "attendee_mastery_level", nullable = false)
   private int attendeeMasteryLevel;
 

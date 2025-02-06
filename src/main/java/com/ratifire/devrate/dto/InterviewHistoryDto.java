@@ -37,6 +37,10 @@ public class InterviewHistoryDto {
 
   private int attendeeId;
 
+  private String attendeeFirstName;
+
+  private String attendeeLastName;
+
   private int attendeeMasteryLevel;
 
   private String attendeeSpecialization;
