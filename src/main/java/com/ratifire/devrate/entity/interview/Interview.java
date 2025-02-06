@@ -48,4 +48,7 @@ public class Interview {
 
   @Column(name = "start_time", nullable = false)
   private ZonedDateTime startTime;
+
+  @Column(name = "request_comment")
+  private String requestComment;
 }
