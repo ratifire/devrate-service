@@ -17,6 +17,9 @@ properties:
   role:
     type: string
     description: The role of counterpart user in the interview.
+  requestComment:
+    type: string
+    description: The interview request comment which is indicated when create request.
   hostId:
     type: integer
     format: int64

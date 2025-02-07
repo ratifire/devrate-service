@@ -16,6 +16,7 @@ public class InterviewRequestViewDto {
   private long id;
   private InterviewRequestRole role;
   private int desiredInterview;
+  private String comment;
   private List<ZonedDateTime> availableDates;
   private List<ZonedDateTime> assignedDates;
 }

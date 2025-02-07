@@ -97,6 +97,7 @@ public class InterviewRequestService {
         .id(request.getId())
         .role(request.getRole())
         .desiredInterview(request.getDesiredInterview())
+        .comment(request.getComment())
         .availableDates(request.getAvailableDates())
         .assignedDates(request.getAssignedDates())
         .build();

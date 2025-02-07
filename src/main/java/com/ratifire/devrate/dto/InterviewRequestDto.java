@@ -19,6 +19,7 @@ public class InterviewRequestDto {
   @NotNull
   private Long masteryId;
   private int desiredInterview;
+  private String comment;
   @NotNull
   private List<ZonedDateTime> availableDates;
   private ZonedDateTime expiredAt;

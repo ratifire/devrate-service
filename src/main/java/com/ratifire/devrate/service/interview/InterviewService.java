@@ -26,6 +26,7 @@ import com.ratifire.devrate.service.UserService;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -136,22 +137,34 @@ public class InterviewService {
     Event event = eventService.buildEvent(candidateId, interviewerId, joinUrl, date, title);
     long eventId = eventService.save(event, List.of(interviewerId, candidateId));
 
+    List<InterviewRequest> requests = interviewRequestService.findByIds(
+        List.of(interviewerRequestId, candidateRequestId));
+
+    String interviewerRequestComment = extractCommentForRole(requests, INTERVIEWER);
     Interview interviewer = buildInterview(interviewerId, interviewerRequestId, eventId,
-        INTERVIEWER, joinUrl, date);
+        INTERVIEWER, joinUrl, date, interviewerRequestComment);
+    String candidateRequestComment = extractCommentForRole(requests, CANDIDATE);
     Interview candidate = buildInterview(candidateId, candidateRequestId, eventId, CANDIDATE,
-        joinUrl, date);
+        joinUrl, date, candidateRequestComment);
     interviewRepository.saveAll(List.of(interviewer, candidate));
 
     interviewRequestService.updateAssignedDates(interviewerRequestId, candidateRequestId,
         interviewer.getStartTime());
 
-    List<InterviewRequest> requests = interviewRequestService.findByIds(
-        List.of(interviewerRequestId, candidateRequestId));
     Map<Long, InterviewRequest> requestMap = requests.stream()
         .collect(Collectors.toMap(InterviewRequest::getId, request -> request));
 
     sendInterviewScheduledAlerts(
         requestMap.get(interviewerRequestId), requestMap.get(candidateRequestId), date, joinUrl);
+  }
+
+  private String extractCommentForRole(List<InterviewRequest> requests, InterviewRequestRole role) {
+    return requests.stream()
+        .filter(r -> r.getRole() == role)
+        .map(InterviewRequest::getComment)
+        .filter(Objects::nonNull)
+        .findFirst()
+        .orElse("");
   }
 
   /**
@@ -200,7 +213,7 @@ public class InterviewService {
    * @return the built Interview object
    */
   private Interview buildInterview(long userId, long requestId, long eventId,
-      InterviewRequestRole role, String roomUrl, ZonedDateTime date) {
+      InterviewRequestRole role, String roomUrl, ZonedDateTime date, String requestComment) {
 
     long masteryId = interviewRequestService.findMasteryId(requestId)
         .orElseThrow(() -> new IllegalStateException(
@@ -213,6 +226,7 @@ public class InterviewService {
         .role(role)
         .roomUrl(roomUrl)
         .startTime(date)
+        .requestComment(requestComment)
         .build();
   }
 
