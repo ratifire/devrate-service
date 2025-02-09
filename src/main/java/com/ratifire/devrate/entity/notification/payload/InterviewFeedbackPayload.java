@@ -18,5 +18,5 @@ import lombok.NoArgsConstructor;
 public class InterviewFeedbackPayload implements NotificationPayload {
 
   @JsonProperty
-  private Long feedbackId;
+  private Long interviewId;
 }

@@ -82,4 +82,7 @@ public class InterviewHistory {
 
   @Column(length = 1000)
   private String feedback;
+
+  @Column(name = "interview_id")
+  private long interviewId;
 }

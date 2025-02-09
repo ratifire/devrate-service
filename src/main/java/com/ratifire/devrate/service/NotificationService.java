@@ -111,12 +111,12 @@ public class NotificationService {
    * Adds an interview feedback notification for a specified user.
    *
    * @param recipient  The user who will receive the notification.
-   * @param feedbackId The ID of the feedback to include in the notification payload.
+   * @param interviewId The user interview ID to include in the notification payload.
    * @param userEmail  The user email to add the notification for.
    */
-  public void addInterviewFeedbackDetail(User recipient, long feedbackId, String userEmail) {
+  public void addInterviewFeedbackDetail(User recipient, long interviewId, String userEmail) {
     InterviewFeedbackPayload feedbackPayload = InterviewFeedbackPayload.builder()
-        .feedbackId(feedbackId)
+        .interviewId(interviewId)
         .build();
 
     Notification notification = create(NotificationType.INTERVIEW_FEEDBACK,
