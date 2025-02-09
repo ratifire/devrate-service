@@ -5,8 +5,10 @@ import static com.ratifire.devrate.enums.InterviewRequestRole.INTERVIEWER;
 
 import com.ratifire.devrate.dto.InterviewDto;
 import com.ratifire.devrate.dto.InterviewEventDto;
+import com.ratifire.devrate.dto.InterviewFeedbackDetailDto;
 import com.ratifire.devrate.dto.PairedParticipantDto;
 import com.ratifire.devrate.dto.ParticipantDto;
+import com.ratifire.devrate.dto.SkillShortDto;
 import com.ratifire.devrate.entity.Event;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.User;
@@ -14,6 +16,7 @@ import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.enums.MasteryLevel;
+import com.ratifire.devrate.enums.SkillType;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
 import com.ratifire.devrate.security.helper.UserContextProvider;
@@ -26,6 +29,7 @@ import com.ratifire.devrate.service.UserService;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -53,6 +57,11 @@ public class InterviewService {
   private final UserContextProvider userContextProvider;
   private final DataMapper<InterviewDto, Interview> mapper;
 
+  public Optional<Interview> findByIdAndUserId(long id) {
+    long currentUserId = userContextProvider.getAuthenticatedUserId();
+    return interviewRepository.findByIdAndUserId(id, currentUserId);
+  }
+
   /**
    * Retrieves a all interviews associated with the currently authenticated user.
    *
@@ -61,7 +70,7 @@ public class InterviewService {
   public Page<InterviewDto> findAll(int page, int size) {
     long userId = userContextProvider.getAuthenticatedUserId();
     Pageable pageable = PageRequest.of(page, size, Sort.by("startTime").ascending());
-    Page<Interview> interviews = interviewRepository.findByUserId(userId, pageable);
+    Page<Interview> interviews = interviewRepository.findByUserIdAndIsVisibleTrue(userId, pageable);
 
     return interviews.map(interview -> {
       Mastery mastery = masteryService.getMasteryById(interview.getMasteryId());
@@ -155,6 +164,15 @@ public class InterviewService {
   }
 
   /**
+   * Saves the given Interview entity to the repository.
+   *
+   * @param interview the Interview entity to be saved
+   */
+  public void save(Interview interview) {
+    interviewRepository.save(interview);
+  }
+
+  /**
    * Deletes a rejected interview by its ID and returns the deleted interview.
    *
    * @param id the ID of the interview to be deleted
@@ -195,6 +213,61 @@ public class InterviewService {
   }
 
   /**
+   * Deletes interview records with the specified IDs.
+   *
+   * @param ids the identifiers of the interview records to be deleted
+   */
+  public void deleteByIds(List<Long> ids) {
+    interviewRepository.deleteAllById(ids);
+  }
+
+
+  /**
+   * Retrieves detailed feedback information for an interview based on the given ID.
+   *
+   * @param id the ID of the interview for which feedback details are to be retrieved
+   * @return an InterviewFeedbackDetailDto containing the feedback details
+   */
+  public InterviewFeedbackDetailDto getFeedbackDetail(long id) {
+    Interview oppositeInterview = findOppositeInterview(id)
+        .orElseThrow(() -> new IllegalStateException("Opposite interview not found for id: " + id));
+
+    Mastery mastery = masteryService.getMasteryById(oppositeInterview.getMasteryId());
+    User user = userService.findById(oppositeInterview.getUserId());
+
+    List<SkillShortDto> skills = mastery.getSkills().stream()
+        .filter(skill -> oppositeInterview.getRole() != InterviewRequestRole.INTERVIEWER
+            || skill.getType() == SkillType.SOFT_SKILL)
+        .map(skill -> new SkillShortDto(skill.getId(), skill.getName(), skill.getType()))
+        .toList();
+
+    ParticipantDto participantDto = ParticipantDto.builder()
+        .id(user.getId())
+        .name(user.getFirstName())
+        .surname(user.getLastName())
+        .masteryLevel(mastery.getLevel())
+        .specializationName(mastery.getSpecialization().getName())
+        .role(oppositeInterview.getRole())
+        .build();
+
+    return InterviewFeedbackDetailDto.builder()
+        .interviewStartTime(oppositeInterview.getStartTime())
+        .skills(skills)
+        .participant(participantDto)
+        .build();
+  }
+
+  /**
+   * Finds the opposite interview for the given interview ID.
+   *
+   * @param id the ID of the interview for which the opposite interview is to be found
+   * @return an Optional containing the opposite Interview
+   */
+  public Optional<Interview> findOppositeInterview(long id) {
+    return interviewRepository.findOppositeInterview(id);
+  }
+
+  /**
    * Builds an Interview object using the provided parameters.
    *
    * @return the built Interview object
@@ -213,6 +286,7 @@ public class InterviewService {
         .role(role)
         .roomUrl(roomUrl)
         .startTime(date)
+        .isVisible(true)
         .build();
   }
 

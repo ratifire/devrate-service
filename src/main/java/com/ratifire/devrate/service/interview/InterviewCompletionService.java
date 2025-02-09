@@ -25,7 +25,6 @@ public class InterviewCompletionService {
   private final InterviewService interviewService;
   private final InterviewRequestService interviewRequestService;
   private final InterviewHistoryService interviewHistoryService;
-  private final InterviewFeedbackDetailService interviewFeedbackDetailService;
   private final SpecializationService specializationService;
   private final UserService userService;
   private final NotificationService notificationService;
@@ -35,6 +34,8 @@ public class InterviewCompletionService {
   @Transactional
   public void finalizeInterviewProcess(Meeting meeting)
       throws ZoomWebhookException, ZoomApiException {
+    //TODO: Force recalculation marks process (skills, quantity of interviews etc.)
+
   //    if (!validateMeetingEndTime(meeting)) {
   //      log.info("Webhook ignored as it was triggered too early.");
   //      return;

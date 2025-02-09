@@ -20,9 +20,9 @@ import lombok.NoArgsConstructor;
 public class InterviewFeedbackDto {
 
   @NotNull
-  private long interviewFeedbackDetailId;
+  private long interviewId;
 
-  private String comment;
+  private String feedback;
 
   @NotNull
   @Valid

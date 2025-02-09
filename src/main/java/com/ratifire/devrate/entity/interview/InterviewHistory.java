@@ -1,4 +1,4 @@
-package com.ratifire.devrate.entity;
+package com.ratifire.devrate.entity.interview;
 
 import com.ratifire.devrate.enums.InterviewRequestRole;
 import jakarta.persistence.CollectionTable;
@@ -66,7 +66,7 @@ public class InterviewHistory {
   private InterviewRequestRole role;
 
   @Column(name = "attendee_id", nullable = false)
-  private int attendeeId;
+  private long attendeeId;
 
   @Column(name = "attendee_mastery_level", nullable = false)
   private int attendeeMasteryLevel;
@@ -76,4 +76,10 @@ public class InterviewHistory {
 
   @Column(length = 1000)
   private String feedback;
+
+  @Column(name = "is_visible", nullable = false)
+  private Boolean isVisible;
+
+  @Column(name = "interview_id")
+  private long interviewId;
 }

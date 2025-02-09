@@ -48,4 +48,7 @@ public class Interview {
 
   @Column(name = "start_time", nullable = false)
   private ZonedDateTime startTime;
+
+  @Column(name = "is_visible", nullable = false)
+  private boolean isVisible;
 }

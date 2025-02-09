@@ -1,9 +1,7 @@
 package com.ratifire.devrate.mapper.impl;
 
 import com.ratifire.devrate.dto.InterviewHistoryDto;
-import com.ratifire.devrate.dto.SpecializationDto;
-import com.ratifire.devrate.entity.InterviewHistory;
-import com.ratifire.devrate.entity.Specialization;
+import com.ratifire.devrate.entity.interview.InterviewHistory;
 import com.ratifire.devrate.mapper.DataMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

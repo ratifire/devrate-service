@@ -18,7 +18,9 @@ import org.springframework.stereotype.Repository;
 @RepositoryRestResource(exported = false)
 public interface InterviewRepository extends JpaRepository<Interview, Long> {
 
-  Page<Interview> findByUserId(long userId, Pageable pageable);
+  Optional<Interview> findByIdAndUserId(long id, long userId);
+
+  Page<Interview> findByUserIdAndIsVisibleTrue(long userId, Pageable pageable);
 
   List<Interview> findByEventId(long eventId);
 
@@ -30,6 +32,11 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
       + " :eventId AND i.userId <> :userId")
   Optional<Long> findUserIdByInterviewIdAndUserIdNot(@Param("eventId") long eventId,
       @Param("userId") long userId);
+
+  @Query("SELECT i FROM Interview i WHERE i.eventId = "
+      + "(SELECT sub.eventId FROM Interview sub WHERE sub.id = :interviewId) "
+      + "AND i.id != :interviewId")
+  Optional<Interview> findOppositeInterview(@Param("interviewId") long interviewId);
 
   //TODO: Method needs to be reimplemented
 
