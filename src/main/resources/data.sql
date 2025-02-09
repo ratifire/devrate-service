@@ -627,24 +627,28 @@ WHERE NOT EXISTS (
 );
 
 -- Insert interview summaries for 10 days
-INSERT INTO interview_histories (id, date_time, duration, user_id, specialization, mastery_level, role, attendee_id, attendee_mastery_level, attendee_specialization, feedback, is_visible, interview_id)
-SELECT id, date_time, duration, user_id, specialization, mastery_level, role, attendee_id, attendee_mastery_level, attendee_specialization, feedback, is_visible, interview_id
+INSERT INTO interview_histories (id, date_time, duration, user_id, specialization, mastery_level, role,
+                                 attendee_id, attendee_first_name, attendee_last_name, attendee_mastery_level,
+                                 attendee_specialization, feedback, is_visible, interview_id)
+SELECT id, date_time, duration, user_id, specialization, mastery_level, role, attendee_id, attendee_first_name,
+       attendee_last_name, attendee_mastery_level, attendee_specialization, feedback, is_visible, interview_id
 FROM (
 VALUES
-    (1000, '2024-07-21T12:40:00Z'::timestamptz, 60, 8881, 'Frontend Developer', 1, 'CANDIDATE', 8882, 3, 'Full stack Developer', 'Great interview', true, 22562),
-    (2000, '2024-07-21T12:23:00Z'::timestamptz, 60, 8882, 'Frontend Developer', 1, 'INTERVIEWER', 8881, 1, 'JavaScript Developer', 'Good communication skills', true, 22563),
-    (3001, '2024-09-08T12:00:00Z'::timestamptz, 45, 8881, 'Backend Developer', 2, 'CANDIDATE', 8882, 2, 'Java Developer', 'Positive feedback', true, 22564),
-    (5000, '2024-07-23T12:00:00Z'::timestamptz, 45, 8881, 'Backend Developer', 2, 'CANDIDATE', 8882, 2, 'Java Developer', 'Needs improvement', true, 22565),
-    (6000, '2024-07-24T12:00:00Z'::timestamptz, 45, 8882, 'Backend Developer', 2, 'INTERVIEWER', 8881, 2, 'Backend full stack', 'Strong technical knowledge', true, 22566),
-    (7000, '2024-07-25T12:00:00Z'::timestamptz, 50, 8881, 'PHP Developer', 1, 'CANDIDATE', 8882, 2, 'PHP Dev', 'Good experience', true, 22567),
-    (8000, '2024-07-26T12:00:00Z'::timestamptz, 45, 8882, 'Backend Developer', 2, 'INTERVIEWER', 8881, 2, 'Backend full stack', 'Lacked leadership skills', true, 22568),
-    (9000, '2024-07-26T12:00:00Z'::timestamptz, 90, 8881, 'Interview with candidate 7', 1, 'CANDIDATE', 8882, 2, 'JS Developer', 'Excellent problem-solving skills', true, 22569),
-    (10000, '2024-07-27T12:00:00Z'::timestamptz, 50, 8882, 'PHP Developer', 1, 'INTERVIEWER', 8881, 1, 'Frontend developer', 'Attention to detail', true, 22570),
-    (11000, '2024-07-27T12:00:00Z'::timestamptz, 45, 8881, 'Interview with candidate 9', 2, 'CANDIDATE', 8882, 2, 'C# Developer', 'Strong decision making', true, 22571),
-    (12000, '2024-07-27T12:00:00Z'::timestamptz, 30, 8882, 'Interview with candidate 10', 3, 'INTERVIEWER', 8881, 1, 'Node Developer', 'Good technical understanding', true, 22572),
-    (13000, '2024-07-28T12:00:00Z'::timestamptz, 90, 8881, 'Interview with candidate 11', 3, 'CANDIDATE', 8882, 3, 'ADA Developer', 'Excellent performance', true, 22573),
-    (14000, '2024-07-28T12:00:00Z'::timestamptz, 75, 8882, 'Interview with candidate 12', 3, 'INTERVIEWER', 8881, 3, 'ADA Developer', 'Experience could be improved', true, 22574)
-) AS new_interview_histories (id, date_time, duration, user_id, specialization, mastery_level, role, attendee_id, attendee_mastery_level, attendee_specialization, feedback, is_visible, interview_id)
+    (1000, '2024-07-21T12:40:00Z'::timestamptz, 60, 8881, 'Frontend Developer', 1, 'CANDIDATE', 8882, 'Ratifire', 'First', 3, 'Full stack Developer', 'Great interview', true, 22562),
+    (2000, '2024-07-21T12:23:00Z'::timestamptz, 60, 8882, 'Frontend Developer', 1, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'JavaScript Developer', 'Good communication skills', true, 22563),
+    (3001, '2024-09-08T12:00:00Z'::timestamptz, 45, 8881, 'Backend Developer', 2, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'Java Developer', 'Positive feedback', true, 22564),
+    (5000, '2024-07-23T12:00:00Z'::timestamptz, 45, 8881, 'Backend Developer', 2, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'Java Developer', 'Needs improvement', true, 22565),
+    (6000, '2024-07-24T12:00:00Z'::timestamptz, 45, 8882, 'Backend Developer', 2, 'INTERVIEWER', 8881, 'John', 'Rate', 2, 'Backend full stack', 'Strong technical knowledge', true, 22566),
+    (7000, '2024-07-25T12:00:00Z'::timestamptz, 50, 8881, 'PHP Developer', 1, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'PHP Dev', 'Good experience', true, 22567),
+    (8000, '2024-07-26T12:00:00Z'::timestamptz, 45, 8882, 'Backend Developer', 2, 'INTERVIEWER', 8881, 'John', 'Rate', 2, 'Backend full stack', 'Lacked leadership skills', true, 22568),
+    (9000, '2024-07-26T12:00:00Z'::timestamptz, 90, 8881, 'Interview with candidate 7', 1, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'JS Developer', 'Excellent problem-solving skills', true, 22569),
+    (10000, '2024-07-27T12:00:00Z'::timestamptz, 50, 8882, 'PHP Developer', 1, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'Frontend developer', 'Attention to detail', true, 22570),
+    (11000, '2024-07-27T12:00:00Z'::timestamptz, 45, 8881, 'Interview with candidate 9', 2, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'C# Developer', 'Strong decision making', true, 22571),
+    (12000, '2024-07-27T12:00:00Z'::timestamptz, 30, 8882, 'Interview with candidate 10', 3, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'Node Developer', 'Good technical understanding', true, 22572),
+    (13000, '2024-07-28T12:00:00Z'::timestamptz, 90, 8881, 'Interview with candidate 11', 3, 'CANDIDATE', 8882, 'Ratifire', 'First', 3, 'ADA Developer', 'Excellent performance', true, 22573),
+    (14000, '2024-07-28T12:00:00Z'::timestamptz, 75, 8882, 'Interview with candidate 12', 3, 'INTERVIEWER', 8881, 'John', 'Rate', 3, 'ADA Developer', 'Experience could be improved', true, 22574)
+) AS new_interview_histories (id, date_time, duration, user_id, specialization, mastery_level, role, attendee_id,
+    attendee_first_name, attendee_last_name, attendee_mastery_level, attendee_specialization, feedback, is_visible, interview_id)
 WHERE NOT EXISTS (
     SELECT 1
     FROM interview_histories
@@ -652,23 +656,27 @@ WHERE NOT EXISTS (
 );
 
 -- Insert interview summaries for each month of the year
-INSERT INTO interview_histories (id, date_time, duration, user_id, specialization, mastery_level, role, attendee_id, attendee_mastery_level, attendee_specialization, feedback, is_visible, interview_id)
-SELECT id, date_time, duration, user_id, specialization, mastery_level, role, attendee_id, attendee_mastery_level, attendee_specialization, feedback, is_visible, interview_id
+INSERT INTO interview_histories (id, date_time, duration, user_id, specialization, mastery_level, role,
+                                 attendee_id, attendee_first_name, attendee_last_name, attendee_mastery_level,
+                                 attendee_specialization, feedback, is_visible, interview_id)
+SELECT id, date_time, duration, user_id, specialization, mastery_level, role, attendee_id, attendee_first_name,
+       attendee_last_name, attendee_mastery_level, attendee_specialization, feedback, is_visible, interview_id
 FROM (
 VALUES
-    (15000, '2023-11-01T12:00:00Z'::timestamptz, 60, 8881, 'Interview with candidate 13', 1, 'CANDIDATE', 8882, 2, 'Full Stack Developer', 'Great potential', true, 22550),
-    (16000, '2023-12-01T12:00:00Z'::timestamptz, 45, 8882, 'Interview with candidate 14', 1, 'INTERVIEWER', 8881, 1, 'JavaScript Developer', 'Needs technical training', true, 22551),
-    (17000, '2023-12-01T12:00:00Z'::timestamptz, 30, 8881, 'Interview with candidate 15', 2, 'CANDIDATE', 8882, 2, 'Java Developer', 'Not enough experience', true, 22552),
-    (18000, '2023-12-01T12:00:00Z'::timestamptz, 90, 8882, 'Interview with candidate 16', 2, 'INTERVIEWER', 8881, 1, 'Backend Developer', 'Great leadership qualities', true, 22553),
-    (19000, '2024-01-01T12:00:00Z'::timestamptz, 75, 8881, 'Interview with candidate 17', 1, 'CANDIDATE', 8882, 2, 'PHP Developer', 'Technically strong', true, 22554),
-    (20000, '2024-02-01T12:00:00Z'::timestamptz, 60, 8882, 'Interview with candidate 18', 1, 'INTERVIEWER', 8881, 1, 'Frontend Developer', 'Solid skills', true, 22555),
-    (21000, '2024-03-01T12:00:00Z'::timestamptz, 45, 8881, 'Interview with candidate 19', 2, 'CANDIDATE', 8882, 2, 'C# Developer', 'Attention to detail', true, 22556),
-    (22000, '2024-04-01T12:00:00Z'::timestamptz, 30, 8882, 'Interview with candidate 20', 2, 'INTERVIEWER', 8881, 1, 'Node Developer', 'Lacks team coordination', true, 22557),
-    (23000, '2024-05-01T12:00:00Z'::timestamptz, 90, 8881, 'Interview with candidate 21', 1, 'CANDIDATE', 8882, 2, 'React Developer', 'Excellent coding skills', true, 22558),
-    (24000, '2024-06-01T12:00:00Z'::timestamptz, 75, 8882, 'Interview with candidate 22', 1, 'INTERVIEWER', 8881, 1, 'Angular Developer', 'Could improve in testing', true, 22559),
-    (25000, '2024-07-01T12:00:00Z'::timestamptz, 60, 8881, 'Interview with candidate 23', 2, 'CANDIDATE', 8882, 2, 'Vue Developer', 'Good problem-solving', true, 22560),
-    (26000, '2024-08-01T12:00:00Z'::timestamptz, 45, 8882, 'Interview with candidate 24', 1, 'INTERVIEWER', 8881, 1, 'Svelte Developer', 'Requires further training', true, 22561)
-) AS new_interview_histories (id, date_time, duration, user_id, specialization, mastery_level, role, attendee_id, attendee_mastery_level, attendee_specialization, feedback, is_visible, interview_id)
+    (15000, '2023-11-01T12:00:00Z'::timestamptz, 60, 8881, 'Interview with candidate 13', 1, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'Full Stack Developer', 'Great potential',true, 22575),
+    (16000, '2023-12-01T12:00:00Z'::timestamptz, 45, 8882, 'Interview with candidate 14', 1, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'JavaScript Developer', 'Needs technical training',true, 22576),
+    (17000, '2023-12-01T12:00:00Z'::timestamptz, 30, 8881, 'Interview with candidate 15', 2, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'Java Developer', 'Not enough experience',true, 22577),
+    (18000, '2023-12-01T12:00:00Z'::timestamptz, 90, 8882, 'Interview with candidate 16', 2, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'Backend Developer', 'Great leadership qualities',true, 22578),
+    (19000, '2024-01-01T12:00:00Z'::timestamptz, 75, 8881, 'Interview with candidate 17', 1, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'PHP Developer', 'Technically strong',true, 22579),
+    (20000, '2024-02-01T12:00:00Z'::timestamptz, 60, 8882, 'Interview with candidate 18', 1, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'Frontend Developer', 'Solid skills',true, 22580),
+    (21000, '2024-03-01T12:00:00Z'::timestamptz, 45, 8881, 'Interview with candidate 19', 2, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'C# Developer', 'Attention to detail',true, 22581),
+    (22000, '2024-04-01T12:00:00Z'::timestamptz, 30, 8882, 'Interview with candidate 20', 2, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'Node Developer', 'Lacks team coordination',true, 22582),
+    (23000, '2024-05-01T12:00:00Z'::timestamptz, 90, 8881, 'Interview with candidate 21', 1, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'React Developer', 'Excellent coding skills',true, 22583),
+    (24000, '2024-06-01T12:00:00Z'::timestamptz, 75, 8882, 'Interview with candidate 22', 1, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'Angular Developer', 'Could improve in testing',true, 22584),
+    (25000, '2024-07-01T12:00:00Z'::timestamptz, 60, 8881, 'Interview with candidate 23', 2, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'Vue Developer', 'Good problem-solving',true, 22585),
+    (26000, '2024-08-01T12:00:00Z'::timestamptz, 45, 8882, 'Interview with candidate 24', 1, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'Svelte Developer', 'Requires further training',true, 22586)
+) AS new_interview_histories (id, date_time, duration, user_id, specialization, mastery_level, role, attendee_id, attendee_first_name,
+                              attendee_last_name, attendee_mastery_level, attendee_specialization, feedback, is_visible, interview_id)
 WHERE NOT EXISTS (
     SELECT 1
     FROM interview_histories
@@ -906,58 +914,58 @@ WHERE NOT EXISTS (
       AND interview_history_id = new_interview_histories_users.interview_history_id
 );
 
-INSERT INTO interviews (id, user_id, mastery_id, role, event_id, room_url, start_time, is_visible)
+INSERT INTO interviews (id, user_id, mastery_id, role, event_id, room_url, start_time, request_comment, is_visible)
 SELECT * FROM (
                   VALUES
-                      (20001,8881, 10001, 'CANDIDATE', 10001, 'https://testlink/1', '2025-02-21T12:00:00Z'::timestamptz, true),
-                      (20002,8882, 10009, 'INTERVIEWER', 10001, 'https://testlink/1', '2025-02-21T12:00:00Z'::timestamptz, true),
-                      (20003,8881, 10001, 'CANDIDATE', 10002, 'https://testlink/2', '2025-02-21T14:00:00Z'::timestamptz, true),
-                      (20004,8882, 10009, 'INTERVIEWER', 10002, 'https://testlink/2', '2025-02-21T14:00:00Z'::timestamptz, true),
-                      (20005,8881, 10001, 'CANDIDATE', 10003, 'https://testlink/3', '2025-02-21T16:00:00Z'::timestamptz, true),
-                      (20006,8882, 10009, 'INTERVIEWER', 10003, 'https://testlink/3', '2025-02-21T16:00:00Z'::timestamptz, true),
-                      (20007,8881, 10001, 'CANDIDATE', 10004, 'https://testlink/4', '2025-02-21T18:00:00Z'::timestamptz, true),
-                      (20008,8882, 10009, 'INTERVIEWER', 10004, 'https://testlink/4', '2025-02-21T18:00:00Z'::timestamptz, true),
-                      (20009,8881, 10001, 'CANDIDATE', 10005, 'https://testlink/5', '2025-02-21T20:00:00Z'::timestamptz, true),
-                      (20010,8882, 10009, 'INTERVIEWER', 10005, 'https://testlink/5', '2025-02-21T20:00:00Z'::timestamptz, true),
-                      (20011,8881, 10001, 'CANDIDATE', 10006, 'https://testlink/6', '2025-02-21T22:00:00Z'::timestamptz, true),
-                      (20012,8882, 10009, 'INTERVIEWER', 10006, 'https://testlink/6', '2025-02-21T22:00:00Z'::timestamptz, true),
-                      (20013,8881, 10001, 'CANDIDATE', 10007, 'https://testlink/7', '2025-02-22T10:00:00Z'::timestamptz, true),
-                      (20014,8882, 10009, 'INTERVIEWER', 10007, 'https://testlink/7', '2025-02-22T10:00:00Z'::timestamptz, true),
-                      (20015,8881, 10001, 'CANDIDATE', 10008, 'https://testlink/8', '2025-02-22T15:00:00Z'::timestamptz, true),
-                      (20016,8882, 10009, 'INTERVIEWER', 10008, 'https://testlink/8', '2025-02-22T15:00:00Z'::timestamptz, true),
-                      (20017,8881, 10001, 'CANDIDATE', 10009, 'https://testlink/9', '2025-02-22T18:00:00Z'::timestamptz, true),
-                      (20018,8882, 10009, 'INTERVIEWER', 10009, 'https://testlink/9', '2025-02-22T18:00:00Z'::timestamptz, true),
-                      (20019,8881, 10001, 'CANDIDATE', 10010, 'https://testlink/10', '2025-02-23T11:00:00Z'::timestamptz, true),
-                      (20020,8882, 10009, 'INTERVIEWER', 10010, 'https://testlink/10', '2025-02-23T11:00:00Z'::timestamptz, true),
-                      (20021,8881, 10001, 'CANDIDATE', 10011, 'https://testlink/11', '2025-02-24T14:00:00Z'::timestamptz, true),
-                      (20022,8882, 10009, 'INTERVIEWER', 10011, 'https://testlink/11', '2025-02-24T14:00:00Z'::timestamptz, true),
-                      (20023,8881, 10001, 'CANDIDATE', 10012, 'https://testlink/12', '2025-02-05T10:00:00Z'::timestamptz, true),
-                      (20024,8882, 10009, 'INTERVIEWER', 10012, 'https://testlink/12', '2025-02-05T10:00:00Z'::timestamptz, true),
-                      (20025, 8881, 10001, 'CANDIDATE', 10013, 'https://testlink/13', '2025-03-01T09:00:00Z'::timestamptz, true),
-                      (20026, 8882, 10009, 'INTERVIEWER', 10013, 'https://testlink/13', '2025-03-01T09:00:00Z'::timestamptz, true),
-                      (20027, 8881, 10001, 'CANDIDATE', 10014, 'https://testlink/14', '2025-03-01T11:00:00Z'::timestamptz, true),
-                      (20028, 8882, 10009, 'INTERVIEWER', 10014, 'https://testlink/14', '2025-03-01T11:00:00Z'::timestamptz, true),
-                      (20029, 8881, 10001, 'CANDIDATE', 10015, 'https://testlink/15', '2025-03-01T13:00:00Z'::timestamptz, true),
-                      (20030, 8882, 10009, 'INTERVIEWER', 10015, 'https://testlink/15', '2025-03-01T13:00:00Z'::timestamptz, true),
-                      (20031, 8881, 10001, 'CANDIDATE', 10016, 'https://testlink/16', '2025-03-01T15:00:00Z'::timestamptz, true),
-                      (20032, 8882, 10009, 'INTERVIEWER', 10016, 'https://testlink/16', '2025-03-01T15:00:00Z'::timestamptz, true),
-                      (20033, 8881, 10001, 'CANDIDATE', 10017, 'https://testlink/17', '2025-02-06T17:00:00Z'::timestamptz, true),
-                      (20034, 8882, 10009, 'INTERVIEWER', 10017, 'https://testlink/17', '2025-02-06T17:00:00Z'::timestamptz, true),
-                      (20035, 8881, 10001, 'CANDIDATE', 10018, 'https://testlink/18', '2025-02-06T19:00:00Z'::timestamptz, true),
-                      (20036, 8882, 10009, 'INTERVIEWER', 10018, 'https://testlink/18', '2025-02-06T19:00:00Z'::timestamptz, true),
-                      (20037, 8881, 10001, 'CANDIDATE', 10019, 'https://testlink/19', '2025-03-02T09:00:00Z'::timestamptz, true),
-                      (20038, 8882, 10009, 'INTERVIEWER', 10019, 'https://testlink/19', '2025-03-02T09:00:00Z'::timestamptz, true),
-                      (20039, 8881, 10001, 'CANDIDATE', 10020, 'https://testlink/20', '2025-03-02T11:00:00Z'::timestamptz, true),
-                      (20040, 8882, 10009, 'INTERVIEWER', 10020, 'https://testlink/20', '2025-03-02T11:00:00Z'::timestamptz, true),
-                      (20041, 8881, 10001, 'CANDIDATE', 10021, 'https://testlink/21', '2025-03-02T13:00:00Z'::timestamptz, true),
-                      (20042, 8882, 10009, 'INTERVIEWER', 10021, 'https://testlink/21', '2025-03-02T13:00:00Z'::timestamptz, true),
-                      (20043, 8881, 10001, 'CANDIDATE', 10022, 'https://testlink/22', '2025-03-02T15:00:00Z'::timestamptz, true),
-                      (20044, 8882, 10009, 'INTERVIEWER', 10022, 'https://testlink/22', '2025-03-02T15:00:00Z'::timestamptz, true),
-                      (20045, 8881, 10001, 'CANDIDATE', 10023, 'https://testlink/23', '2025-03-02T17:00:00Z'::timestamptz, true),
-                      (20046, 8882, 10009, 'INTERVIEWER', 10023, 'https://testlink/23', '2025-03-02T17:00:00Z'::timestamptz, true),
-                      (20047, 8881, 10001, 'CANDIDATE', 10024, 'https://testlink/24', '2025-03-02T19:00:00Z'::timestamptz, true),
-                      (20048, 8882, 10009, 'INTERVIEWER', 10024, 'https://testlink/24', '2025-03-02T19:00:00Z'::timestamptz, true)
-) AS new_interviews (id, user_id, mastery_id, role, event_id, room_url, start_time, is_visible)
+                      (20001,8881, 10001, 'CANDIDATE', 10001, 'https://testlink/1', '2025-02-21T12:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20001', true),
+                      (20002,8882, 10009, 'INTERVIEWER', 10001, 'https://testlink/1', '2025-02-21T12:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20002', true),
+                      (20003,8881, 10001, 'CANDIDATE', 10002, 'https://testlink/2', '2025-02-21T14:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20003', true),
+                      (20004,8882, 10009, 'INTERVIEWER', 10002, 'https://testlink/2', '2025-02-21T14:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20004', true),
+                      (20005,8881, 10001, 'CANDIDATE', 10003, 'https://testlink/3', '2025-02-21T16:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20005', true),
+                      (20006,8882, 10009, 'INTERVIEWER', 10003, 'https://testlink/3', '2025-02-21T16:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20006', true),
+                      (20007,8881, 10001, 'CANDIDATE', 10004, 'https://testlink/4', '2025-02-21T18:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20007', true),
+                      (20008,8882, 10009, 'INTERVIEWER', 10004, 'https://testlink/4', '2025-02-21T18:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20008', true),
+                      (20009,8881, 10001, 'CANDIDATE', 10005, 'https://testlink/5', '2025-02-21T20:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20009', true),
+                      (20010,8882, 10009, 'INTERVIEWER', 10005, 'https://testlink/5', '2025-02-21T20:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20010', true),
+                      (20011,8881, 10001, 'CANDIDATE', 10006, 'https://testlink/6', '2025-02-21T22:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20011', true),
+                      (20012,8882, 10009, 'INTERVIEWER', 10006, 'https://testlink/6', '2025-02-21T22:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20012', true),
+                      (20013,8881, 10001, 'CANDIDATE', 10007, 'https://testlink/7', '2025-02-22T10:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20013', true),
+                      (20014,8882, 10009, 'INTERVIEWER', 10007, 'https://testlink/7', '2025-02-22T10:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20014', true),
+                      (20015,8881, 10001, 'CANDIDATE', 10008, 'https://testlink/8', '2025-02-22T15:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20015', true),
+                      (20016,8882, 10009, 'INTERVIEWER', 10008, 'https://testlink/8', '2025-02-22T15:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20016', true),
+                      (20017,8881, 10001, 'CANDIDATE', 10009, 'https://testlink/9', '2025-02-22T18:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20017', true),
+                      (20018,8882, 10009, 'INTERVIEWER', 10009, 'https://testlink/9', '2025-02-22T18:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20018', true),
+                      (20019,8881, 10001, 'CANDIDATE', 10010, 'https://testlink/10', '2025-02-23T11:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20019', true),
+                      (20020,8882, 10009, 'INTERVIEWER', 10010, 'https://testlink/10', '2025-02-23T11:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20020', true),
+                      (20021,8881, 10001, 'CANDIDATE', 10011, 'https://testlink/11', '2025-02-24T14:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20021', true),
+                      (20022,8882, 10009, 'INTERVIEWER', 10011, 'https://testlink/11', '2025-02-24T14:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20022', true),
+                      (20023,8881, 10001, 'CANDIDATE', 10012, 'https://testlink/12', '2025-02-05T10:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20023', true),
+                      (20024,8882, 10009, 'INTERVIEWER', 10012, 'https://testlink/12', '2025-02-05T10:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20024', true),
+                      (20025, 8881, 10001, 'CANDIDATE', 10013, 'https://testlink/13', '2025-03-01T09:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20025', true),
+                      (20026, 8882, 10009, 'INTERVIEWER', 10013, 'https://testlink/13', '2025-03-01T09:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20026', true),
+                      (20027, 8881, 10001, 'CANDIDATE', 10014, 'https://testlink/14', '2025-03-01T11:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20027', true),
+                      (20028, 8882, 10009, 'INTERVIEWER', 10014, 'https://testlink/14', '2025-03-01T11:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20028', true),
+                      (20029, 8881, 10001, 'CANDIDATE', 10015, 'https://testlink/15', '2025-03-01T13:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20029', true),
+                      (20030, 8882, 10009, 'INTERVIEWER', 10015, 'https://testlink/15', '2025-03-01T13:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20030', true),
+                      (20031, 8881, 10001, 'CANDIDATE', 10016, 'https://testlink/16', '2025-03-01T15:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20031', true),
+                      (20032, 8882, 10009, 'INTERVIEWER', 10016, 'https://testlink/16', '2025-03-01T15:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20032', true),
+                      (20033, 8881, 10001, 'CANDIDATE', 10017, 'https://testlink/17', '2025-02-06T17:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20033', true),
+                      (20034, 8882, 10009, 'INTERVIEWER', 10017, 'https://testlink/17', '2025-02-06T17:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20034', true),
+                      (20035, 8881, 10001, 'CANDIDATE', 10018, 'https://testlink/18', '2025-02-06T19:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20035', true),
+                      (20036, 8882, 10009, 'INTERVIEWER', 10018, 'https://testlink/18', '2025-02-06T19:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20036', true),
+                      (20037, 8881, 10001, 'CANDIDATE', 10019, 'https://testlink/19', '2025-03-02T09:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20037', true),
+                      (20038, 8882, 10009, 'INTERVIEWER', 10019, 'https://testlink/19', '2025-03-02T09:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20038', true),
+                      (20039, 8881, 10001, 'CANDIDATE', 10020, 'https://testlink/20', '2025-03-02T11:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20039', true),
+                      (20040, 8882, 10009, 'INTERVIEWER', 10020, 'https://testlink/20', '2025-03-02T11:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20040', true),
+                      (20041, 8881, 10001, 'CANDIDATE', 10021, 'https://testlink/21', '2025-03-02T13:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20041', true),
+                      (20042, 8882, 10009, 'INTERVIEWER', 10021, 'https://testlink/21', '2025-03-02T13:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20042', true),
+                      (20043, 8881, 10001, 'CANDIDATE', 10022, 'https://testlink/22', '2025-03-02T15:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20043', true),
+                      (20044, 8882, 10009, 'INTERVIEWER', 10022, 'https://testlink/22', '2025-03-02T15:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20044', true),
+                      (20045, 8881, 10001, 'CANDIDATE', 10023, 'https://testlink/23', '2025-03-02T17:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20045', true),
+                      (20046, 8882, 10009, 'INTERVIEWER', 10023, 'https://testlink/23', '2025-03-02T17:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20046', true),
+                      (20047, 8881, 10001, 'CANDIDATE', 10024, 'https://testlink/24', '2025-03-02T19:00:00Z'::timestamptz, 'Request comment 8881. Interview Id 20047', true),
+                      (20048, 8882, 10009, 'INTERVIEWER', 10024, 'https://testlink/24', '2025-03-02T19:00:00Z'::timestamptz, 'Request comment 8882. Interview Id 20048', true)
+) AS new_interviews (id, user_id, mastery_id, role, event_id, room_url, start_time, request_comment, is_visible)
 WHERE NOT EXISTS (
     SELECT 1
     FROM interviews

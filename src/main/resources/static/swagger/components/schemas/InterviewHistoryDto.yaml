@@ -45,6 +45,12 @@ properties:
     type: integer
     format: int64
     description: The ID of the attendee (e.g., candidate or interviewer)
+  attendeeFirstName:
+    type: string
+    description: The first name of the attendee (e.g., candidate or interviewer)
+  attendeeLastName:
+    type: string
+    description: The last name of the attendee (e.g., candidate or interviewer)
   attendeeMasteryLevel:
     type: integer
     format: int64
