@@ -3,6 +3,7 @@ package com.ratifire.devrate.controller;
 import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.MasteryHistoryDto;
 import com.ratifire.devrate.dto.SkillDto;
+import com.ratifire.devrate.dto.SkillSetDto;
 import com.ratifire.devrate.service.MasteryService;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
@@ -35,6 +36,17 @@ public class MasteryController {
   @GetMapping("/{id}")
   public MasteryDto findById(@PathVariable Long id) {
     return masteryService.findById(id);
+  }
+
+  /**
+   * Retrieve a list of hard and soft skills associated with a specific Mastery by its ID.
+   *
+   * @param id the ID of the Mastery
+   * @return a list of SkillDto representing the hard and soft skills
+   */
+  @GetMapping("/{id}/set-skills")
+  public SkillSetDto getSkillsSetByMasteryId(@PathVariable Long id) {
+    return masteryService.getSkillsSetByMasteryId(id);
   }
 
   /**

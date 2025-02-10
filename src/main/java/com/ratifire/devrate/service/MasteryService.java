@@ -5,6 +5,7 @@ import static com.ratifire.devrate.enums.InterviewRequestRole.INTERVIEWER;
 import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.MasteryHistoryDto;
 import com.ratifire.devrate.dto.SkillDto;
+import com.ratifire.devrate.dto.SkillSetDto;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.MasteryHistory;
 import com.ratifire.devrate.entity.Skill;
@@ -19,6 +20,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.Named;
 import org.springframework.stereotype.Service;
@@ -87,6 +90,22 @@ public class MasteryService {
     return getSkillsByMasteryId(id).stream()
         .filter(skillDto -> skillDto.getType() == SkillType.SOFT_SKILL)
         .toList();
+  }
+
+  /**
+   * Retrieves a SkillSetDto containing hard and soft skills associated with a given Mastery ID.
+   *
+   * @param id the ID of the Mastery
+   * @return a SkillSetDto with lists of hard and soft skills
+   */
+  public SkillSetDto getSkillsSetByMasteryId(Long id) {
+    Map<SkillType, List<SkillDto>> groupedSkills = getSkillsByMasteryId(id).stream()
+        .collect(Collectors.groupingBy(SkillDto::getType));
+
+    return new SkillSetDto(
+        groupedSkills.getOrDefault(SkillType.HARD_SKILL, List.of()),
+        groupedSkills.getOrDefault(SkillType.SOFT_SKILL, List.of())
+    );
   }
 
   /**

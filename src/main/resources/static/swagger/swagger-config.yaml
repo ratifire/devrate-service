@@ -134,6 +134,8 @@ paths:
     $ref: './paths/specializations/specializations-id-setMainMastery-masteryId.yaml'
   /masteries/{id}:
     $ref: './paths/masteries/masteries-id.yaml'
+  /masteries/{id}/set-skills:
+    $ref: './paths/masteries/masteries-id-set-skills.yaml'
   /masteries/{id}/soft-skills:
     $ref: './paths/masteries/masteries-id-soft-skills.yaml'
   /masteries/{id}/hard-skills:
