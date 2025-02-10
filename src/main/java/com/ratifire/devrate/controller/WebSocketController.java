@@ -24,9 +24,9 @@ public class WebSocketController {
   @MessageMapping("/chat")
   public void sendMessage(@RequestBody ChatMessageDto chatMessageDto) {
     simpMessagingTemplate.convertAndSend(
-        String.format("/topic/messages/%s", chatMessageDto.getReceiverId()), chatMessageDto);
-    simpMessagingTemplate.convertAndSend(
         String.format("/topic/messages/%s", chatMessageDto.getSenderId()), chatMessageDto);
+    simpMessagingTemplate.convertAndSend(
+        String.format("/topic/messages/%s", chatMessageDto.getReceiverId()), chatMessageDto);
 
     chatService.createMessage(chatMessageDto);
   }
