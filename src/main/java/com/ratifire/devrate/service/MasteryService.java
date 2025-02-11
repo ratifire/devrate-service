@@ -98,7 +98,7 @@ public class MasteryService {
    * @param id the ID of the Mastery
    * @return a SkillSetDto with lists of hard and soft skills
    */
-  public SkillSetDto getSkillsSetByMasteryId(Long id) {
+  public SkillSetDto getAllSkillsByMasteryId(Long id) {
     Map<SkillType, List<SkillDto>> groupedSkills = getSkillsByMasteryId(id).stream()
         .collect(Collectors.groupingBy(SkillDto::getType));
 

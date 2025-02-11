@@ -44,9 +44,9 @@ public class MasteryController {
    * @param id the ID of the Mastery
    * @return a list of SkillDto representing the hard and soft skills
    */
-  @GetMapping("/{id}/set-skills")
-  public SkillSetDto getSkillsSetByMasteryId(@PathVariable Long id) {
-    return masteryService.getSkillsSetByMasteryId(id);
+  @GetMapping("/{id}/skills/all")
+  public SkillSetDto getAllSkillsByMasteryId(@PathVariable Long id) {
+    return masteryService.getAllSkillsByMasteryId(id);
   }
 
   /**
