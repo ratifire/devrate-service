@@ -1,9 +1,7 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.InterviewHistoryDto;
-import com.ratifire.devrate.entity.InterviewHistory;
 import com.ratifire.devrate.service.interview.InterviewHistoryService;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.DeleteMapping;

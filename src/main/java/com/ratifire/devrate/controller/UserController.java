@@ -5,8 +5,6 @@ import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
-import com.ratifire.devrate.dto.EventDto;
-import com.ratifire.devrate.dto.InterviewFeedbackDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.NotificationDto;
 import com.ratifire.devrate.dto.SpecializationDto;
@@ -17,11 +15,8 @@ import com.ratifire.devrate.dto.UserNameSearchDto;
 import com.ratifire.devrate.dto.UserPictureDto;
 import com.ratifire.devrate.service.UserService;
 import jakarta.validation.Valid;
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -302,12 +297,6 @@ public class UserController {
   public List<UserMainMasterySkillDto> getPublicMainMasterySkillsByUserId(
       @PathVariable long userId) {
     return userService.getPublicMainMasterySkillsByUserId(userId);
-  }
-
-  @PostMapping("/{reviewerId}/feedbacks")
-  public void saveFeedback(@PathVariable long reviewerId,
-      @Valid @RequestBody InterviewFeedbackDto interviewFeedbackDto) {
-    userService.saveFeedback(reviewerId, interviewFeedbackDto);
   }
 
   @GetMapping("/{userId}/specializations/main-mastery/skills")

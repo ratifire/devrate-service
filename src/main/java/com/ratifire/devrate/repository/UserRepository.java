@@ -2,8 +2,8 @@ package com.ratifire.devrate.repository;
 
 import com.ratifire.devrate.dto.UserNameSearchDto;
 import com.ratifire.devrate.entity.Event;
-import com.ratifire.devrate.entity.InterviewHistory;
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.entity.interview.InterviewHistory;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

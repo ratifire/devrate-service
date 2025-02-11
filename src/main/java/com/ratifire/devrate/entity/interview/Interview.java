@@ -51,4 +51,7 @@ public class Interview {
 
   @Column(name = "request_comment")
   private String requestComment;
+
+  @Column(name = "is_visible", nullable = false)
+  private boolean isVisible;
 }

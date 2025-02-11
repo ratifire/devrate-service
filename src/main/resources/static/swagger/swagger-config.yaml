@@ -154,10 +154,6 @@ paths:
     $ref: './paths/skills/skills-id-hide-hide.yaml'
   /masteries/{masteryId}/history:
     $ref: './paths/masteries/masteries-id-mastery-history.yaml'
-  /users/{reviewerId}/feedbacks:
-    $ref: './paths/users/users-id-feedbacks.yaml'
-  /feedback-details/{id}:
-    $ref: './paths/interviewFeedback/feedback-details-id.yaml'
   /users/{userId}/specializations/main-mastery/skills:
     $ref: './paths/users/users-id-specializations-main-mastery-skills.yaml'
   /users/search:
@@ -182,6 +178,10 @@ paths:
     $ref: './paths/interview/interviews-id.yaml'
   /interviews/events/{id}:
     $ref: './paths/interview/interviews-events-id.yaml'
+  /interview-feedbacks:
+    $ref: './paths/interviewFeedback/interview-feedback.yaml'
+  /interview-feedbacks/{id}:
+    $ref: './paths/interviewFeedback/interview-feedback-detail-id.yaml'
   /chats:
     $ref: './paths/chats/chats.yaml'
   /chats/{opponentUserId}?page=1&size=10:

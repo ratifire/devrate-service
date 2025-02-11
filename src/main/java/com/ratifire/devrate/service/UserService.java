@@ -5,10 +5,8 @@ import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
-import com.ratifire.devrate.dto.InterviewFeedbackDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.NotificationDto;
-import com.ratifire.devrate.dto.SkillFeedbackDto;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.dto.UserMainHardSkillsDto;
@@ -26,20 +24,15 @@ import com.ratifire.devrate.entity.Notification;
 import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.entity.interview.InterviewFeedbackDetail;
-import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.exception.UserSearchInvalidInputException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
-import com.ratifire.devrate.service.interview.InterviewFeedbackDetailService;
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -61,8 +54,6 @@ public class UserService {
   private UserRepository userRepository;
   private final SpecializationRepository specializationRepository;
   private final SpecializationService specializationService;
-  private final SkillService skillService;
-  private final InterviewFeedbackDetailService interviewFeedbackDetailService;
   private final NotificationService notificationService;
   private final DataMapper<UserDto, User> userMapper;
   private final DataMapper<ContactDto, Contact> contactMapper;
@@ -496,30 +487,6 @@ public class UserService {
     specializationService.createMasteriesForSpecialization(specialization,
         specializationDto.getMainMasteryLevel());
     return specializationDataMapper.toDto(specialization);
-  }
-
-  /**
-   * Saves feedback provided by a reviewer and updates associated mastery marks.
-   *
-   * @param reviewerId           The ID of the reviewer submitting the feedback.
-   * @param interviewFeedbackDto The  interviewFeedbackDto object containing all the feedback
-   *                             details
-   */
-  @Transactional
-  public void saveFeedback(long reviewerId, InterviewFeedbackDto interviewFeedbackDto) {
-    InterviewFeedbackDetail feedbackDetail = interviewFeedbackDetailService.findById(
-        interviewFeedbackDto.getInterviewFeedbackDetailId());
-
-    if (!new HashSet<>(feedbackDetail.getSkillsIds())
-        .equals(interviewFeedbackDto.getSkills().stream()
-            .map(SkillFeedbackDto::getId)
-            .collect(Collectors.toSet()))) {
-      throw new ResourceNotFoundException("Input invalid skills");
-    }
-
-    skillService.updateMarks(interviewFeedbackDto.getSkills());
-
-    interviewFeedbackDetailService.delete(feedbackDetail.getId());
   }
 
   /**

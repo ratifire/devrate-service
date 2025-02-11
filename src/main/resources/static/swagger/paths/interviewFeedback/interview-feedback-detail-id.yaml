@@ -1,25 +1,25 @@
 get:
   tags:
     - Interview Feedback
-  summary: Get interview feedback detail by ID
+  summary: Get interview feedback detail by interview ID
   description: |
-    Retrieves all necessary data of interview feedback detail based on the provided ID for 
+    Retrieves all necessary data of interview feedback detail based on the provided interview ID for 
     filling the feedback form
-  operationId: getInterviewFeedbackDetail
+  operationId: getFeedbackDetail
   security:
     - accessToken: [ ]
     - idToken: [ ]
   parameters:
     - in: path
       name: id
-      description: The ID of the interview feedback detail to retrieve
+      description: The ID of the interview
       required: true
       schema:
         type: integer
         format: int64
   responses:
     '200':
-      description: The feedback detail corresponding to the provided ID
+      description: The feedback detail corresponding to the provided interview ID
       content:
         application/json:
           schema:

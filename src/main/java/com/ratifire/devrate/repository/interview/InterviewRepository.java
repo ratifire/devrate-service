@@ -3,6 +3,7 @@ package com.ratifire.devrate.repository.interview;
 import com.ratifire.devrate.dto.projection.InterviewUserMasteryProjection;
 import com.ratifire.devrate.entity.interview.Interview;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,7 +19,9 @@ import org.springframework.stereotype.Repository;
 @RepositoryRestResource(exported = false)
 public interface InterviewRepository extends JpaRepository<Interview, Long> {
 
-  Page<Interview> findByUserId(long userId, Pageable pageable);
+  Optional<Interview> findByIdAndUserId(long id, long userId);
+
+  Page<Interview> findByUserIdAndIsVisibleTrue(long userId, Pageable pageable);
 
   List<Interview> findByEventId(long eventId);
 
@@ -28,6 +31,11 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
 
   InterviewUserMasteryProjection findUserIdAndMasterIdByEventIdAndUserIdNot(
       Long eventId, Long userId);
+
+  @Query("SELECT i FROM Interview i WHERE i.eventId = "
+      + "(SELECT sub.eventId FROM Interview sub WHERE sub.id = :interviewId) "
+      + "AND i.id != :interviewId")
+  Optional<Interview> findOppositeInterview(@Param("interviewId") long interviewId);
 
   //TODO: Method needs to be reimplemented
 
