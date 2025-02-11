@@ -17,7 +17,6 @@ import org.springframework.stereotype.Repository;
 @RepositoryRestResource(exported = false)
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
-  // TODO: or we can implement the same logic by using JPA Criteria API (EntityManager)
   @Query("SELECT m FROM Message m "
       + "WHERE (m.sender.id = :userId OR m.receiver.id = :userId) "
       + " AND m.sentAt = ("
@@ -30,7 +29,6 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
       + "ORDER BY m.sentAt DESC")
   List<Message> findLastMessagesByUserId(@Param("userId") Long userId);
 
-  // TODO: or we can use @Query as above
-  Page<Message> findBySenderIdAndReceiverIdOrSenderIdAndReceiverIdOrderBySentAtAsc(
+  Page<Message> findBySenderIdAndReceiverIdOrSenderIdAndReceiverIdOrderBySentAtDesc(
       Long senderId, Long receiverId, Long senderId2, Long receiverId2, Pageable pageable);
 }
