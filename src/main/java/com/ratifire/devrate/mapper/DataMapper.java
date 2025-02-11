@@ -25,7 +25,7 @@ public interface DataMapper<D, E> {
   }
 
   default D toDto(E entity, int masteryLevel, String specializationName, long hostId,
-      String hostFirstName, String hostLastName) {
+      String hostFirstName, String hostLastName, long hostMasteryId) {
     throw new UnsupportedOperationException("This method is not supported.");
   }
 

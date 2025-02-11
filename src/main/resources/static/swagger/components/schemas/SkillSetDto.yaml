@@ -1,0 +1,12 @@
+type: object
+properties:
+  hardSkills:
+    type: array
+    description: List of hard skills.
+    items:
+     $ref: './SkillDto.yaml'
+  softSkills:
+    type: array
+    description: List of soft skills.
+    items:
+      $ref: './SkillDto.yaml'
