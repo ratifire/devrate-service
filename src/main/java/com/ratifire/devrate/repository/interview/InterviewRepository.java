@@ -1,8 +1,8 @@
 package com.ratifire.devrate.repository.interview;
 
+import com.ratifire.devrate.dto.projection.InterviewUserMasteryProjection;
 import com.ratifire.devrate.entity.interview.Interview;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,10 +28,8 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
       + "(SELECT eventId FROM Interview WHERE id = :id)")
   List<Interview> findInterviewPairById(@Param("id") long id);
 
-  @Query("SELECT i.userId FROM Interview i WHERE i.eventId ="
-      + " :eventId AND i.userId <> :userId")
-  Optional<Long> findUserIdByInterviewIdAndUserIdNot(@Param("eventId") long eventId,
-      @Param("userId") long userId);
+  InterviewUserMasteryProjection findUserIdAndMasterIdByEventIdAndUserIdNot(
+      Long eventId, Long userId);
 
   @Query("SELECT i FROM Interview i WHERE i.eventId = "
       + "(SELECT sub.eventId FROM Interview sub WHERE sub.id = :interviewId) "

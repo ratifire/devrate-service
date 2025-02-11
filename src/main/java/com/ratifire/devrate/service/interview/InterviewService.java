@@ -8,6 +8,7 @@ import com.ratifire.devrate.dto.InterviewEventDto;
 import com.ratifire.devrate.dto.InterviewFeedbackDetailDto;
 import com.ratifire.devrate.dto.PairedParticipantDto;
 import com.ratifire.devrate.dto.ParticipantDto;
+import com.ratifire.devrate.dto.projection.InterviewUserMasteryProjection;
 import com.ratifire.devrate.dto.SkillShortDto;
 import com.ratifire.devrate.entity.Event;
 import com.ratifire.devrate.entity.Mastery;
@@ -33,6 +34,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -75,19 +77,26 @@ public class InterviewService {
 
     return interviews.map(interview -> {
       Mastery mastery = masteryService.getMasteryById(interview.getMasteryId());
-      long hostId = interviewRepository.findUserIdByInterviewIdAndUserIdNot(
-          interview.getEventId(),
-          interview.getUserId()
-      ).orElseThrow(() -> new IllegalStateException("Host not found"));
-      User host = userService.findById(hostId);
+      InterviewUserMasteryProjection projection =
+          interviewRepository.findUserIdAndMasterIdByEventIdAndUserIdNot(
+              interview.getEventId(),
+              interview.getUserId());
 
+      Long hostId = projection.getUserId();
+      Long hostMasterId = projection.getMasteryId();
+      if (ObjectUtils.isEmpty(hostId) || ObjectUtils.isEmpty(hostMasterId)) {
+        throw new IllegalStateException("Not enough providing interview data");
+      }
+
+      User host = userService.findById(hostId);
       return mapper.toDto(
           interview,
           mastery.getLevel(),
           mastery.getSpecialization().getName(),
           hostId,
           host.getFirstName(),
-          host.getLastName());
+          host.getLastName(),
+          hostMasterId);
     });
   }
 

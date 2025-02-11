@@ -20,6 +20,7 @@ import lombok.NoArgsConstructor;
 public class InterviewDto {
 
   private long id;
+  private long masteryId;
   private int masteryLevel;
   private String specializationName;
   private ZonedDateTime startTime;
@@ -28,4 +29,6 @@ public class InterviewDto {
   private String requestComment;
   private String hostFirstName;
   private String hostLastName;
+  private long hostMasteryId;
+  private String roomUrl;
 }
