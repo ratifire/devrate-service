@@ -23,6 +23,7 @@ public interface InterviewHistoryRepository extends JpaRepository<InterviewHisto
   Page<InterviewHistory> findAllByUserIdAndIsVisibleTrue(long userId, Pageable pageable);
 
   Optional<InterviewHistory> findByInterviewIdAndUserId(long interviewId, long userId);
+
   @Query("SELECT ih.interviewId FROM InterviewHistory ih WHERE ih.interviewId IN :interviewIds")
   List<Long> findExistingInterviewIds(@Param("interviewIds") List<Long> interviewIds);
 }

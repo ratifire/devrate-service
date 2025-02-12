@@ -2,7 +2,7 @@ package com.ratifire.devrate.service.interview;
 
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
-import com.ratifire.devrate.repository.InterviewHistoryRepository;
+import com.ratifire.devrate.repository.interview.InterviewHistoryRepository;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserService;
