@@ -54,7 +54,7 @@ public class ChatService {
     long authUserId = userContextProvider.getAuthenticatedUserId();
 
     Page<Message> messagesPage = messageRepository
-        .findBySenderIdAndReceiverIdOrSenderIdAndReceiverIdOrderBySentAtAsc(
+        .findBySenderIdAndReceiverIdOrSenderIdAndReceiverIdOrderBySentAtDesc(
             authUserId, opponentUserId,
             opponentUserId, authUserId,
             pageable);

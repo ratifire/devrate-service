@@ -1,6 +1,6 @@
-package com.ratifire.devrate.repository;
+package com.ratifire.devrate.repository.interview;
 
-import com.ratifire.devrate.entity.InterviewHistory;
+import com.ratifire.devrate.entity.interview.InterviewHistory;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -20,8 +20,9 @@ public interface InterviewHistoryRepository extends JpaRepository<InterviewHisto
 
   Optional<InterviewHistory> findByIdAndUserId(Long id, Long userId);
 
-  Page<InterviewHistory> findAllByUserId(long userId, Pageable pageable);
+  Page<InterviewHistory> findAllByUserIdAndIsVisibleTrue(long userId, Pageable pageable);
 
+  Optional<InterviewHistory> findByInterviewIdAndUserId(long interviewId, long userId);
   @Query("SELECT ih.interviewId FROM InterviewHistory ih WHERE ih.interviewId IN :interviewIds")
   List<Long> findExistingInterviewIds(@Param("interviewIds") List<Long> interviewIds);
 }

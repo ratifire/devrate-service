@@ -13,6 +13,7 @@ import org.mapstruct.Mapping;
 public abstract class InterviewMapper implements DataMapper<InterviewDto, Interview> {
 
   @Mapping(source = "interview.id", target = "id")
+  @Mapping(source = "interview.requestComment", target = "requestComment")
   @Mapping(source = "interview.startTime", target = "startTime")
   @Mapping(source = "interview.role", target = "role")
   @Mapping(source = "hostId", target = "hostId")
@@ -20,17 +21,19 @@ public abstract class InterviewMapper implements DataMapper<InterviewDto, Interv
   @Mapping(source = "hostLastName", target = "hostLastName")
   @Mapping(source = "masteryLevel", target = "masteryLevel")
   @Mapping(source = "specializationName", target = "specializationName")
+  @Mapping(source = "hostMasteryId", target = "hostMasteryId")
+  @Mapping(source = "interview.masteryId", target = "masteryId")
+  @Mapping(source = "interview.roomUrl", target = "roomUrl")
   @Mapping(target = "interview.userId", ignore = true)
-  @Mapping(target = "interview.masteryId", ignore = true)
   @Mapping(target = "interview.interviewId", ignore = true)
-  @Mapping(target = "interview.roomUrl", ignore = true)
   public abstract InterviewDto toDto(
       Interview interview,
       int masteryLevel,
       String specializationName,
       long hostId,
       String hostFirstName,
-      String hostLastName
+      String hostLastName,
+      long hostMasteryId
   );
 
 }

@@ -1,19 +1,11 @@
 post:
   tags:
     - Interview Feedback
-  summary: Add an interview feedback to evaluate opposite interview participant
-  description: Adds an interview feedback to evaluate opposite interview participant
+  summary: Add an interview feedback to evaluate opposite participant
+  description: Add an interview feedback to evaluate opposite participant
   security:
     - accessToken: [ ]
     - idToken: [ ]
-  parameters:
-    - in: path
-      name: reviewerId
-      description: ID of the user who evaluates
-      required: true
-      schema:
-        type: integer
-        format: int64
   requestBody:
     description: Interview feedback data
     required: true

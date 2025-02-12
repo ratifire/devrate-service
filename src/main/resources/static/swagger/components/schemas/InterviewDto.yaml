@@ -4,6 +4,10 @@ properties:
     type: integer
     format: int64
     description: The unique identifier of the interview.
+  masteryId:
+    type: integer
+    format: int64
+    description: The mastery identifier of the current user.
   masteryLevel:
     type: integer
     description: The mastery level of counterpart user.
@@ -30,3 +34,10 @@ properties:
   hostLastName:
     type: string
     description: The last name of host user.
+  hostMasteryId:
+    type: integer
+    format: int64
+    description: The mastery identifier of the counterpart user.
+  roomUrl:
+    type: string
+    description: The room URL of the interview.
