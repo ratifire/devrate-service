@@ -37,4 +37,16 @@ public class MatcherServiceQueueSender {
     ParticipantRequestDto dto = mapper.toDto(request);
     interviewRequestSender.send(SqsMessageType.UPDATE.name(), dto);
   }
+
+  /**
+   * Sends a delete message to the queue.
+   *
+   * @param interviewRequestId the id of the interview request that should be deleted
+   */
+  public void delete(long interviewRequestId) {
+    ParticipantRequestDto dto = ParticipantRequestDto.builder()
+        .id((int)interviewRequestId)
+        .build();
+    interviewRequestSender.send(SqsMessageType.DELETE.name(), dto);
+  }
 }

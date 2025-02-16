@@ -179,7 +179,9 @@ public class SpecializationService {
    * @param id the ID of the specialization whose is to be deleted
    * @throws SpecializationLinkedToInterviewException if specialization stills linked to interview
    */
-  // TODO: Method needs to be reimplemented
+  // TODO: Method needs to be reimplemented. Also when we want to delete the specialization we need
+  //  to check that we don't have existing interview or interview request for it, otherwise throw
+  //  a custom exception
   @Transactional
   public void delete(long id) {
     //    Long linkedInterviewId = interviewRepository.findFirstBySpecializationId(id);

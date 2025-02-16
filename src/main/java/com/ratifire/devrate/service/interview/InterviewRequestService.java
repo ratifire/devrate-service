@@ -10,6 +10,7 @@ import com.ratifire.devrate.mapper.impl.InterviewRequestMapper;
 import com.ratifire.devrate.repository.interview.InterviewRequestRepository;
 import com.ratifire.devrate.security.helper.UserContextProvider;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -40,16 +41,12 @@ public class InterviewRequestService {
   /**
    * Updates the assigned dates for the specified interview requests by adding a new assigned date.
    *
-   * @param interviewerRequestId the ID of the interviewer's request
-   * @param candidateRequestId   the ID of the candidate's request
-   * @param assignedDate         the date to assign to the requests
+   * @param scheduledInterviewRequests the list of interview requests
+   * @param assignedDate               the date to assign to the requests
    */
   @Transactional
-  public void updateAssignedDates(long interviewerRequestId,
-      long candidateRequestId, ZonedDateTime assignedDate) {
-    List<InterviewRequest> scheduledInterviewRequests = findByIds(
-        List.of(interviewerRequestId, candidateRequestId));
-
+  public void updateAssignedDates(List<InterviewRequest> scheduledInterviewRequests,
+      ZonedDateTime assignedDate) {
     if (scheduledInterviewRequests.isEmpty()) {
       return;
     }
@@ -136,7 +133,13 @@ public class InterviewRequestService {
     mapper.updateEntity(requestDto, interviewRequest);
     repository.save(interviewRequest);
 
-    matcherServiceQueueSender.update(interviewRequest);
+    List<ZonedDateTime> filteredAvailableDates = new ArrayList<>(
+        interviewRequest.getAvailableDates());
+    filteredAvailableDates.removeAll(interviewRequest.getAssignedDates());
+
+    InterviewRequest filteredRequest = interviewRequest.withAvailableDates(filteredAvailableDates);
+
+    matcherServiceQueueSender.update(filteredRequest);
   }
 
   /**
@@ -156,8 +159,11 @@ public class InterviewRequestService {
    *
    * @param id the ID of the interview request to be deleted
    */
+  @Transactional
   public void delete(long id) {
     long userId = userContextProvider.getAuthenticatedUserId();
     repository.deleteByIdAndUser_Id(id, userId);
+
+    matcherServiceQueueSender.delete(id);
   }
 }
