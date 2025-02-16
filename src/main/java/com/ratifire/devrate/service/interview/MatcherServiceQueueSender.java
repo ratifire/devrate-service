@@ -45,7 +45,7 @@ public class MatcherServiceQueueSender {
    */
   public void delete(long interviewRequestId) {
     ParticipantRequestDto dto = ParticipantRequestDto.builder()
-        .id((int)interviewRequestId)
+        .id((int) interviewRequestId)
         .build();
     interviewRequestSender.send(SqsMessageType.DELETE.name(), dto);
   }
