@@ -166,8 +166,7 @@ public class InterviewService {
         joinUrl, date, candidateRequestComment);
     interviewRepository.saveAll(List.of(interviewer, candidate));
 
-    interviewRequestService.updateAssignedDates(interviewerRequestId, candidateRequestId,
-        interviewer.getStartTime());
+    interviewRequestService.updateAssignedDates(requests, interviewer.getStartTime());
 
     Map<Long, InterviewRequest> requestMap = requests.stream()
         .collect(Collectors.toMap(InterviewRequest::getId, request -> request));
