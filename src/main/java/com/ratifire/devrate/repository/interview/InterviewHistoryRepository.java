@@ -26,4 +26,8 @@ public interface InterviewHistoryRepository extends JpaRepository<InterviewHisto
 
   @Query("SELECT ih.interviewId FROM InterviewHistory ih WHERE ih.interviewId IN :interviewIds")
   List<Long> findExistingInterviewIds(@Param("interviewIds") List<Long> interviewIds);
+
+  int countByCandidateId(long userId);
+
+  int countByInterviewerId(long userId);
 }
