@@ -20,6 +20,8 @@ public class SpecializationDto {
 
   private int mainMasteryLevel;
 
+  private Long mainMasteryId;
+
   private boolean main;
 
   private int completedInterviews;

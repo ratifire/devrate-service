@@ -32,5 +32,6 @@ public abstract class SpecializationMapper implements
       @MappingTarget Specialization specialization);
 
   @Mapping(target = "mainMasteryLevel", source = "mainMastery.level")
+  @Mapping(target = "mainMasteryId", source = "mainMastery.id")
   public abstract SpecializationDto toDto(Specialization specialization);
 }

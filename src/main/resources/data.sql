@@ -1143,6 +1143,89 @@ WHERE NOT EXISTS (
     WHERE specializations.id = new_specializations.id
     );
 
+--  Create interview requests records
+INSERT INTO interview_requests (id, role, mastery_id, desired_interview, average_mark, expired_at, comment, user_id)
+SELECT * FROM (
+VALUES
+    (99880, 'CANDIDATE', 10005, 5, 0, '2025-12-30T12:00:00Z'::timestamptz, 'I want to get a realistic interview experience, including technical questions, coding, and feedback to improve my skills. The goal is to prepare for real interviews.', 8881),
+    (99881, 'INTERVIEWER', 10005, 10, 0, '2025-12-30T12:00:00Z'::timestamptz, 'I strive to create a realistic interview experience with technical questions, coding, and providing feedback. The goal is to improve my interviewing and candidate evaluation skills.', 8881),
+    (99882, 'CANDIDATE', 10001, 2, 0, '2025-12-30T12:00:00Z'::timestamptz, 'I want to get a realistic interview experience, including technical questions, coding, and feedback to improve my skills. The goal is to prepare for real interviews.', 8881)
+) AS new_interview_requests (id, role, mastery_id, desired_interview, average_mark, expired_at, comment, user_id)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM interview_requests
+    WHERE id = new_interview_requests.id
+);
+
+--  Create interview requests available dates records
+INSERT INTO interview_request_available_dates (interview_request_id, available_dates)
+SELECT * FROM (
+VALUES
+    (99880, '2025-02-17T11:00:00Z'::timestamptz),
+    (99880, '2025-02-17T12:00:00Z'::timestamptz),
+    (99880, '2025-02-17T13:00:00Z'::timestamptz),
+    (99880, '2025-02-17T14:00:00Z'::timestamptz),
+    (99880, '2025-02-18T08:00:00Z'::timestamptz),
+    (99880, '2025-02-18T09:00:00Z'::timestamptz),
+    (99880, '2025-03-10T11:00:00Z'::timestamptz),
+    (99880, '2025-03-10T12:00:00Z'::timestamptz),
+    (99880, '2025-03-10T13:00:00Z'::timestamptz),
+    (99880, '2025-03-11T11:00:00Z'::timestamptz),
+    (99880, '2025-03-11T12:00:00Z'::timestamptz),
+    (99881, '2025-02-20T09:00:00Z'::timestamptz),
+    (99881, '2025-02-20T10:00:00Z'::timestamptz),
+    (99881, '2025-02-20T11:00:00Z'::timestamptz),
+    (99881, '2025-02-20T12:00:00Z'::timestamptz),
+    (99881, '2025-02-21T08:00:00Z'::timestamptz),
+    (99881, '2025-02-21T09:00:00Z'::timestamptz),
+    (99881, '2025-02-21T10:00:00Z'::timestamptz),
+    (99881, '2025-02-21T11:00:00Z'::timestamptz),
+    (99881, '2025-03-12T09:00:00Z'::timestamptz),
+    (99881, '2025-03-12T10:00:00Z'::timestamptz),
+    (99881, '2025-03-12T11:00:00Z'::timestamptz),
+    (99881, '2025-03-12T12:00:00Z'::timestamptz),
+    (99881, '2025-03-24T09:00:00Z'::timestamptz),
+    (99881, '2025-03-24T10:00:00Z'::timestamptz),
+    (99881, '2025-03-24T11:00:00Z'::timestamptz),
+    (99881, '2025-03-24T12:00:00Z'::timestamptz),
+    (99881, '2025-03-24T13:00:00Z'::timestamptz),
+    (99881, '2025-03-24T14:00:00Z'::timestamptz),
+    (99881, '2025-04-01T15:00:00Z'::timestamptz),
+    (99881, '2025-04-01T16:00:00Z'::timestamptz),
+    (99881, '2025-04-01T17:00:00Z'::timestamptz),
+    (99881, '2025-04-01T18:00:00Z'::timestamptz),
+    (99881, '2025-04-01T19:00:00Z'::timestamptz),
+    (99881, '2025-04-01T20:00:00Z'::timestamptz),
+    (99882, '2025-03-10T10:00:00Z'::timestamptz),
+    (99882, '2025-03-10T11:00:00Z'::timestamptz),
+    (99882, '2025-03-10T12:00:00Z'::timestamptz),
+    (99882, '2025-03-10T13:00:00Z'::timestamptz),
+    (99882, '2025-03-10T14:00:00Z'::timestamptz)
+) AS new_interview_request_available_dates (interview_request_id, available_dates)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM interview_request_available_dates
+    WHERE interview_request_id = new_interview_request_available_dates.interview_request_id
+);
+
+--  Create interview requests available dates records
+INSERT INTO interview_request_assigned_dates (interview_request_id, assigned_dates)
+SELECT * FROM (
+VALUES
+    (99880, '2025-02-18T08:00:00Z'::timestamptz),
+    (99880, '2025-03-10T13:00:00Z'::timestamptz),
+    (99881, '2025-03-12T09:00:00Z'::timestamptz),
+    (99881, '2025-03-24T13:00:00Z'::timestamptz),
+    (99881, '2025-04-01T16:00:00Z'::timestamptz),
+    (99881, '2025-04-01T19:00:00Z'::timestamptz),
+    (99882, '2025-03-10T11:00:00Z'::timestamptz)
+) AS new_interview_request_assigned_dates (interview_request_id, assigned_dates)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM interview_request_assigned_dates
+    WHERE interview_request_id = new_interview_request_assigned_dates.interview_request_id
+);
+
 -- Create test data for interview_feedback_details
 -- INSERT INTO interview_feedback_details (id, participant_role, start_time, interview_history_id, evaluated_mastery_id, skill_id, participant_id, owner_id)
 -- SELECT * FROM (
