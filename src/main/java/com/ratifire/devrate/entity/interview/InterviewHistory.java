@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -44,19 +45,22 @@ public class InterviewHistory {
   @Column(name = "user_id", nullable = false)
   private long userId;
 
+  @Column(name = "mastery_id", nullable = false)
+  private long masteryId;
+
   @ElementCollection
   @CollectionTable(name = "soft_skills", joinColumns = @JoinColumn(name = "interview_history_id"))
   @MapKeyColumn(name = "skill_name")
-  @Column(name = "skill_value")
-  private Map<String, Integer> softSkills;
+  @Column(name = "skill_value", precision = 4, scale = 2)
+  private Map<String, BigDecimal> softSkills;
 
   @ElementCollection
   @CollectionTable(name = "hard_skills", joinColumns = @JoinColumn(name = "interview_history_id"))
   @MapKeyColumn(name = "skill_name")
-  @Column(name = "skill_value")
-  private Map<String, Integer> hardSkills;
+  @Column(name = "skill_value", precision = 4, scale = 2)
+  private Map<String, BigDecimal> hardSkills;
 
-  @Column(name = "specialization", nullable = false, length = 255)
+  @Column(nullable = false)
   private String specialization;
 
   @Column(name = "mastery_level", nullable = false)
