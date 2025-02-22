@@ -4,6 +4,7 @@ import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.MasteryHistoryDto;
 import com.ratifire.devrate.dto.SkillDto;
 import com.ratifire.devrate.dto.SkillSetDto;
+import com.ratifire.devrate.service.MasteryHistoryService;
 import com.ratifire.devrate.service.MasteryService;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MasteryController {
 
   private final MasteryService masteryService;
+  private final MasteryHistoryService masteryHistoryService;
 
   /**
    * Retrieves Mastery by ID.
@@ -109,6 +111,6 @@ public class MasteryController {
       @PathVariable Long masteryId,
       @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
       @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-    return masteryService.getMasteryHistory(masteryId, from, to);
+    return masteryHistoryService.getMasteryHistory(masteryId, from, to);
   }
 }
