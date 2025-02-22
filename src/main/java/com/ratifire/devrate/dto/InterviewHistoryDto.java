@@ -1,6 +1,7 @@
 package com.ratifire.devrate.dto;
 
 import com.ratifire.devrate.enums.InterviewRequestRole;
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -25,9 +26,9 @@ public class InterviewHistoryDto {
 
   private long userId;
 
-  private Map<String, Integer> softSkills;
+  private Map<String, BigDecimal> softSkills;
 
-  private Map<String, Integer> hardSkills;
+  private Map<String, BigDecimal> hardSkills;
 
   private String specialization;
 
