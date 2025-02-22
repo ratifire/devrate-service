@@ -2,7 +2,9 @@ package com.ratifire.devrate.service.interview;
 
 import com.ratifire.devrate.dto.InterviewFeedbackDto;
 import com.ratifire.devrate.entity.interview.InterviewHistory;
+import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.security.helper.UserContextProvider;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class InterviewFeedbackService {
 
   private final InterviewHistoryService interviewHistoryService;
-  private final InterviewCompletionService interviewCompletionService;
+  private final InterviewMetricsService interviewMetricsService;
   private final UserContextProvider userContextProvider;
 
   /**
@@ -33,11 +35,11 @@ public class InterviewFeedbackService {
     if (existingInterviewHistoryOpt.isEmpty()) {
       interviewHistoryService.create(feedbackDto);
     } else {
-      interviewHistoryService.updateExisting(feedbackDto,
-          existingInterviewHistoryOpt.get());
-      //TODO: Triger interview completion process
+      Map<InterviewRequestRole, InterviewHistory> interviewHistoriesMap =
+          interviewHistoryService.updateExisting(feedbackDto, existingInterviewHistoryOpt.get());
 
-      //      interviewCompletionService.finalizeInterviewProcess();
+      interviewMetricsService
+          .updateAllMarksAndCountersAfterGettingFeedback(interviewHistoriesMap);
     }
   }
 }
