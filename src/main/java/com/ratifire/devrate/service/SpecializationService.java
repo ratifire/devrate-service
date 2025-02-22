@@ -4,7 +4,7 @@ import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Specialization;
-import com.ratifire.devrate.entity.interview.Interview;
+import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
@@ -12,7 +12,6 @@ import com.ratifire.devrate.exception.SpecializationLinkedToInterviewException;
 import com.ratifire.devrate.exception.SpecializationNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SpecializationRepository;
-import com.ratifire.devrate.repository.interview.InterviewRepository;
 import com.ratifire.devrate.util.JsonConverter;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
@@ -33,9 +32,9 @@ public class SpecializationService {
   @Value("${specialization.defaultSpecializationsPath}")
   private String defaultSpecializationsPath;
 
+  private final UserService userService;
   private final MasteryService masteryService;
   private final SpecializationRepository specializationRepository;
-  private final InterviewRepository interviewRepository;
   private final DataMapper<SpecializationDto, Specialization> specializationMapper;
   private final DataMapper<MasteryDto, Mastery> masteryMapper;
 
@@ -65,6 +64,17 @@ public class SpecializationService {
   }
 
   /**
+   * Retrieves specialization by user ID.
+   *
+   * @param userId the ID of the user
+   * @return the user's specialization as a DTO
+   */
+  public List<SpecializationDto> getSpecializationsByUserId(long userId) {
+    User user = userService.findById(userId);
+    return specializationMapper.toDto(user.getSpecializations());
+  }
+
+  /**
    * Retrieves main mastery by specializationId.
    *
    * @param id the ID of the specialization
@@ -89,6 +99,26 @@ public class SpecializationService {
         .map(Specialization::getMasteries)
         .map(masteryMapper::toDto)
         .orElse(List.of());
+  }
+
+  /**
+   * Creates specialization information. Сreate masteries for specialization.
+   *
+   * @param specializationDto the user's specialization information as a DTO
+   * @return the created user specialization information as a DTO
+   */
+  @Transactional
+  public SpecializationDto createSpecialization(SpecializationDto specializationDto,
+      long userId) {
+    validateBeforeCreate(specializationDto, userId);
+    User user = userService.findById(userId);
+    Specialization specialization = specializationMapper.toEntity(specializationDto);
+    specialization.setUser(user);
+    user.getSpecializations().add(specialization);
+    userService.updateByEntity(user);
+    createMasteriesForSpecialization(specialization,
+        specializationDto.getMainMasteryLevel());
+    return specializationMapper.toDto(specialization);
   }
 
   /**
@@ -254,24 +284,5 @@ public class SpecializationService {
     specialization.setMainMastery(newMainMastery);
     specializationRepository.save(specialization);
     return masteryMapper.toDto(newMainMastery);
-  }
-
-  /**
-   * Updates the interview counts for the interviewer and candidate specializations after the
-   * interview has been completed and conducted.
-   *
-   * @param interview the interview from which the interviewer and candidate specializations are
-   *                  derived
-   */
-  //TODO Method needs to be reimplemented
-  public void updateUserInterviewCounts(Interview interview) {
-  //    Specialization interviewer = interview.getInterviewerRequest()
-  //    .getMastery().getSpecialization();
-  //    Specialization candidate = interview.getCandidateRequest().getMastery().getSpecialization();
-  //
-  //    interviewer.setConductedInterviews(interviewer.getConductedInterviews() + 1);
-  //    candidate.setCompletedInterviews(candidate.getCompletedInterviews() + 1);
-  //
-  //    specializationRepository.saveAll(List.of(interviewer, candidate));
   }
 }
