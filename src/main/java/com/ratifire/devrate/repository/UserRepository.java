@@ -1,6 +1,7 @@
 package com.ratifire.devrate.repository;
 
 import com.ratifire.devrate.dto.UserNameSearchDto;
+import com.ratifire.devrate.dto.projection.UserNameProjection;
 import com.ratifire.devrate.entity.Event;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.InterviewHistory;
@@ -19,6 +20,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RepositoryRestResource(exported = false)
 public interface UserRepository extends JpaRepository<User, Long> {
+
+  @Query("SELECT u.firstName AS firstName, u.lastName AS lastName FROM User u WHERE u.id = :userId")
+  UserNameProjection findUserNameByUserId(@Param("userId") long userId);
 
   boolean existsByEmail(String email);
 
