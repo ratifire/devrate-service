@@ -13,6 +13,8 @@ properties:
   comment:
     type: string
     description: The interview request comment which is indicated when create request
+  languageCode:
+    $ref: './InterviewRequestLanguageCode.yaml'
   availableDates:
     type: array
     description: A list of available dates for the interview

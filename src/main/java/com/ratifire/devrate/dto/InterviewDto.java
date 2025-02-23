@@ -8,7 +8,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
 /**
  * Data Transfer Object (DTO) representing the interview details.
  */
@@ -26,6 +25,7 @@ public class InterviewDto {
   private ZonedDateTime startTime;
   private InterviewRequestRole role;
   private long hostId;
+  private String languageCode;
   private String requestComment;
   private String hostFirstName;
   private String hostLastName;
