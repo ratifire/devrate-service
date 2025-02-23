@@ -17,6 +17,8 @@ properties:
   comment:
     type: string
     description: The interview request comment which is indicated when create request
+  languageCode:
+    $ref: './InterviewRequestLanguageCode.yaml'
   expiredAt:
     type: string
     format: date

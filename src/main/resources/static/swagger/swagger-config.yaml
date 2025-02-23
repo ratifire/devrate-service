@@ -166,6 +166,8 @@ paths:
     $ref: './paths/users/users-id-platform-feedbacks.yaml'
   /interview-requests:
     $ref: './paths/interviewRequest/interview-requests.yaml'
+  /interview-requests/{id}:
+    $ref: './paths/interviewRequest/interview-requests-id.yaml'
   /interview-requests/masteries/{masteryId}:
     $ref: './paths/interviewRequest/interview-requests-masteries-masteryId.yaml'
   /events:

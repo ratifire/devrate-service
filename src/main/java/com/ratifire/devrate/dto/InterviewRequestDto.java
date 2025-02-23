@@ -21,6 +21,8 @@ public class InterviewRequestDto {
   private int desiredInterview;
   private String comment;
   @NotNull
+  private String languageCode;
+  @NotNull
   private List<ZonedDateTime> availableDates;
   private ZonedDateTime expiredAt;
 }
