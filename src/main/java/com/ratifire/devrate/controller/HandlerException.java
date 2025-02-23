@@ -7,6 +7,7 @@ import com.ratifire.devrate.exception.MailException;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.exception.SpecializationLinkedToInterviewException;
+import com.ratifire.devrate.exception.SpecializationLinkedToInterviewRequestException;
 import com.ratifire.devrate.exception.UserSearchInvalidInputException;
 import com.ratifire.devrate.security.exception.AuthTokenExpiredException;
 import com.ratifire.devrate.security.exception.AuthenticationException;
@@ -180,7 +181,8 @@ public class HandlerException {
    */
   @ResponseStatus(HttpStatus.CONFLICT)
   @ExceptionHandler({ResourceAlreadyExistException.class,
-      SpecializationLinkedToInterviewException.class})
+      SpecializationLinkedToInterviewException.class,
+      SpecializationLinkedToInterviewRequestException.class})
   public void handleAlreadyExistExceptions() {
   }
 

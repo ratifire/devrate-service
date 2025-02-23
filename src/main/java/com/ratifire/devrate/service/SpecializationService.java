@@ -5,14 +5,18 @@ import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.interview.Interview;
+import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.exception.SpecializationLinkedToInterviewException;
+import com.ratifire.devrate.exception.SpecializationLinkedToInterviewRequestException;
 import com.ratifire.devrate.exception.SpecializationNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
+import com.ratifire.devrate.repository.interview.InterviewRequestRepository;
+import com.ratifire.devrate.security.helper.UserContextProvider;
 import com.ratifire.devrate.util.JsonConverter;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
@@ -38,6 +42,8 @@ public class SpecializationService {
   private final InterviewRepository interviewRepository;
   private final DataMapper<SpecializationDto, Specialization> specializationMapper;
   private final DataMapper<MasteryDto, Mastery> masteryMapper;
+  private final InterviewRequestRepository interviewRequestRepository;
+  private final UserContextProvider userContextProvider;
 
   /**
    * Finds a specialization by its ID.
@@ -105,11 +111,24 @@ public class SpecializationService {
       throw new ResourceAlreadyExistException("Specialization name is already exist.");
     }
 
+    checkSpecializationByInterviewRequest(specialisation.getMainMastery().getId(),
+        specializationDto.getId());
+
     boolean mainStatus = specialisation.isMain();
     specializationMapper.updateEntity(specializationDto, specialisation);
     specialisation.setMain(mainStatus);
     Specialization updatedSpecialization = specializationRepository.save(specialisation);
     return specializationMapper.toDto(updatedSpecialization);
+  }
+
+  private void checkSpecializationByInterviewRequest(Long mainMasteryId, Long specializationId) {
+    long userId = userContextProvider.getAuthenticatedUserId();
+    List<InterviewRequest> masteryRequests = interviewRequestRepository
+        .findAllByMastery_IdAndUser_Id(mainMasteryId, userId);
+    if (!masteryRequests.isEmpty()) {
+      throw new SpecializationLinkedToInterviewRequestException(specializationId,
+          masteryRequests.getFirst().getId());
+    }
   }
 
   /**
@@ -241,8 +260,10 @@ public class SpecializationService {
    * @param specId    the ID of the specialization to which the mastery should be set as main
    * @param masteryId the ID of the mastery that will become the new main mastery
    * @return the updated main mastery as a DTO
-   * @throws ResourceNotFoundException if the mastery does not belong to the specified
-   *                                   specialization
+   * @throws ResourceNotFoundException                       if the mastery does not belong to the
+   *                                                         specified specialization
+   * @throws SpecializationLinkedToInterviewRequestException if the specialization has existing
+   *                                                         interview request
    */
   public MasteryDto setMainMasteryById(long specId, long masteryId) {
     Mastery newMainMastery = masteryService.getMasteryById(masteryId);
@@ -251,6 +272,9 @@ public class SpecializationService {
       throw new ResourceNotFoundException(
           "The mastery does not belong to the specified specialization.");
     }
+
+    checkSpecializationByInterviewRequest(specialization.getMainMastery().getId(), specId);
+
     specialization.setMainMastery(newMainMastery);
     specializationRepository.save(specialization);
     return masteryMapper.toDto(newMainMastery);
