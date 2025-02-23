@@ -1,6 +1,5 @@
 package com.ratifire.devrate.entity.interview;
 
-
 import com.ratifire.devrate.enums.InterviewRequestRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -48,6 +47,9 @@ public class Interview {
 
   @Column(name = "start_time", nullable = false)
   private ZonedDateTime startTime;
+
+  @Column(name = "language_code", nullable = false)
+  private String languageCode;
 
   @Column(name = "request_comment")
   private String requestComment;

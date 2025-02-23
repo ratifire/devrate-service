@@ -159,11 +159,13 @@ public class InterviewService {
         List.of(interviewerRequestId, candidateRequestId));
 
     String interviewerRequestComment = extractCommentForRole(requests, INTERVIEWER);
+    String interviewerLanguageCode = extractLanguageCode(requests, INTERVIEWER);
     Interview interviewer = buildInterview(interviewerId, interviewerRequestId, eventId,
-        INTERVIEWER, joinUrl, date, interviewerRequestComment);
+        INTERVIEWER, joinUrl, date, interviewerRequestComment, interviewerLanguageCode);
     String candidateRequestComment = extractCommentForRole(requests, CANDIDATE);
+    String candidateLanguageCode = extractLanguageCode(requests, CANDIDATE);
     Interview candidate = buildInterview(candidateId, candidateRequestId, eventId, CANDIDATE,
-        joinUrl, date, candidateRequestComment);
+        joinUrl, date, candidateRequestComment, candidateLanguageCode);
     interviewRepository.saveAll(List.of(interviewer, candidate));
 
     interviewRequestService.updateAssignedDates(requests, interviewer.getStartTime());
@@ -179,6 +181,15 @@ public class InterviewService {
     return requests.stream()
         .filter(r -> r.getRole() == role)
         .map(InterviewRequest::getComment)
+        .filter(Objects::nonNull)
+        .findFirst()
+        .orElse("");
+  }
+
+  private String extractLanguageCode(List<InterviewRequest> requests, InterviewRequestRole role) {
+    return requests.stream()
+        .filter(r -> r.getRole() == role)
+        .map(InterviewRequest::getLanguageCode)
         .filter(Objects::nonNull)
         .findFirst()
         .orElse("");
@@ -294,7 +305,8 @@ public class InterviewService {
    * @return the built Interview object
    */
   private Interview buildInterview(long userId, long requestId, long eventId,
-      InterviewRequestRole role, String roomUrl, ZonedDateTime date, String requestComment) {
+      InterviewRequestRole role, String roomUrl, ZonedDateTime date, String requestComment,
+      String languageCode) {
 
     long masteryId = interviewRequestService.findMasteryId(requestId)
         .orElseThrow(() -> new IllegalStateException(
@@ -307,6 +319,7 @@ public class InterviewService {
         .role(role)
         .roomUrl(roomUrl)
         .startTime(date)
+        .languageCode(languageCode)
         .requestComment(requestComment)
         .isVisible(true)
         .build();

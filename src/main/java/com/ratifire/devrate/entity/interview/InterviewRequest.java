@@ -3,7 +3,6 @@ package com.ratifire.devrate.entity.interview;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.enums.InterviewRequestRole;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -60,6 +59,9 @@ public class InterviewRequest {
 
   @Column(name = "comment", length = 1000)
   private String comment;
+
+  @Column(name = "language_code", nullable = false)
+  private String languageCode;
 
   @ElementCollection(targetClass = ZonedDateTime.class, fetch = FetchType.LAZY)
   @CollectionTable(name = "interview_request_available_dates",
