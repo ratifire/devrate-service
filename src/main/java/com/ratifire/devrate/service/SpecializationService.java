@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SpecializationService {
 
   @Value("${specialization.defaultSpecializationsPath}")
@@ -226,18 +228,35 @@ public class SpecializationService {
    * Deletes specialization by specialization ID.
    *
    * @param id the ID of the specialization whose is to be deleted
-   * @throws SpecializationLinkedToInterviewException if specialization stills linked to interview
+   * @throws SpecializationLinkedToInterviewException        if specialization stills linked to
+   *                                                         interview
+   * @throws SpecializationLinkedToInterviewRequestException if specialization stills linked to
+   *                                                         interview request
    */
-  // TODO: Method needs to be reimplemented. Also when we want to delete the specialization we need
-  //  to check that we don't have existing interview or interview request for it, otherwise throw
-  //  a custom exception
   @Transactional
   public void delete(long id) {
-    //    Long linkedInterviewId = interviewRepository.findFirstBySpecializationId(id);
-    //    if (linkedInterviewId != null) {
-    //      throw new SpecializationLinkedToInterviewException(id, linkedInterviewId);
-    //    }
-    //    specializationRepository.deleteById(id);
+    long userId = userContextProvider.getAuthenticatedUserId();
+    Specialization specialization = findById(id);
+    Long mainMasteryId = specialization.getMainMastery().getId();
+
+    List<Interview> existingInterviews = interviewRepository
+        .findByMasteryIdAndUserId(mainMasteryId, userId);
+    if (!existingInterviews.isEmpty()) {
+      log.warn("Cannot delete specialization with ID: {} because it has linked interview ID: {}",
+          id, existingInterviews.getFirst().getId());
+      throw new SpecializationLinkedToInterviewException(id, existingInterviews.getFirst().getId());
+    }
+
+    List<InterviewRequest> existsInterviewRequests = interviewRequestRepository
+        .findAllByMastery_IdAndUser_Id(mainMasteryId, userId);
+    if (!existsInterviewRequests.isEmpty()) {
+      log.warn("Cannot delete specialization with ID: {} because it has linked interview request "
+              + "ID: {}", id, existsInterviewRequests.getFirst().getId());
+      throw new SpecializationLinkedToInterviewRequestException(id,
+          existsInterviewRequests.getFirst().getId());
+    }
+
+    specializationRepository.delete(specialization);
   }
 
   /**

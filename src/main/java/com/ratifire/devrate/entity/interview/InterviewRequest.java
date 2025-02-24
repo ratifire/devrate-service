@@ -25,7 +25,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import lombok.With;
 
 /**
  * Entity class representing an interview request entry.
@@ -67,7 +66,6 @@ public class InterviewRequest {
   @CollectionTable(name = "interview_request_available_dates",
       joinColumns = @JoinColumn(name = "interview_request_id"))
   @Column(name = "available_dates", nullable = false)
-  @With
   private List<ZonedDateTime> availableDates;
 
   @ElementCollection(targetClass = ZonedDateTime.class, fetch = FetchType.LAZY)

@@ -7,7 +7,7 @@ public class SpecializationLinkedToInterviewRequestException extends RuntimeExce
 
   public SpecializationLinkedToInterviewRequestException(Long specializationId,
       Long interviewRequestId) {
-    super("Cannot delete specialization with ID " + specializationId
-        + " because it has linked interview request ID" + interviewRequestId);
+    super("Cannot delete specialization with ID: " + specializationId
+        + " because it has linked interview request ID: " + interviewRequestId);
   }
 }

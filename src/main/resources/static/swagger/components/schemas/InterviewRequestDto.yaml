@@ -14,6 +14,13 @@ properties:
       type: string
       format: date-time
     required: true
+  assignedDates:
+    type: array
+    description: A list of assigned dates for the interview
+    items:
+      type: string
+      format: date-time
+    required: true
   comment:
     type: string
     description: The interview request comment which is indicated when create request
