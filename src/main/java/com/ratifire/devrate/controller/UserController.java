@@ -13,6 +13,7 @@ import com.ratifire.devrate.dto.UserMainHardSkillsDto;
 import com.ratifire.devrate.dto.UserMainMasterySkillDto;
 import com.ratifire.devrate.dto.UserNameSearchDto;
 import com.ratifire.devrate.dto.UserPictureDto;
+import com.ratifire.devrate.service.SpecializationService;
 import com.ratifire.devrate.service.UserService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserService userService;
+  private final SpecializationService specializationService;
 
   /**
    * Retrieves user personal information by user ID.
@@ -260,7 +262,7 @@ public class UserController {
    */
   @GetMapping("/{userId}/specializations")
   public List<SpecializationDto> getSpecializationsByUserId(@PathVariable long userId) {
-    return userService.getSpecializationsByUserId(userId);
+    return specializationService.getSpecializationsByUserId(userId);
   }
 
   /**
@@ -272,7 +274,7 @@ public class UserController {
   @PostMapping("/{userId}/specializations")
   public SpecializationDto createSpecialization(
       @Valid @RequestBody SpecializationDto specializationDto, @PathVariable long userId) {
-    return userService.createSpecialization(specializationDto, userId);
+    return specializationService.createSpecialization(specializationDto, userId);
   }
 
   /**

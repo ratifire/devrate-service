@@ -18,7 +18,7 @@ import org.springframework.stereotype.Repository;
 @RepositoryRestResource(exported = false)
 public interface InterviewHistoryRepository extends JpaRepository<InterviewHistory, Long> {
 
-  Optional<InterviewHistory> findByIdAndUserId(Long id, Long userId);
+  Optional<InterviewHistory> findByIdAndUserIdAndIsVisibleTrue(Long id, Long userId);
 
   Page<InterviewHistory> findAllByUserIdAndIsVisibleTrue(long userId, Pageable pageable);
 
@@ -26,4 +26,5 @@ public interface InterviewHistoryRepository extends JpaRepository<InterviewHisto
 
   @Query("SELECT ih.interviewId FROM InterviewHistory ih WHERE ih.interviewId IN :interviewIds")
   List<Long> findExistingInterviewIds(@Param("interviewIds") List<Long> interviewIds);
+
 }

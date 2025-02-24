@@ -7,7 +7,6 @@ import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.NotificationDto;
-import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.dto.UserMainHardSkillsDto;
 import com.ratifire.devrate.dto.UserMainMasterySkillDto;
@@ -39,7 +38,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class for performing operations related to {@link User} entities.
@@ -53,7 +51,6 @@ public class UserService {
 
   private UserRepository userRepository;
   private final SpecializationRepository specializationRepository;
-  private final SpecializationService specializationService;
   private final NotificationService notificationService;
   private final DataMapper<UserDto, User> userMapper;
   private final DataMapper<ContactDto, Contact> contactMapper;
@@ -62,7 +59,6 @@ public class UserService {
   private final DataMapper<EmploymentRecordDto, EmploymentRecord> employmentRecordMapper;
   private final DataMapper<LanguageProficiencyDto, LanguageProficiency> languageProficiencyMapper;
   private final DataMapper<BookmarkDto, Bookmark> bookmarkMapper;
-  private final DataMapper<SpecializationDto, Specialization> specializationDataMapper;
   private final DataMapper<UserMainMasterySkillDto, Specialization> userMainMasterySkillMapper;
   private final DataMapper<UserMainHardSkillsDto, Specialization> userMainHardSkillsMapper;
 
@@ -193,21 +189,6 @@ public class UserService {
   public void delete(long userId) {
     User user = findById(userId);
     userRepository.delete(user);
-  }
-
-  /**
-   * Recalculate the interview counts for a list of users.
-   *
-   * @param users the list of users for whom the interview counts need to be refreshed. Each user's
-   *              conducted and completed interview counts will be recalculated and updated in the
-   *              database.
-   */
-  public void recalculateInterviewCounts(List<User> users) {
-    users.forEach(user -> {
-      long userId = user.getId();
-
-      updateByEntity(user);
-    });
   }
 
   /**
@@ -431,17 +412,6 @@ public class UserService {
   }
 
   /**
-   * Retrieves specialization by user ID.
-   *
-   * @param userId the ID of the user
-   * @return the user's specialization as a DTO
-   */
-  public List<SpecializationDto> getSpecializationsByUserId(long userId) {
-    User user = findById(userId);
-    return specializationDataMapper.toDto(user.getSpecializations());
-  }
-
-  /**
    * Retrieves a list of all main mastery skills for the specified user.
    *
    * @param userId the ID of the user whose mastery skills are to be retrieved.
@@ -467,26 +437,6 @@ public class UserService {
       specialization.getMainMastery().setSkills(skills);
     });
     return userMainMasterySkillMapper.toDto(user.getSpecializations());
-  }
-
-  /**
-   * Creates specialization information. Сreate masteries for specialization.
-   *
-   * @param specializationDto the user's specialization information as a DTO
-   * @return the created user specialization information as a DTO
-   */
-  @Transactional
-  public SpecializationDto createSpecialization(SpecializationDto specializationDto,
-      long userId) {
-    specializationService.validateBeforeCreate(specializationDto, userId);
-    User user = findById(userId);
-    Specialization specialization = specializationDataMapper.toEntity(specializationDto);
-    specialization.setUser(user);
-    user.getSpecializations().add(specialization);
-    updateByEntity(user);
-    specializationService.createMasteriesForSpecialization(specialization,
-        specializationDto.getMainMasteryLevel());
-    return specializationDataMapper.toDto(specialization);
   }
 
   /**

@@ -3,10 +3,12 @@ package com.ratifire.devrate.service.interview;
 import com.ratifire.devrate.dto.InterviewFeedbackDto;
 import com.ratifire.devrate.dto.InterviewHistoryDto;
 import com.ratifire.devrate.dto.SkillFeedbackDto;
+import com.ratifire.devrate.dto.projection.UserNameProjection;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewHistory;
+import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.enums.SkillType;
 import com.ratifire.devrate.exception.InterviewHistoryNotFoundException;
 import com.ratifire.devrate.mapper.impl.InterviewHistoryMapper;
@@ -14,9 +16,11 @@ import com.ratifire.devrate.repository.UserRepository;
 import com.ratifire.devrate.repository.interview.InterviewHistoryRepository;
 import com.ratifire.devrate.security.helper.UserContextProvider;
 import com.ratifire.devrate.service.MasteryService;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -49,8 +53,9 @@ public class InterviewHistoryService {
   public InterviewHistoryDto findByIdAndUserId(long id) {
     long userId = userContextProvider.getAuthenticatedUserId();
 
-    InterviewHistory interviewHistory = interviewHistoryRepository.findByIdAndUserId(id, userId)
-        .orElseThrow(() -> new InterviewHistoryNotFoundException(id));
+    InterviewHistory interviewHistory =
+        interviewHistoryRepository.findByIdAndUserIdAndIsVisibleTrue(id, userId)
+            .orElseThrow(() -> new InterviewHistoryNotFoundException(id));
     return interviewHistoryMapper.toDto(interviewHistory);
   }
 
@@ -101,7 +106,8 @@ public class InterviewHistoryService {
    * @param feedbackDto             the DTO containing feedback data for the interview
    * @param currentInterviewHistory the current interview history to be updated
    */
-  public void updateExisting(InterviewFeedbackDto feedbackDto,
+  public Map<InterviewRequestRole, InterviewHistory> updateExisting(
+      InterviewFeedbackDto feedbackDto,
       InterviewHistory currentInterviewHistory) {
     long currentInterviewId = feedbackDto.getInterviewId();
     Interview oppositeInterview = interviewService.findOppositeInterview(currentInterviewId)
@@ -122,8 +128,13 @@ public class InterviewHistoryService {
 
     currentInterviewHistory.setIsVisible(true);
 
-    interviewHistoryRepository.saveAll(List.of(currentInterviewHistory, oppositeInterviewHistory));
+    List<InterviewHistory> interviewHistories = List.of(currentInterviewHistory,
+        oppositeInterviewHistory);
+    interviewHistoryRepository.saveAll(interviewHistories);
     interviewService.deleteByIds(List.of(currentInterviewId, oppositeInterviewId));
+
+    return interviewHistories.stream()
+        .collect(Collectors.toMap(InterviewHistory::getRole, Function.identity()));
   }
 
   /**
@@ -145,11 +156,19 @@ public class InterviewHistoryService {
     Mastery currentMastery = masteryService.getMasteryById(currentInterview.getMasteryId());
     Mastery oppositeMastery = masteryService.getMasteryById(oppositeInterview.getMasteryId());
 
+    long currentUserId = currentInterview.getUserId();
+    long oppositeUserId = oppositeInterview.getUserId();
+
+    UserNameProjection currentUserName = userRepository.findUserNameByUserId(currentUserId);
+    UserNameProjection oppositeUserName = userRepository.findUserNameByUserId(oppositeUserId);
+
     InterviewHistory currentInterviewHistory = buildInterviewHistory(
         currentInterview,
         currentMastery,
         oppositeMastery,
-        oppositeInterview.getUserId(),
+        oppositeUserId,
+        oppositeUserName.getFirstName(),
+        oppositeUserName.getLastName(),
         null,
         null,
         null,
@@ -160,7 +179,9 @@ public class InterviewHistoryService {
         oppositeInterview,
         oppositeMastery,
         currentMastery,
-        currentInterview.getUserId(),
+        currentUserId,
+        currentUserName.getFirstName(),
+        currentUserName.getLastName(),
         convertEvaluatedSkills(feedbackDto.getSkills(), SkillType.SOFT_SKILL),
         convertEvaluatedSkills(feedbackDto.getSkills(), SkillType.HARD_SKILL),
         feedbackDto.getFeedback(),
@@ -178,8 +199,10 @@ public class InterviewHistoryService {
       Mastery mastery,
       Mastery attendeeMastery,
       long attendeeId,
-      Map<String, Integer> softSkills,
-      Map<String, Integer> hardSkills,
+      String attendeeFirstName,
+      String attendeeLastName,
+      Map<String, BigDecimal> softSkills,
+      Map<String, BigDecimal> hardSkills,
       String feedback,
       boolean isVisible) {
     return InterviewHistory.builder()
@@ -188,10 +211,13 @@ public class InterviewHistoryService {
         .userId(interview.getUserId())
         .softSkills(softSkills)
         .hardSkills(hardSkills)
+        .masteryId(mastery.getId())
         .specialization(mastery.getSpecialization().getName())
         .masteryLevel(mastery.getLevel())
         .role(interview.getRole())
         .attendeeId(attendeeId)
+        .attendeeFirstName(attendeeFirstName)
+        .attendeeLastName(attendeeLastName)
         .attendeeMasteryLevel(attendeeMastery.getLevel())
         .attendeeSpecialization(attendeeMastery.getSpecialization().getName())
         .feedback(feedback)
@@ -200,11 +226,10 @@ public class InterviewHistoryService {
         .build();
   }
 
-  private Map<String, Integer> convertEvaluatedSkills(List<SkillFeedbackDto> skills,
+  private Map<String, BigDecimal> convertEvaluatedSkills(List<SkillFeedbackDto> skills,
       SkillType type) {
     return skills.stream()
         .filter(skill -> skill.getType() == type)
-        .collect(Collectors.toMap(SkillFeedbackDto::getName,
-            skill -> skill.getMark().intValue()));
+        .collect(Collectors.toMap(SkillFeedbackDto::getName, SkillFeedbackDto::getMark));
   }
 }
