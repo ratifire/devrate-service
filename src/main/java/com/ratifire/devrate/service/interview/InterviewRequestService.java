@@ -10,7 +10,6 @@ import com.ratifire.devrate.mapper.impl.InterviewRequestMapper;
 import com.ratifire.devrate.repository.interview.InterviewRequestRepository;
 import com.ratifire.devrate.security.helper.UserContextProvider;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -51,7 +50,10 @@ public class InterviewRequestService {
       return;
     }
 
-    scheduledInterviewRequests.forEach(request -> request.getAssignedDates().add(assignedDate));
+    scheduledInterviewRequests.forEach(request -> {
+      request.getAssignedDates().add(assignedDate);
+      request.getAvailableDates().remove(assignedDate);
+    });
     repository.saveAll(scheduledInterviewRequests);
   }
 
@@ -134,13 +136,7 @@ public class InterviewRequestService {
     mapper.updateEntity(requestDto, interviewRequest);
     repository.save(interviewRequest);
 
-    List<ZonedDateTime> filteredAvailableDates = new ArrayList<>(
-        interviewRequest.getAvailableDates());
-    filteredAvailableDates.removeAll(interviewRequest.getAssignedDates());
-
-    InterviewRequest filteredRequest = interviewRequest.withAvailableDates(filteredAvailableDates);
-
-    matcherServiceQueueSender.update(filteredRequest);
+    matcherServiceQueueSender.update(interviewRequest);
   }
 
   /**
