@@ -1,4 +1,4 @@
-put:
+post:
   tags:
     - Registration
   description: Confirming the user's email by matching the code
