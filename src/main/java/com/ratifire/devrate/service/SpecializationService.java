@@ -5,6 +5,7 @@ import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
@@ -14,6 +15,7 @@ import com.ratifire.devrate.exception.SpecializationLinkedToInterviewRequestExce
 import com.ratifire.devrate.exception.SpecializationNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SpecializationRepository;
+import com.ratifire.devrate.repository.interview.InterviewRepository;
 import com.ratifire.devrate.repository.interview.InterviewRequestRepository;
 import com.ratifire.devrate.security.helper.UserContextProvider;
 import com.ratifire.devrate.util.JsonConverter;
@@ -41,6 +43,7 @@ public class SpecializationService {
   private final UserService userService;
   private final MasteryService masteryService;
   private final SpecializationRepository specializationRepository;
+  private final InterviewRepository interviewRepository;
   private final DataMapper<SpecializationDto, Specialization> specializationMapper;
   private final DataMapper<MasteryDto, Mastery> masteryMapper;
   private final InterviewRequestRepository interviewRequestRepository;
