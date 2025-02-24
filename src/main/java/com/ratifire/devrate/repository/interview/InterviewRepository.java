@@ -41,11 +41,5 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
   List<Interview> findByStartTimeGreaterThanEqualAndStartTimeLessThan(ZonedDateTime start,
       ZonedDateTime end);
 
-  //TODO: Method needs to be reimplemented
-
-  //  @Query("SELECT i.id "
-  //      + "FROM Interview i "
-  //      + "WHERE i.candidateRequest.mastery.specialization.id = :specializationId "
-  //      + "   OR i.interviewerRequest.mastery.specialization.id = :specializationId")
-  //  Long findFirstBySpecializationId(@Param("specializationId") Long specializationId);
+  List<Interview> findByMasteryIdAndUserId(long masteryId, long userId);
 }

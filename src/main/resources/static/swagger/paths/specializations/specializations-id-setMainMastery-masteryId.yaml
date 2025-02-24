@@ -27,3 +27,5 @@ put:
             $ref: '../../components/schemas/MasteryDto.yaml'
     '400':
       description: Bad Request. The request cannot be fulfilled due to bad syntax.
+    '409':
+      description: The main mastery still has scheduled interviews or interview requests.

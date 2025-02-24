@@ -39,4 +39,4 @@ delete:
     '200':
       description: Specialization deleted
     '409':
-      description: The specialization still has scheduled interviews.
+      description: The specialization still has scheduled interviews or interview requests.
