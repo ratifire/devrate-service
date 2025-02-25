@@ -7,14 +7,14 @@ import com.ratifire.devrate.enums.ContactType;
 import com.ratifire.devrate.security.exception.UserAlreadyExistsException;
 import com.ratifire.devrate.security.exception.UserRegistrationException;
 import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
+import com.ratifire.devrate.security.model.dto.ResendConfirmCodeDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import com.ratifire.devrate.security.model.enums.AccessLevel;
 import com.ratifire.devrate.service.EmailService;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,12 +24,12 @@ import org.springframework.transaction.annotation.Transactional;
  * Service class responsible for user registration logic. This service handles the registration
  * process, including validation and database operations.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Profile("!local")
 public class RegistrationService {
 
-  private static final Logger log = LoggerFactory.getLogger(RegistrationService.class);
   private final CognitoApiClientService cognitoApiClientService;
   private final UserService userService;
   private final EmailService emailService;
@@ -93,6 +93,22 @@ public class RegistrationService {
       log.error("Confirmation registration process was failed for email {}: {}",
           confirmationCodeDto.getEmail(), e.getMessage(), e);
       throw new UserRegistrationException("Confirmation registration process was failed.");
+    }
+  }
+
+  /**
+   * Resends the registration confirmation code to the user's email.
+   *
+   * @param resendConfirmCodeDto the DTO containing the user's email for which the confirmation code
+   *                             should be resent.
+   */
+  public void resendRegistrationConfirmCode(ResendConfirmCodeDto resendConfirmCodeDto) {
+    try {
+      cognitoApiClientService.resendRegistrationCode(resendConfirmCodeDto.getEmail());
+    } catch (Exception e) {
+      log.error("Resend confirmation code process was failed for email {}: {}",
+          resendConfirmCodeDto.getEmail(), e.getMessage(), e);
+      throw new UserRegistrationException("Resend confirmation code process was failed.");
     }
   }
 

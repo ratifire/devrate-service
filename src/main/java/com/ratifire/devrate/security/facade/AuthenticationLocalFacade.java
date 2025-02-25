@@ -10,6 +10,7 @@ import com.ratifire.devrate.security.helper.RefreshTokenCookieHelper;
 import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.LoginDto;
 import com.ratifire.devrate.security.model.dto.PasswordResetDto;
+import com.ratifire.devrate.security.model.dto.ResendConfirmCodeDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import com.ratifire.devrate.security.util.TokenUtil;
 import com.ratifire.devrate.service.UserService;
@@ -21,8 +22,7 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
@@ -49,11 +49,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /**
  * Local implementation facade class.
  */
+@Slf4j
 @RequiredArgsConstructor
 @Component
 @Profile("local")
 public class AuthenticationLocalFacade implements AuthenticationFacade {
-  private static final Logger log = LoggerFactory.getLogger(AuthenticationLocalFacade.class);
   private final UserService userService;
   private final DataMapper<UserDto, User> userMapper;
   private final RefreshTokenCookieHelper refreshTokenCookieHelper;
@@ -104,6 +104,11 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
               userRegistrationDto.getEmail(), e.getMessage(), e);
       throw new UserRegistrationException("Initiate registration process was failed.");
     }
+  }
+
+  @Override
+  public void resendRegistrationConfirmCode(ResendConfirmCodeDto resendConfirmCodeDto) {
+    throw new UnsupportedOperationException("Unsupported operation locally.");
   }
 
   @Override

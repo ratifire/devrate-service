@@ -17,19 +17,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 /**
  * Service responsible for validating JWT tokens from AWS Cognito.
  */
+@Slf4j
 @Service
 @Profile("!local")
 public class CognitoTokenValidationService {
 
-  private static final Logger log = LoggerFactory.getLogger(CognitoTokenValidationService.class);
   private final JWKSource<SecurityContext> jwkSource;
   private final Map<CognitoTypeToken, TokenClaimsValidator> claimValidators;
 
