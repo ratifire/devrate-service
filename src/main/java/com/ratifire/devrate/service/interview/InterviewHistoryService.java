@@ -2,6 +2,7 @@ package com.ratifire.devrate.service.interview;
 
 import com.ratifire.devrate.dto.InterviewFeedbackDto;
 import com.ratifire.devrate.dto.InterviewHistoryDto;
+import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.dto.SkillFeedbackDto;
 import com.ratifire.devrate.dto.projection.UserNameProjection;
 import com.ratifire.devrate.entity.Mastery;
@@ -17,6 +18,9 @@ import com.ratifire.devrate.repository.interview.InterviewHistoryRepository;
 import com.ratifire.devrate.security.helper.UserContextProvider;
 import com.ratifire.devrate.service.MasteryService;
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -231,5 +235,39 @@ public class InterviewHistoryService {
     return skills.stream()
         .filter(skill -> skill.getType() == type)
         .collect(Collectors.toMap(SkillFeedbackDto::getName, SkillFeedbackDto::getMark));
+  }
+
+  /**
+   * Counts the number of conducted and passed interviews for the specified user within a given date
+   * range.
+   *
+   * @param from the start date of the date range (inclusive)
+   * @param to   the end date of the date range (inclusive)
+   * @return a list with the count of conducted and passed interviews per date.
+   */
+  public List<InterviewStatsConductedPassedByDateDto> getInterviewsConductedPassed(
+      ZonedDateTime from, ZonedDateTime to) {
+    long userId = userContextProvider.getAuthenticatedUserId();
+
+    List<InterviewHistory> interviewHistories = interviewHistoryRepository
+        .findByUserIdAndDateTimeBetween(userId, from, to);
+
+    Map<ZonedDateTime, InterviewStatsConductedPassedByDateDto> interviewStats = new HashMap<>();
+
+    for (InterviewHistory interview : interviewHistories) {
+      ZonedDateTime date = interview.getDateTime();
+      interviewStats.putIfAbsent(date, new InterviewStatsConductedPassedByDateDto(date, 0, 0));
+
+      if (InterviewRequestRole.CANDIDATE == interview.getRole()) {
+        interviewStats.get(date).setPassed(interviewStats.get(date).getPassed() + 1);
+      }
+
+      if (InterviewRequestRole.INTERVIEWER == interview.getRole()) {
+        interviewStats.get(date).setConducted(interviewStats.get(date).getConducted() + 1);
+      }
+    }
+
+    return interviewStats.values().stream()
+        .sorted(Comparator.comparing(InterviewStatsConductedPassedByDateDto::getDate)).toList();
   }
 }

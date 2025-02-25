@@ -1,6 +1,6 @@
 package com.ratifire.devrate.dto;
 
-import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +17,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class InterviewStatsConductedPassedByDateDto {
-  private LocalDate date;
+  private ZonedDateTime date;
   private long conducted;
   private long passed;
 
