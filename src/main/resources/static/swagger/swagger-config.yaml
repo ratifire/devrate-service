@@ -112,6 +112,8 @@ paths:
     $ref: './paths/interviewHistories/interview-histories.yaml'
   /interview-histories/{id}:
     $ref: './paths/interviewHistories/interview-histories-id.yaml'
+  /interview-histories/statistics?from={fromDateTime}&to={toDateTime}:
+    $ref: './paths/interviewHistories/interview-histories-statistics.yaml'
   /data/languageproficiency/{filename}:
     $ref: './paths/data/data-languageproficiency-filename.yaml'
   /data/user/{filename}:

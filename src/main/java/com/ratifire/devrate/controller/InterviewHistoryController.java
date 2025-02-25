@@ -1,9 +1,13 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.InterviewHistoryDto;
+import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
 import com.ratifire.devrate.service.interview.InterviewHistoryService;
+import java.time.ZonedDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,4 +57,18 @@ public class InterviewHistoryController {
     interviewHistoryService.delete(id);
   }
 
+
+  /**
+   * Retrieves a list of conducted and passed interviews by date range.
+   *
+   * @param from   the start date of the date range (inclusive)
+   * @param to     the end date of the date range (inclusive)
+   * @return the list of conducted and passed interviews as a DTO
+   */
+  @GetMapping("/statistics")
+  public List<InterviewStatsConductedPassedByDateDto> getInterviewsConductedPassed(
+      @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime from,
+      @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime to) {
+    return interviewHistoryService.getInterviewsConductedPassed(from, to);
+  }
 }

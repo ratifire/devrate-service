@@ -2,8 +2,8 @@ type: object
 properties:
   date:
     type: string
-    format: date
-    description: The specific date of the interviews.
+    format: date-time
+    description: The specific date time of the interviews.
   conducted:
     type: integer
     format: int64
