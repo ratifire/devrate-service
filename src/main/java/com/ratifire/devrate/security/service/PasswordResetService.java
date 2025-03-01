@@ -6,8 +6,7 @@ import com.ratifire.devrate.security.model.dto.PasswordResetDto;
 import com.ratifire.devrate.service.EmailService;
 import com.ratifire.devrate.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,12 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Service class for managing password reset operations.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Profile("!local")
 public class PasswordResetService {
 
-  private static final Logger log = LoggerFactory.getLogger(PasswordResetService.class);
   private final CognitoApiClientService cognitoApiClientService;
   private final UserService userService;
   private final EmailService emailService;

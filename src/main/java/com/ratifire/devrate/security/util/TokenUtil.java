@@ -10,17 +10,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.util.function.ThrowingFunction;
 
 /**
  * Utility class for extracting claims from a JWTClaimsSet.
  */
+@Slf4j
 public class TokenUtil {
 
-  private static final Logger log = LoggerFactory.getLogger(TokenUtil.class);
   private static final String AUTHORIZATION_HEADER = "Authorization";
   private static final String ID_TOKEN_HEADER = "ID-Token";
   private static final String REFRESH_TOKEN_COOKIE_NAME = "Refresh-Token";

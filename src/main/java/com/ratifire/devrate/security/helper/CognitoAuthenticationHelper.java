@@ -9,18 +9,17 @@ import java.util.Base64;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
  * Provides helper methods for Cognito authentication.
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class CognitoAuthenticationHelper {
 
-  private static final Logger logger = LoggerFactory.getLogger(CognitoAuthenticationHelper.class);
   private static final String HMAC_SHA256_ALGORITHM = "HmacSHA256";
   private final CognitoRegistrationProperties cognitoRegistrationProperties;
 
@@ -48,7 +47,7 @@ public class CognitoAuthenticationHelper {
       return Base64.getEncoder().encodeToString(hashBytes);
 
     } catch (Exception e) {
-      logger.error("Failed to generate secret hash for cognito for user: {}", identifier);
+      log.error("Failed to generate secret hash for cognito for user: {}", identifier);
       throw new SecretHashGenerationException("Failed to generate secret hash");
     }
   }

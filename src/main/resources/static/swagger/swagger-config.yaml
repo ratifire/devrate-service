@@ -62,6 +62,8 @@ paths:
     $ref: './paths/auth/signup.yaml'
   /auth/signup/confirm:
     $ref: './paths/auth/signup-code.yaml'
+  /auth/signup/resend-code:
+    $ref: './paths/auth/signup-resend-code.yaml'
   /auth/request-password-reset:
     $ref: './paths/auth/request-password-reset.yaml'
   /auth/password-reset:
