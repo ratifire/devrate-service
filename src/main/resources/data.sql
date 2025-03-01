@@ -1149,7 +1149,9 @@ SELECT * FROM (
 VALUES
     (99880, 'CANDIDATE', 10005, 5, 0, '2025-12-30T12:00:00Z'::timestamptz, 'ua', 'I want to get a realistic interview experience, including technical questions, coding, and feedback to improve my skills. The goal is to prepare for real interviews.', 8881),
     (99881, 'INTERVIEWER', 10005, 10, 0, '2025-12-30T12:00:00Z'::timestamptz, 'en', 'I strive to create a realistic interview experience with technical questions, coding, and providing feedback. The goal is to improve my interviewing and candidate evaluation skills.', 8881),
-    (99882, 'CANDIDATE', 10001, 2, 0, '2025-12-30T12:00:00Z'::timestamptz, 'pl', 'I want to get a realistic interview experience, including technical questions, coding, and feedback to improve my skills. The goal is to prepare for real interviews.', 8881)
+    (99882, 'CANDIDATE', 10001, 2, 0, '2025-12-30T12:00:00Z'::timestamptz, 'pl', 'I want to get a realistic interview experience, including technical questions, coding, and feedback to improve my skills. The goal is to prepare for real interviews.', 8881),
+    (99883, 'CANDIDATE', 10010, 2, 0, '2025-12-30T12:00:00Z'::timestamptz, 'en', 'I want to get a realistic interview experience, including technical questions, coding, and feedback to improve my skills. The goal is to prepare for real interviews.', 8882),
+    (99884, 'INTERVIEWER', 10009, 2, 0, '2025-12-30T12:00:00Z'::timestamptz, 'pl', 'I want to get a realistic interview experience, including technical questions, coding, and feedback to improve my skills. The goal is to prepare for real interviews.', 8882)
 ) AS new_interview_requests (id, role, mastery_id, desired_interview, average_mark, expired_at, language_code, comment, user_id)
 WHERE NOT EXISTS (
     SELECT 1
@@ -1193,7 +1195,14 @@ VALUES
     (99882, '2025-03-10T10:00:00Z'::timestamptz),
     (99882, '2025-03-10T12:00:00Z'::timestamptz),
     (99882, '2025-03-10T13:00:00Z'::timestamptz),
-    (99882, '2025-03-10T14:00:00Z'::timestamptz)
+    (99883, '2025-03-10T14:00:00Z'::timestamptz),
+    (99883, '2025-03-12T12:00:00Z'::timestamptz),
+    (99883, '2025-03-13T13:00:00Z'::timestamptz),
+    (99883, '2025-03-14T14:00:00Z'::timestamptz),
+    (99884, '2025-03-01T14:00:00Z'::timestamptz),
+    (99884, '2025-03-02T12:00:00Z'::timestamptz),
+    (99884, '2025-03-05T13:00:00Z'::timestamptz),
+    (99884, '2025-03-07T14:00:00Z'::timestamptz)
 ) AS new_interview_request_available_dates (interview_request_id, available_dates)
 WHERE NOT EXISTS (
     SELECT 1
@@ -1211,7 +1220,11 @@ VALUES
     (99881, '2025-03-24T13:00:00Z'::timestamptz),
     (99881, '2025-04-01T16:00:00Z'::timestamptz),
     (99881, '2025-04-01T19:00:00Z'::timestamptz),
-    (99882, '2025-03-10T11:00:00Z'::timestamptz)
+    (99882, '2025-03-10T11:00:00Z'::timestamptz),
+    (99883, '2025-03-08T14:00:00Z'::timestamptz),
+    (99883, '2025-03-09T12:00:00Z'::timestamptz),
+    (99884, '2025-03-08T14:00:00Z'::timestamptz),
+    (99884, '2025-03-09T12:00:00Z'::timestamptz)
 ) AS new_interview_request_assigned_dates (interview_request_id, assigned_dates)
 WHERE NOT EXISTS (
     SELECT 1
