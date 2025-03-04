@@ -30,6 +30,7 @@ import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserService;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -148,7 +149,7 @@ public class InterviewService {
         .toList();
 
     if (upcomingEvents.isEmpty()) {
-      return List.of();
+      return new ArrayList<>();
     }
 
     // Find all user interviews by event id
