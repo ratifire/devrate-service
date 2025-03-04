@@ -3,6 +3,7 @@ package com.ratifire.devrate.service.interview;
 import static com.ratifire.devrate.enums.InterviewRequestRole.CANDIDATE;
 import static com.ratifire.devrate.enums.InterviewRequestRole.INTERVIEWER;
 
+import com.ratifire.devrate.dto.ClosestEventDto;
 import com.ratifire.devrate.dto.InterviewDto;
 import com.ratifire.devrate.dto.InterviewEventDto;
 import com.ratifire.devrate.dto.InterviewFeedbackDetailDto;
@@ -27,7 +28,9 @@ import com.ratifire.devrate.service.MasteryService;
 import com.ratifire.devrate.service.MeetingService;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserService;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -127,6 +130,78 @@ public class InterviewService {
     return InterviewEventDto.builder()
         .currentUser(current)
         .counterpartUser(counterpart)
+        .build();
+  }
+
+  /**
+   * Retrieves a list of events for a given user that start from a specified date and time in UTC.
+   *
+   * @param from the starting date and time from which events should be retrieved
+   * @return a list of {@link ClosestEventDto} objects representing the events starting from
+   */
+  public List<ClosestEventDto> findUpcomingEvents(ZonedDateTime from) {
+    long authUserId = userContextProvider.getAuthenticatedUserId();
+    User authUser = userService.findById(authUserId);
+
+    List<Event> upcomingEvents = authUser.getEvents().stream()
+        .filter(event -> !event.getStartTime().isBefore(from.withZoneSameInstant(ZoneId.of("UTC"))))
+        .toList();
+
+    if (upcomingEvents.isEmpty()) {
+      return List.of();
+    }
+
+    // Find all user interviews by event id
+    List<Long> eventIds = upcomingEvents.stream().map(Event::getId).toList();
+    List<Interview> userInterviews = interviewRepository.findByEventIdInAndUserId(eventIds,
+        authUserId);
+
+    // Find all user masteries for retrieved interviews
+    List<Long> masteryIds = userInterviews.stream().map(Interview::getMasteryId).distinct()
+        .toList();
+    Map<Long, Mastery> masteryById = masteryService.findByIds(masteryIds).stream()
+        .collect(Collectors.toMap(Mastery::getId, mastery -> mastery));
+
+    // Find opponent users for the retrieved events
+    List<Long> opponentIds = upcomingEvents.stream().map(Event::getHostId).distinct().toList();
+    Map<Long, User> opponentById = userService.findByIds(opponentIds).stream()
+        .collect(Collectors.toMap(User::getId, user -> user));
+
+    return upcomingEvents.stream()
+        .sorted(Comparator.comparing(Event::getStartTime))
+        .map(event -> createClosestEventDto(event, userInterviews, masteryById, opponentById))
+        .toList();
+  }
+
+  private ClosestEventDto createClosestEventDto(Event event, List<Interview> userInterviews,
+      Map<Long, Mastery> masteryById, Map<Long, User> hostById) {
+    int masteryLevel = userInterviews.stream()
+        .findFirst()
+        .map(interview -> masteryById.get(interview.getMasteryId()))
+        .map(Mastery::getLevel)
+        .orElse(0);
+
+    String specializationName = userInterviews.stream()
+        .findFirst()
+        .map(interview -> masteryById.get(interview.getMasteryId()))
+        .map(mastery -> mastery.getSpecialization().getName())
+        .orElse("");
+
+    User host = hostById.get(event.getHostId());
+    return buildClosestEventDto(host, event, masteryLevel, specializationName);
+  }
+
+  private ClosestEventDto buildClosestEventDto(User opponent, Event event, int masteryLevel,
+      String specializationName) {
+    return ClosestEventDto.builder()
+        .id(event.getId())
+        .type(event.getType())
+        .startTime(event.getStartTime())
+        .hostName(opponent.getFirstName())
+        .hostSurname(opponent.getLastName())
+        .masteryLevel(masteryLevel)
+        .specializationName(specializationName)
+        .roomUrl(event.getRoomLink())
         .build();
   }
 

@@ -1,9 +1,9 @@
 get:
   tags:
-    - Event
-  summary: Get events of current user by date time range
-  description: Retrieve events of current user by date time range
-  operationId: findEventsBetweenDateTime
+    - Interview
+  summary: Get closest events
+  description: Retrieve the closest events for the auth user.
+  operationId: findUpcomingEvents
   security:
     - accessToken: [ ]
     - idToken: [ ]
@@ -14,25 +14,16 @@ get:
       required: true
       schema:
         type: string
-        format: date
-    - in: query
-      name: to
-      description: The end of the date time range (inclusive)
-      required: true
-      schema:
-        type: string
-        format: date
+        format: date-time
   responses:
     '200':
-      description: The events of current user corresponding to the provided date time range
+      description: Closest events retrieved successfully.
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: '../../components/schemas/EventDto.yaml'
+            $ref: '../../components/schemas/ClosestEventDto.yaml'
     '400':
-      description: Bad request
+      description: Bad request.
       content:
         application/json:
           schema:
