@@ -1,10 +1,14 @@
 package com.ratifire.devrate.controller;
 
+import com.ratifire.devrate.dto.ClosestEventDto;
 import com.ratifire.devrate.dto.InterviewDto;
 import com.ratifire.devrate.dto.InterviewEventDto;
 import com.ratifire.devrate.service.interview.InterviewService;
+import java.time.ZonedDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,5 +57,17 @@ public class InterviewController {
   @GetMapping("/events/{id}")
   public InterviewEventDto getInterviewEventDetails(@PathVariable long id) {
     return interviewService.getInterviewEventDetails(id);
+  }
+
+  /**
+   * Retrieves a list of events for a given user that start from a specified date and time.
+   *
+   * @param from   the starting date and time in ISO format (e.g., {@code 2024-08-28T12:00:00Z})
+   * @return a list of {@link ClosestEventDto} objects representing the events starting from
+   */
+  @GetMapping("/events/closest")
+  public List<ClosestEventDto> findUpcomingEvents(
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime from) {
+    return interviewService.findUpcomingEvents(from);
   }
 }

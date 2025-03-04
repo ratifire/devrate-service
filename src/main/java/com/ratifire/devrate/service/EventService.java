@@ -9,6 +9,7 @@ import com.ratifire.devrate.repository.EventRepository;
 import com.ratifire.devrate.security.helper.UserContextProvider;
 import com.ratifire.devrate.util.DateTimeUtils;
 import jakarta.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public class EventService {
    * @param to   the end of the time range (inclusive)
    * @return a list of {@link EventDto} objects representing the events for the user
    */
-  public List<EventDto> findBetweenDateTime(ZonedDateTime from, ZonedDateTime to) {
+  public List<EventDto> findBetweenDateTime(LocalDate from, LocalDate to) {
     User user = userService.findById(userContextProvider.getAuthenticatedUserId());
     return user.getEvents().stream()
         .filter(event -> DateTimeUtils.isWithinRange(event.getStartTime(), from, to))

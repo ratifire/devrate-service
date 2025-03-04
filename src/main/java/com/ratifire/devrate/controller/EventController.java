@@ -2,7 +2,7 @@ package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.dto.EventDto;
 import com.ratifire.devrate.service.EventService;
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -30,8 +30,8 @@ public class EventController {
    */
   @GetMapping()
   public List<EventDto> findEventsBetweenDateTime(
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime from,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime to) {
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate from,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate to) {
     return eventService.findBetweenDateTime(from, to);
   }
 }

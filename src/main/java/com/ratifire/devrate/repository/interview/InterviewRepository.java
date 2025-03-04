@@ -42,4 +42,6 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
       ZonedDateTime end);
 
   List<Interview> findByMasteryIdAndUserId(long masteryId, long userId);
+
+  List<Interview> findByEventIdInAndUserId(List<Long> eventIds, long userId);
 }
