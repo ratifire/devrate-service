@@ -43,6 +43,16 @@ variable "db_name" {
   default     = "backend"
 }
 
+variable "db_username" {
+  description = "Name of database user"
+  default     = "backend"
+}
+
+variable "db_password" {
+  description = "Password of database"
+  default     = "backenddb"
+}
+
 variable "s3_bucket_name" {
   description = "Name of the S3 bucket for the backend"
   type        = string

@@ -21,14 +21,13 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Select environment to deploy (prod, dev, dev_old)'
+        description: 'Select environment to deploy (prod, dev)'
         required: true
         default: 'dev'
         type: choice
         options:
           - dev
           - prod
-          - dev_old
 
 permissions:
   id-token: write
@@ -53,23 +52,23 @@ jobs:
 
       - name: Update application-dev.properties with environment variables
         run: |
-          sed -i 's|<AWS_SES_ACCESS_KEY_ID>|'${{ secrets.AWS_SES_ACCESS_KEY_ID }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<AWS_SES_SECRET_ACCESS_KEY>|'${{ secrets.AWS_SES_SECRET_ACCESS_KEY }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<ZOOM_CLIENT_ID>|'${{ env.ZOOM_CLIENT_ID }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<ZOOM_CLIENT_SECRET>|'${{ env.ZOOM_CLIENT_SECRET }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<ZOOM_ACCOUNT_ID>|'${{ env.ZOOM_ACCOUNT_ID }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<ZOOM_SECRET>|'${{ env.ZOOM_SECRET }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<DOMAIN>|'${{ vars.DOMAIN }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<AWS_ACCESS_KEY_ID>|'${{ secrets.AWS_ACCESS_KEY_ID }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<AWS_SECRET_ACCESS_KEY>|'${{ secrets.AWS_SECRET_ACCESS_KEY }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<AWS_REGION>|'${{ vars.AWS_REGION }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<REGISTRATION_COGNITO_CLIENT_NAME>|'${{ secrets.REGISTRATION_COGNITO_CLIENT_NAME }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<REGISTRATION_COGNITO_CLIENT_ID>|'${{ secrets.REGISTRATION_COGNITO_CLIENT_ID }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<REGISTRATION_COGNITO_CLIENT_SECRET>|'${{ secrets.REGISTRATION_COGNITO_CLIENT_SECRET }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<PROVIDER_COGNITO_ISSUER_URI>|'${{ secrets.PROVIDER_COGNITO_ISSUER_URI }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<PROVIDER_COGNITO_JWK_SET_URI>|'${{ secrets.PROVIDER_COGNITO_JWK_SET_URI }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<AWS_MIROTALK_API_URL>|'${{ secrets.AWS_MIROTALK_API_URL }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<AWS_MIROTALK_API_KEY>|'${{ secrets.AWS_MIROTALK_API_KEY }}'|g' src/main/resources/application-dev.properties
+          sed -i 's|<AWS_SES_ACCESS_KEY_ID>|'${{ secrets.AWS_SES_ACCESS_KEY_ID }}'|g' src/main/resources/application-${{ github.event.inputs.environment || 'dev' }}.properties
+          sed -i 's|<AWS_SES_SECRET_ACCESS_KEY>|'${{ secrets.AWS_SES_SECRET_ACCESS_KEY }}'|g' src/main/resources/application-${{ github.event.inputs.environment || 'dev' }}.properties
+          sed -i 's|<ZOOM_CLIENT_ID>|'${{ env.ZOOM_CLIENT_ID }}'|g' src/main/resources/application-${{ github.event.inputs.environment || 'dev' }}.properties
+          sed -i 's|<ZOOM_CLIENT_SECRET>|'${{ env.ZOOM_CLIENT_SECRET }}'|g' src/main/resources/application-${{ github.event.inputs.environment || 'dev' }}.properties
+          sed -i 's|<ZOOM_ACCOUNT_ID>|'${{ env.ZOOM_ACCOUNT_ID }}'|g' src/main/resources/application-${{ github.event.inputs.environment || 'dev' }}.properties
+          sed -i 's|<ZOOM_SECRET>|'${{ env.ZOOM_SECRET }}'|g' src/main/resources/application-${{ github.event.inputs.environment || 'dev' }}.properties
+          sed -i 's|<DOMAIN>|'${{ vars.DOMAIN }}'|g' src/main/resources/application-${{ github.event.inputs.environment || 'dev' }}.properties
+          sed -i 's|<AWS_ACCESS_KEY_ID>|'${{ secrets.AWS_ACCESS_KEY_ID }}'|g' src/main/resources/application-${{ github.event.inputs.environment || 'dev' }}.properties
+          sed -i 's|<AWS_SECRET_ACCESS_KEY>|'${{ secrets.AWS_SECRET_ACCESS_KEY }}'|g' src/main/resources/application-${{ github.event.inputs.environment || 'dev' }}.properties
+          sed -i 's|<AWS_REGION>|'${{ vars.AWS_REGION }}'|g' src/main/resources/application-${{ github.event.inputs.environment || 'dev' }}.properties
+          sed -i 's|<REGISTRATION_COGNITO_CLIENT_NAME>|'${{ secrets.REGISTRATION_COGNITO_CLIENT_NAME }}'|g' src/main/resources/application-${{ github.event.inputs.environment || 'dev' }}.properties
+          sed -i 's|<REGISTRATION_COGNITO_CLIENT_ID>|'${{ secrets.REGISTRATION_COGNITO_CLIENT_ID }}'|g' src/main/resources/application-${{ github.event.inputs.environment || 'dev' }}.properties
+          sed -i 's|<REGISTRATION_COGNITO_CLIENT_SECRET>|'${{ secrets.REGISTRATION_COGNITO_CLIENT_SECRET }}'|g' src/main/resources/application-${{ github.event.inputs.environment || 'dev' }}.properties
+          sed -i 's|<PROVIDER_COGNITO_ISSUER_URI>|'${{ secrets.PROVIDER_COGNITO_ISSUER_URI }}'|g' src/main/resources/application-${{ github.event.inputs.environment || 'dev' }}.properties
+          sed -i 's|<PROVIDER_COGNITO_JWK_SET_URI>|'${{ secrets.PROVIDER_COGNITO_JWK_SET_URI }}'|g' src/main/resources/application-${{ github.event.inputs.environment || 'dev' }}.properties
+          sed -i 's|<AWS_MIROTALK_API_URL>|'${{ secrets.AWS_MIROTALK_API_URL }}'|g' src/main/resources/application-${{ github.event.inputs.environment || 'dev' }}.properties
+          sed -i 's|<AWS_MIROTALK_API_KEY>|'${{ secrets.AWS_MIROTALK_API_KEY }}'|g' src/main/resources/application-${{ github.event.inputs.environment || 'dev' }}.properties
 
       - name: run tests
         run: mvn test
