@@ -30,4 +30,7 @@ public interface InterviewRequestTimeSlotRepository extends
 
   void deleteByInterviewRequestAndDateTimeNotIn(InterviewRequest request,
       Set<ZonedDateTime> updatedDateTime);
+
+  List<InterviewRequestTimeSlot> findByStatusAndDateTimeBefore(TimeSlotStatus status,
+      ZonedDateTime dateTime);
 }
