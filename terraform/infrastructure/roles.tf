@@ -18,7 +18,7 @@ locals {
 }
 
 resource "aws_iam_role" "ecs_ex_role_backend" {
-  name = "ecs-ex-role-backend"
+  name = "ecs-ex-role-backend-${var.deploy_profile}"
   assume_role_policy = jsonencode({
     "Version" : "2008-10-17",
     "Statement" : [
@@ -42,7 +42,7 @@ resource "aws_iam_role_policy_attachment" "ecs_policy_attachments_ex_backend_rol
 }
 
 resource "aws_iam_role" "ecs_inst_role_backend" {
-  name = "ecs-inst-role-backend"
+  name = "ecs-inst-role-backend-${var.deploy_profile}"
   assume_role_policy = jsonencode({
     "Version" : "2008-10-17",
     "Statement" : [
@@ -67,6 +67,6 @@ resource "aws_iam_role_policy_attachment" "ecs_policy_attachments_inst_backend_r
 }
 
 resource "aws_iam_instance_profile" "instance_profile_backend" {
-  name = "ecs-instance-profile-backend"
+  name = "ecs-instance-profile-backend-${var.deploy_profile}"
   role = aws_iam_role.ecs_inst_role_backend.name
 }

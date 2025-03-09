@@ -5,8 +5,8 @@ resource "aws_db_instance" "pg_db_backend" {
   storage_type        = "gp2"
   allocated_storage   = 20
   db_name             = var.db_name
-  username            = "backend"
-  password            = "backenddb"
+  username            = var.db_username
+  password            = var.db_password
   publicly_accessible = true
   skip_final_snapshot = true
   identifier          = var.db_instance_identifier

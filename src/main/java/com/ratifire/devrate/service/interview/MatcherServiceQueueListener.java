@@ -22,7 +22,7 @@ public class MatcherServiceQueueListener {
    *
    * @param message the message payload
    */
-  @SqsListener("matched-participant")
+  @SqsListener("${matching-service.received-sqs-endpoint}")
   public void receiveMessage(String message) throws JsonProcessingException {
     System.out.println("Message: " + message);
     PairedParticipantDto pairedParticipantDto = objectMapper.readValue(message,

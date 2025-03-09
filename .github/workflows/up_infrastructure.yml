@@ -4,14 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Select environment to deploy (prod, dev, dev_old)'
+        description: 'Select environment to deploy (prod, dev)'
         required: true
         default: 'dev'
         type: choice
         options:
           - dev
           - prod
-          - dev_old
 
 permissions:
   id-token: write
@@ -72,4 +71,12 @@ jobs:
       run: terraform plan -input=false -var-file=${{ github.event.inputs.environment }}.tfvars
 
     - name: Terraform Apply
+      env:
+        TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
+        TF_VAR_db_name: ${{ secrets.DB_NAME }}
+        TF_VAR_db_username: ${{ secrets.DB_USERNAME }}
+        TF_VAR_back_cluster_name: ${{ vars.ECS_CLUSTER }}
+        TF_VAR_back_container_name: ${{ vars.CONTAINER_NAME }}
+        TF_VAR_back_repository_name: ${{ vars.ECR_REPOSITORY }}
+        TF_VAR_back_service_name: ${{ vars.ECR_REPOSITORY }}
       run: terraform apply -auto-approve -input=false -var-file=${{ github.event.inputs.environment }}.tfvars
