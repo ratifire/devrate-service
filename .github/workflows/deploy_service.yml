@@ -69,4 +69,7 @@ jobs:
           TF_VAR_back_container_name: ${{ vars.CONTAINER_NAME }}
           TF_VAR_back_repository_name: ${{ vars.ECR_REPOSITORY }}
           TF_VAR_back_service_name: ${{ vars.ECR_REPOSITORY }}
+          TF_VAR_db_username: ${{ secrets.PG_USERNAME }}
+          TF_VAR_db_password: ${{ secrets.PG_PASSWORD }}
+          TF_VAR_db_database: ${{ secrets.PG_DATABASE }}
         run: terraform apply -var="image_tag=${{ env.IMAGE_TAG }}" -var-file="${{ github.workspace }}/${{ env.working-directory }}/${{ github.event.inputs.environment }}.tfvars" -auto-approve -input=false
