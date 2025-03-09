@@ -65,8 +65,8 @@ jobs:
 
       - name: Terraform apply
         env:
-          TF_VAR_front_cluster_name: ${{ vars.ECS_CLUSTER }}
-          TF_VAR_front_container_name: ${{ vars.CONTAINER_NAME }}
-          TF_VAR_front_repository_name: ${{ vars.ECR_REPOSITORY }}
-          TF_VAR_front_service_name: ${{ vars.ECR_REPOSITORY }}
+          TF_VAR_back_cluster_name: ${{ vars.ECS_CLUSTER }}
+          TF_VAR_back_container_name: ${{ vars.CONTAINER_NAME }}
+          TF_VAR_back_repository_name: ${{ vars.ECR_REPOSITORY }}
+          TF_VAR_back_service_name: ${{ vars.ECR_REPOSITORY }}
         run: terraform apply -var="image_tag=${{ env.IMAGE_TAG }}" -var-file="${{ github.workspace }}/${{ env.working-directory }}/${{ github.event.inputs.environment }}.tfvars" -auto-approve -input=false
