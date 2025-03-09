@@ -15,15 +15,8 @@ properties:
     description: The interview request comment which is indicated when create request
   languageCode:
     $ref: './InterviewRequestLanguageCode.yaml'
-  availableDates:
+  timeSlots:
     type: array
-    description: A list of available dates for the interview
+    description: A list of time slots for the interview request
     items:
-      type: string
-      format: date-time
-  assignedDates:
-    type: array
-    description: A list of assigned dates for the interview
-    items:
-      type: string
-      format: date-time
+      $ref: './InterviewRequestTimeSlotDto.yaml'

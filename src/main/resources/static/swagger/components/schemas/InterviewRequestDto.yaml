@@ -7,16 +7,9 @@ properties:
     format: int64
     description: The ID of the mastery associated with the interview request
     required: true
-  availableDates:
+  timeSlots:
     type: array
-    description: A list of available dates for the interview
-    items:
-      type: string
-      format: date-time
-    required: true
-  assignedDates:
-    type: array
-    description: A list of assigned dates for the interview
+    description: A list of dates for the interview
     items:
       type: string
       format: date-time
