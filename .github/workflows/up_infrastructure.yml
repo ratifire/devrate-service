@@ -75,4 +75,8 @@ jobs:
         TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
         TF_VAR_db_name: ${{ secrets.DB_NAME }}
         TF_VAR_db_username: ${{ secrets.DB_USERNAME }}
+        TF_VAR_front_cluster_name: ${{ vars.ECS_CLUSTER }}
+        TF_VAR_front_container_name: ${{ vars.CONTAINER_NAME }}
+        TF_VAR_front_repository_name: ${{ vars.ECR_REPOSITORY }}
+        TF_VAR_front_service_name: ${{ vars.ECR_REPOSITORY }}
       run: terraform apply -auto-approve -input=false -var-file=${{ github.event.inputs.environment }}.tfvars
