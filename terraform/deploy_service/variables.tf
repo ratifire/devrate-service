@@ -69,3 +69,36 @@ variable "td_family" {
   description = "Name of TD"
   default     = "backend_td"
 }
+
+variable "back_ecs_alb" {
+  default = "ecs-back-alb"
+}
+
+variable "back_capacity_provider" {
+  default = "backend-ec2-capacity-provider"
+}
+
+variable "back-ec2-capacity-provider-tag" {
+  default = "back-ec2-capacity-provider"
+}
+
+variable "ecs_back_launch" {
+  default = "ecs_back_launch"
+}
+
+variable "backend_security_group_name" {
+  default = "backend_security_group"
+}
+
+variable "back_kay" {
+  default = "terraform_ec2_back_key_pair"
+}
+
+variable "db_instance_identifier" {
+  description = "Name of db_instance_identifier"
+  default     = "pg-backend"
+}
+
+variable "deploy_profile" {
+  default = "dev"
+}

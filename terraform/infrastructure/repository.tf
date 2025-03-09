@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "backend-service" {
-  name = "backend-service"
+  name = "backend-service-${var.deploy_profile}"
 
   image_scanning_configuration {
     scan_on_push = true

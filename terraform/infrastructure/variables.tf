@@ -57,3 +57,15 @@ variable "s3_bucket_name" {
   description = "Name of the S3 bucket for the backend"
   type        = string
 }
+
+variable "backend_security_group_name" {
+  default = "backend_security_group"
+}
+
+variable "back_kay" {
+  default = "terraform_ec2_back_key_pair"
+}
+
+variable "deploy_profile" {
+  default = "dev"
+}

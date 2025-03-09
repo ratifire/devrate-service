@@ -3,7 +3,7 @@ resource "aws_ecs_cluster" "backend_cluster" {
 }
 
 resource "aws_launch_template" "ecs_back_launch" {
-  name_prefix            = "ecs_back_launch"
+  name_prefix            = var.ecs_back_launch
   image_id               = data.aws_ami.aws_linux_latest_ecs.image_id
   instance_type          = var.instance_type
   vpc_security_group_ids = [data.aws_security_group.vpc_backend_security_group.id]
@@ -34,7 +34,7 @@ resource "aws_launch_template" "ecs_back_launch" {
 }
 
 resource "aws_ecs_capacity_provider" "back_capacity_provider" {
-  name = "backend-ec2-capacity-provider"
+  name = var.back_capacity_provider
 
   auto_scaling_group_provider {
     auto_scaling_group_arn         = aws_autoscaling_group.ecs_back_asg.arn
@@ -48,7 +48,7 @@ resource "aws_ecs_capacity_provider" "back_capacity_provider" {
   }
 
   tags = {
-    Name = "back-ec2-capacity-provider"
+    Name = var.back-ec2-capacity-provider-tag
   }
 }
 
@@ -85,7 +85,7 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
   }
   dynamic "tag" {
     for_each = {
-      Name  = "Ecs-Back-Instance-ASG"
+      Name  = "Ecs-Back-Instance-ASG-${var.deploy_profile}"
       Owner = "Max Matveichuk"
     }
     content {
@@ -104,7 +104,7 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
 }
 
 resource "aws_ecs_service" "back_services" {
-  name                               = "back-service"
+  name                               = var.back_repository_name
   cluster                            = var.back_cluster_name
   task_definition                    = aws_ecs_task_definition.task_definition.arn
   scheduling_strategy                = "REPLICA"
@@ -133,7 +133,7 @@ resource "aws_ecs_service" "back_services" {
 }
 
 resource "aws_lb" "back_ecs_alb" {
-  name               = "ecs-back-alb"
+  name               = var.back_ecs_alb
   internal           = false
   load_balancer_type = "application"
   security_groups    = [data.aws_security_group.vpc_backend_security_group.id]

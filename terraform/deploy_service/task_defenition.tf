@@ -41,10 +41,6 @@ resource "aws_ecs_task_definition" "task_definition" {
         {
           name  = "PG_DATABASE",
           value = var.db_name
-        },
-        {
-          name  = "ACTIVE_PROFILE",
-          value = "dev"
         }
       ],
       mountPoints = [],
