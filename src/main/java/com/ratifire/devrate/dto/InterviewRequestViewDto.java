@@ -1,7 +1,6 @@
 package com.ratifire.devrate.dto;
 
 import com.ratifire.devrate.enums.InterviewRequestRole;
-import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +17,5 @@ public class InterviewRequestViewDto {
   private int desiredInterview;
   private String comment;
   private String languageCode;
-  private List<ZonedDateTime> availableDates;
-  private List<ZonedDateTime> assignedDates;
+  private List<InterviewRequestTimeSlotDto> timeSlots;
 }

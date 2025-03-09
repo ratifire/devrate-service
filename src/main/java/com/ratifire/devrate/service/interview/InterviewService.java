@@ -243,7 +243,7 @@ public class InterviewService {
         joinUrl, date, candidateRequestComment, candidateLanguageCode);
     interviewRepository.saveAll(List.of(interviewer, candidate));
 
-    interviewRequestService.updateAssignedDates(requests, interviewer.getStartTime());
+    interviewRequestService.markTimeSlotsAsBooked(requests, interviewer.getStartTime());
 
     Map<Long, InterviewRequest> requestMap = requests.stream()
         .collect(Collectors.toMap(InterviewRequest::getId, request -> request));

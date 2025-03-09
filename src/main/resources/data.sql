@@ -1160,85 +1160,72 @@ WHERE NOT EXISTS (
 );
 
 --  Create interview requests available dates records
-INSERT INTO interview_request_available_dates (interview_request_id, available_dates)
-SELECT * FROM (
-VALUES
-    (99880, '2025-02-17T11:00:00Z'::timestamptz),
-    (99880, '2025-02-17T12:00:00Z'::timestamptz),
-    (99880, '2025-02-17T13:00:00Z'::timestamptz),
-    (99880, '2025-02-17T14:00:00Z'::timestamptz),
-    (99880, '2025-02-18T09:00:00Z'::timestamptz),
-    (99880, '2025-03-10T11:00:00Z'::timestamptz),
-    (99880, '2025-03-10T12:00:00Z'::timestamptz),
-    (99880, '2025-03-11T11:00:00Z'::timestamptz),
-    (99880, '2025-03-11T12:00:00Z'::timestamptz),
-    (99881, '2025-02-20T09:00:00Z'::timestamptz),
-    (99881, '2025-02-20T10:00:00Z'::timestamptz),
-    (99881, '2025-02-20T11:00:00Z'::timestamptz),
-    (99881, '2025-02-20T12:00:00Z'::timestamptz),
-    (99881, '2025-02-21T08:00:00Z'::timestamptz),
-    (99881, '2025-02-21T09:00:00Z'::timestamptz),
-    (99881, '2025-02-21T10:00:00Z'::timestamptz),
-    (99881, '2025-02-21T11:00:00Z'::timestamptz),
-    (99881, '2025-03-12T10:00:00Z'::timestamptz),
-    (99881, '2025-03-12T11:00:00Z'::timestamptz),
-    (99881, '2025-03-12T12:00:00Z'::timestamptz),
-    (99881, '2025-03-24T09:00:00Z'::timestamptz),
-    (99881, '2025-03-24T10:00:00Z'::timestamptz),
-    (99881, '2025-03-24T11:00:00Z'::timestamptz),
-    (99881, '2025-03-24T12:00:00Z'::timestamptz),
-    (99881, '2025-03-24T14:00:00Z'::timestamptz),
-    (99881, '2025-04-01T15:00:00Z'::timestamptz),
-    (99881, '2025-04-01T17:00:00Z'::timestamptz),
-    (99881, '2025-04-01T18:00:00Z'::timestamptz),
-    (99881, '2025-04-01T20:00:00Z'::timestamptz),
-    (99882, '2025-03-10T10:00:00Z'::timestamptz),
-    (99882, '2025-03-10T12:00:00Z'::timestamptz),
-    (99882, '2025-03-10T13:00:00Z'::timestamptz),
-    (99883, '2025-03-10T14:00:00Z'::timestamptz),
-    (99883, '2025-03-12T12:00:00Z'::timestamptz),
-    (99883, '2025-03-13T13:00:00Z'::timestamptz),
-    (99883, '2025-03-14T14:00:00Z'::timestamptz),
-    (99884, '2025-03-01T14:00:00Z'::timestamptz),
-    (99884, '2025-03-02T12:00:00Z'::timestamptz),
-    (99884, '2025-03-05T13:00:00Z'::timestamptz),
-    (99884, '2025-03-07T14:00:00Z'::timestamptz)
-) AS new_interview_request_available_dates (interview_request_id, available_dates)
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM interview_request_available_dates
-    WHERE interview_request_id = new_interview_request_available_dates.interview_request_id
-);
-
---  Create interview requests available dates records
-INSERT INTO interview_request_assigned_dates (interview_request_id, assigned_dates)
-SELECT * FROM (
-VALUES
-    (99880, '2025-02-18T08:00:00Z'::timestamptz),
-    (99880, '2025-03-10T13:00:00Z'::timestamptz),
-    (99881, '2025-03-12T09:00:00Z'::timestamptz),
-    (99881, '2025-03-24T13:00:00Z'::timestamptz),
-    (99881, '2025-04-01T16:00:00Z'::timestamptz),
-    (99881, '2025-04-01T19:00:00Z'::timestamptz),
-    (99882, '2025-03-10T11:00:00Z'::timestamptz),
-    (99883, '2025-03-08T14:00:00Z'::timestamptz),
-    (99883, '2025-03-09T12:00:00Z'::timestamptz),
-    (99884, '2025-03-08T14:00:00Z'::timestamptz),
-    (99884, '2025-03-09T12:00:00Z'::timestamptz)
-) AS new_interview_request_assigned_dates (interview_request_id, assigned_dates)
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM interview_request_assigned_dates
-    WHERE interview_request_id = new_interview_request_assigned_dates.interview_request_id
-);
-
--- Create test data for interview_feedback_details
--- INSERT INTO interview_feedback_details (id, participant_role, start_time, interview_history_id, evaluated_mastery_id, skill_id, participant_id, owner_id)
+-- INSERT INTO interview_request_time_slots (id, interview_request_id, date_time, status)
 -- SELECT * FROM (
 -- VALUES
---     (40001, 'INTERVIEWER', '2024-09-08T09:00:00Z'::timestamptz, 3001, 10001, ARRAY[100001, 100002, 100003, 100004, 100005]::bigint[], 8882, 8881),
---     (40002, 'CANDIDATE', '2024-09-08T09:00:00Z'::timestamptz, 3001, 10001, ARRAY[100001, 100002, 100003, 100004, 100005, 100006, 100007, 100008, 100078, 100079, 100080]::bigint[], 8881, 8882)
--- ) AS interview_feedback_details (id, participant_role, start_time, interview_history_id, evaluated_mastery_id, skill_id, participant_id, owner_id)
--- WHERE NOT EXISTS (SELECT 1
---                   FROM interview_feedback_details
---                   WHERE id = interview_feedback_details.id);
+--     (88990, 99880, '2025-02-17T11:00:00Z'::timestamptz, 'PENDING'),
+--     (88991, 99880, '2025-02-17T12:00:00Z'::timestamptz, 'PENDING'),
+--     (88992, 99880, '2025-02-17T13:00:00Z'::timestamptz, 'PENDING'),
+--     (88993, 99880, '2025-02-17T14:00:00Z'::timestamptz, 'PENDING'),
+--     (88994, 99880, '2025-02-18T09:00:00Z'::timestamptz, 'PENDING'),
+--     (88995, 99880, '2025-03-10T11:00:00Z'::timestamptz, 'PENDING'),
+--     (88996, 99880, '2025-03-10T12:00:00Z'::timestamptz, 'PENDING'),
+--     (88997, 99880, '2025-03-11T11:00:00Z'::timestamptz, 'PENDING'),
+--     (88998, 99880, '2025-03-11T12:00:00Z'::timestamptz, 'PENDING'),
+--     (89030, 99880, '2025-02-18T08:00:00Z'::timestamptz, 'BOOKED'),
+--     (89031, 99880, '2025-03-10T13:00:00Z'::timestamptz, 'BOOKED'),
+--     (88999, 99881, '2025-02-20T09:00:00Z'::timestamptz, 'PENDING'),
+--     (89000, 99881, '2025-02-20T10:00:00Z'::timestamptz, 'PENDING'),
+--     (89001, 99881, '2025-02-20T11:00:00Z'::timestamptz, 'PENDING'),
+--     (89002, 99881, '2025-02-20T12:00:00Z'::timestamptz, 'PENDING'),
+--     (89003, 99881, '2025-02-21T08:00:00Z'::timestamptz, 'PENDING'),
+--     (89004, 99881, '2025-02-21T09:00:00Z'::timestamptz, 'PENDING'),
+--     (89005, 99881, '2025-02-21T10:00:00Z'::timestamptz, 'PENDING'),
+--     (89006, 99881, '2025-02-21T11:00:00Z'::timestamptz, 'PENDING'),
+--     (89007, 99881, '2025-03-12T10:00:00Z'::timestamptz, 'PENDING'),
+--     (89008, 99881, '2025-03-12T11:00:00Z'::timestamptz, 'PENDING'),
+--     (89009, 99881, '2025-03-12T12:00:00Z'::timestamptz, 'PENDING'),
+--     (89010, 99881, '2025-03-24T09:00:00Z'::timestamptz, 'PENDING'),
+--     (89011, 99881, '2025-03-24T10:00:00Z'::timestamptz, 'PENDING'),
+--     (89012, 99881, '2025-03-24T11:00:00Z'::timestamptz, 'PENDING'),
+--     (89013, 99881, '2025-03-24T12:00:00Z'::timestamptz, 'PENDING'),
+--     (89014, 99881, '2025-03-24T14:00:00Z'::timestamptz, 'PENDING'),
+--     (89015, 99881, '2025-04-01T15:00:00Z'::timestamptz, 'PENDING'),
+--     (89016, 99881, '2025-04-01T17:00:00Z'::timestamptz, 'PENDING'),
+--     (89017, 99881, '2025-04-01T18:00:00Z'::timestamptz, 'PENDING'),
+--     (89018, 99881, '2025-04-01T20:00:00Z'::timestamptz, 'PENDING'),
+--     (89032, 99881, '2025-03-12T09:00:00Z'::timestamptz, 'BOOKED'),
+--     (89033, 99881, '2025-03-24T13:00:00Z'::timestamptz, 'BOOKED'),
+--     (89034, 99881, '2025-04-01T16:00:00Z'::timestamptz, 'BOOKED'),
+--     (89035, 99881, '2025-04-01T19:00:00Z'::timestamptz, 'BOOKED'),
+--     (89019, 99882, '2025-03-10T10:00:00Z'::timestamptz, 'PENDING'),
+--     (89020, 99882, '2025-03-10T12:00:00Z'::timestamptz, 'PENDING'),
+--     (89021, 99882, '2025-03-10T13:00:00Z'::timestamptz, 'PENDING'),
+--     (89036, 99882, '2025-03-10T11:00:00Z'::timestamptz, 'BOOKED'),
+--     (89022, 99883, '2025-03-10T14:00:00Z'::timestamptz, 'PENDING'),
+--     (89023, 99883, '2025-03-12T12:00:00Z'::timestamptz, 'PENDING'),
+--     (89024, 99883, '2025-03-13T13:00:00Z'::timestamptz, 'PENDING'),
+--     (89025, 99883, '2025-03-14T14:00:00Z'::timestamptz, 'PENDING'),
+--     (89037, 99883, '2025-03-08T14:00:00Z'::timestamptz, 'BOOKED'),
+--     (89038, 99883, '2025-03-09T12:00:00Z'::timestamptz, 'BOOKED'),
+--     (89026, 99884, '2025-03-01T14:00:00Z'::timestamptz, 'PENDING'),
+--     (89027, 99884, '2025-03-02T12:00:00Z'::timestamptz, 'PENDING'),
+--     (89028, 99884, '2025-03-05T13:00:00Z'::timestamptz, 'PENDING'),
+--     (89029, 99884, '2025-03-07T14:00:00Z'::timestamptz, 'PENDING'),
+--     (89039, 99884, '2025-03-08T14:00:00Z'::timestamptz, 'BOOKED'),
+--     (89040, 99884, '2025-03-09T12:00:00Z'::timestamptz, 'BOOKED')
+-- ) AS new_interview_request_available_dates (id, interview_request_id, date_time, status)
+-- WHERE NOT EXISTS (
+--     SELECT 1
+--     FROM interview_request_available_dates
+--     WHERE interview_request_id = new_interview_request_available_dates.interview_request_id
+-- );
+
+-- INSERT INTO interview_request_time_slots (interview_request_id, date_time, status)
+-- SELECT interview_request_id, available_dates, 'PENDING' FROM interview_request_available_dates;
+--
+-- INSERT INTO interview_request_time_slots (interview_request_id, date_time, status)
+-- SELECT interview_request_id, assigned_dates, 'BOOKED' FROM interview_request_assigned_dates;
+--
+-- DROP TABLE interview_request_available_dates;
+-- DROP TABLE interview_request_assigned_dates;

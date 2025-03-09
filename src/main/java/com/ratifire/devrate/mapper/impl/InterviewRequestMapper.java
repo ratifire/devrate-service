@@ -19,12 +19,17 @@ public abstract class InterviewRequestMapper implements
   @Mapping(target = "mastery", source = "dto.masteryId",
       qualifiedByName = {"MasteryService", "getMasteryById"})
   @Mapping(target = "user", ignore = true)
+  @Mapping(target = "timeSlots", ignore = true)
   public abstract InterviewRequest toEntity(InterviewRequestDto dto);
 
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "mastery", source = "dto.masteryId",
       qualifiedByName = {"MasteryService", "getMasteryById"})
   @Mapping(target = "user", ignore = true)
+  @Mapping(target = "timeSlots", ignore = true)
   public abstract InterviewRequest updateEntity(InterviewRequestDto dto,
       @MappingTarget InterviewRequest entity);
+
+  @Mapping(target = "timeSlots", ignore = true)
+  public abstract InterviewRequestDto toDto(InterviewRequest request);
 }
