@@ -28,7 +28,7 @@ resource "aws_ecs_task_definition" "task_definition" {
       environment = [
         {
           name  = "PG_USERNAME",
-          value = "${var.db_username}${var.deploy_profile}"
+          value = "${var.db_username}"
         },
         {
           name  = "PG_HOST",
@@ -36,11 +36,11 @@ resource "aws_ecs_task_definition" "task_definition" {
         },
         {
           name  = "PG_PASSWORD",
-          value = "${var.db_password}${var.deploy_profile}"
+          value = "${var.db_password}"
         },
         {
           name  = "PG_DATABASE",
-          value = "${var.db_name}${var.deploy_profile}"
+          value = "${var.db_name}"
         },
         {
           name  = "ACTIVE_PROFILE",
