@@ -9,6 +9,7 @@ import com.ratifire.devrate.entity.interview.InterviewRequestTimeSlot;
 import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.enums.TimeSlotStatus;
 import com.ratifire.devrate.exception.InterviewRequestDoesntExistException;
+import com.ratifire.devrate.exception.InterviewRequestNotFoundException;
 import com.ratifire.devrate.exception.InvalidInterviewRequestException;
 import com.ratifire.devrate.mapper.impl.InterviewRequestMapper;
 import com.ratifire.devrate.mapper.impl.InterviewRequestTimeSlotMapper;
@@ -244,6 +245,54 @@ public class InterviewRequestService {
     List<InterviewRequest> updatedRequests = repository.findAllById(requestIds);
 
     updatedRequests.forEach(matcherServiceQueueSender::update);
+  }
+
+  /**
+   * Add time slots to the specific interview request.
+   *
+   * @param id        the interview request ID
+   * @param dateTimes list of the time slots that should be added
+   */
+  public void addTimeSlots(long id, List<ZonedDateTime> dateTimes) {
+    InterviewRequest interviewRequest = repository.findById(id)
+        .orElseThrow(() -> new InterviewRequestNotFoundException(id));
+
+    List<InterviewRequestTimeSlot> timeSlotsToAdd = dateTimes.stream()
+        .map(dateTime -> InterviewRequestTimeSlot.builder()
+            .interviewRequest(interviewRequest)
+            .dateTime(dateTime)
+            .status(TimeSlotStatus.PENDING)
+            .build())
+        .toList();
+
+    if (!CollectionUtils.isEmpty(timeSlotsToAdd)) {
+      interviewRequest.getTimeSlots().addAll(timeSlotsToAdd);
+      repository.save(interviewRequest);
+    }
+
+    matcherServiceQueueSender.update(interviewRequest);
+  }
+
+  /**
+   * Delete time slots to the specific interview request.
+   *
+   * @param id        the interview request ID
+   * @param dateTimes list of the time slots that should be deleted
+   */
+  public void deleteTimeSlots(long id, List<ZonedDateTime> dateTimes) {
+    InterviewRequest interviewRequest = repository.findById(id)
+        .orElseThrow(() -> new InterviewRequestNotFoundException(id));
+
+    List<InterviewRequestTimeSlot> timeSlotsToDelete = interviewRequest.getTimeSlots().stream()
+        .filter(timeSlot -> dateTimes.contains(timeSlot.getDateTime()))
+        .toList();
+
+    if (!CollectionUtils.isEmpty(timeSlotsToDelete)) {
+      interviewRequest.getTimeSlots().removeAll(timeSlotsToDelete);
+      repository.save(interviewRequest);
+    }
+
+    matcherServiceQueueSender.update(interviewRequest);
   }
 
   /**

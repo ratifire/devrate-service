@@ -4,6 +4,7 @@ import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.dto.InterviewRequestViewDto;
 import com.ratifire.devrate.service.interview.InterviewRequestService;
 import jakarta.validation.Valid;
+import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -66,6 +67,30 @@ public class InterviewRequestController {
   public void update(@PathVariable long id,
       @Valid @RequestBody InterviewRequestDto interviewRequest) {
     interviewRequestService.update(id, interviewRequest);
+  }
+
+  /**
+   * Add time slots to the specific interview request.
+   *
+   * @param id        the interview request ID
+   * @param dateTimes list of the time slots that should be added
+   */
+  @PostMapping("/{id}/add-timeslots")
+  public void addTimeSlots(@PathVariable long id,
+      @Valid @RequestBody List<ZonedDateTime> dateTimes) {
+    interviewRequestService.addTimeSlots(id, dateTimes);
+  }
+
+  /**
+   * Delete time slots to the specific interview request.
+   *
+   * @param id        the interview request ID
+   * @param dateTimes list of the time slots that should be deleted
+   */
+  @DeleteMapping("/{id}/delete-timeslots")
+  public void deleteTimeSlots(@PathVariable long id,
+      @Valid @RequestBody List<ZonedDateTime> dateTimes) {
+    interviewRequestService.deleteTimeSlots(id, dateTimes);
   }
 
   /**
