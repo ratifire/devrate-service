@@ -172,12 +172,15 @@ public class InterviewRequestService {
     InterviewRequest interviewRequest = repository.findByIdAndUser_Id(id, userId)
         .orElseThrow(() -> new InterviewRequestDoesntExistException(id, userId));
 
-    List<ZonedDateTime> pendingDateTime = interviewRequest.getTimeSlots().stream()
-        .filter(dateTime -> TimeSlotStatus.PENDING == dateTime.getStatus())
-        .map(InterviewRequestTimeSlot::getDateTime)
-        .toList();
+    // Check that desiredInterview was changed
+    if (requestDto.getDesiredInterview() != interviewRequest.getDesiredInterview()) {
+      List<ZonedDateTime> pendingDateTime = interviewRequest.getTimeSlots().stream()
+          .filter(dateTime -> TimeSlotStatus.PENDING == dateTime.getStatus())
+          .map(InterviewRequestTimeSlot::getDateTime)
+          .toList();
 
-    validateRequest(pendingDateTime, requestDto.getDesiredInterview());
+      validateRequest(pendingDateTime, requestDto.getDesiredInterview());
+    }
 
     mapper.updateEntity(requestDto, interviewRequest);
     repository.save(interviewRequest);
@@ -294,9 +297,9 @@ public class InterviewRequestService {
     if (!CollectionUtils.isEmpty(timeSlotsToAdd)) {
       interviewRequest.getTimeSlots().addAll(timeSlotsToAdd);
       repository.save(interviewRequest);
-    }
 
-    matcherServiceQueueSender.update(interviewRequest);
+      matcherServiceQueueSender.update(interviewRequest);
+    }
   }
 
   /**
@@ -309,16 +312,18 @@ public class InterviewRequestService {
     InterviewRequest interviewRequest = repository.findById(id)
         .orElseThrow(() -> new InterviewRequestNotFoundException(id));
 
-    List<InterviewRequestTimeSlot> timeSlotsToDelete = interviewRequest.getTimeSlots().stream()
+    List<InterviewRequestTimeSlot> requestTimeSlots = interviewRequest.getTimeSlots();
+
+    List<InterviewRequestTimeSlot> timeSlotsToDelete = requestTimeSlots.stream()
         .filter(timeSlot -> dateTimes.contains(timeSlot.getDateTime()))
         .toList();
 
     if (!CollectionUtils.isEmpty(timeSlotsToDelete)) {
-      interviewRequest.getTimeSlots().removeAll(timeSlotsToDelete);
+      requestTimeSlots.removeAll(timeSlotsToDelete);
       repository.save(interviewRequest);
-    }
 
-    matcherServiceQueueSender.update(interviewRequest);
+      matcherServiceQueueSender.update(interviewRequest);
+    }
   }
 
   /**
