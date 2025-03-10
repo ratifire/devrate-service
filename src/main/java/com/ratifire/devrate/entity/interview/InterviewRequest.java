@@ -52,6 +52,9 @@ public class InterviewRequest {
   @Column(name = "desired_interview", nullable = false)
   private int desiredInterview;
 
+  @Column(name = "matched_interview", nullable = false)
+  private int matchedInterview;
+
   @Column(name = "average_mark", nullable = false)
   private double averageMark;    // need to be improved
 

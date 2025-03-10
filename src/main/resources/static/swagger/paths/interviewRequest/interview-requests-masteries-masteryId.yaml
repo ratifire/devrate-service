@@ -27,6 +27,7 @@ get:
             - id: 0
               role: "CANDIDATE"
               desiredInterview: 0
+              matchedInterview: 0
               comment: "string"
               timeSlots: [
                 {
@@ -37,6 +38,7 @@ get:
             - id: 1
               role: "INTERVIEWER"
               desiredInterview: 0
+              matchedInterview: 0
               comment: "string"
               timeSlots: [
                 {

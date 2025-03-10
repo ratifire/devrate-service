@@ -244,6 +244,7 @@ public class InterviewService {
     interviewRepository.saveAll(List.of(interviewer, candidate));
 
     interviewRequestService.markTimeSlotsAsBooked(requests, interviewer.getStartTime());
+    interviewRequestService.incrementMatchedInterviewCount(requests);
 
     Map<Long, InterviewRequest> requestMap = requests.stream()
         .collect(Collectors.toMap(InterviewRequest::getId, request -> request));
@@ -287,6 +288,9 @@ public class InterviewService {
   @Transactional
   public void deleteRejected(long id) {
     List<Interview> interviews = interviewRepository.findInterviewPairById(id);
+
+    interviewRequestService.markRejectedInterviewTimeSlotsAsPending(interviews);
+
     interviewRepository.deleteAll(interviews);
     eventService.delete(interviews.getFirst().getEventId());
     //TODO: add logic for deleting provider meeting room (if needed)

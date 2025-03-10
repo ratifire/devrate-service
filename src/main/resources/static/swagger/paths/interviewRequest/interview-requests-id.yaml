@@ -1,8 +1,8 @@
 put:
   tags:
     - Interview Request
-  summary: Update the interview request
-  description: Updates the interview request.
+  summary: Update the interview request main info without time slots
+  description: Updates the interview request main info without time slots.
   security:
     - accessToken: [ ]
     - idToken: [ ]
@@ -15,12 +15,23 @@ put:
         type: integer
         format: int64
   requestBody:
-    description: Updated interview request data
+    description: Updated interview request data without time slots.
     required: true
     content:
       application/json:
         schema:
           $ref: '../../components/schemas/InterviewRequestDto.yaml'
+        example:
+          - {
+            "role": "CANDIDATE",
+            "masteryId": 0,
+            "timeSlots": [
+            ],
+            "comment": "string",
+            "languageCode": "ua,",
+            "expiredAt": "2025-03-10",
+            "desiredInterview": 0
+          }
   responses:
     '200':
       description: Interview request updated successfully

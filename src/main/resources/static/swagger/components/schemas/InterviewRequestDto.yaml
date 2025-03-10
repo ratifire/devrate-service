@@ -13,7 +13,6 @@ properties:
     items:
       type: string
       format: date-time
-    required: true
   comment:
     type: string
     description: The interview request comment which is indicated when create request

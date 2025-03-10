@@ -3,8 +3,10 @@ package com.ratifire.devrate.service.interview;
 import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.dto.InterviewRequestViewDto;
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.entity.interview.InterviewRequestTimeSlot;
+import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.enums.TimeSlotStatus;
 import com.ratifire.devrate.exception.InterviewRequestDoesntExistException;
 import com.ratifire.devrate.exception.InvalidInterviewRequestException;
@@ -14,13 +16,14 @@ import com.ratifire.devrate.repository.interview.InterviewRequestRepository;
 import com.ratifire.devrate.repository.interview.InterviewRequestTimeSlotRepository;
 import com.ratifire.devrate.security.helper.UserContextProvider;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -30,21 +33,22 @@ import org.springframework.util.CollectionUtils;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class InterviewRequestService {
 
   private final InterviewRequestRepository repository;
   private final InterviewRequestMapper mapper;
   private final MatcherServiceQueueSender matcherServiceQueueSender;
   private final UserContextProvider userContextProvider;
-  private final InterviewRequestTimeSlotRepository interviewRequestTimeSlotRepository;
-  private final InterviewRequestTimeSlotMapper interviewRequestTimeSlotMapper;
+  private final InterviewRequestTimeSlotRepository timeSlotRepository;
+  private final InterviewRequestTimeSlotMapper timeSlotMapper;
 
   public Optional<Long> findMasteryId(long id) {
     return repository.findMasteryIdById(id);
   }
 
   public List<InterviewRequest> findByIds(List<Long> ids) {
-    return repository.findByIds(ids);
+    return repository.findAllById(ids);
   }
 
   /**
@@ -86,9 +90,10 @@ public class InterviewRequestService {
         .id(request.getId())
         .role(request.getRole())
         .desiredInterview(request.getDesiredInterview())
+        .matchedInterview(request.getMatchedInterview())
         .comment(request.getComment())
         .languageCode(request.getLanguageCode())
-        .timeSlots(interviewRequestTimeSlotMapper.toDto(request.getTimeSlots()))
+        .timeSlots(timeSlotMapper.toDto(request.getTimeSlots()))
         .build();
   }
 
@@ -99,7 +104,7 @@ public class InterviewRequestService {
    */
   @Transactional
   public void create(InterviewRequestDto requestDto) {
-    validateRequest(requestDto);
+    validateRequest(requestDto.getTimeSlots(), requestDto.getDesiredInterview());
 
     long userId = userContextProvider.getAuthenticatedUserId();
 
@@ -139,70 +144,28 @@ public class InterviewRequestService {
 
     InterviewRequest interviewRequest = repository.findByIdAndUser_Id(id, userId)
         .orElseThrow(() -> new InterviewRequestDoesntExistException(id, userId));
+
+    List<ZonedDateTime> pendingDateTime = interviewRequest.getTimeSlots().stream()
+        .filter(dateTime -> TimeSlotStatus.PENDING == dateTime.getStatus())
+        .map(InterviewRequestTimeSlot::getDateTime)
+        .toList();
+
+    validateRequest(pendingDateTime, requestDto.getDesiredInterview());
+
     mapper.updateEntity(requestDto, interviewRequest);
-
-    updateTimeSlots(interviewRequest, requestDto.getTimeSlots());
-
     repository.save(interviewRequest);
 
     matcherServiceQueueSender.update(interviewRequest);
   }
 
-  private void updateTimeSlots(InterviewRequest interviewRequest, List<ZonedDateTime> timeSlots) {
+  private void validateRequest(List<ZonedDateTime> timeSlots, int desiredInterview) {
     if (CollectionUtils.isEmpty(timeSlots)) {
       throw new InvalidInterviewRequestException("Time slots is a required parameters.");
     }
-
-    Set<ZonedDateTime> updatedDateTime = new HashSet<>(timeSlots);
-
-    interviewRequest.getTimeSlots().removeIf(slot -> !updatedDateTime.contains(slot.getDateTime()));
-
-    List<InterviewRequestTimeSlot> existingTimeSlots = interviewRequest.getTimeSlots();
-    Set<ZonedDateTime> existingDateTime = existingTimeSlots.stream()
-        .map(InterviewRequestTimeSlot::getDateTime)
-        .collect(Collectors.toSet());
-
-    List<InterviewRequestTimeSlot> timeSlotsToAdd = updatedDateTime.stream()
-        .filter(dateTime -> !existingDateTime.contains(dateTime))
-        .map(dateTime -> InterviewRequestTimeSlot.builder()
-            .interviewRequest(interviewRequest)
-            .dateTime(dateTime)
-            .status(TimeSlotStatus.PENDING)
-            .build())
-        .toList();
-
-    validateRequest(interviewRequest.getDesiredInterview(), existingTimeSlots, timeSlotsToAdd);
-
-    interviewRequestTimeSlotRepository.deleteByInterviewRequestAndDateTimeNotIn(interviewRequest,
-        updatedDateTime);
-
-    if (!CollectionUtils.isEmpty(timeSlotsToAdd)) {
-      interviewRequest.getTimeSlots().addAll(timeSlotsToAdd);
-      interviewRequestTimeSlotRepository.saveAll(timeSlotsToAdd);
-    }
-  }
-
-  private void validateRequest(int desiredInterview,
-      List<InterviewRequestTimeSlot> existingTimeSlots,
-      List<InterviewRequestTimeSlot> timeSlotsToAdd) {
-    long countOfPendingTimeSlot = Stream.concat(existingTimeSlots.stream(), timeSlotsToAdd.stream())
-        .filter(t -> TimeSlotStatus.PENDING == t.getStatus()).count();
-    if (countOfPendingTimeSlot < desiredInterview) {
-      throw new InvalidInterviewRequestException("Count of pending dates \""
-          + countOfPendingTimeSlot + "\" must be greater than or equal to the desired number \""
-          + desiredInterview + "\" of interviews.");
-    }
-  }
-
-  private void validateRequest(InterviewRequestDto requestDto) {
-    List<ZonedDateTime> timeSlots = requestDto.getTimeSlots();
-    if (CollectionUtils.isEmpty(timeSlots)) {
-      throw new InvalidInterviewRequestException("Time slots is a required parameters.");
-    }
-    if (timeSlots.size() < requestDto.getDesiredInterview()) {
+    if (timeSlots.size() < desiredInterview) {
       throw new InvalidInterviewRequestException("Count of pending dates \"" + timeSlots.size()
           + "\" must be greater than or equal to the desired number \""
-          + requestDto.getDesiredInterview() + "\" of interviews.");
+          + desiredInterview + "\" of interviews.");
     }
   }
 
@@ -219,8 +182,68 @@ public class InterviewRequestService {
       return;
     }
 
-    interviewRequestTimeSlotRepository.updateTimeSlotStatus(scheduledInterviewRequests,
-        scheduledDate, TimeSlotStatus.BOOKED);
+    timeSlotRepository.updateTimeSlotStatus(scheduledInterviewRequests, scheduledDate,
+        TimeSlotStatus.BOOKED);
+  }
+
+  /**
+   * Increments the matched interview count for each InterviewRequest in the given list.
+   *
+   * @param requests the list of InterviewRequest entities to be updated
+   */
+  public void incrementMatchedInterviewCount(List<InterviewRequest> requests) {
+    if (CollectionUtils.isEmpty(requests)) {
+      throw new IllegalArgumentException("Request list cannot be null or empty");
+    }
+    requests.forEach(request -> request.setMatchedInterview(request.getMatchedInterview() + 1));
+    repository.saveAll(requests);
+  }
+
+  /**
+   * Marks rejected interview time slots as pending.
+   *
+   * @param interviews the list of rejected interviews to process
+   */
+  public void markRejectedInterviewTimeSlotsAsPending(List<Interview> interviews) {
+    if (CollectionUtils.isEmpty(interviews)) {
+      log.warn("No interviews provided for rejection handling");
+      return;
+    }
+
+    Map<Long, InterviewRequestRole> roleByMastery = interviews.stream()
+        .collect(Collectors.toMap(Interview::getMasteryId, Interview::getRole, (r1, r2) -> r1));
+
+    List<Long> masteryIds = new ArrayList<>(roleByMastery.keySet());
+    List<InterviewRequestRole> roles = new ArrayList<>(roleByMastery.values());
+
+    // TODO: need improvements, List<InterviewRequest> from the repository should return interview
+    //  request that already have paired (masteryId + role) like a key. And after that we don't make
+    //  code below.
+    // Perform a single query to fetch all requests (may return some incorrect combinations)
+    List<InterviewRequest> allRequests = repository.findByMastery_IdInAndRoleIn(masteryIds, roles);
+
+    // Filter out only the correct masteryId + role pairs
+    List<InterviewRequest> interviewRequestsToUpdate = allRequests.stream()
+        .filter(req -> roleByMastery.containsKey(req.getMastery().getId())
+            && roleByMastery.get(req.getMastery().getId()).equals(req.getRole()))
+        .toList();
+
+    if (interviewRequestsToUpdate.isEmpty()) {
+      log.warn("Rejected interview doesn't have available interview request");
+      return;
+    }
+
+    ZonedDateTime interviewStartTime = interviews.getFirst().getStartTime();
+    timeSlotRepository.updateTimeSlotStatus(interviewRequestsToUpdate, interviewStartTime,
+        TimeSlotStatus.PENDING);
+
+    // Fetch the latest updated InterviewRequests from DB
+    List<Long> requestIds = interviewRequestsToUpdate.stream()
+        .map(InterviewRequest::getId)
+        .toList();
+    List<InterviewRequest> updatedRequests = repository.findAllById(requestIds);
+
+    updatedRequests.forEach(matcherServiceQueueSender::update);
   }
 
   /**

@@ -10,6 +10,10 @@ properties:
     type: integer
     format: int64
     description: The number of desired interview for the interview request
+  matchedInterview:
+    type: integer
+    format: int64
+    description: The number of matched interview for the interview request
   comment:
     type: string
     description: The interview request comment which is indicated when create request

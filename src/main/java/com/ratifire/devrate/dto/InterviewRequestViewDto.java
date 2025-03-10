@@ -15,6 +15,7 @@ public class InterviewRequestViewDto {
   private long id;
   private InterviewRequestRole role;
   private int desiredInterview;
+  private int matchedInterview;
   private String comment;
   private String languageCode;
   private List<InterviewRequestTimeSlotDto> timeSlots;
