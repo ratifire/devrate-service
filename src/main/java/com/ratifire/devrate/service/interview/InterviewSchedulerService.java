@@ -2,11 +2,8 @@ package com.ratifire.devrate.service.interview;
 
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
-import com.ratifire.devrate.entity.interview.InterviewRequestTimeSlot;
-import com.ratifire.devrate.enums.TimeSlotStatus;
 import com.ratifire.devrate.repository.interview.InterviewHistoryRepository;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
-import com.ratifire.devrate.repository.interview.InterviewRequestTimeSlotRepository;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserService;
 import java.time.ZoneOffset;
@@ -30,7 +27,6 @@ public class InterviewSchedulerService {
   private final NotificationService notificationService;
   private final InterviewHistoryRepository interviewHistoryRepository;
   private final UserService userService;
-  private final InterviewRequestTimeSlotRepository interviewRequestTimeSlotRepository;
 
   /**
    * Scheduled method that processes interviews from the last 1 hour and checks
@@ -63,21 +59,5 @@ public class InterviewSchedulerService {
       User user = userService.findById(interview.getUserId());
       notificationService.addInterviewFeedbackDetail(user, interview.getId(), user.getEmail());
     });
-  }
-
-  /**
-   * Scheduled method that runs every hour to mark expired interview request time slots.
-   */
-  @Scheduled(cron = "0 0 * * * *")
-  public void markExpiredTimeSlots() {
-    ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
-    List<InterviewRequestTimeSlot> expiredSlots = interviewRequestTimeSlotRepository
-        .findByStatusAndDateTimeBefore(TimeSlotStatus.PENDING, now);
-
-    if (!expiredSlots.isEmpty()) {
-      expiredSlots.forEach(slot -> slot.setStatus(TimeSlotStatus.EXPIRED));
-      interviewRequestTimeSlotRepository.saveAll(expiredSlots);
-      log.info("Updated {} expired time slots", expiredSlots.size());
-    }
   }
 }

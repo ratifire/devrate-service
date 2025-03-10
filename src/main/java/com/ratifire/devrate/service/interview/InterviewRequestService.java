@@ -16,6 +16,7 @@ import com.ratifire.devrate.mapper.impl.InterviewRequestTimeSlotMapper;
 import com.ratifire.devrate.repository.interview.InterviewRequestRepository;
 import com.ratifire.devrate.repository.interview.InterviewRequestTimeSlotRepository;
 import com.ratifire.devrate.security.helper.UserContextProvider;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -59,8 +60,12 @@ public class InterviewRequestService {
    */
   public List<InterviewRequestViewDto> getAll() {
     long userId = userContextProvider.getAuthenticatedUserId();
-    return repository.findAllByUser_Id(userId)
-        .stream()
+
+    List<InterviewRequest> interviewRequests = repository.findAllByUser_Id(userId);
+
+    updateExpiredTimeSlots(interviewRequests);
+
+    return interviewRequests.stream()
         .map(this::convertToInterviewRequestViewDto)
         .toList();
   }
@@ -74,10 +79,31 @@ public class InterviewRequestService {
   public List<InterviewRequestViewDto> getByMasteryId(long masteryId) {
     long userId = userContextProvider.getAuthenticatedUserId();
 
-    return repository.findAllByMastery_IdAndUser_Id(masteryId, userId)
-        .stream()
+    List<InterviewRequest> interviewRequests = repository.findAllByMastery_IdAndUser_Id(masteryId,
+        userId);
+
+    updateExpiredTimeSlots(interviewRequests);
+
+    return interviewRequests.stream()
         .map(this::convertToInterviewRequestViewDto)
         .toList();
+  }
+
+  private void updateExpiredTimeSlots(List<InterviewRequest> interviewRequests) {
+    if (CollectionUtils.isEmpty(interviewRequests)) {
+      return;
+    }
+
+    ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
+    interviewRequests.forEach(request -> request.getTimeSlots().forEach(slot -> {
+      if (TimeSlotStatus.PENDING == slot.getStatus() && slot.getDateTime().isBefore(now)) {
+        slot.setStatus(TimeSlotStatus.EXPIRED);
+      }
+    }));
+
+    repository.saveAll(interviewRequests);
+
+    interviewRequests.forEach(matcherServiceQueueSender::update);
   }
 
   /**
