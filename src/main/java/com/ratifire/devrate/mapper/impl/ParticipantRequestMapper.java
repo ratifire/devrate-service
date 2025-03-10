@@ -3,9 +3,10 @@ package com.ratifire.devrate.mapper.impl;
 import com.ratifire.devrate.dto.ParticipantRequestDto;
 import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
+import com.ratifire.devrate.entity.interview.InterviewRequestTimeSlot;
 import com.ratifire.devrate.enums.SkillType;
+import com.ratifire.devrate.enums.TimeSlotStatus;
 import com.ratifire.devrate.mapper.DataMapper;
-import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -29,7 +30,7 @@ public abstract class ParticipantRequestMapper implements
       qualifiedByName = "extractHardSkills")
   @Mapping(target = "softSkills", source = "entity.mastery.skills",
       qualifiedByName = "extractSoftSkills")
-  @Mapping(target = "dates", source = "entity.availableDates", qualifiedByName = "convertToDates")
+  @Mapping(target = "dates", source = "entity.timeSlots", qualifiedByName = "extractPendingDates")
   public abstract ParticipantRequestDto toDto(InterviewRequest entity);
 
   /**
@@ -62,15 +63,16 @@ public abstract class ParticipantRequestMapper implements
   }
 
   /**
-   * Converts a list of {@link ZonedDateTime} objects to a set of {@link Date} objects.
+   * Extracts a set of pending interview request dates.
    *
-   * @param availableDates the list of {@link ZonedDateTime} objects to convert.
-   * @return a {@link Set} of {@link Date} converted from a {@link List} of {@link ZonedDateTime}
+   * @param timeSlots the list of {@link InterviewRequestTimeSlot} objects.
+   * @return a {@link Set} of {@link Date} containing only pending interview dates.
    */
-  @Named("convertToDates")
-  protected Set<Date> convertToDates(List<ZonedDateTime> availableDates) {
-    return availableDates.stream()
-        .map(zdt -> Date.from(zdt.toInstant()))
+  @Named("extractPendingDates")
+  protected Set<Date> extractPendingDates(List<InterviewRequestTimeSlot> timeSlots) {
+    return timeSlots.stream()
+        .filter(slot -> slot.getStatus() == TimeSlotStatus.PENDING)
+        .map(slot -> Date.from(slot.getDateTime().toInstant()))
         .collect(Collectors.toSet());
   }
 }

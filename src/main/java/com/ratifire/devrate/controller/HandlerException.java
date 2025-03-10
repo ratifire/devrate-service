@@ -103,7 +103,8 @@ public class HandlerException {
    */
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(InvalidInterviewRequestException.class)
-  public void handleInterviewRequestExceptions() {
+  public void handleInterviewRequestExceptions(InvalidInterviewRequestException ex) {
+    log.warn("Handling InvalidInterviewRequestException: {}", ex.getMessage());
   }
 
   /**
