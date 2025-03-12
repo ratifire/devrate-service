@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class InterviewScheduledService {
+public class InterviewSchedulerService {
 
   private final InterviewRepository interviewRepository;
   private final NotificationService notificationService;

@@ -1,0 +1,36 @@
+post:
+  tags:
+    - Interview Request
+  summary: Add new time slots to an existing interview request.
+  description: Adds one or more new time slots to an existing interview request. The provided dates must be in ISO 8601 format (e.g., "2024-03-10T14:30:00Z").
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
+  parameters:
+    - in: path
+      name: id
+      description: ID of the interview request
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    description: The list of new date-time slots to be added.
+    required: true
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            type: string
+        example:
+          [
+            "2024-03-10T14:30:00Z",
+            "2024-03-11T16:00:00Z",
+            "2024-03-12T09:15:00Z"
+          ]
+  responses:
+    '200':
+      description: New time slots successfully added.
+    '404':
+      description: Interview request not found.
