@@ -1,6 +1,7 @@
 package com.ratifire.devrate.repository.interview;
 
 import com.ratifire.devrate.entity.interview.InterviewRequest;
+import com.ratifire.devrate.enums.InterviewRequestRole;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,10 +23,10 @@ public interface InterviewRequestRepository extends JpaRepository<InterviewReque
   @Query("SELECT r.mastery.id FROM InterviewRequest r WHERE r.id = :id")
   Optional<Long> findMasteryIdById(@Param("id") Long id);
 
-  @Query("SELECT r FROM InterviewRequest r WHERE r.id IN (:ids)")
-  List<InterviewRequest> findByIds(@Param("ids") List<Long> ids);
-
   List<InterviewRequest> findAllByMastery_IdAndUser_Id(long masteryId, long userId);
 
   List<InterviewRequest> findAllByUser_Id(long userId);
+
+  List<InterviewRequest> findByMastery_IdInAndRoleIn(List<Long> masteryIds,
+      List<InterviewRequestRole> roles);
 }
