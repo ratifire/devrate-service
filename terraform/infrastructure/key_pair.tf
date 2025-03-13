@@ -1,5 +1,5 @@
 resource "aws_key_pair" "back_key" {
-  key_name   = "terraform_ec2_back_key_pair"
+  key_name   = var.back_kay
   public_key = tls_private_key.rsa-4096-example.public_key_openssh
 }
 

@@ -1,10 +1,10 @@
 resource "aws_ecs_task_definition" "task_definition" {
 
-  family = "backend_td"
+  family = var.td_family
 
   container_definitions = jsonencode([
     {
-      name              = "back-container",
+      name              = var.back_container_name,
       image             = "${data.aws_caller_identity.current_user.account_id}.dkr.ecr.${var.region}.amazonaws.com/${var.back_repository_name}:${var.image_tag}",
       cpu               = 0,
       memory            = 819,
@@ -28,7 +28,7 @@ resource "aws_ecs_task_definition" "task_definition" {
       environment = [
         {
           name  = "PG_USERNAME",
-          value = "backend"
+          value = var.db_username
         },
         {
           name  = "PG_HOST",
@@ -36,19 +36,15 @@ resource "aws_ecs_task_definition" "task_definition" {
         },
         {
           name  = "PG_PASSWORD",
-          value = "backenddb"
+          value = var.db_password
         },
         {
           name  = "PG_DATABASE",
-          value = "backend"
-        },
-        {
-          name  = "POSTGRES_DB",
-          value = "backend"
+          value = var.db_name
         },
         {
           name  = "ACTIVE_PROFILE",
-          value = "dev"
+          value = var.deploy_profile
         }
       ],
       mountPoints = [],
