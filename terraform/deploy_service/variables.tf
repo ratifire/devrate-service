@@ -87,7 +87,7 @@ variable "ecs_back_launch" {
 }
 
 variable "backend_security_group_name" {
-  default = "backend_security_group"
+  default = "Security_group_for_backend_project"
 }
 
 variable "back_kay" {
