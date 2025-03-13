@@ -4,4 +4,3 @@ region = "eu-north-1"
 
 instance_type = "t3.micro"
 
-backend_security_group_name = "backend_security_group_dev"
