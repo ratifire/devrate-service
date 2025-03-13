@@ -1,16 +1,16 @@
 variable "back_cluster_name" {
   description = "Back cluster name."
-  default     = "backend-cluster"
+  default     = "backend-cluster-dev"
 }
 
 variable "back_container_name" {
   description = "Back container name."
-  default     = "back-container"
+  default     = "back-container-dev"
 }
 
 variable "back_repository_name" {
   description = "Repository name"
-  default     = "backend-service"
+  default     = "backend-service-dev"
 }
 
 variable "instance_type" {

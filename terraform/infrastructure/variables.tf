@@ -15,7 +15,7 @@ variable "instance_type" {
 
 variable "repository_name" {
   description = "Repository name"
-  default     = "backend-service"
+  default     = "backend-service-dev"
 }
 
 variable "list_of_ports" {
