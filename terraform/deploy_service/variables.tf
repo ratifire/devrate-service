@@ -67,7 +67,7 @@ variable "db_password" {
 
 variable "td_family" {
   description = "Name of TD"
-  default     = "backend_td"
+  default     = "backend_td_dev"
 }
 
 variable "back_ecs_alb" {
