@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 /**
  * The service responsible for managing user`s Specialization.
@@ -125,6 +126,11 @@ public class SpecializationService {
     User user = userService.findById(userId);
     Specialization specialization = specializationMapper.toEntity(specializationDto);
     specialization.setUser(user);
+
+    if (CollectionUtils.isEmpty(user.getSpecializations())) {
+      specialization.setMain(true);
+    }
+
     user.getSpecializations().add(specialization);
     userService.updateByEntity(user);
     createMasteriesForSpecialization(specialization,
