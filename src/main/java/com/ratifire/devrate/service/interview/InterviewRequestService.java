@@ -95,15 +95,20 @@ public class InterviewRequestService {
     }
 
     ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
-    interviewRequests.forEach(request -> request.getTimeSlots().forEach(slot -> {
-      if (TimeSlotStatus.PENDING == slot.getStatus() && slot.getDateTime().isBefore(now)) {
-        slot.setStatus(TimeSlotStatus.EXPIRED);
+    boolean hasExpiredSlots = false;
+    for (InterviewRequest request : interviewRequests) {
+      for (InterviewRequestTimeSlot slot : request.getTimeSlots()) {
+        if (TimeSlotStatus.PENDING == slot.getStatus() && slot.getDateTime().isBefore(now)) {
+          slot.setStatus(TimeSlotStatus.EXPIRED);
+          hasExpiredSlots = true;
+        }
       }
-    }));
+    }
 
-    repository.saveAll(interviewRequests);
-
-    interviewRequests.forEach(matcherServiceQueueSender::update);
+    if (hasExpiredSlots) {
+      repository.saveAll(interviewRequests);
+      interviewRequests.forEach(matcherServiceQueueSender::update);
+    }
   }
 
   /**

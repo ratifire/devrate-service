@@ -5,7 +5,6 @@ import com.ratifire.devrate.entity.interview.InterviewRequestTimeSlot;
 import com.ratifire.devrate.enums.TimeSlotStatus;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Set;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -23,14 +22,8 @@ public interface InterviewRequestTimeSlotRepository extends
 
   @Modifying
   @Query("UPDATE InterviewRequestTimeSlot t SET t.status = :updatedStatus "
-      + "WHERE t.interviewRequest IN :requests AND DATE(t.dateTime) = DATE(:scheduledDate)")
+      + "WHERE t.interviewRequest IN :requests AND t.dateTime = :scheduledDate")
   void updateTimeSlotStatus(@Param("requests") List<InterviewRequest> scheduledInterviewRequests,
       @Param("scheduledDate") ZonedDateTime scheduledDate,
       @Param("updatedStatus") TimeSlotStatus updatedStatus);
-
-  void deleteByInterviewRequestAndDateTimeNotIn(InterviewRequest request,
-      Set<ZonedDateTime> updatedDateTime);
-
-  List<InterviewRequestTimeSlot> findByStatusAndDateTimeBefore(TimeSlotStatus status,
-      ZonedDateTime dateTime);
 }
