@@ -185,9 +185,10 @@ public class NotificationService {
     // we could get notifications from user, but during the LAZY mode we can not retrieve it regard
     // to closed DB session
     // TODO: should be refactored to reduce DB invocations
-    List<Notification> notifications = repository.findNotificationsByUserId(userId)
-        .orElseThrow(() -> new NotificationNotFoundException(
-            "Can not find notifications by user id " + userId));
+    List<Notification> notifications =
+        repository.findNotificationsByUserIdOrderByCreatedAtDesc(userId)
+            .orElseThrow(() -> new NotificationNotFoundException(
+                "Can not find notifications by user id " + userId));
 
     return mapper.toDto(notifications);
   }
