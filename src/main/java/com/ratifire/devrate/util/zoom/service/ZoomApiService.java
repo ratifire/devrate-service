@@ -71,7 +71,7 @@ public class ZoomApiService implements MeetingService {
           .build();
       return objectMapper.writeValueAsString(request);
     } catch (JsonProcessingException e) {
-      logger.error("Error processing JSON request", e);
+      logger.error("Error processing JSON request: {}", e.getMessage());
       return StringUtils.EMPTY;
     }
   }

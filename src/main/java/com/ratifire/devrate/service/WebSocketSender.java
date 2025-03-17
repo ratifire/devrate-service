@@ -34,7 +34,7 @@ public class WebSocketSender {
       try {
         session.sendMessage(message);
       } catch (IOException e) {
-        log.error("Failed to send message: {}", message, e);
+        log.error("Failed to send message: {}", message);
       }
     }
   }

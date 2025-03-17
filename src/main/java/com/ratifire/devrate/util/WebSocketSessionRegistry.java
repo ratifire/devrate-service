@@ -54,7 +54,7 @@ public class WebSocketSessionRegistry {
       try {
         session.close();
       } catch (IOException e) {
-        log.debug("Can't close WebSocketSession {}", session, e);
+        log.debug("Can't close WebSocketSession {}", session);
       }
     }
   }

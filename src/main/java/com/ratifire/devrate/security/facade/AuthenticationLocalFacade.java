@@ -70,7 +70,7 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
       return userMapper.toDto(user);
 
     } catch (Exception e) {
-      log.error("Authentication process was failed for email {}: {}", email, e.getMessage(), e);
+      log.error("Authentication process was failed for email {}: {}", email, e.getMessage());
       throw new AuthenticationException("Authentication process was failed.");
     }
   }

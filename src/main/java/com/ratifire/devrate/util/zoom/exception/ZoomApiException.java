@@ -7,8 +7,4 @@ public class ZoomApiException extends RuntimeException {
   public ZoomApiException(String msg) {
     super(msg);
   }
-
-  public ZoomApiException(String msg, Throwable cause) {
-    super(msg, cause);
-  }
 }

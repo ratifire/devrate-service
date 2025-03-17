@@ -35,7 +35,7 @@ public class PasswordResetService {
     try {
       cognitoApiClientService.resetPassword(email);
     } catch (Exception e) {
-      log.error("Password reset process was failed for email {}: {}", email, e.getMessage(), e);
+      log.error("Password reset process was failed for email {}: {}", email, e.getMessage());
       throw new PasswordResetException("Password reset process was failed.");
     }
   }
@@ -63,7 +63,7 @@ public class PasswordResetService {
       userService.updateByEntity(user);
       emailService.sendPasswordChangeConfirmationEmail(email);
     } catch (Exception e) {
-      log.error("Confirmation password reset process was failed: {}", e.getMessage(), e);
+      log.error("Confirmation password reset process was failed: {}", e.getMessage());
       throw new PasswordResetException("Confirmation password reset process was failed.");
     }
   }

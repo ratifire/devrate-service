@@ -80,7 +80,7 @@ public class ZoomAuthHelper {
       String message = String.format("Unable to get authentication token due to %s. "
               + "Response code: %d", res.getBody(), res.getStatusCode().value());
 
-      throw new ZoomAuthException(message, ex);
+      throw new ZoomAuthException(message);
     }
 
     Calendar now = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
