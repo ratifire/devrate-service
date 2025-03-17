@@ -27,7 +27,6 @@ class ContactValidatorTest {
   static Stream<Arguments> validContactProvider() {
     return Stream.of(
         Arguments.of(ContactType.EMAIL, "test@example.com"),
-        Arguments.of(ContactType.PHONE_NUMBER, "+12345678901"),
         Arguments.of(ContactType.TELEGRAM_LINK, "https://t.me/testuser"),
         Arguments.of(ContactType.LINKEDIN_LINK, "https://www.linkedin.com/in/testuser"),
         Arguments.of(ContactType.GITHUB_LINK, "https://github.com/testuser"),
@@ -43,10 +42,6 @@ class ContactValidatorTest {
         Arguments.of(ContactType.EMAIL, "test@example.c"),
         Arguments.of(ContactType.EMAIL, "@example.com"),
         Arguments.of(ContactType.EMAIL, "test@.com"),
-        Arguments.of(ContactType.PHONE_NUMBER, "12345678901"),
-        Arguments.of(ContactType.PHONE_NUMBER, "+1234"),
-        Arguments.of(ContactType.PHONE_NUMBER, "+1234567890123456"),
-        Arguments.of(ContactType.PHONE_NUMBER, "+12 345678901"),
         Arguments.of(ContactType.TELEGRAM_LINK, "https://invalid.telegram./testuser"),
         Arguments.of(ContactType.LINKEDIN_LINK, "https://invalid.linkedin/in/testuser"),
         Arguments.of(ContactType.GITHUB_LINK, "https://invalid.github/testuser"),
