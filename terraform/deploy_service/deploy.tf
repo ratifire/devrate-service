@@ -76,7 +76,7 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
   health_check_grace_period = 180
   vpc_zone_identifier       = data.aws_subnets.default_subnets.ids
   force_delete              = true
-  termination_policies      = ["OldestInstance", "NewInstancesFirst"]
+  termination_policies      = ["OldestInstance"]
   initial_lifecycle_hook {
     lifecycle_transition = "autoscaling:EC2_INSTANCE_TERMINATING"
     name                 = "ecs-managed-draining-termination-hook"
