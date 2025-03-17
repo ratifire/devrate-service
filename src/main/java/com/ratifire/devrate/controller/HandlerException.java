@@ -41,7 +41,6 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 public class HandlerException {
 
   private static final Logger log = LogManager.getLogger(HandlerException.class);
-  private static final int EXPIRED_AUTH_TOKEN_HTTP_STATUS = 498;
   private static final int EXPIRED_REFRESH_TOKEN_HTTP_STATUS = 497;
 
   /**
@@ -54,7 +53,7 @@ public class HandlerException {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public Map<String, String> handleArgumentErrors(MethodArgumentNotValidException ex) {
-    log.error("Handling MethodArgumentNotValidException: {}", ex.getMessage(), ex);
+    log.error("Handling MethodArgumentNotValidException: {}", ex.getMessage());
     Map<String, String> errors = new HashMap<>();
     ex.getBindingResult().getFieldErrors()
         .forEach((error -> errors.put(error.getField(), error.getDefaultMessage())));
@@ -69,7 +68,7 @@ public class HandlerException {
    */
   @ExceptionHandler(Exception.class)
   public ResponseEntity<?> handleExceptionErrors(Exception ex) {
-    log.error("Handling Exception: {}", ex.getMessage(), ex);
+    log.error("Handling Exception: {}", ex.getMessage());
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Oops! Something went wrong:( We're working to fix it! Please try again later:)");
   }
@@ -136,8 +135,7 @@ public class HandlerException {
    * Handles the AuthTokenExpired exceptions by returning an HTTP status 498.
    */
   @ExceptionHandler(AuthTokenExpiredException.class)
-  public void handleAuthTokenExpiredException(HttpServletResponse response) {
-    response.setStatus(EXPIRED_AUTH_TOKEN_HTTP_STATUS);
+  public void handleAuthTokenExpiredException() {
   }
 
   /**
