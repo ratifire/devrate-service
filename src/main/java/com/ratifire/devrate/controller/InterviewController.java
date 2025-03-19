@@ -39,6 +39,16 @@ public class InterviewController {
   }
 
   /**
+   * Retrieves a single interview by id for the user.
+   *
+   * @return an InterviewDto object by id
+   */
+  @GetMapping("/{id}")
+  public InterviewDto findById(@PathVariable long id) {
+    return interviewService.findById(id);
+  }
+
+  /**
    * Deletes a rejected interview by its ID.
    *
    * @param id the ID of the interview to be deleted

@@ -19,6 +19,7 @@ import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.enums.SkillType;
+import com.ratifire.devrate.exception.InterviewNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
 import com.ratifire.devrate.security.helper.UserContextProvider;
@@ -63,6 +64,17 @@ public class InterviewService {
   private final UserContextProvider userContextProvider;
   private final DataMapper<InterviewDto, Interview> mapper;
 
+  /**
+   * Retrieves a single interview by id for the auth user.
+   *
+   * @return an InterviewDto object by id
+   */
+  public InterviewDto findById(long interviewId) {
+    Interview interview = findByIdAndUserId(interviewId)
+        .orElseThrow(() -> new InterviewNotFoundException(interviewId));
+    return constructInterviewDto(interview);
+  }
+
   public Optional<Interview> findByIdAndUserId(long id) {
     long currentUserId = userContextProvider.getAuthenticatedUserId();
     return interviewRepository.findByIdAndUserId(id, currentUserId);
@@ -78,29 +90,31 @@ public class InterviewService {
     Pageable pageable = PageRequest.of(page, size, Sort.by("startTime").ascending());
     Page<Interview> interviews = interviewRepository.findByUserIdAndIsVisibleTrue(userId, pageable);
 
-    return interviews.map(interview -> {
-      Mastery mastery = masteryService.getMasteryById(interview.getMasteryId());
-      InterviewUserMasteryProjection projection =
-          interviewRepository.findUserIdAndMasterIdByEventIdAndUserIdNot(
-              interview.getEventId(),
-              interview.getUserId());
+    return interviews.map(this::constructInterviewDto);
+  }
 
-      Long hostId = projection.getUserId();
-      Long hostMasterId = projection.getMasteryId();
-      if (ObjectUtils.isEmpty(hostId) || ObjectUtils.isEmpty(hostMasterId)) {
-        throw new IllegalStateException("Not enough providing interview data");
-      }
+  private InterviewDto constructInterviewDto(Interview interview) {
+    Mastery mastery = masteryService.getMasteryById(interview.getMasteryId());
+    InterviewUserMasteryProjection projection =
+        interviewRepository.findUserIdAndMasterIdByEventIdAndUserIdNot(
+            interview.getEventId(),
+            interview.getUserId());
 
-      User host = userService.findById(hostId);
-      return mapper.toDto(
-          interview,
-          mastery.getLevel(),
-          mastery.getSpecialization().getName(),
-          hostId,
-          host.getFirstName(),
-          host.getLastName(),
-          hostMasterId);
-    });
+    Long hostId = projection.getUserId();
+    Long hostMasterId = projection.getMasteryId();
+    if (ObjectUtils.isEmpty(hostId) || ObjectUtils.isEmpty(hostMasterId)) {
+      throw new IllegalStateException("Not enough providing interview data");
+    }
+
+    User host = userService.findById(hostId);
+    return mapper.toDto(
+        interview,
+        mastery.getLevel(),
+        mastery.getSpecialization().getName(),
+        hostId,
+        host.getFirstName(),
+        host.getLastName(),
+        hostMasterId);
   }
 
   /**
