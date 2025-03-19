@@ -14,6 +14,7 @@ import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.NotificationRepository;
 import com.ratifire.devrate.util.JsonConverter;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -139,7 +140,7 @@ public class NotificationService {
         .type(type)
         .payload(payload != null ? JsonConverter.serialize(payload) : null)
         .read(false)
-        .createdAt(LocalDateTime.now())
+        .createdAt(LocalDateTime.now(ZoneOffset.UTC))
         .user(user)
         .build();
   }
