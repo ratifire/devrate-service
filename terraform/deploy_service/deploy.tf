@@ -43,7 +43,7 @@ resource "aws_ecs_capacity_provider" "back_capacity_provider" {
       maximum_scaling_step_size = 2
       minimum_scaling_step_size = 1
       status                    = "ENABLED"
-      target_capacity           = 100
+      target_capacity           = 80
     }
   }
 
@@ -70,7 +70,7 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
     version = aws_launch_template.ecs_back_launch.latest_version
   }
   min_size                  = 2
-  max_size                  = 2
+  max_size                  = 3
   desired_capacity          = 2
   health_check_type         = "EC2"
   health_check_grace_period = 180

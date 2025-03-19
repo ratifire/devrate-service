@@ -16,6 +16,7 @@ import com.ratifire.devrate.mapper.impl.InterviewHistoryMapper;
 import com.ratifire.devrate.repository.UserRepository;
 import com.ratifire.devrate.repository.interview.InterviewHistoryRepository;
 import com.ratifire.devrate.security.helper.UserContextProvider;
+import com.ratifire.devrate.service.EventService;
 import com.ratifire.devrate.service.MasteryService;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -47,6 +48,7 @@ public class InterviewHistoryService {
   private final UserContextProvider userContextProvider;
   private final InterviewHistoryMapper interviewHistoryMapper;
   private final UserRepository userRepository;
+  private final EventService eventService;
 
   /**
    * Retrieves an InterviewSummary entity by its identifier.
@@ -137,6 +139,7 @@ public class InterviewHistoryService {
         oppositeInterviewHistory);
     interviewHistoryRepository.saveAll(interviewHistories);
     interviewService.deleteByIds(List.of(currentInterviewId, oppositeInterviewId));
+    eventService.delete(oppositeInterview.getEventId());
 
     return interviewHistories.stream()
         .collect(Collectors.toMap(InterviewHistory::getRole, Function.identity()));
