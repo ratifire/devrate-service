@@ -1,4 +1,0 @@
-<configuration>
-  <logger name="org.apache.coyote.http11" level="DEBUG"/>
-  <logger name="org.apache.catalina.connector.Request" level="DEBUG"/>
-</configuration>
