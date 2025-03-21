@@ -65,12 +65,14 @@ public class InterviewService {
   private final DataMapper<InterviewDto, Interview> mapper;
 
   /**
-   * Retrieves a single interview by id for the auth user.
+   * Retrieves a single visible interview by id for the auth user.
    *
    * @return an InterviewDto object by id
    */
-  public InterviewDto findById(long interviewId) {
-    Interview interview = findByIdAndUserId(interviewId)
+  public InterviewDto findVisibleInterviewById(long interviewId) {
+    long currentUserId = userContextProvider.getAuthenticatedUserId();
+    Interview interview = interviewRepository
+        .findByIdAndUserIdAndIsVisibleTrue(interviewId, currentUserId)
         .orElseThrow(() -> new InterviewNotFoundException(interviewId));
     return constructInterviewDto(interview);
   }

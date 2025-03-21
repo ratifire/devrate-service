@@ -1,25 +1,29 @@
-delete:
+get:
   tags:
     - Interview
-  summary: Reject interview By ID
-  description: Reject the interview by its ID.
-  operationId: deleteRejected
+  summary: Retrieve a single visible interview by Id
+  description: Retrieve a single visible interview by id for the current user.
+  operationId: findVisibleInterviewById
   security:
     - accessToken: [ ]
     - idToken: [ ]
   parameters:
     - in: path
       name: id
-      description: The ID of the interview that will be rejected.
+      description: The ID of the interview that will be retrieved.
       required: true
       schema:
         type: integer
         format: int64
   responses:
     '200':
-      description: Successful operation
-    '400':
-      description: Bad request, e.g., missing or invalid parameters
+      description: A single interview by id for the user.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/InterviewDto.yaml'
+    '404':
+      description: Interview by id could not be found.
       content:
         application/json:
           schema:
