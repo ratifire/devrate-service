@@ -20,6 +20,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.PathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
@@ -33,6 +34,7 @@ public class CognitoAuthenticationFilter extends OncePerRequestFilter {
   private static final int EXPIRED_AUTH_TOKEN_HTTP_STATUS = 498;
   private final CognitoTokenValidationService cognitoTokenValidationService;
   private final WhitelistPathProperties whitelistPathProperties;
+  private final PathMatcher pathMatcher;
 
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) {
@@ -41,14 +43,7 @@ public class CognitoAuthenticationFilter extends OncePerRequestFilter {
       return false;
     }
     return whitelistPathProperties.getWhitelistedPaths().stream()
-        .anyMatch(pattern -> {
-          if (pattern.endsWith("/**")) {
-            String basePath = pattern.substring(0, pattern.length() - 3);
-            return path.startsWith(basePath);
-          } else {
-            return path.equals(pattern);
-          }
-        });
+        .anyMatch(pattern -> pathMatcher.match(pattern, path));
   }
 
   @Override
