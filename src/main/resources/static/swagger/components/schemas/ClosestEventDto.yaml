@@ -6,7 +6,7 @@ properties:
     description: Event id
   type:
     type: string
-    description: The event type.
+    description: The event type
     enum:
       - INTERVIEW
   startTime:
@@ -15,18 +15,18 @@ properties:
     items:
       type: string
       format: date-time
+  hostId:
+    type: integer
+    description: The id of the opponent user
   hostName:
     type: string
-    description: The host first name
+    description: The opponent user first name
   hostSurname:
     type: string
-    description: The host last name
-  masteryLevel:
-    type: integer
-    description: The mastery level of the host (1-Junior,2-Middle,3-Senior).
-  specializationName:
+    description: The opponent user last name
+  title:
     type: string
-    description: The specialization name of the host.
+    description: The interview title (in general it's mastery level + specialization name of the CANDIDATE interview request)
   roomUrl:
     type: string
-    description: The room link url for the event.
+    description: The room link url for the event

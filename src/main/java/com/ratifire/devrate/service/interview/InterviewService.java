@@ -31,7 +31,6 @@ import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserService;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -45,6 +44,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 /**
  * Service for handling Interview operations.
@@ -165,56 +165,56 @@ public class InterviewService {
       return List.of();
     }
 
-    // Find all user interviews by event id
+    // Find and group interviews by event id
     List<Long> eventIds = upcomingEvents.stream().map(Event::getId).toList();
-    List<Interview> userInterviews = interviewRepository.findByEventIdInAndUserId(eventIds,
-        authUserId);
+    List<Interview> allInterviews = interviewRepository.findByEventIdIn(eventIds);
+    Map<Long, List<Interview>> interviewsByEventId = allInterviews.stream()
+        .collect(Collectors.groupingBy(Interview::getEventId));
 
-    // Find all user masteries for retrieved interviews
-    List<Long> masteryIds = userInterviews.stream().map(Interview::getMasteryId).distinct()
+    List<Long> opponentUserIds = allInterviews.stream()
+        .map(Interview::getUserId)
+        .filter(userId -> userId != authUserId)
         .toList();
-    Map<Long, Mastery> masteryById = masteryService.findByIds(masteryIds).stream()
-        .collect(Collectors.toMap(Mastery::getId, mastery -> mastery));
 
-    // Find opponent users for the retrieved events
-    List<Long> opponentIds = upcomingEvents.stream().map(Event::getHostId).distinct().toList();
-    Map<Long, User> opponentById = userService.findByIds(opponentIds).stream()
+    Map<Long, User> opponentById = userService.findByIds(opponentUserIds).stream()
         .collect(Collectors.toMap(User::getId, user -> user));
 
     return upcomingEvents.stream()
-        .sorted(Comparator.comparing(Event::getStartTime))
-        .map(event -> createClosestEventDto(event, userInterviews, masteryById, opponentById))
+        .map(event -> createClosestEventDto(event, interviewsByEventId.get(event.getId()),
+            authUserId, opponentById))
+        .filter(Objects::nonNull)
         .toList();
   }
 
-  private ClosestEventDto createClosestEventDto(Event event, List<Interview> userInterviews,
-      Map<Long, Mastery> masteryById, Map<Long, User> hostById) {
-    int masteryLevel = userInterviews.stream()
+  private ClosestEventDto createClosestEventDto(Event event, List<Interview> eventInterviews,
+      long authUserId, Map<Long, User> opponentById) {
+    if (CollectionUtils.isEmpty(eventInterviews)) {
+      return null;
+    }
+
+    Long opponentUserId = eventInterviews.stream()
+        .filter(interview -> interview.getUserId() != authUserId)
         .findFirst()
-        .map(interview -> masteryById.get(interview.getMasteryId()))
-        .map(Mastery::getLevel)
-        .orElse(0);
+        .map(Interview::getUserId)
+        .orElse(null);
 
-    String specializationName = userInterviews.stream()
-        .findFirst()
-        .map(interview -> masteryById.get(interview.getMasteryId()))
-        .map(mastery -> mastery.getSpecialization().getName())
-        .orElse("");
+    if (opponentUserId == null) {
+      return null;
+    }
 
-    User host = hostById.get(event.getHostId());
-    return buildClosestEventDto(host, event, masteryLevel, specializationName);
-  }
+    User opponent = opponentById.get(opponentUserId);
+    if (opponent == null) {
+      return null;
+    }
 
-  private ClosestEventDto buildClosestEventDto(User opponent, Event event, int masteryLevel,
-      String specializationName) {
     return ClosestEventDto.builder()
         .id(event.getId())
         .type(event.getType())
         .startTime(event.getStartTime())
+        .hostId(opponent.getId())
         .hostName(opponent.getFirstName())
         .hostSurname(opponent.getLastName())
-        .masteryLevel(masteryLevel)
-        .specializationName(specializationName)
+        .title(event.getTitle())
         .roomUrl(event.getRoomLink())
         .build();
   }
