@@ -31,8 +31,10 @@ public class ChatService {
    * @return a list of {@link TopicDto} representing the chat topics.
    */
   public List<TopicDto> getUserChatTopics() {
+    log.info("call getUserChatTopics");
     long authUserId = userContextProvider.getAuthenticatedUserId();
-    return messageRepository.findLastMessagesByUserId(authUserId)
+    log.info("getUserChatTopics, authUserId: {}", authUserId);
+    List<TopicDto> result = messageRepository.findLastMessagesByUserId(authUserId)
         .stream()
         .map(message -> {
           User opponent = message.getSender().getId() == authUserId
@@ -41,6 +43,8 @@ public class ChatService {
           return toTopicDto(message, opponent);
         })
         .toList();
+    log.info("getUserChatTopics, result: {}", result);
+    return result;
   }
 
   /**
