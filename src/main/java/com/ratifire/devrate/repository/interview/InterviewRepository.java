@@ -43,5 +43,7 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
 
   List<Interview> findByMasteryIdAndUserId(long masteryId, long userId);
 
-  List<Interview> findByEventIdInAndUserId(List<Long> eventIds, long userId);
+  List<Interview> findByEventIdIn(List<Long> eventIds);
+
+  Optional<Interview> findByIdAndUserIdAndIsVisibleTrue(long id, long userId);
 }

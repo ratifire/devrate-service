@@ -39,13 +39,13 @@ public class InterviewController {
   }
 
   /**
-   * Retrieves a single interview by id for the user.
+   * Retrieves a single visible interview by id for the user.
    *
    * @return an InterviewDto object by id
    */
-  @GetMapping("/{id}")
-  public InterviewDto findById(@PathVariable long id) {
-    return interviewService.findById(id);
+  @GetMapping("/{id}/visible")
+  public InterviewDto findVisibleInterviewById(@PathVariable long id) {
+    return interviewService.findVisibleInterviewById(id);
   }
 
   /**

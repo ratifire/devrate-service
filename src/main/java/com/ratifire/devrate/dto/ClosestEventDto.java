@@ -20,7 +20,7 @@ public class ClosestEventDto {
   private ZonedDateTime startTime;
   private String hostName;
   private String hostSurname;
-  private int masteryLevel;
-  private String specializationName;
   private String roomUrl;
+  private long hostId;    // opponent userId
+  private String title;    // it's mastery level + specialization name of the CANDIDATE request
 }
