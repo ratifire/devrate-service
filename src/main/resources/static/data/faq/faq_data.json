@@ -1,0 +1,97 @@
+[
+  {
+    "id": 1,
+    "question": "How can I request an interview?",
+    "answer": "To request an interview, go to the Specialization screen, choose one of your specializations for which the interview will be conducted, then click on the 'Schedule an interview' button and select your role. If you wish to conduct the interview, select 'Become an interviewer.' If you want to be evaluated, choose 'Schedule an interview.' Then, fill out the form, select convenient dates and times, and confirm by clicking 'Schedule.' After that, your request will be submitted, and you'll be notified when the interview is scheduled."
+  },
+  {
+    "id": 2,
+    "question": "When creating a specialization (Junior, Middle, Senior), how do you choose the appropriate level?",
+    "answer": "Consider your experience and skills in the selected specialization when choosing the appropriate level. If you are just starting out and have limited practical experience, the Junior level is recommended. For those with moderate experience who can work independently with some guidance, the Middle level may be the best fit. If you have extensive experience, can lead projects, and mentor others, the Senior level would be the most appropriate. Selecting a level that accurately reflects your current expertise is crucial for ensuring a fair evaluation process and selecting the appropriate interview participants."
+  },
+  {
+    "id": 3,
+    "question": "How long does it take to wait for an interview?",
+    "answer": "From the moment you submit an interview request, we immediately begin searching for a match that meets your criteria (specialization, skills, level, availability, etc.). As soon as a match is found, you'll receive a notification with further steps. If no suitable match is found within 30 days, you will be notified about the next steps."
+  },
+  {
+    "id": 4,
+    "question": "How can I cancel or reschedule an interview?",
+    "answer": "We apologize, but at this time, rescheduling an interview is unavailable. This feature will be implemented in future versions. For now, you can cancel the interview, which will restart the search process for a new match. To cancel, go to the 'Schedule' page, find the interview, select it, and click 'Cancel Event.'"
+  },
+  {
+    "id": 5,
+    "question": "Where can I view my interview results?",
+    "answer": "To view your interview results, go to the 'Interviews' screen \u2014 it displays the overall score, comments, and other important information."
+  },
+  {
+    "id": 6,
+    "question": "Can I select my interviewer or candidate?",
+    "answer": "Our system automatically selects the most suitable participant for you through our matching algorithms, taking your requests into account. This enables effective evaluation of your skills and ensures the best possible match."
+  },
+  {
+    "id": 7,
+    "question": "How can I raise my level?",
+    "answer": "To increase your level, actively participate in interviews as a candidate and an interviewer. Positive feedback, consistent demonstration of your skills, and expanding your expertise in the specialization will help you advance. Our system tracks your results and progress to support your growth based on demonstrated abilities."
+  },
+  {
+    "id": 8,
+    "question": "What criteria are used to match an interviewer or candidate?",
+    "answer": "Our matching system uses several key criteria to find the best interviewers and candidates, including specialization, skill level, experience, availability, and timezone. These factors ensure a productive and effective interview suited to both participants."
+  },
+  {
+    "id": 9,
+    "question": "What is a primary specialization, and how do I select it?",
+    "answer": "Your primary specialization is your key field, with its general score displayed on the main profile screen. It will also be visible to other users during searches and marked as primary to highlight your main professional focus."
+  },
+  {
+    "id": 10,
+    "question": "How long does an interview take?",
+    "answer": "A practical interview typically lasts up to 40 minutes, depending on the interview type and agreed-upon format between you and the other participant."
+  },
+  {
+    "id": 11,
+    "question": "How is the evaluation conducted after the interview?",
+    "answer": "After the interview, each participant will receive a notification to complete the results. If you were the interviewer, you'll need to evaluate the candidate's hard and soft skills and write a general comment. If you were the candidate, you need to rate the interviewer's soft skills and leave a general comment."
+  },
+  {
+    "id": 12,
+    "question": "Where can I view my interview schedule?",
+    "answer": "The interview schedule is available on the 'Schedule' screen. You can access it through the right-hand menu by clicking on the 'Schedule' section."
+  },
+  {
+    "id": 13,
+    "question": "What if I don't receive an interview invitation within 30 days?",
+    "answer": "If you don't receive an invitation within 30 days, please submit a new request, selecting your desired specialization, role (interviewer/candidate), and convenient dates and times."
+  },
+  {
+    "id": 14,
+    "question": "How do I know an interview has been scheduled?",
+    "answer": "Once we find a match that meets your criteria, we will send you a notification and an email to the address you provided during registration. The interview will also appear on your schedule on the 'Schedule' screen."
+  },
+  {
+    "id": 15,
+    "question": "What do I need to prepare for an interview?",
+    "answer": "All you need is a basic preparation for your selected skills. The interview is conducted online via Zoom, so it's essential to find a quiet place, ensure a stable internet connection, and be ready for the experience."
+  },
+  {
+    "id": 16,
+    "question": "How can I report a bug on the site?",
+    "answer": "To report a bug, use the 'Leave Feedback' option in the right-hand menu. Here, you can also share your thoughts about the site and offer suggestions for improvement. We genuinely appreciate your attention and support!"
+  },
+  {
+    "id": 17,
+    "question": "What should I do if my interview partner doesn't show up?",
+    "answer": "If your interview partner doesn\u2019t show up, report it through the 'Leave Feedback' form. The system will automatically submit a new request, and we'll work to find a new match for you soon."
+  },
+  {
+    "id": 18,
+    "question": "How can I update my contact information?",
+    "answer": "To update your contact information, go to your profile by clicking on your avatar in the upper-right corner. Then, select the 'Edit Profile' option and make the necessary changes. Don't forget to save your new data."
+  },
+  {
+    "id": 19,
+    "question": "Can I invite a specific person to an interview?",
+    "answer": "Currently, the participant selection is automated and doesn\u2019t support inviting a specific person. We strive to ensure fairness and impartiality, so we rely on the automatic selection for an effective interview experience."
+  }
+]

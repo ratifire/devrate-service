@@ -9,6 +9,17 @@ properties:
     minimum: 1
     maximum: 10
     description: The mark assigned to the skill, ranging from 1 to 10
+  name:
+    type: string
+    description: The name of evaluated skill
+  type:
+    type: string
+    description: The type of evaluated skill
+    enum:
+      - HARD_SKILL
+      - SOFT_SKILL
 required:
   - id
   - mark
+  - name
+  - type

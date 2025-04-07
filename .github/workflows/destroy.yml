@@ -1,24 +1,23 @@
 name: Destroy
 
 on:
-  schedule:
-    - cron: '00 01 * * *'
+  # schedule:
+  #   - cron: '00 01 * * *'
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Select environment to deploy (prod, dev, dev_new)'
+        description: 'Select environment to deploy (prod, dev)'
         required: true
-        default: 'dev_new'
+        default: 'dev'
         type: choice
         options:
           - dev
           - prod
-          - dev_new
 
 jobs:
   destroy:
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment || 'dev_new' }}
+    environment: ${{ github.event.inputs.environment || 'dev' }}
 
     steps:
       - name: Checkout code
@@ -28,7 +27,7 @@ jobs:
         id: determine_env
         run: |
           if [ -z "${{ github.event.inputs.environment }}" ]; then
-            ENVIRONMENT="dev_new"  # Default value for scheduled runs
+            ENVIRONMENT="dev"  # Default value for scheduled runs
           else
             ENVIRONMENT="${{ github.event.inputs.environment }}"
           fi

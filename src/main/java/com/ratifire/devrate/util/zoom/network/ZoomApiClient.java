@@ -81,7 +81,7 @@ public class ZoomApiClient {
     } catch (Throwable ex) {
       logger.error("Error occurred while sending DELETE request to URL: {}: {}",
           url, ex.getMessage());
-      throw new ZoomApiException("Error occurred while sending DELETE request to URL: " + url, ex);
+      throw new ZoomApiException("Error occurred while sending DELETE request to URL: " + url);
     }
   }
 }

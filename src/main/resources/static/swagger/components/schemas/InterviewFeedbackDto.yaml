@@ -1,10 +1,10 @@
 type: object
 properties:
-  interviewFeedbackDetailId:
+  interviewId:
     type: integer
     format: int64
-    description: The unique identifier of the interview feedback detail
-  comment:
+    description: The unique identifier of the interview
+  feedback:
     type: string
     description: The comment of reviewer for the interview feedback
   skills:
@@ -13,5 +13,5 @@ properties:
     items:
       $ref: './SkillFeedbackDto.yaml'
 required:
-  - interviewFeedbackDetailId
+  - interviewId
   - skills

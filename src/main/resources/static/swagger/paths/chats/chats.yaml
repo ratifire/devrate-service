@@ -1,0 +1,25 @@
+get:
+  tags:
+    - Chat
+  summary: Retrieves the latest message from each conversation for the authenticated user.
+  description: |
+    Retrieves the latest message from each conversation for the authenticated user.
+  operationId: getUserChatTopics
+  security:
+    - accessToken: []
+    - idToken: []
+  responses:
+    '200':
+      description: Successfully retrieved chat topics.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../components/schemas/TopicDto.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

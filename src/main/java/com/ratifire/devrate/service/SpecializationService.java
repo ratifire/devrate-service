@@ -4,15 +4,20 @@ import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.SpecializationDto;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Specialization;
+import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
+import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.exception.SpecializationLinkedToInterviewException;
+import com.ratifire.devrate.exception.SpecializationLinkedToInterviewRequestException;
 import com.ratifire.devrate.exception.SpecializationNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
+import com.ratifire.devrate.repository.interview.InterviewRequestRepository;
+import com.ratifire.devrate.security.helper.UserContextProvider;
 import com.ratifire.devrate.util.JsonConverter;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
@@ -20,24 +25,30 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 /**
  * The service responsible for managing user`s Specialization.
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SpecializationService {
 
   @Value("${specialization.defaultSpecializationsPath}")
   private String defaultSpecializationsPath;
 
+  private final UserService userService;
   private final MasteryService masteryService;
   private final SpecializationRepository specializationRepository;
   private final InterviewRepository interviewRepository;
   private final DataMapper<SpecializationDto, Specialization> specializationMapper;
   private final DataMapper<MasteryDto, Mastery> masteryMapper;
+  private final InterviewRequestRepository interviewRequestRepository;
+  private final UserContextProvider userContextProvider;
 
   /**
    * Finds a specialization by its ID.
@@ -62,6 +73,17 @@ public class SpecializationService {
    */
   public SpecializationDto getDtoById(long id) {
     return specializationMapper.toDto(findById(id));
+  }
+
+  /**
+   * Retrieves specialization by user ID.
+   *
+   * @param userId the ID of the user
+   * @return the user's specialization as a DTO
+   */
+  public List<SpecializationDto> getSpecializationsByUserId(long userId) {
+    User user = userService.findById(userId);
+    return specializationMapper.toDto(user.getSpecializations());
   }
 
   /**
@@ -92,6 +114,31 @@ public class SpecializationService {
   }
 
   /**
+   * Creates specialization information. Сreate masteries for specialization.
+   *
+   * @param specializationDto the user's specialization information as a DTO
+   * @return the created user specialization information as a DTO
+   */
+  @Transactional
+  public SpecializationDto createSpecialization(SpecializationDto specializationDto,
+      long userId) {
+    validateBeforeCreate(specializationDto, userId);
+    User user = userService.findById(userId);
+    Specialization specialization = specializationMapper.toEntity(specializationDto);
+    specialization.setUser(user);
+
+    if (CollectionUtils.isEmpty(user.getSpecializations())) {
+      specialization.setMain(true);
+    }
+
+    user.getSpecializations().add(specialization);
+    userService.updateByEntity(user);
+    createMasteriesForSpecialization(specialization,
+        specializationDto.getMainMasteryLevel());
+    return specializationMapper.toDto(specialization);
+  }
+
+  /**
    * Updates Specialization information.
    *
    * @param specializationDto the updated Specialization as a DTO
@@ -105,11 +152,24 @@ public class SpecializationService {
       throw new ResourceAlreadyExistException("Specialization name is already exist.");
     }
 
+    checkSpecializationByInterviewRequest(specialisation.getMainMastery().getId(),
+        specializationDto.getId());
+
     boolean mainStatus = specialisation.isMain();
     specializationMapper.updateEntity(specializationDto, specialisation);
     specialisation.setMain(mainStatus);
     Specialization updatedSpecialization = specializationRepository.save(specialisation);
     return specializationMapper.toDto(updatedSpecialization);
+  }
+
+  private void checkSpecializationByInterviewRequest(Long mainMasteryId, Long specializationId) {
+    long userId = userContextProvider.getAuthenticatedUserId();
+    List<InterviewRequest> masteryRequests = interviewRequestRepository
+        .findAllByMastery_IdAndUser_Id(mainMasteryId, userId);
+    if (!masteryRequests.isEmpty()) {
+      throw new SpecializationLinkedToInterviewRequestException(specializationId,
+          masteryRequests.getFirst().getId());
+    }
   }
 
   /**
@@ -177,15 +237,35 @@ public class SpecializationService {
    * Deletes specialization by specialization ID.
    *
    * @param id the ID of the specialization whose is to be deleted
-   * @throws SpecializationLinkedToInterviewException if specialization stills linked to interview
+   * @throws SpecializationLinkedToInterviewException        if specialization stills linked to
+   *                                                         interview
+   * @throws SpecializationLinkedToInterviewRequestException if specialization stills linked to
+   *                                                         interview request
    */
   @Transactional
   public void delete(long id) {
-    Long linkedInterviewId = interviewRepository.findFirstBySpecializationId(id);
-    if (linkedInterviewId != null) {
-      throw new SpecializationLinkedToInterviewException(id, linkedInterviewId);
+    long userId = userContextProvider.getAuthenticatedUserId();
+    Specialization specialization = findById(id);
+    Long mainMasteryId = specialization.getMainMastery().getId();
+
+    List<Interview> existingInterviews = interviewRepository
+        .findByMasteryIdAndUserId(mainMasteryId, userId);
+    if (!existingInterviews.isEmpty()) {
+      log.warn("Cannot delete specialization with ID: {} because it has linked interview ID: {}",
+          id, existingInterviews.getFirst().getId());
+      throw new SpecializationLinkedToInterviewException(id, existingInterviews.getFirst().getId());
     }
-    specializationRepository.deleteById(id);
+
+    List<InterviewRequest> existsInterviewRequests = interviewRequestRepository
+        .findAllByMastery_IdAndUser_Id(mainMasteryId, userId);
+    if (!existsInterviewRequests.isEmpty()) {
+      log.warn("Cannot delete specialization with ID: {} because it has linked interview request "
+              + "ID: {}", id, existsInterviewRequests.getFirst().getId());
+      throw new SpecializationLinkedToInterviewRequestException(id,
+          existsInterviewRequests.getFirst().getId());
+    }
+
+    specializationRepository.delete(specialization);
   }
 
   /**
@@ -238,8 +318,10 @@ public class SpecializationService {
    * @param specId    the ID of the specialization to which the mastery should be set as main
    * @param masteryId the ID of the mastery that will become the new main mastery
    * @return the updated main mastery as a DTO
-   * @throws ResourceNotFoundException if the mastery does not belong to the specified
-   *                                   specialization
+   * @throws ResourceNotFoundException                       if the mastery does not belong to the
+   *                                                         specified specialization
+   * @throws SpecializationLinkedToInterviewRequestException if the specialization has existing
+   *                                                         interview request
    */
   public MasteryDto setMainMasteryById(long specId, long masteryId) {
     Mastery newMainMastery = masteryService.getMasteryById(masteryId);
@@ -248,25 +330,11 @@ public class SpecializationService {
       throw new ResourceNotFoundException(
           "The mastery does not belong to the specified specialization.");
     }
+
+    checkSpecializationByInterviewRequest(specialization.getMainMastery().getId(), specId);
+
     specialization.setMainMastery(newMainMastery);
     specializationRepository.save(specialization);
     return masteryMapper.toDto(newMainMastery);
-  }
-
-  /**
-   * Updates the interview counts for the interviewer and candidate specializations after the
-   * interview has been completed and conducted.
-   *
-   * @param interview the interview from which the interviewer and candidate specializations are
-   *                  derived
-   */
-  public void updateUserInterviewCounts(Interview interview) {
-    Specialization interviewer = interview.getInterviewerRequest().getMastery().getSpecialization();
-    Specialization candidate = interview.getCandidateRequest().getMastery().getSpecialization();
-
-    interviewer.setConductedInterviews(interviewer.getConductedInterviews() + 1);
-    candidate.setCompletedInterviews(candidate.getCompletedInterviews() + 1);
-
-    specializationRepository.saveAll(List.of(interviewer, candidate));
   }
 }

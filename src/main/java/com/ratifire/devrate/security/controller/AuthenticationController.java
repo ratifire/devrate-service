@@ -6,6 +6,7 @@ import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.LoginDto;
 import com.ratifire.devrate.security.model.dto.OauthAuthorizationDto;
 import com.ratifire.devrate.security.model.dto.PasswordResetDto;
+import com.ratifire.devrate.security.model.dto.ResendConfirmCodeDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -102,6 +103,17 @@ public class AuthenticationController {
   @PostMapping("/signup")
   public void registerUser(@RequestBody @Valid UserRegistrationDto userRegistrationDto) {
     authenticationFacade.registerUser(userRegistrationDto);
+  }
+
+  /**
+   * Resends the confirmation code for user registration.
+   *
+   * @param resendConfirmCodeDto The DTO containing the user's email.
+   */
+  @PostMapping("/signup/resend-code")
+  public void resendConfirmCode(
+      @RequestBody @Valid ResendConfirmCodeDto resendConfirmCodeDto) {
+    authenticationFacade.resendRegistrationConfirmCode(resendConfirmCodeDto);
   }
 
   /**

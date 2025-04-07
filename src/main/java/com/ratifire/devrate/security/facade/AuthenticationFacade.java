@@ -5,6 +5,7 @@ import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.LoginDto;
 import com.ratifire.devrate.security.model.dto.OauthAuthorizationDto;
 import com.ratifire.devrate.security.model.dto.PasswordResetDto;
+import com.ratifire.devrate.security.model.dto.ResendConfirmCodeDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -36,4 +37,6 @@ public interface AuthenticationFacade {
   void resetPassword(String email);
 
   void refreshAuthTokens(HttpServletRequest request, HttpServletResponse response);
+
+  void resendRegistrationConfirmCode(ResendConfirmCodeDto resendConfirmCodeDto);
 }

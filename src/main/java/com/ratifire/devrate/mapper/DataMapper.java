@@ -1,7 +1,6 @@
 package com.ratifire.devrate.mapper;
 
 import com.ratifire.devrate.entity.Skill;
-import com.ratifire.devrate.entity.User;
 import java.util.List;
 import org.mapstruct.MappingTarget;
 
@@ -21,11 +20,12 @@ public interface DataMapper<D, E> {
 
   List<D> toDto(List<E> entity);
 
-  default D toDto(E entity, User user, List<User> users) {
+  default D toDto(E entity, List<Skill> skills) {
     throw new UnsupportedOperationException("This method is not supported.");
   }
 
-  default D toDto(E entity, List<Skill> skills) {
+  default D toDto(E entity, int masteryLevel, String specializationName, long hostId,
+      String hostFirstName, String hostLastName, long hostMasteryId) {
     throw new UnsupportedOperationException("This method is not supported.");
   }
 

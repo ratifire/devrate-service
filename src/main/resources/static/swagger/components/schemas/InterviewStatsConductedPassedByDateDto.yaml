@@ -1,0 +1,14 @@
+type: object
+properties:
+  date:
+    type: string
+    format: date-time
+    description: The specific date time of the interviews.
+  conducted:
+    type: integer
+    format: int64
+    description: The count of interviews conducted by the user on this date.
+  passed:
+    type: integer
+    format: int64
+    description: The count of interviews passed by the user on this date.

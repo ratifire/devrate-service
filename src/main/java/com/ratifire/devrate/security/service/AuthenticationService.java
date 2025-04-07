@@ -47,10 +47,11 @@ public class AuthenticationService {
       TokenUtil.setAuthTokensToHeaders(response, result.getAccessToken(), result.getIdToken());
       refreshTokenCookieHelper.setRefreshTokenToCookie(response, result.getRefreshToken());
       User user = userService.findByEmail(email);
+
       return userMapper.toDto(user);
 
     } catch (Exception e) {
-      log.error("Authentication process was failed for email {}: {}", email, e.getMessage(), e);
+      log.error("Authentication process was failed for email {}: {}", email, e.getMessage());
       throw new AuthenticationException("Authentication process was failed.");
     }
   }
@@ -68,10 +69,10 @@ public class AuthenticationService {
       refreshTokenCookieHelper.deleteRefreshTokenFromCookie(response);
       return "Logout process was successfully completed.";
     } catch (NotAuthorizedException e) {
-      log.error("Access token has expired: {}", e.getMessage(), e);
+      log.error("Access token has expired: {}", e.getMessage());
       throw new AuthTokenExpiredException("Access token has expired.");
     } catch (Exception e) {
-      log.error("Logout process was failed: {}", e.getMessage(), e);
+      log.error("Logout process was failed: {}", e.getMessage());
       throw new LogoutException("Logout process was failed.");
     }
   }

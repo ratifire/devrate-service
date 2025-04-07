@@ -7,6 +7,7 @@ import com.ratifire.devrate.enums.ContactType;
 import com.ratifire.devrate.security.exception.UserAlreadyExistsException;
 import com.ratifire.devrate.security.exception.UserRegistrationException;
 import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
+import com.ratifire.devrate.security.model.dto.ResendConfirmCodeDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import com.ratifire.devrate.security.model.enums.AccessLevel;
 import com.ratifire.devrate.service.EmailService;
@@ -105,6 +106,22 @@ public class RegistrationService {
     user.getContacts()
         .add(contact);
     sendGreetings(user, email);
+  }
+
+  /**
+   * Resends the registration confirmation code to the user's email.
+   *
+   * @param resendConfirmCodeDto the DTO containing the user's email for which the confirmation code
+   *                             should be resent.
+   */
+  public void resendRegistrationConfirmCode(ResendConfirmCodeDto resendConfirmCodeDto) {
+    try {
+      cognitoApiClientService.resendRegistrationCode(resendConfirmCodeDto.getEmail());
+    } catch (Exception e) {
+      log.error("Resend confirmation code process was failed for email {}: {}",
+          resendConfirmCodeDto.getEmail(), e.getMessage(), e);
+      throw new UserRegistrationException("Resend confirmation code process was failed.");
+    }
   }
 
   /**

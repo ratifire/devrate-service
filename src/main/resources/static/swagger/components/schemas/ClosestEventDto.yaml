@@ -1,0 +1,32 @@
+type: object
+description: The object representing the closest event
+properties:
+  id:
+    type: integer
+    description: Event id
+  type:
+    type: string
+    description: The event type
+    enum:
+      - INTERVIEW
+  startTime:
+    type: string
+    description: The start time of the event
+    items:
+      type: string
+      format: date-time
+  hostId:
+    type: integer
+    description: The id of the opponent user
+  hostName:
+    type: string
+    description: The opponent user first name
+  hostSurname:
+    type: string
+    description: The opponent user last name
+  title:
+    type: string
+    description: The interview title (in general it's mastery level + specialization name of the CANDIDATE interview request)
+  roomUrl:
+    type: string
+    description: The room link url for the event

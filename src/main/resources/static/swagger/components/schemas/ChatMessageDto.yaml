@@ -1,0 +1,24 @@
+type: object
+properties:
+  senderId:
+    type: integer
+    format: int64
+    description: The ID of the user who sent the message
+    required: true
+  receiverId:
+    type: integer
+    format: int64
+    description: The ID of the user who received the message
+    required: true
+  payload:
+    type: string
+    description: The content of the chat message
+  status:
+    type: string
+    description: The current status of the chat message
+    required: true
+  dateTime:
+    type: string
+    format: date-time
+    description: The timestamp of when the chat message was sent
+    required: true

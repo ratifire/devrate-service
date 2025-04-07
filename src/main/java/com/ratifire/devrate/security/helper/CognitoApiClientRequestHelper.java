@@ -38,6 +38,7 @@ import com.amazonaws.services.cognitoidp.model.ConfirmSignUpRequest;
 import com.amazonaws.services.cognitoidp.model.ForgotPasswordRequest;
 import com.amazonaws.services.cognitoidp.model.GlobalSignOutRequest;
 import com.amazonaws.services.cognitoidp.model.InitiateAuthRequest;
+import com.amazonaws.services.cognitoidp.model.ResendConfirmationCodeRequest;
 import com.amazonaws.services.cognitoidp.model.ListUsersRequest;
 import com.amazonaws.services.cognitoidp.model.ProviderUserIdentifierType;
 import com.amazonaws.services.cognitoidp.model.SignUpRequest;
@@ -102,6 +103,19 @@ public class CognitoApiClientRequestHelper {
         .withSecretHash(cognitoAuthHelper.generateSecretHash(email))
         .withUsername(email)
         .withConfirmationCode(confirmationCode);
+  }
+
+  /**
+   * Builds a request to resend the registration confirmation code to a user in AWS Cognito.
+   *
+   * @param email the email of the user (used as the username in Cognito).
+   * @return a {@link ResendConfirmationCodeRequest} object configured with the provided email.
+   */
+  public ResendConfirmationCodeRequest buildResendRegistrationCodeRequest(String email) {
+    return new ResendConfirmationCodeRequest()
+        .withClientId(cognitoConfig.getClientId())
+        .withSecretHash(cognitoAuthHelper.generateSecretHash(email))
+        .withUsername(email);
   }
 
   /**

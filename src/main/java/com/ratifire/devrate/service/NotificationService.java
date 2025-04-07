@@ -14,6 +14,7 @@ import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.NotificationRepository;
 import com.ratifire.devrate.util.JsonConverter;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -28,7 +29,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class NotificationService {
 
-  private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
+  private static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSSS";
 
   private final NotificationRepository repository;
   private final DataMapper<NotificationDto, Notification> mapper;
@@ -111,12 +112,12 @@ public class NotificationService {
    * Adds an interview feedback notification for a specified user.
    *
    * @param recipient  The user who will receive the notification.
-   * @param feedbackId The ID of the feedback to include in the notification payload.
+   * @param interviewId The user interview ID to include in the notification payload.
    * @param userEmail  The user email to add the notification for.
    */
-  public void addInterviewFeedbackDetail(User recipient, long feedbackId, String userEmail) {
+  public void addInterviewFeedbackDetail(User recipient, long interviewId, String userEmail) {
     InterviewFeedbackPayload feedbackPayload = InterviewFeedbackPayload.builder()
-        .feedbackId(feedbackId)
+        .interviewId(interviewId)
         .build();
 
     Notification notification = create(NotificationType.INTERVIEW_FEEDBACK,
@@ -139,7 +140,7 @@ public class NotificationService {
         .type(type)
         .payload(payload != null ? JsonConverter.serialize(payload) : null)
         .read(false)
-        .createdAt(LocalDateTime.now())
+        .createdAt(LocalDateTime.now(ZoneOffset.UTC))
         .user(user)
         .build();
   }
@@ -185,9 +186,10 @@ public class NotificationService {
     // we could get notifications from user, but during the LAZY mode we can not retrieve it regard
     // to closed DB session
     // TODO: should be refactored to reduce DB invocations
-    List<Notification> notifications = repository.findNotificationsByUserId(userId)
-        .orElseThrow(() -> new NotificationNotFoundException(
-            "Can not find notifications by user id " + userId));
+    List<Notification> notifications =
+        repository.findNotificationsByUserIdOrderByCreatedAtDesc(userId)
+            .orElseThrow(() -> new NotificationNotFoundException(
+                "Can not find notifications by user id " + userId));
 
     return mapper.toDto(notifications);
   }

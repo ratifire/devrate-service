@@ -1,0 +1,36 @@
+get:
+  tags:
+    - Interview
+  summary: Retrieve a single visible interview by Id
+  description: Retrieve a single visible interview by id for the current user.
+  operationId: findVisibleInterviewById
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
+  parameters:
+    - in: path
+      name: id
+      description: The ID of the interview that will be retrieved.
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: A single interview by id for the user.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/InterviewDto.yaml'
+    '404':
+      description: Interview by id could not be found.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

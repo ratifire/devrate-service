@@ -1,0 +1,43 @@
+get:
+  tags:
+    - Interview History
+  summary: Get interview history statistics (conducted/passed interviews)
+  description: Retrieves the interview history statistics for the authenticated user about count of conducted and passed interviews.
+  operationId: getInterviewsConductedPassed
+  security:
+    - accessToken: []
+    - idToken: []
+  parameters:
+    - name: from
+      in: query
+      required: true
+      schema:
+        type: string
+        format: date-time
+      description: The start date of the date range (inclusive).
+    - name: to
+      in: query
+      required: true
+      schema:
+        type: string
+        format: date-time
+      description: The end date of the date range (inclusive).
+  responses:
+    '200':
+      description: Interview history retrieved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/InterviewStatsConductedPassedByDateDto.yaml'
+    '400':
+      description: Bad request, e.g., invalid ID or missing required parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error occurred while processing the request.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

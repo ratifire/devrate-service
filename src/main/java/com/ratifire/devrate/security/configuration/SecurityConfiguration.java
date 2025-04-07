@@ -1,6 +1,7 @@
 package com.ratifire.devrate.security.configuration;
 
 
+import com.ratifire.devrate.security.configuration.properties.WhitelistPathProperties;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_AUTHORIZATION;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_ID_TOKEN;
 
@@ -39,23 +40,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfiguration {
 
   private final CognitoAuthenticationFilter cognitoAuthenticationFilter;
-  private final AuthenticationFailureHandlerEntryPoint authenticationEntryPoint;
-
-  private static final String[] WHITELIST = {
-      // -- health-check
-      "/actuator/**",
-      // -- authentication
-      "/auth/**",
-      // -- swagger ui
-      "/swagger/**",
-      "/swagger-ui/**",
-      "/swagger-config.yaml",
-      "/v3/api-docs/**",
-      // -- static resources
-      "/data/user/countries.json",
-      // -- zoom webhook
-      "/zoom/webhook/events"
-  };
+  private final WhitelistPathProperties whitelistPathProperties;
 
   /**
    * Configures security filters.
@@ -72,12 +57,12 @@ public class SecurityConfiguration {
         .sessionManagement(session -> session
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers(WHITELIST).permitAll()
+            .requestMatchers(
+                whitelistPathProperties.getWhitelistedPaths().toArray(String[]::new)).permitAll()
             .anyRequest().authenticated()
         )
+        .httpBasic(AbstractHttpConfigurer::disable)
         .addFilterBefore(cognitoAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-        .exceptionHandling(e -> e
-            .authenticationEntryPoint(authenticationEntryPoint))
         .build();
   }
 

@@ -15,7 +15,7 @@ variable "instance_type" {
 
 variable "repository_name" {
   description = "Repository name"
-  default     = "backend-service"
+  default     = "backend-service-dev"
 }
 
 variable "list_of_ports" {
@@ -43,7 +43,29 @@ variable "db_name" {
   default     = "backend"
 }
 
+variable "db_username" {
+  description = "Name of database user"
+  default     = "backend"
+}
+
+variable "db_password" {
+  description = "Password of database"
+  default     = "backenddb"
+}
+
 variable "s3_bucket_name" {
   description = "Name of the S3 bucket for the backend"
   type        = string
+}
+
+variable "backend_security_group_name" {
+  default = "Security_group_for_backend_project"
+}
+
+variable "back_kay" {
+  default = "terraform_ec2_back_key_pair"
+}
+
+variable "deploy_profile" {
+  default = "dev"
 }

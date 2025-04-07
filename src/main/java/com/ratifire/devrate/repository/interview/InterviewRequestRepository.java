@@ -1,9 +1,7 @@
 package com.ratifire.devrate.repository.interview;
 
-import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.InterviewRequestRole;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,41 +16,17 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RepositoryRestResource(exported = false)
 public interface InterviewRequestRepository extends JpaRepository<InterviewRequest, Long> {
+  Optional<InterviewRequest> findByIdAndUser_Id(long id, long userId);
 
-  @Query("""
-          SELECT req FROM InterviewRequest req
-          JOIN req.mastery mast
-          JOIN mast.specialization spec
-          WHERE spec.name = :#{#request.mastery.specialization.name}
-          AND req.active = true
-          AND req.id != :#{#request.id}
-          AND req.role != :#{#request.role}
-          AND req.user != :#{#request.user}
-          AND mast.level <= :#{#request.mastery.level}
-          AND EXISTS (SELECT 1 FROM req.availableDates d WHERE d IN :#{#request.availableDates})
-          AND (:#{#ignoreList.size()} = 0 OR req.user NOT IN :ignoreList)
-      """)
-  List<InterviewRequest> findMatchedCandidates(@Param("request") InterviewRequest request,
-      List<User> ignoreList);
+  void deleteByIdAndUser_Id(long id, long userId);
 
-  @Query("""
-          SELECT req FROM InterviewRequest req
-          JOIN req.mastery mast
-          JOIN mast.specialization spec
-          WHERE spec.name = :#{#request.mastery.specialization.name}
-          AND req.active = true
-          AND req.id != :#{#request.id}
-          AND req.role != :#{#request.role}
-          AND req.user != :#{#request.user}
-          AND mast.level >= :#{#request.mastery.level}
-          AND EXISTS (SELECT 1 FROM req.availableDates d WHERE d IN :#{#request.availableDates})
-          AND (:#{#ignoreList.size()} = 0 OR req.user NOT IN :ignoreList)
-      """)
-  List<InterviewRequest> findMatchedInterviewers(@Param("request") InterviewRequest request,
-      List<User> ignoreList);
+  @Query("SELECT r.mastery.id FROM InterviewRequest r WHERE r.id = :id")
+  Optional<Long> findMasteryIdById(@Param("id") Long id);
 
-  List<InterviewRequest> findByActiveTrueAndExpiredAtBefore(ZonedDateTime currentDateTime);
+  List<InterviewRequest> findAllByMastery_IdAndUser_Id(long masteryId, long userId);
 
-  Optional<InterviewRequest> findByUserIdAndRoleAndMastery_Id(long userId,
-      InterviewRequestRole role, long masteryId);
+  List<InterviewRequest> findAllByUser_Id(long userId);
+
+  List<InterviewRequest> findByMastery_IdInAndRoleIn(List<Long> masteryIds,
+      List<InterviewRequestRole> roles);
 }

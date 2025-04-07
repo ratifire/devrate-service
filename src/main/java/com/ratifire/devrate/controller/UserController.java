@@ -5,11 +5,6 @@ import com.ratifire.devrate.dto.BookmarkDto;
 import com.ratifire.devrate.dto.ContactDto;
 import com.ratifire.devrate.dto.EducationDto;
 import com.ratifire.devrate.dto.EmploymentRecordDto;
-import com.ratifire.devrate.dto.EventDto;
-import com.ratifire.devrate.dto.InterviewFeedbackDto;
-import com.ratifire.devrate.dto.InterviewRequestDto;
-import com.ratifire.devrate.dto.InterviewStatsConductedPassedByDateDto;
-import com.ratifire.devrate.dto.InterviewSummaryDto;
 import com.ratifire.devrate.dto.LanguageProficiencyDto;
 import com.ratifire.devrate.dto.NotificationDto;
 import com.ratifire.devrate.dto.SpecializationDto;
@@ -18,14 +13,11 @@ import com.ratifire.devrate.dto.UserMainHardSkillsDto;
 import com.ratifire.devrate.dto.UserMainMasterySkillDto;
 import com.ratifire.devrate.dto.UserNameSearchDto;
 import com.ratifire.devrate.dto.UserPictureDto;
-import com.ratifire.devrate.enums.InterviewRequestRole;
+import com.ratifire.devrate.service.SpecializationService;
 import com.ratifire.devrate.service.UserService;
 import jakarta.validation.Valid;
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,6 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserService userService;
+  private final SpecializationService specializationService;
 
   /**
    * Retrieves user personal information by user ID.
@@ -158,7 +151,7 @@ public class UserController {
    *
    * @param userId the ID of the user whose picture is to be retrieved
    * @return a ResponseEntity containing a UserPictureDto with the user's picture as a
-   *         base64-encoded string if present; otherwise, returns no content status
+   *         base64-encoded string if present otherwise, returns no content status
    */
   @GetMapping("/{userId}/pictures")
   public ResponseEntity<UserPictureDto> getUserPicture(@PathVariable long userId) {
@@ -262,44 +255,6 @@ public class UserController {
   }
 
   /**
-   * Retrieves a list of user`s interview summaries information by user ID.
-   *
-   * @param userId the ID of the user
-   * @return the list of user's InterviewSummary information as a DTO
-   */
-  @GetMapping("/{userId}/interview-summaries")
-  public List<InterviewSummaryDto> getInterviewSummariesByUserId(@PathVariable long userId) {
-    return userService.getInterviewSummariesByUserId(userId);
-  }
-
-  /**
-   * Retrieves a list of conducted and passed interviews by user ID and date range.
-   *
-   * @param userId the ID of the user
-   * @param from   the start date of the date range (inclusive)
-   * @param to     the end date of the date range (inclusive)
-   * @return the list of conducted and passed interviews as a DTO
-   */
-  @GetMapping("/{userId}/interview-summaries/statistics")
-  public List<InterviewStatsConductedPassedByDateDto> getInterviewsConductedPassed(
-      @PathVariable long userId,
-      @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-      @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-    return userService.getInterviewStatConductedPassedByDate(userId, from, to);
-  }
-
-  /**
-   * Deletes the association between a user and an interview summary.
-   *
-   * @param userId the ID of the user whose association with the interview summary is to be deleted
-   * @param id     the ID of the interview summary to be removed from the user's associations
-   */
-  @DeleteMapping("/{userId}/interview-summaries/{id}")
-  public void deleteInterviewSummary(@PathVariable long userId, @PathVariable long id) {
-    userService.deleteInterviewSummary(userId, id);
-  }
-
-  /**
    * Retrieves user`s Specialization information by user ID.
    *
    * @param userId the ID of the user
@@ -307,7 +262,7 @@ public class UserController {
    */
   @GetMapping("/{userId}/specializations")
   public List<SpecializationDto> getSpecializationsByUserId(@PathVariable long userId) {
-    return userService.getSpecializationsByUserId(userId);
+    return specializationService.getSpecializationsByUserId(userId);
   }
 
   /**
@@ -319,7 +274,7 @@ public class UserController {
   @PostMapping("/{userId}/specializations")
   public SpecializationDto createSpecialization(
       @Valid @RequestBody SpecializationDto specializationDto, @PathVariable long userId) {
-    return userService.createSpecialization(specializationDto, userId);
+    return specializationService.createSpecialization(specializationDto, userId);
   }
 
   /**
@@ -344,101 +299,6 @@ public class UserController {
   public List<UserMainMasterySkillDto> getPublicMainMasterySkillsByUserId(
       @PathVariable long userId) {
     return userService.getPublicMainMasterySkillsByUserId(userId);
-  }
-
-  /**
-   * Adds an interview request for the specified user.
-   *
-   * @param userId           the ID of the user
-   * @param interviewRequest the interview request data
-   */
-  @PostMapping("/{userId}/interview-requests")
-  public void createInterviewRequest(@PathVariable long userId,
-      @Valid @RequestBody InterviewRequestDto interviewRequest) {
-    userService.createAndMatchInterviewRequest(userId, interviewRequest);
-  }
-
-  /**
-   * Retrieves the interview request for a specific user and role.
-   *
-   * @param userId    the ID of the user
-   * @param role      the role for which the interview request is being retrieved
-   * @param masteryId the mastery id for which the interview request is being retrieved
-   * @return the InterviewRequestDto containing the interview request details
-   */
-  @GetMapping("/{userId}/interview-requests")
-  public InterviewRequestDto getInterviewRequest(@PathVariable long userId,
-      @Valid @RequestParam InterviewRequestRole role, @Valid @RequestParam long masteryId) {
-    return userService.getInterviewRequest(userId, role, masteryId);
-  }
-
-  /**
-   * Updates the interview request for a specific user.
-   *
-   * @param userId           the ID of the user
-   * @param interviewRequest the InterviewRequestDto containing the updated interview request
-   */
-  @PutMapping("/{userId}/interview-requests")
-  public void updateInterviewRequest(@PathVariable long userId,
-      @Valid @RequestBody InterviewRequestDto interviewRequest) {
-    userService.updateAndMatchInterviewRequest(userId, interviewRequest);
-  }
-
-  /**
-   * Deletes an interview request for the specified user and request ID.
-   *
-   * @param userId    the user's ID
-   * @param requestId the ID of the interview request to be deleted
-   */
-  @DeleteMapping("/{userId}/interview-requests/{requestId}")
-  public void deleteInterviewRequest(@PathVariable long userId,
-      @PathVariable long requestId) {
-    userService.deleteInterviewRequest(requestId);
-  }
-
-  /**
-   * Delete an interview for the specified user.
-   *
-   * @param userId      the ID of the user who rejected the interview
-   * @param eventTypeId the rejected interview ID
-   */
-  @DeleteMapping("/{userId}/interviews/{eventTypeId}")
-  public void deleteRejectedInterview(@PathVariable long userId, @PathVariable long eventTypeId) {
-    userService.deleteRejectedInterview(userId, eventTypeId);
-  }
-
-  /**
-   * Retrieves a list of events for a specified user that occur within a given date range.
-   *
-   * @param userId the ID of the user whose events are to be retrieved
-   * @param from   the start of the date range (inclusive)
-   * @param to     the end of the date range (inclusive)
-   * @return a list of {@link EventDto} objects representing the events for the user
-   */
-  @GetMapping("/{userId}/events")
-  public List<EventDto> findEventsBetweenDate(@PathVariable long userId,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-    return userService.findEventsBetweenDate(userId, from, to);
-  }
-
-  /**
-   * Retrieves a list of events for a given user that start from a specified date and time.
-   *
-   * @param userId the ID of the user whose events are to be retrieved
-   * @param from   the starting date and time in ISO format (e.g., {@code 2024-08-28T12:00:00Z})
-   * @return a list of {@link EventDto} objects representing the events starting from
-   */
-  @GetMapping("/{userId}/events/closest")
-  public List<EventDto> findEventsFromDateTime(@PathVariable long userId,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime from) {
-    return userService.findEventsFromDateTime(userId, from);
-  }
-
-  @PostMapping("/{reviewerId}/feedbacks")
-  public void saveFeedback(@PathVariable long reviewerId,
-      @Valid @RequestBody InterviewFeedbackDto interviewFeedbackDto) {
-    userService.saveFeedback(reviewerId, interviewFeedbackDto);
   }
 
   @GetMapping("/{userId}/specializations/main-mastery/skills")

@@ -1,0 +1,69 @@
+get:
+  tags:
+    - Interview Request
+  summary: Retrieves all interview requests.
+  description: |
+    Retrieves all interview requests for the authenticated user.
+  operationId: getAll
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
+  responses:
+    '200':
+      description: The interview requests for the authenticated user retrieved successfully.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../components/schemas/InterviewRequestViewDto.yaml'
+          example:
+            - id: 0
+              role: "CANDIDATE"
+              desiredInterview: 0
+              matchedInterview: 0
+              comment: "string"
+              timeSlots: [
+                {
+                  "dateTime": "2025-04-01T08:10:00Z",
+                  "status": "PENDING"
+                }
+              ]
+            - id: 1
+              role: "INTERVIEWER"
+              desiredInterview: 0
+              matchedInterview: 0
+              comment: "string"
+              timeSlots: [
+                {
+                  "dateTime": "2025-04-01T08:10:00Z",
+                  "status": "PENDING"
+                }
+              ]
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+
+post:
+  tags:
+    - Interview Request
+  summary: Add an interview request
+  description: Adds an interview request.
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
+  requestBody:
+    description: Interview request data
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/InterviewRequestDto.yaml'
+  responses:
+    '200':
+      description: Interview request created successfully
+    '400':
+      description: Bad Request. Available dates must be greater than or equal to the desired number of interviews.

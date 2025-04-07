@@ -61,7 +61,6 @@ public class CognitoTokenValidationService {
     } catch (AuthTokenExpiredException e) {
       throw e;
     } catch (Exception e) {
-      log.error("Token validation process was failed: {}", e.getMessage(), e);
       throw new TokenValidationException("Token validation process was failed");
     }
   }

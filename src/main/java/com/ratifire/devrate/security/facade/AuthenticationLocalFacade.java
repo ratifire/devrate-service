@@ -14,6 +14,7 @@ import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.LoginDto;
 import com.ratifire.devrate.security.model.dto.OauthAuthorizationDto;
 import com.ratifire.devrate.security.model.dto.PasswordResetDto;
+import com.ratifire.devrate.security.model.dto.ResendConfirmCodeDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import com.ratifire.devrate.security.util.TokenUtil;
 import com.ratifire.devrate.service.UserService;
@@ -71,10 +72,11 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
       String encodedUserId =
           Base64.getEncoder().encodeToString(String.valueOf(user.getId()).getBytes());
       TokenUtil.setAuthTokensToHeaders(response, encodedUserId, encodedUserId);
+
       return userMapper.toDto(user);
 
     } catch (Exception e) {
-      log.error("Authentication process was failed for email {}: {}", email, e.getMessage(), e);
+      log.error("Authentication process was failed for email {}: {}", email, e.getMessage());
       throw new AuthenticationException("Authentication process was failed.");
     }
   }
@@ -124,6 +126,11 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
           userRegistrationDto.getEmail(), e.getMessage(), e);
       throw new UserRegistrationException("Initiate registration process was failed.");
     }
+  }
+
+  @Override
+  public void resendRegistrationConfirmCode(ResendConfirmCodeDto resendConfirmCodeDto) {
+    throw new UnsupportedOperationException("Unsupported operation locally.");
   }
 
   @Override
@@ -191,7 +198,7 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
      */
     @Bean
     public ServletContextInitializer servletContextInitializer(
-        @Value("${server.servlet.session.cookie.domain}") String domain) {
+            @Value("${server.servlet.session.cookie.domain}") String domain) {
       return servletContext -> {
         servletContext.getSessionCookieConfig().setDomain(domain);
         servletContext.getSessionCookieConfig().setPath("/");
@@ -241,11 +248,11 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
         filterChain.doFilter(request, response);
         return;
       }
-      setUpAuthenticationContext(new String(Base64.getDecoder().decode(userId)));
+      setUpAuthenticationContext(Long.parseLong(new String(Base64.getDecoder().decode(userId))));
       filterChain.doFilter(request, response);
     }
 
-    private void setUpAuthenticationContext(String userId) {
+    private void setUpAuthenticationContext(Long userId) {
       UsernamePasswordAuthenticationToken authentication =
           new UsernamePasswordAuthenticationToken(userId, null, List.of());
       SecurityContextHolder.getContext().setAuthentication(authentication);

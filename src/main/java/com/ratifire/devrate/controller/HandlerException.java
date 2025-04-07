@@ -2,10 +2,12 @@ package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.exception.FeedbackSubmissionLimitException;
 import com.ratifire.devrate.exception.InterviewRequestDoesntExistException;
+import com.ratifire.devrate.exception.InvalidInterviewRequestException;
 import com.ratifire.devrate.exception.MailException;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.exception.SpecializationLinkedToInterviewException;
+import com.ratifire.devrate.exception.SpecializationLinkedToInterviewRequestException;
 import com.ratifire.devrate.exception.UserSearchInvalidInputException;
 import com.ratifire.devrate.security.exception.AuthTokenExpiredException;
 import com.ratifire.devrate.security.exception.AuthenticationException;
@@ -39,7 +41,6 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 public class HandlerException {
 
   private static final Logger log = LogManager.getLogger(HandlerException.class);
-  private static final int EXPIRED_AUTH_TOKEN_HTTP_STATUS = 498;
   private static final int EXPIRED_REFRESH_TOKEN_HTTP_STATUS = 497;
 
   /**
@@ -52,7 +53,7 @@ public class HandlerException {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public Map<String, String> handleArgumentErrors(MethodArgumentNotValidException ex) {
-    log.error("Handling MethodArgumentNotValidException: {}", ex.getMessage(), ex);
+    log.error("Handling MethodArgumentNotValidException: {}", ex.getMessage());
     Map<String, String> errors = new HashMap<>();
     ex.getBindingResult().getFieldErrors()
         .forEach((error -> errors.put(error.getField(), error.getDefaultMessage())));
@@ -67,7 +68,7 @@ public class HandlerException {
    */
   @ExceptionHandler(Exception.class)
   public ResponseEntity<?> handleExceptionErrors(Exception ex) {
-    log.error("Handling Exception: {}", ex.getMessage(), ex);
+    log.error("Handling Exception: {}", ex.getMessage());
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Oops! Something went wrong:( We're working to fix it! Please try again later:)");
   }
@@ -97,11 +98,21 @@ public class HandlerException {
   }
 
   /**
-   * Handles exceptions that extend ResourceNotFoundException by returning an HTTP status 400.
+   * Handles InterviewRequestExceptions by returning an HTTP status 400.
    */
   @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(InvalidInterviewRequestException.class)
+  public void handleInterviewRequestExceptions(InvalidInterviewRequestException ex) {
+    log.warn("Handling InvalidInterviewRequestException: {}", ex.getMessage());
+  }
+
+  /**
+   * Handles exceptions that extend ResourceNotFoundException by returning an HTTP status 400.
+   */
+  @ResponseStatus(HttpStatus.NOT_FOUND)
   @ExceptionHandler(ResourceNotFoundException.class)
-  public void handleNoFoundExceptions() {
+  public void handleNoFoundExceptions(ResourceNotFoundException ex) {
+    log.warn(ex.getMessage());
   }
 
   /**
@@ -124,8 +135,7 @@ public class HandlerException {
    * Handles the AuthTokenExpired exceptions by returning an HTTP status 498.
    */
   @ExceptionHandler(AuthTokenExpiredException.class)
-  public void handleAuthTokenExpiredException(HttpServletResponse response) {
-    response.setStatus(EXPIRED_AUTH_TOKEN_HTTP_STATUS);
+  public void handleAuthTokenExpiredException() {
   }
 
   /**
@@ -170,7 +180,8 @@ public class HandlerException {
    */
   @ResponseStatus(HttpStatus.CONFLICT)
   @ExceptionHandler({ResourceAlreadyExistException.class,
-      SpecializationLinkedToInterviewException.class})
+      SpecializationLinkedToInterviewException.class,
+      SpecializationLinkedToInterviewRequestException.class})
   public void handleAlreadyExistExceptions() {
   }
 

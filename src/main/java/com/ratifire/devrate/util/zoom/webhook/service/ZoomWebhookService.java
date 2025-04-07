@@ -2,7 +2,6 @@ package com.ratifire.devrate.util.zoom.webhook.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ratifire.devrate.service.interview.InterviewCompletionService;
 import com.ratifire.devrate.util.zoom.webhook.exception.ZoomWebhookException;
 import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest;
 import java.util.Map;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 public class ZoomWebhookService {
 
   private final ZoomWebhookAuthService zoomWebhookAuthService;
-  private final InterviewCompletionService interviewCompletionService;
   private final ObjectMapper objectMapper;
 
   /**
@@ -49,7 +47,7 @@ public class ZoomWebhookService {
             HttpStatus.OK);
       case "meeting.ended":
         try {
-          interviewCompletionService.finalizeInterviewProcess(payload.getPayload().getMeeting());
+          // add logic for interview completion (if will be needed in the future)
           return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception ex) {
           return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

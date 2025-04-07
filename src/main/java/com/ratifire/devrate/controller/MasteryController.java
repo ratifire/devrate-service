@@ -3,6 +3,8 @@ package com.ratifire.devrate.controller;
 import com.ratifire.devrate.dto.MasteryDto;
 import com.ratifire.devrate.dto.MasteryHistoryDto;
 import com.ratifire.devrate.dto.SkillDto;
+import com.ratifire.devrate.dto.SkillSetDto;
+import com.ratifire.devrate.service.MasteryHistoryService;
 import com.ratifire.devrate.service.MasteryService;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MasteryController {
 
   private final MasteryService masteryService;
+  private final MasteryHistoryService masteryHistoryService;
 
   /**
    * Retrieves Mastery by ID.
@@ -35,6 +38,17 @@ public class MasteryController {
   @GetMapping("/{id}")
   public MasteryDto findById(@PathVariable Long id) {
     return masteryService.findById(id);
+  }
+
+  /**
+   * Retrieve a list of hard and soft skills associated with a specific Mastery by its ID.
+   *
+   * @param id the ID of the Mastery
+   * @return a list of SkillDto representing the hard and soft skills
+   */
+  @GetMapping("/{id}/skills/all")
+  public SkillSetDto getAllSkillsByMasteryId(@PathVariable Long id) {
+    return masteryService.getAllSkillsByMasteryId(id);
   }
 
   /**
@@ -97,6 +111,6 @@ public class MasteryController {
       @PathVariable Long masteryId,
       @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
       @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-    return masteryService.getMasteryHistory(masteryId, from, to);
+    return masteryHistoryService.getMasteryHistory(masteryId, from, to);
   }
 }

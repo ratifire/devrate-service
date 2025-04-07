@@ -1,0 +1,45 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+    description: The unique identifier of the interview.
+  masteryId:
+    type: integer
+    format: int64
+    description: The mastery identifier of the current user.
+  masteryLevel:
+    type: integer
+    description: The mastery level of counterpart user.
+  specializationName:
+    type: string
+    description: The name of the specialization of counterpart user.
+  startTime:
+    type: string
+    format: date-time
+    description: The start time of the interview.
+  role:
+    type: string
+    description: The role of counterpart user in the interview.
+  requestComment:
+    type: string
+    description: The interview request comment which is indicated when create request.
+  languageCode:
+    $ref: './InterviewRequestLanguageCode.yaml'
+  hostId:
+    type: integer
+    format: int64
+    description: The ID of counterpart user.
+  hostFirstName:
+    type: string
+    description: The first name of host user.
+  hostLastName:
+    type: string
+    description: The last name of host user.
+  hostMasteryId:
+    type: integer
+    format: int64
+    description: The mastery identifier of the counterpart user.
+  roomUrl:
+    type: string
+    description: The room URL of the interview.

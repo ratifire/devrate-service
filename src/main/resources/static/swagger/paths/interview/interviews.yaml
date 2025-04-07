@@ -1,0 +1,59 @@
+get:
+  tags:
+    - Interview
+  summary: Find paginated interviews
+  description: Retrieve a paginated list of all interviews for current user.
+  operationId: findAll
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
+  parameters:
+    - in: query
+      name: page
+      description: The page number to retrieve. Defaults to 0.
+      required: false
+      schema:
+        type: integer
+        format: int32
+        default: 0
+    - in: query
+      name: size
+      description: The number of records per page. Defaults to 5.
+      required: false
+      schema:
+        type: integer
+        format: int32
+        default: 5
+  responses:
+    '200':
+      description: A paginated list of interviews for the user.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              content:
+                type: array
+                items:
+                  $ref: '../../components/schemas/InterviewDto.yaml'
+              pageable:
+                type: object
+                properties:
+                  pageNumber:
+                    type: integer
+                    description: The current page number.
+                  pageSize:
+                    type: integer
+                    description: The size of each page.
+              totalElements:
+                type: integer
+                description: The total number of interview available.
+              totalPages:
+                type: integer
+                description: The total number of pages available.
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

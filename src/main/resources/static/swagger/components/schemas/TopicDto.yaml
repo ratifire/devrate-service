@@ -1,0 +1,28 @@
+type: object
+properties:
+  opponentUserId:
+    type: integer
+    format: int64
+    description: The ID of the opponent user
+    required: true
+  opponentFirstName:
+    type: string
+    description: The first name of the opponent user
+    required: true
+  opponentLastName:
+    type: string
+    description: The last name of the opponent user
+    required: true
+  opponentPicture:
+    type: string
+    description: The picture of the opponent user
+    required: true
+  lastMessage:
+    type: string
+    description: The content of the last message
+    required: true
+  lastMessageDate:
+    type: string
+    format: date-time
+    description: The timestamp of the last message
+    required: true

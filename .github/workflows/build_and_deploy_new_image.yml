@@ -7,14 +7,13 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Select environment to deploy (prod, dev, dev_new)'
+        description: 'Select environment to deploy (prod, dev)'
         required: true
-        default: 'dev_new'
+        default: 'dev'
         type: choice
         options:
           - dev
           - prod
-          - dev_new
   push:
     branches:
       - main
@@ -26,12 +25,14 @@ env:
   ZOOM_SECRET: ${{secrets.ZOOM_SECRET}}
   AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
   AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-  AWS_REGION: ${{secrets.AWS_REGION}}
+  AWS_REGION: ${{vars.AWS_REGION}}
   REGISTRATION_COGNITO_CLIENT_NAME: ${{secrets.REGISTRATION_COGNITO_CLIENT_NAME}}
   REGISTRATION_COGNITO_CLIENT_ID: ${{secrets.REGISTRATION_COGNITO_CLIENT_ID}}
   REGISTRATION_COGNITO_CLIENT_SECRET: ${{secrets.REGISTRATION_COGNITO_CLIENT_SECRET}}
   PROVIDER_COGNITO_ISSUER_URI: ${{secrets.PROVIDER_COGNITO_ISSUER_URI}}
   PROVIDER_COGNITO_JWK_SET_URI: ${{secrets.PROVIDER_COGNITO_JWK_SET_URI}}
+  AWS_MIROTALK_API_URL: ${{secrets.AWS_MIROTALK_API_URL}}
+  AWS_MIROTALK_API_KEY: ${{secrets.AWS_MIROTALK_API_KEY}}
 
 permissions:
   contents: read
@@ -40,7 +41,7 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment || 'dev_new' }}
+    environment: ${{ github.event.inputs.environment || 'dev' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -51,23 +52,33 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Update application-dev.properties with environment variables
+      - name: Update application.properties with environment variables
         run: |
-          sed -i 's|<AWS_SES_ACCESS_KEY_ID>|'${{ secrets.AWS_SES_ACCESS_KEY_ID }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<AWS_SES_SECRET_ACCESS_KEY>|'${{ secrets.AWS_SES_SECRET_ACCESS_KEY }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<ZOOM_CLIENT_ID>|'${{ env.ZOOM_CLIENT_ID }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<ZOOM_CLIENT_SECRET>|'${{ env.ZOOM_CLIENT_SECRET }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<ZOOM_ACCOUNT_ID>|'${{ env.ZOOM_ACCOUNT_ID }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<ZOOM_SECRET>|'${{ env.ZOOM_SECRET }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<DOMAIN>|'${{ vars.DOMAIN }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<AWS_ACCESS_KEY_ID>|'${{ secrets.AWS_ACCESS_KEY_ID }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<AWS_SECRET_ACCESS_KEY>|'${{ secrets.AWS_SECRET_ACCESS_KEY }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<AWS_REGION>|'${{ secrets.AWS_REGION }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<REGISTRATION_COGNITO_CLIENT_NAME>|'${{ secrets.REGISTRATION_COGNITO_CLIENT_NAME }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<REGISTRATION_COGNITO_CLIENT_ID>|'${{ secrets.REGISTRATION_COGNITO_CLIENT_ID }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<REGISTRATION_COGNITO_CLIENT_SECRET>|'${{ secrets.REGISTRATION_COGNITO_CLIENT_SECRET }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<PROVIDER_COGNITO_ISSUER_URI>|'${{ secrets.PROVIDER_COGNITO_ISSUER_URI }}'|g' src/main/resources/application-dev.properties
-          sed -i 's|<PROVIDER_COGNITO_JWK_SET_URI>|'${{ secrets.PROVIDER_COGNITO_JWK_SET_URI }}'|g' src/main/resources/application-dev.properties
+          FILE="src/main/resources/application-${{ github.event.inputs.environment || 'dev' }}.properties"
+          
+          declare -A REPLACEMENTS=(
+            ["<AWS_SES_ACCESS_KEY_ID>"]="${{ secrets.AWS_SES_ACCESS_KEY_ID }}"
+            ["<AWS_SES_SECRET_ACCESS_KEY>"]="${{ secrets.AWS_SES_SECRET_ACCESS_KEY }}"
+            ["<ZOOM_CLIENT_ID>"]="${{ env.ZOOM_CLIENT_ID }}"
+            ["<ZOOM_CLIENT_SECRET>"]="${{ env.ZOOM_CLIENT_SECRET }}"
+            ["<ZOOM_ACCOUNT_ID>"]="${{ env.ZOOM_ACCOUNT_ID }}"
+            ["<ZOOM_SECRET>"]="${{ env.ZOOM_SECRET }}"
+            ["<DOMAIN>"]="${{ vars.DOMAIN }}"
+            ["<AWS_ACCESS_KEY_ID>"]="${{ secrets.AWS_ACCESS_KEY_ID }}"
+            ["<AWS_SECRET_ACCESS_KEY>"]="${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+            ["<AWS_REGION>"]="${{ vars.AWS_REGION }}"
+            ["<REGISTRATION_COGNITO_CLIENT_NAME>"]="${{ secrets.REGISTRATION_COGNITO_CLIENT_NAME }}"
+            ["<REGISTRATION_COGNITO_CLIENT_ID>"]="${{ secrets.REGISTRATION_COGNITO_CLIENT_ID }}"
+            ["<REGISTRATION_COGNITO_CLIENT_SECRET>"]="${{ secrets.REGISTRATION_COGNITO_CLIENT_SECRET }}"
+            ["<PROVIDER_COGNITO_ISSUER_URI>"]="${{ secrets.PROVIDER_COGNITO_ISSUER_URI }}"
+            ["<PROVIDER_COGNITO_JWK_SET_URI>"]="${{ secrets.PROVIDER_COGNITO_JWK_SET_URI }}"
+            ["<AWS_MIROTALK_API_URL>"]="${{ secrets.AWS_MIROTALK_API_URL }}"
+            ["<AWS_MIROTALK_API_KEY>"]="${{ secrets.AWS_MIROTALK_API_KEY }}"
+          )
+          
+          for key in "${!REPLACEMENTS[@]}"; do
+            sed -i "s|$key|${REPLACEMENTS[$key]}|g" "$FILE"
+          done
 
       - name: Run tests
         run: mvn test
@@ -92,6 +103,9 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
+          TF_VAR_pg_username: ${{ secrets.PG_USERNAME }}
+          TF_VAR_pg_password: ${{ secrets.PG_PASSWORD }}
+          TF_VAR_pg_database: ${{ secrets.PG_DATABASE }}
         run: |
           # Build a docker container and
           # push it to ECR so that it can
@@ -108,11 +122,15 @@ jobs:
           --query 'taskDefinition' \
           --output json > task-def.json
 
+      - name: Clean Task Definition File
+        run: |
+          jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' task-def.json > clean-task-def.json
+
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: task-def.json
+          task-definition: clean-task-def.json
           container-name: ${{ vars.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
 

@@ -8,6 +8,7 @@ import com.amazonaws.services.cognitoidp.model.ConfirmSignUpRequest;
 import com.amazonaws.services.cognitoidp.model.ForgotPasswordRequest;
 import com.amazonaws.services.cognitoidp.model.GlobalSignOutRequest;
 import com.amazonaws.services.cognitoidp.model.InitiateAuthRequest;
+import com.amazonaws.services.cognitoidp.model.ResendConfirmationCodeRequest;
 import com.amazonaws.services.cognitoidp.model.ListUsersRequest;
 import com.amazonaws.services.cognitoidp.model.ListUsersResult;
 import com.amazonaws.services.cognitoidp.model.ProviderUserIdentifierType;
@@ -59,6 +60,16 @@ public class CognitoApiClientService {
   public void confirmRegistration(String email, String code) {
     ConfirmSignUpRequest request = requestHelper.buildConfirmRegistrationRequest(email, code);
     cognitoClient.confirmSignUp(request);
+  }
+
+  /**
+   * Resends the registration confirmation code to the specified user's email.
+   *
+   * @param email The user's email to which the confirmation code will be sent.
+   */
+  public void resendRegistrationCode(String email) {
+    ResendConfirmationCodeRequest request = requestHelper.buildResendRegistrationCodeRequest(email);
+    cognitoClient.resendConfirmationCode(request);
   }
 
   /**

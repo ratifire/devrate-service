@@ -5,22 +5,22 @@ data "aws_caller_identity" "current_user" {}
 data "aws_availability_zones" "availability_zones" {}
 
 data "aws_security_group" "vpc_backend_security_group" {
-  name = "Security_group_for_backend_project"
+  name = var.backend_security_group_name
 }
 
 data "aws_key_pair" "keypair" {
-  key_name = "terraform_ec2_back_key_pair"
+  key_name = var.back_kay
 }
 
 data "aws_iam_instance_profile" "aws_iam_instance_profile_backend" {
-  name = "ecs-instance-profile-backend"
+  name = "ecs-instance-profile-backend-${var.deploy_profile}"
 }
 
 data "aws_vpcs" "all_vpcs" {}
 
 
 data "aws_db_instance" "db_host" {
-  db_instance_identifier = "pg-backend"
+  db_instance_identifier = var.db_instance_identifier
 }
 
 data "aws_subnets" "default_subnets" {
@@ -41,10 +41,10 @@ data "aws_subnets" "default_subnets" {
 }
 
 data "aws_iam_role" "ecs_task_execution_role_arn" {
-  name = "ecs-ex-role-backend"
+  name = "ecs-ex-role-backend-${var.deploy_profile}"
 }
 data "aws_iam_role" "ecs_instance_role" {
-  name = "ecs-inst-role-backend"
+  name = "ecs-inst-role-backend-${var.deploy_profile}"
 }
 
 data "aws_ami" "aws_linux_latest_ecs" {
@@ -59,7 +59,7 @@ data "aws_ami" "aws_linux_latest_ecs" {
 data "aws_instances" "filtered_instances" {
   filter {
     name   = "tag:Name"
-    values = ["Ecs-Back-Instance-ASG"]
+    values = ["Ecs-Back-Instance-ASG-${var.deploy_profile}"]
   }
 }
 

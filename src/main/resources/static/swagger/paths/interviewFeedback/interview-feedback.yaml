@@ -1,0 +1,20 @@
+post:
+  tags:
+    - Interview Feedback
+  summary: Add an interview feedback to evaluate opposite participant
+  description: Add an interview feedback to evaluate opposite participant
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
+  requestBody:
+    description: Interview feedback data
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/InterviewFeedbackDto.yaml'
+  responses:
+    '200':
+      description: Interview feedback created successfully
+    '400':
+      description: Bad Request. The request cannot be fulfilled due to bad syntax

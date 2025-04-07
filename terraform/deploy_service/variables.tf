@@ -1,16 +1,16 @@
 variable "back_cluster_name" {
   description = "Back cluster name."
-  default     = "backend-cluster"
+  default     = "backend-cluster-dev"
 }
 
 variable "back_container_name" {
   description = "Back container name."
-  default     = "back-container"
+  default     = "back-container-dev"
 }
 
 variable "back_repository_name" {
   description = "Repository name"
-  default     = "backend-service"
+  default     = "backend-service-dev"
 }
 
 variable "instance_type" {
@@ -29,12 +29,12 @@ variable "back_port" {
 
 variable "subdomain_name" {
   description = "Subdomain name"
-  default     = "server.devrate.org"
+  default     = "server.skillzzy.com"
 }
 
 variable "domain_name" {
   description = "Domain name"
-  default     = "devrate.org"
+  default     = "skillzzy.com"
 }
 
 variable "region" {
@@ -48,4 +48,57 @@ variable "vpc" {
 
 variable "target_group_name" {
   default = "http-ecs-back-tg"
+}
+
+variable "db_name" {
+  description = "Name of database"
+  default     = "backend"
+}
+
+variable "db_username" {
+  description = "Name of database user"
+  default     = "backend"
+}
+
+variable "db_password" {
+  description = "Password of database"
+  default     = "backenddb"
+}
+
+variable "td_family" {
+  description = "Name of TD"
+  default     = "backend_td_dev"
+}
+
+variable "back_ecs_alb" {
+  default = "ecs-back-alb"
+}
+
+variable "back_capacity_provider" {
+  default = "backend-ec2-capacity-provider"
+}
+
+variable "back-ec2-capacity-provider-tag" {
+  default = "back-ec2-capacity-provider"
+}
+
+variable "ecs_back_launch" {
+  default = "ecs_back_launch"
+}
+
+variable "backend_security_group_name" {
+  default = "Security_group_for_backend_project"
+}
+
+variable "back_kay" {
+  default = "terraform_ec2_back_key_pair"
+}
+
+variable "db_instance_identifier" {
+  description = "Name of db_instance_identifier"
+  default     = "pg-backend"
+}
+
+variable "deploy_profile" {
+  default = "dev"
 }

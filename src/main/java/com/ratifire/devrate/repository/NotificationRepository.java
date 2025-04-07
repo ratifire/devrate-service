@@ -14,5 +14,5 @@ import org.springframework.stereotype.Repository;
 @RepositoryRestResource(exported = false)
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-  Optional<List<Notification>> findNotificationsByUserId(long userId);
+  Optional<List<Notification>> findNotificationsByUserIdOrderByCreatedAtDesc(long userId);
 }

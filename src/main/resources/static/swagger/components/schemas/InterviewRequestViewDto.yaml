@@ -1,0 +1,26 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+    description: The ID of the interview request
+  role:
+    $ref: './InterviewRequestRole.yaml'
+  desiredInterview:
+    type: integer
+    format: int64
+    description: The number of desired interview for the interview request
+  matchedInterview:
+    type: integer
+    format: int64
+    description: The number of matched interview for the interview request
+  comment:
+    type: string
+    description: The interview request comment which is indicated when create request
+  languageCode:
+    $ref: './InterviewRequestLanguageCode.yaml'
+  timeSlots:
+    type: array
+    description: A list of time slots for the interview request
+    items:
+      $ref: './InterviewRequestTimeSlotDto.yaml'

@@ -1,0 +1,36 @@
+get:
+  tags:
+    - Interview
+  summary: Get closest events
+  description: Retrieve the closest events for the auth user.
+  operationId: findUpcomingEvents
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
+  parameters:
+    - in: query
+      name: from
+      description: The start of the date time range (inclusive)
+      required: true
+      schema:
+        type: string
+        format: date-time
+  responses:
+    '200':
+      description: Closest events retrieved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ClosestEventDto.yaml'
+    '400':
+      description: Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

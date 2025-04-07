@@ -36,7 +36,7 @@ public class Specialization {
   @Column(nullable = false)
   private String name;
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "main_mastery_id", referencedColumnName = "id")
   private Mastery mainMastery;
 

@@ -51,8 +51,8 @@ class NotificationServiceTest {
         NotificationDto.builder().build(),
         NotificationDto.builder().build());
 
-    when(notificationRepository.findNotificationsByUserId(anyLong())).thenReturn(
-        Optional.of(notifications));
+    when(notificationRepository.findNotificationsByUserIdOrderByCreatedAtDesc(anyLong()))
+        .thenReturn(Optional.of(notifications));
     when(mapper.toDto(notifications)).thenReturn(expectedNotifications);
 
     List<NotificationDto> actualNotifications = notificationService.getAllByUserId(anyLong());
@@ -62,8 +62,8 @@ class NotificationServiceTest {
 
   @Test
   void testGetAllByUserId_NotFoundNotifications() {
-    when(notificationRepository.findNotificationsByUserId(anyLong())).thenReturn(
-        Optional.empty());
+    when(notificationRepository.findNotificationsByUserIdOrderByCreatedAtDesc(anyLong()))
+        .thenReturn(Optional.empty());
 
     assertThrows(NotificationNotFoundException.class,
         () -> notificationService.getAllByUserId(anyLong()));

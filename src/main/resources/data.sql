@@ -207,75 +207,75 @@ FROM (VALUES  (100001, 'Communication', 'SOFT_SKILL', 5.31, 3, true, true, 10001
               (100022, 'Java Core', 'HARD_SKILL', 8.88, 9, false, true, 10003),
               (100023, 'Git Hub', 'HARD_SKILL', 9.18, 9, false, false, 10003),
               (100024, 'Hibernate', 'HARD_SKILL', 0, 0, false, true, 10003),
-              (100025, 'Leadership', 'SOFT_SKILL', 6.54, 4, false, true, 10004),
-              (100026, 'Project Management', 'SOFT_SKILL', 7.88, 5, true, true, 10004),
-              (100027, 'Team Collaboration', 'SOFT_SKILL', 8.75, 6, false, true, 10004),
-              (100028, 'Negotiation', 'SOFT_SKILL', 5.99, 3, true, false, 10004),
-              (100029, 'Public Speaking', 'SOFT_SKILL', 7.11, 4, true, true, 10004),
+              (100025, 'Communication', 'SOFT_SKILL', 6.54, 4, false, true, 10004),
+              (100026, 'Problem-Solving', 'SOFT_SKILL', 7.88, 5, true, true, 10004),
+              (100027, 'Adaptability', 'SOFT_SKILL', 8.75, 6, false, true, 10004),
+              (100028, 'Critical Thinking', 'SOFT_SKILL', 5.99, 3, true, false, 10004),
+              (100029, 'Time Management', 'SOFT_SKILL', 7.11, 4, true, true, 10004),
               (100030, 'SQL', 'HARD_SKILL', 8.21, 7, false, true, 10004),
               (100031, 'Docker', 'HARD_SKILL', 6.85, 5, true, false, 10004),
               (100032, 'Kubernetes', 'HARD_SKILL', 7.45, 6, true, true, 10004),
-              (100033, 'Leadership', 'SOFT_SKILL', 7.23, 4, false, true, 10005),
-              (100034, 'Project Management', 'SOFT_SKILL', 8.67, 5, true, true, 10005),
-              (100035, 'Team Collaboration', 'SOFT_SKILL', 9.12, 6, true, true, 10005),
-              (100036, 'Negotiation', 'SOFT_SKILL', 6.22, 3, false, false, 10005),
-              (100037, 'Public Speaking', 'SOFT_SKILL', 8.33, 5, true, true, 10005),
+              (100033, 'Communication', 'SOFT_SKILL', 7.23, 4, false, true, 10005),
+              (100034, 'Problem-Solving', 'SOFT_SKILL', 8.67, 5, true, true, 10005),
+              (100035, 'Adaptability', 'SOFT_SKILL', 9.12, 6, true, true, 10005),
+              (100036, 'Critical Thinking', 'SOFT_SKILL', 6.22, 3, false, false, 10005),
+              (100037, 'Time Management', 'SOFT_SKILL', 8.33, 5, true, true, 10005),
               (100038, 'SQL', 'HARD_SKILL', 7.77, 6, false, true, 10005),
               (100039, 'Docker', 'HARD_SKILL', 8.09, 7, true, true, 10005),
               (100040, 'Kubernetes', 'HARD_SKILL', 6.98, 5, true, false, 10005),
-              (100041, 'Leadership', 'SOFT_SKILL', 8.44, 5, true, true, 10006),
-              (100042, 'Project Management', 'SOFT_SKILL', 6.78, 4, false, true, 10006),
-              (100043, 'Team Collaboration', 'SOFT_SKILL', 7.89, 6, true, true, 10006),
-              (100044, 'Negotiation', 'SOFT_SKILL', 6.67, 4, true, false, 10006),
-              (100045, 'Public Speaking', 'SOFT_SKILL', 7.55, 4, false, true, 10006),
+              (100041, 'Communication', 'SOFT_SKILL', 8.44, 5, true, true, 10006),
+              (100042, 'Problem-Solving', 'SOFT_SKILL', 6.78, 4, false, true, 10006),
+              (100043, 'Adaptability', 'SOFT_SKILL', 7.89, 6, true, true, 10006),
+              (100044, 'Critical Thinking', 'SOFT_SKILL', 6.67, 4, true, false, 10006),
+              (100045, 'Time Management', 'SOFT_SKILL', 7.55, 4, false, true, 10006),
               (100046, 'SQL', 'HARD_SKILL', 8.12, 7, true, true, 10006),
               (100047, 'Docker', 'HARD_SKILL', 7.68, 6, false, true, 10006),
               (100048, 'Kubernetes', 'HARD_SKILL', 7.89, 6, true, true, 10006),
-              (100049, 'Leadership', 'SOFT_SKILL', 7.56, 5, true, true, 10007),
-              (100050, 'Project Management', 'SOFT_SKILL', 8.78, 6, true, true, 10007),
-              (100051, 'Team Collaboration', 'SOFT_SKILL', 8.34, 5, true, true, 10007),
-              (100052, 'Negotiation', 'SOFT_SKILL', 7.88, 4, false, true, 10007),
-              (100053, 'Public Speaking', 'SOFT_SKILL', 6.99, 5, true, false, 10007),
+              (100049, 'Communication', 'SOFT_SKILL', 7.56, 5, true, true, 10007),
+              (100050, 'Problem-Solving', 'SOFT_SKILL', 8.78, 6, true, true, 10007),
+              (100051, 'Adaptability', 'SOFT_SKILL', 8.34, 5, true, true, 10007),
+              (100052, 'Critical Thinking', 'SOFT_SKILL', 7.88, 4, false, true, 10007),
+              (100053, 'Time Management', 'SOFT_SKILL', 6.99, 5, true, false, 10007),
               (100054, 'SQL', 'HARD_SKILL', 8.54, 8, true, true, 10007),
               (100055, 'Docker', 'HARD_SKILL', 7.93, 7, true, true, 10007),
               (100056, 'Kubernetes', 'HARD_SKILL', 6.78, 6, false, true, 10007),
-              (100057, 'Leadership', 'SOFT_SKILL', 8.22, 4, true, true, 10008),
-              (100058, 'Project Management', 'SOFT_SKILL', 7.93, 5, true, true, 10008),
-              (100059, 'Team Collaboration', 'SOFT_SKILL', 9.12, 6, false, true, 10008),
-              (100060, 'Negotiation', 'SOFT_SKILL', 6.56, 4, false, false, 10008),
-              (100061, 'Public Speaking', 'SOFT_SKILL', 7.76, 5, true, true, 10008),
+              (100057, 'Communication', 'SOFT_SKILL', 8.22, 4, true, true, 10008),
+              (100058, 'Problem-Solving', 'SOFT_SKILL', 7.93, 5, true, true, 10008),
+              (100059, 'Adaptability', 'SOFT_SKILL', 9.12, 6, false, true, 10008),
+              (100060, 'Critical Thinking', 'SOFT_SKILL', 6.56, 4, false, false, 10008),
+              (100061, 'Time Management', 'SOFT_SKILL', 7.76, 5, true, true, 10008),
               (100062, 'SQL', 'HARD_SKILL', 8.34, 7, true, true, 10008),
               (100063, 'Docker', 'HARD_SKILL', 7.85, 6, false, true, 10008),
               (100064, 'Kubernetes', 'HARD_SKILL', 8.01, 7, true, true, 10008),
-              (100065, 'Leadership', 'SOFT_SKILL', 7.89, 5, true, true, 10009),
-              (100066, 'Project Management', 'SOFT_SKILL', 6.72, 4, false, true, 10009),
-              (100067, 'Team Collaboration', 'SOFT_SKILL', 8.14, 6, true, true, 10009),
-              (100068, 'Negotiation', 'SOFT_SKILL', 6.23, 4, true, true, 10009),
-              (100069, 'Public Speaking', 'SOFT_SKILL', 7.90, 5, true, false, 10009),
+              (100065, 'Communication', 'SOFT_SKILL', 7.89, 5, true, true, 10009),
+              (100066, 'Problem-Solving', 'SOFT_SKILL', 6.72, 4, false, true, 10009),
+              (100067, 'Adaptability', 'SOFT_SKILL', 8.14, 6, true, true, 10009),
+              (100068, 'Critical Thinking', 'SOFT_SKILL', 6.23, 4, true, true, 10009),
+              (100069, 'Time Management', 'SOFT_SKILL', 7.90, 5, true, false, 10009),
               (100070, 'SQL', 'HARD_SKILL', 7.99, 6, true, true, 10009),
               (100071, 'Docker', 'HARD_SKILL', 8.45, 7, false, true, 10009),
               (100072, 'Kubernetes', 'HARD_SKILL', 6.90, 5, true, true, 10009),
-              (100073, 'Leadership', 'SOFT_SKILL', 7.65, 5, true, true, 10010),
-              (100074, 'Project Management', 'SOFT_SKILL', 6.85, 4, true, true, 10010),
-              (100075, 'Team Collaboration', 'SOFT_SKILL', 8.12, 6, false, true, 10010),
-              (100076, 'Negotiation', 'SOFT_SKILL', 6.98, 3, false, false, 10010),
-              (100077, 'Public Speaking', 'SOFT_SKILL', 7.42, 5, true, true, 10010),
+              (100073, 'Communication', 'SOFT_SKILL', 7.65, 5, true, true, 10010),
+              (100074, 'Problem-Solving', 'SOFT_SKILL', 6.85, 4, true, true, 10010),
+              (100075, 'Adaptability', 'SOFT_SKILL', 8.12, 6, false, true, 10010),
+              (100076, 'Critical Thinking', 'SOFT_SKILL', 6.98, 3, false, false, 10010),
+              (100077, 'Time Management', 'SOFT_SKILL', 7.42, 5, true, true, 10010),
               (100078, 'SQL', 'HARD_SKILL', 8.27, 7, true, true, 10010),
               (100079, 'Docker', 'HARD_SKILL', 7.88, 6, false, true, 10010),
               (100080, 'Kubernetes', 'HARD_SKILL', 8.05, 6, true, true, 10010),
-              (100081, 'Leadership', 'SOFT_SKILL', 8.34, 5, true, true, 10011),
-              (100082, 'Project Management', 'SOFT_SKILL', 7.56, 4, true, true, 10011),
-              (100083, 'Team Collaboration', 'SOFT_SKILL', 9.01, 6, false, true, 10011),
-              (100084, 'Negotiation', 'SOFT_SKILL', 6.44, 4, false, true, 10011),
-              (100085, 'Public Speaking', 'SOFT_SKILL', 8.12, 5, true, true, 10011),
+              (100081, 'Communication', 'SOFT_SKILL', 8.34, 5, true, true, 10011),
+              (100082, 'Problem-Solving', 'SOFT_SKILL', 7.56, 4, true, true, 10011),
+              (100083, 'Adaptability', 'SOFT_SKILL', 9.01, 6, false, true, 10011),
+              (100084, 'Critical Thinking', 'SOFT_SKILL', 6.44, 4, false, true, 10011),
+              (100085, 'Time Management', 'SOFT_SKILL', 8.12, 5, true, true, 10011),
               (100086, 'SQL', 'HARD_SKILL', 8.43, 8, true, true, 10011),
               (100087, 'Docker', 'HARD_SKILL', 7.67, 6, true, false, 10011),
               (100088, 'Kubernetes', 'HARD_SKILL', 8.22, 7, true, true, 10011),
-              (100089, 'Leadership', 'SOFT_SKILL', 7.78, 4, true, true, 10012),
-              (100090, 'Project Management', 'SOFT_SKILL', 8.99, 5, true, true, 10012),
-              (100091, 'Team Collaboration', 'SOFT_SKILL', 8.45, 6, false, true, 10012),
-              (100092, 'Negotiation', 'SOFT_SKILL', 6.89, 4, true, true, 10012),
-              (100093, 'Public Speaking', 'SOFT_SKILL', 7.32, 5, true, false, 10012),
+              (100089, 'Communication', 'SOFT_SKILL', 7.78, 4, true, true, 10012),
+              (100090, 'Problem-Solving', 'SOFT_SKILL', 8.99, 5, true, true, 10012),
+              (100091, 'Adaptability', 'SOFT_SKILL', 8.45, 6, false, true, 10012),
+              (100092, 'Critical Thinking', 'SOFT_SKILL', 6.89, 4, true, true, 10012),
+              (100093, 'Time Management', 'SOFT_SKILL', 7.32, 5, true, false, 10012),
               (100094, 'SQL', 'HARD_SKILL', 8.56, 7, true, true, 10012),
               (100095, 'Docker', 'HARD_SKILL', 7.79, 6, false, true, 10012),
               (100096, 'Kubernetes', 'HARD_SKILL', 8.34, 8, true, true, 10012)
@@ -627,114 +627,417 @@ WHERE NOT EXISTS (
 );
 
 -- Insert interview summaries for 10 days
-INSERT INTO interview_summaries (id, date, duration, candidate_id, interviewer_id)
-SELECT id, date::DATE, duration, candidate_id, interviewer_id
+INSERT INTO interview_histories (id, date_time, duration, user_id, mastery_id, specialization, mastery_level, role,
+                                 attendee_id, attendee_first_name, attendee_last_name, attendee_mastery_level,
+                                 attendee_specialization, feedback, is_visible, interview_id)
+SELECT id, date_time, duration, user_id, mastery_id, specialization, mastery_level, role, attendee_id, attendee_first_name,
+       attendee_last_name, attendee_mastery_level, attendee_specialization, feedback, is_visible, interview_id
 FROM (
 VALUES
-    (1000, '2024-07-21', 60, 8881, 8882),
-    (2000, '2024-07-21', 45, 8882, 8881),
-    (5000, '2024-07-23', 75, 8881, 8882),
-    (6000, '2024-07-24', 60, 8882, 8881),
-    (7000, '2024-07-25', 45, 8881, 8882),
-    (8000, '2024-07-26', 30, 8882, 8881),
-    (9000, '2024-07-26', 90, 8881, 8882),
-    (10000, '2024-07-27', 75, 8882, 8881),
-    (11000, '2024-07-27', 45, 8881, 8882),
-    (12000, '2024-07-27', 30, 8882, 8881),
-    (13000, '2024-07-28', 90, 8881, 8882),
-    (14000, '2024-07-28', 75, 8882, 8881)
-) AS new_interview_summaries (id, date, duration, candidate_id, interviewer_id)
+    (1000, '2024-07-21T12:40:00Z'::timestamptz, 60, 8881, 10001, 'Frontend Developer', 1, 'CANDIDATE', 8882, 'Ratifire', 'First', 3, 'Full stack Developer', 'Great interview', true, 22562),
+    (2000, '2024-07-21T12:23:00Z'::timestamptz, 60, 8882, 10008, 'Frontend Developer', 1, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'JavaScript Developer', 'Good communication skills', true, 22563),
+    (3001, '2024-09-08T12:00:00Z'::timestamptz, 45, 8881, 10001, 'Backend Developer', 2, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'Java Developer', 'Positive feedback', true, 22564),
+    (5000, '2024-07-23T12:00:00Z'::timestamptz, 45, 8881, 10008, 'Backend Developer', 2, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'Java Developer', 'Needs improvement', true, 22565),
+    (6000, '2024-07-24T12:00:00Z'::timestamptz, 45, 8882, 10001, 'Backend Developer', 2, 'INTERVIEWER', 8881, 'John', 'Rate', 2, 'Backend full stack', 'Strong technical knowledge', true, 22566),
+    (7000, '2024-07-25T12:00:00Z'::timestamptz, 50, 8881, 10008, 'PHP Developer', 1, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'PHP Dev', 'Good experience', true, 22567),
+    (8000, '2024-07-26T12:00:00Z'::timestamptz, 45, 8882, 10001, 'Backend Developer', 2, 'INTERVIEWER', 8881, 'John', 'Rate', 2, 'Backend full stack', 'Lacked leadership skills', true, 22568),
+    (9000, '2024-07-26T12:00:00Z'::timestamptz, 90, 8881, 10008, 'Interview with candidate 7', 1, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'JS Developer', 'Excellent problem-solving skills', true, 22569),
+    (10000, '2024-07-27T12:00:00Z'::timestamptz, 50, 8882, 10001, 'PHP Developer', 1, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'Frontend developer', 'Attention to detail', true, 22570),
+    (11000, '2024-07-27T12:00:00Z'::timestamptz, 45, 8881, 10008, 'Interview with candidate 9', 2, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'C# Developer', 'Strong decision making', true, 22571),
+    (12000, '2024-07-27T12:00:00Z'::timestamptz, 30, 8882, 10001, 'Interview with candidate 10', 3, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'Node Developer', 'Good technical understanding', true, 22572),
+    (13000, '2024-07-28T12:00:00Z'::timestamptz, 90, 8881, 10008, 'Interview with candidate 11', 3, 'CANDIDATE', 8882, 'Ratifire', 'First', 3, 'ADA Developer', 'Excellent performance', true, 22573),
+    (14000, '2024-07-28T12:00:00Z'::timestamptz, 75, 8882, 10001,'Interview with candidate 12', 3, 'INTERVIEWER', 8881, 'John', 'Rate', 3, 'ADA Developer', 'Experience could be improved', true, 22574)
+) AS new_interview_histories (id, date_time, duration, user_id, mastery_id, specialization, mastery_level, role, attendee_id,
+    attendee_first_name, attendee_last_name, attendee_mastery_level, attendee_specialization, feedback, is_visible, interview_id)
 WHERE NOT EXISTS (
     SELECT 1
-    FROM interview_summaries
-    WHERE id = new_interview_summaries.id
+    FROM interview_histories
+    WHERE id = new_interview_histories.id
 );
 
 -- Insert interview summaries for each month of the year
-INSERT INTO interview_summaries (id, date, duration, candidate_id, interviewer_id)
-SELECT id, date::DATE, duration, candidate_id, interviewer_id
+INSERT INTO interview_histories (id, date_time, duration, user_id, mastery_id, specialization, mastery_level, role,
+                                 attendee_id, attendee_first_name, attendee_last_name, attendee_mastery_level,
+                                 attendee_specialization, feedback, is_visible, interview_id)
+SELECT id, date_time, duration, user_id, mastery_id, specialization, mastery_level, role, attendee_id, attendee_first_name,
+       attendee_last_name, attendee_mastery_level, attendee_specialization, feedback, is_visible, interview_id
 FROM (
 VALUES
-    (15000, '2023-11-01', 60, 8881, 8882),
-    (16000, '2023-12-01', 45, 8882, 8881),
-    (17000, '2023-12-01', 30, 8881, 8882),
-    (18000, '2023-12-01', 90, 8882, 8881),
-    (19000, '2024-01-01', 75, 8881, 8882),
-    (20000, '2024-02-01', 60, 8882, 8881),
-    (21000, '2024-03-01', 45, 8881, 8882),
-    (22000, '2024-04-01', 30, 8882, 8881),
-    (23000, '2024-05-01', 90, 8881, 8882),
-    (24000, '2024-06-01', 75, 8882, 8881),
-    (25000, '2024-07-01', 60, 8881, 8882),
-    (26000, '2024-08-01', 45, 8882, 8881)
-) AS new_interview_summaries (id, date, duration, candidate_id, interviewer_id)
+    (15000, '2023-11-01T12:00:00Z'::timestamptz, 60, 8881, 10001, 'Interview with candidate 13', 1, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'Full Stack Developer', 'Great potential',true, 22575),
+    (16000, '2023-12-01T12:00:00Z'::timestamptz, 45, 8882, 10008,  'Interview with candidate 14', 1, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'JavaScript Developer', 'Needs technical training',true, 22576),
+    (17000, '2023-12-01T12:00:00Z'::timestamptz, 30, 8881, 10001, 'Interview with candidate 15', 2, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'Java Developer', 'Not enough experience',true, 22577),
+    (18000, '2023-12-01T12:00:00Z'::timestamptz, 90, 8882, 10008, 'Interview with candidate 16', 2, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'Backend Developer', 'Great leadership qualities',true, 22578),
+    (19000, '2024-01-01T12:00:00Z'::timestamptz, 75, 8881, 10001, 'Interview with candidate 17', 1, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'PHP Developer', 'Technically strong',true, 22579),
+    (20000, '2024-02-01T12:00:00Z'::timestamptz, 60, 8882, 10008, 'Interview with candidate 18', 1, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'Frontend Developer', 'Solid skills',true, 22580),
+    (21000, '2024-03-01T12:00:00Z'::timestamptz, 45, 8881, 10001, 'Interview with candidate 19', 2, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'C# Developer', 'Attention to detail',true, 22581),
+    (22000, '2024-04-01T12:00:00Z'::timestamptz, 30, 8882, 10008, 'Interview with candidate 20', 2, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'Node Developer', 'Lacks team coordination',true, 22582),
+    (23000, '2024-05-01T12:00:00Z'::timestamptz, 90, 8881, 10001, 'Interview with candidate 21', 1, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'React Developer', 'Excellent coding skills',true, 22583),
+    (24000, '2024-06-01T12:00:00Z'::timestamptz, 75, 8882, 10008, 'Interview with candidate 22', 1, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'Angular Developer', 'Could improve in testing',true, 22584),
+    (25000, '2024-07-01T12:00:00Z'::timestamptz, 60, 8881, 10001, 'Interview with candidate 23', 2, 'CANDIDATE', 8882, 'Ratifire', 'First', 2, 'Vue Developer', 'Good problem-solving',true, 22585),
+    (26000, '2024-08-01T12:00:00Z'::timestamptz, 45, 8882, 10008, 'Interview with candidate 24', 1, 'INTERVIEWER', 8881, 'John', 'Rate', 1, 'Svelte Developer', 'Requires further training',true, 22586)
+) AS new_interview_histories (id, date_time, duration, user_id, mastery_id, specialization, mastery_level, role, attendee_id, attendee_first_name,
+                              attendee_last_name, attendee_mastery_level, attendee_specialization, feedback, is_visible, interview_id)
 WHERE NOT EXISTS (
     SELECT 1
-    FROM interview_summaries
-    WHERE id = new_interview_summaries.id
+    FROM interview_histories
+    WHERE id = new_interview_histories.id
 );
 
--- Associate interview summaries with user
-INSERT INTO interview_summaries_users (user_id, interview_summary_id)
-SELECT * FROM (
+INSERT INTO soft_skills (interview_history_id, skill_name, skill_value)
+SELECT interview_history_id, skill_name, skill_value
+FROM (
 VALUES
-    (8881, 1000), (8881, 2000), (8881, 5000), (8881, 6000), (8881, 7000),
-    (8881, 8000), (8881, 9000), (8881, 10000), (8881, 11000), (8881, 12000),
-    (8881, 13000), (8881, 14000), (8881, 15000), (8881, 16000), (8881, 17000),
-    (8881, 18000), (8881, 19000), (8881, 20000), (8881, 21000), (8881, 22000),
-    (8881, 23000), (8881, 24000), (8881, 25000), (8881, 26000)
-) AS new_interview_summaries_users (user_id, interview_summary_id)
+    (1000, 'Communication', 8),
+    (1000, 'Teamwork', 7),
+    (1000, 'Problem Solving', 6),
+    (1000, 'Adaptability', 9),
+    (3001, 'Communication', 6),
+    (3001, 'Teamwork', 9),
+    (3001, 'Problem Solving', 8),
+    (3001, 'Adaptability', 7),
+    (2000, 'Leadership', 6),
+    (2000, 'Communication', 7),
+    (2000, 'Teamwork', 8),
+    (2000, 'Problem Solving', 5),
+    (2000, 'Adaptability', 8),
+    (5000, 'Critical Thinking', 5),
+    (5000, 'Communication', 9),
+    (5000, 'Teamwork', 6),
+    (5000, 'Problem Solving', 7),
+    (5000, 'Adaptability', 8),
+    (6000, 'Adaptability', 9),
+    (6000, 'Communication', 7),
+    (6000, 'Teamwork', 8),
+    (6000, 'Problem Solving', 9),
+    (7000, 'Time Management', 8),
+    (7000, 'Communication', 8),
+    (7000, 'Teamwork', 7),
+    (7000, 'Problem Solving', 6),
+    (7000, 'Adaptability', 9),
+    (8000, 'Problem-Solving', 4),
+    (8000, 'Communication', 9),
+    (8000, 'Teamwork', 8),
+    (8000, 'Adaptability', 8),
+    (9000, 'Creativity', 10),
+    (9000, 'Communication', 6),
+    (9000, 'Teamwork', 9),
+    (9000, 'Problem Solving', 8),
+    (9000, 'Adaptability', 7),
+    (10000, 'Work Ethic', 7),
+    (10000, 'Communication', 8),
+    (10000, 'Teamwork', 7),
+    (10000, 'Problem Solving', 6),
+    (10000, 'Adaptability', 9),
+    (11000, 'Conflict Resolution', 6),
+    (11000, 'Communication', 9),
+    (11000, 'Teamwork', 8),
+    (11000, 'Problem Solving', 7),
+    (11000, 'Adaptability', 8),
+    (12000, 'Empathy', 7),
+    (12000, 'Communication', 7),
+    (12000, 'Teamwork', 8),
+    (12000, 'Problem Solving', 9),
+    (12000, 'Adaptability', 6),
+    (13000, 'Attention to Detail', 9),
+    (13000, 'Communication', 8),
+    (13000, 'Teamwork', 7),
+    (13000, 'Problem Solving', 6),
+    (13000, 'Adaptability', 9),
+    (14000, 'Networking', 8),
+    (14000, 'Communication', 9),
+    (14000, 'Teamwork', 8),
+    (14000, 'Problem Solving', 7),
+    (14000, 'Adaptability', 8)
+) AS new_soft_skills (interview_history_id, skill_name, skill_value)
 WHERE NOT EXISTS (
     SELECT 1
-    FROM interview_summaries_users
-    WHERE user_id = new_interview_summaries_users.user_id
-      AND interview_summary_id = new_interview_summaries_users.interview_summary_id
+    FROM soft_skills
+    WHERE interview_history_id = new_soft_skills.interview_history_id
+      AND skill_name = new_soft_skills.skill_name
+);
+
+INSERT INTO hard_skills (interview_history_id, skill_name, skill_value)
+SELECT interview_history_id, skill_name, skill_value
+FROM (
+VALUES
+    (1000, 'Java', 9),
+    (1000, 'Spring Boot', 8),
+    (1000, 'Hibernate', 7),
+    (1000, 'Microservices', 8),
+    (1000, 'SQL', 7),
+    (1000, 'Docker', 8),
+    (1000, 'Kubernetes', 7),
+    (1000, 'REST APIs', 9),
+    (3001, 'Java', 6),
+    (3001, 'Python', 8),
+    (3001, 'Django', 7),
+    (3001, 'Flask', 8),
+    (3001, 'SQLAlchemy', 7),
+    (3001, 'Pandas', 8),
+    (3001, 'NumPy', 7),
+    (3001, 'Scikit-learn', 8),
+    (3001, 'TensorFlow', 7),
+    (2000, 'React', 7),
+    (2000, 'Redux', 8),
+    (2000, 'JavaScript', 9),
+    (2000, 'TypeScript', 7),
+    (2000, 'Node.js', 8),
+    (2000, 'GraphQL', 7),
+    (2000, 'Webpack', 8),
+    (2000, 'Jest', 7),
+    (5000, 'SQL', 6),
+    (5000, 'C#', 8),
+    (5000, '.NET Core', 7),
+    (5000, 'Entity Framework', 8),
+    (5000, 'LINQ', 7),
+    (5000, 'Azure', 8),
+    (5000, 'REST APIs', 7),
+    (5000, 'Microservices', 8),
+    (5000, 'SQL Server', 7),
+    (6000, 'AWS', 9),
+    (6000, 'Terraform', 8),
+    (6000, 'Ansible', 7),
+    (6000, 'CloudFormation', 8),
+    (6000, 'Docker', 7),
+    (6000, 'Kubernetes', 8),
+    (6000, 'Serverless', 7),
+    (6000, 'Linux', 8),
+    (7000, 'Docker', 7),
+    (7000, 'PHP', 8),
+    (7000, 'Laravel', 7),
+    (7000, 'Symfony', 8),
+    (7000, 'MySQL', 7),
+    (7000, 'REST APIs', 8),
+    (7000, 'Composer', 7),
+    (7000, 'HTML/CSS', 8),
+    (7000, 'JavaScript', 7),
+    (8000, 'Kubernetes', 5),
+    (8000, 'C++', 8),
+    (8000, 'STL', 7),
+    (8000, 'Boost', 8),
+    (8000, 'Multithreading', 7),
+    (8000, 'Algorithms', 8),
+    (8000, 'Data Structures', 7),
+    (8000, 'Design Patterns', 8),
+    (8000, 'Debugging', 7),
+    (9000, 'Python', 10),
+    (9000, 'Ruby', 8),
+    (9000, 'Rails', 7),
+    (9000, 'Sinatra', 8),
+    (9000, 'RSpec', 7),
+    (9000, 'PostgreSQL', 8),
+    (9000, 'Redis', 7),
+    (9000, 'Sidekiq', 8),
+    (9000, 'Capistrano', 7),
+    (10000, 'Node.js', 8),
+    (10000, 'Express', 7),
+    (10000, 'MongoDB', 8),
+    (10000, 'Mongoose', 7),
+    (10000, 'GraphQL', 8),
+    (10000, 'TypeScript', 7),
+    (10000, 'Jest', 8),
+    (10000, 'REST APIs', 7),
+    (11000, 'Terraform', 8),
+    (11000, 'AWS', 9),
+    (11000, 'Python', 8),
+    (11000, 'Flask', 7),
+    (11000, 'Django', 8),
+    (11000, 'SQLAlchemy', 7),
+    (11000, 'Pandas', 8),
+    (11000, 'NumPy', 7),
+    (12000, 'CI/CD', 8),
+    (12000, 'Jenkins', 7),
+    (12000, 'Git', 8),
+    (12000, 'Docker', 7),
+    (12000, 'Kubernetes', 8),
+    (12000, 'Maven', 7),
+    (12000, 'Gradle', 8),
+    (12000, 'JUnit', 7),
+    (13000, 'Testing', 9),
+    (13000, 'Selenium', 8),
+    (13000, 'Cucumber', 7),
+    (13000, 'Postman', 8),
+    (13000, 'JMeter', 7),
+    (13000, 'LoadRunner', 8),
+    (13000, 'Appium', 7),
+    (13000, 'Mocha', 8),
+    (14000, 'Machine Learning', 8),
+    (14000, 'Deep Learning', 7),
+    (14000, 'TensorFlow', 8),
+    (14000, 'Keras', 7),
+    (14000, 'PyTorch', 8),
+    (14000, 'Scikit-learn', 7),
+    (14000, 'Pandas', 8),
+    (14000, 'NumPy', 7)
+) AS new_hard_skills (interview_history_id, skill_name, skill_value)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM hard_skills
+    WHERE interview_history_id = new_hard_skills.interview_history_id
+      AND skill_name = new_hard_skills.skill_name
+);
+
+
+-- Associate interview summaries with user
+INSERT INTO interview_histories_users (user_id, interview_history_id)
+SELECT * FROM (
+VALUES (8881, 1000),
+       (8882, 2000),
+       (8881, 3001),
+       (8881, 5000),
+       (8882, 6000),
+       (8882, 8000),
+       (8881, 7000),
+       (8882, 10000),
+       (8881, 9000),
+       (8881, 11000),
+       (8882, 12000),
+       (8881, 13000),
+       (8882, 14000),
+       (8881, 15000),
+       (8882, 16000),
+       (8881, 17000),
+       (8882, 18000),
+       (8881, 19000),
+       (8882, 20000),
+       (8881, 21000),
+       (8882, 22000),
+       (8881, 23000),
+       (8882, 24000),
+       (8881, 25000),
+       (8882, 26000)
+) AS new_interview_histories_users (user_id, interview_history_id)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM interview_histories_users
+    WHERE user_id = new_interview_histories_users.user_id
+      AND interview_history_id = new_interview_histories_users.interview_history_id
+);
+
+INSERT INTO interviews (id, user_id, mastery_id, role, event_id, room_url, start_time, language_code, request_comment, is_visible)
+SELECT * FROM (
+                  VALUES
+                      (20001,8881, 10001, 'CANDIDATE', 10001, 'https://testlink/1', '2025-02-21T12:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20001', true),
+                      (20002,8882, 10009, 'INTERVIEWER', 10001, 'https://testlink/1', '2025-02-21T12:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20002', true),
+                      (20003,8881, 10001, 'CANDIDATE', 10002, 'https://testlink/2', '2025-02-21T14:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20003', true),
+                      (20004,8882, 10009, 'INTERVIEWER', 10002, 'https://testlink/2', '2025-02-21T14:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20004', true),
+                      (20005,8881, 10001, 'CANDIDATE', 10003, 'https://testlink/3', '2025-02-21T16:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20005', true),
+                      (20006,8882, 10009, 'INTERVIEWER', 10003, 'https://testlink/3', '2025-02-21T16:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20006', true),
+                      (20007,8881, 10001, 'CANDIDATE', 10004, 'https://testlink/4', '2025-02-21T18:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20007', true),
+                      (20008,8882, 10009, 'INTERVIEWER', 10004, 'https://testlink/4', '2025-02-21T18:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20008', true),
+                      (20009,8881, 10001, 'CANDIDATE', 10005, 'https://testlink/5', '2025-02-21T20:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20009', true),
+                      (20010,8882, 10009, 'INTERVIEWER', 10005, 'https://testlink/5', '2025-02-21T20:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20010', true),
+                      (20011,8881, 10001, 'CANDIDATE', 10006, 'https://testlink/6', '2025-02-21T22:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20011', true),
+                      (20012,8882, 10009, 'INTERVIEWER', 10006, 'https://testlink/6', '2025-02-21T22:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20012', true),
+                      (20013,8881, 10001, 'CANDIDATE', 10007, 'https://testlink/7', '2025-02-22T10:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20013', true),
+                      (20014,8882, 10009, 'INTERVIEWER', 10007, 'https://testlink/7', '2025-02-22T10:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20014', true),
+                      (20015,8881, 10001, 'CANDIDATE', 10008, 'https://testlink/8', '2025-02-22T15:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20015', true),
+                      (20016,8882, 10009, 'INTERVIEWER', 10008, 'https://testlink/8', '2025-02-22T15:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20016', true),
+                      (20017,8881, 10001, 'CANDIDATE', 10009, 'https://testlink/9', '2025-02-22T18:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20017', true),
+                      (20018,8882, 10009, 'INTERVIEWER', 10009, 'https://testlink/9', '2025-02-22T18:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20018', true),
+                      (20019,8881, 10001, 'CANDIDATE', 10010, 'https://testlink/10', '2025-02-23T11:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20019', true),
+                      (20020,8882, 10009, 'INTERVIEWER', 10010, 'https://testlink/10', '2025-02-23T11:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20020', true),
+                      (20021,8881, 10001, 'CANDIDATE', 10011, 'https://testlink/11', '2025-02-24T14:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20021', true),
+                      (20022,8882, 10009, 'INTERVIEWER', 10011, 'https://testlink/11', '2025-02-24T14:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20022', true),
+                      (20023,8881, 10001, 'CANDIDATE', 10012, 'https://testlink/12', '2025-02-05T10:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20023', true),
+                      (20024,8882, 10009, 'INTERVIEWER', 10012, 'https://testlink/12', '2025-02-05T10:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20024', true),
+                      (20025, 8881, 10001, 'CANDIDATE', 10013, 'https://testlink/13', '2025-03-01T09:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20025', true),
+                      (20026, 8882, 10009, 'INTERVIEWER', 10013, 'https://testlink/13', '2025-03-01T09:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20026', true),
+                      (20027, 8881, 10001, 'CANDIDATE', 10014, 'https://testlink/14', '2025-03-01T11:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20027', true),
+                      (20028, 8882, 10009, 'INTERVIEWER', 10014, 'https://testlink/14', '2025-03-01T11:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20028', true),
+                      (20029, 8881, 10001, 'CANDIDATE', 10015, 'https://testlink/15', '2025-03-01T13:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20029', true),
+                      (20030, 8882, 10009, 'INTERVIEWER', 10015, 'https://testlink/15', '2025-03-01T13:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20030', true),
+                      (20031, 8881, 10001, 'CANDIDATE', 10016, 'https://testlink/16', '2025-03-01T15:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20031', true),
+                      (20032, 8882, 10009, 'INTERVIEWER', 10016, 'https://testlink/16', '2025-03-01T15:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20032', true),
+                      (20033, 8881, 10001, 'CANDIDATE', 10017, 'https://testlink/17', '2025-02-06T17:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20033', true),
+                      (20034, 8882, 10009, 'INTERVIEWER', 10017, 'https://testlink/17', '2025-02-06T17:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20034', true),
+                      (20035, 8881, 10001, 'CANDIDATE', 10018, 'https://testlink/18', '2025-02-06T19:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20035', true),
+                      (20036, 8882, 10009, 'INTERVIEWER', 10018, 'https://testlink/18', '2025-02-06T19:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20036', true),
+                      (20037, 8881, 10001, 'CANDIDATE', 10019, 'https://testlink/19', '2025-03-02T09:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20037', true),
+                      (20038, 8882, 10009, 'INTERVIEWER', 10019, 'https://testlink/19', '2025-03-02T09:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20038', true),
+                      (20039, 8881, 10001, 'CANDIDATE', 10020, 'https://testlink/20', '2025-03-02T11:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20039', true),
+                      (20040, 8882, 10009, 'INTERVIEWER', 10020, 'https://testlink/20', '2025-03-02T11:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20040', true),
+                      (20041, 8881, 10001, 'CANDIDATE', 10021, 'https://testlink/21', '2025-03-02T13:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20041', true),
+                      (20042, 8882, 10009, 'INTERVIEWER', 10021, 'https://testlink/21', '2025-03-02T13:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20042', true),
+                      (20043, 8881, 10001, 'CANDIDATE', 10022, 'https://testlink/22', '2025-03-02T15:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20043', true),
+                      (20044, 8882, 10009, 'INTERVIEWER', 10022, 'https://testlink/22', '2025-03-02T15:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20044', true),
+                      (20045, 8881, 10001, 'CANDIDATE', 10023, 'https://testlink/23', '2025-03-02T17:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20045', true),
+                      (20046, 8882, 10009, 'INTERVIEWER', 10023, 'https://testlink/23', '2025-03-02T17:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20046', true),
+                      (20047, 8881, 10001, 'CANDIDATE', 10024, 'https://testlink/24', '2025-03-02T19:00:00Z'::timestamptz, 'ua', 'Request comment 8881. Interview Id 20047', true),
+                      (20048, 8882, 10009, 'INTERVIEWER', 10024, 'https://testlink/24', '2025-03-02T19:00:00Z'::timestamptz, 'ua', 'Request comment 8882. Interview Id 20048', true)
+) AS new_interviews (id, user_id, mastery_id, role, event_id, room_url, start_time, language_code, request_comment, is_visible)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM interviews
+    WHERE id = new_interviews.id
 );
 
 --  Create event records
-INSERT INTO events (id, event_type_id, type, room_link, host_id, participant_id, start_time)
+INSERT INTO events (id, type, room_link, host_id, participant_id, start_time, title)
 SELECT * FROM (
 VALUES
-    (10001, 20001, 'INTERVIEW', 'https://zoom.us/j/123456701', 8881, ARRAY[8882], '2024-09-02T00:00:00Z'::timestamptz),
-    (10002, 20002, 'INTERVIEW', 'https://zoom.us/j/123456702', 8881, ARRAY[8882], '2024-09-04T12:00:00Z'::timestamptz),
-    (10003, 20003, 'INTERVIEW', 'https://zoom.us/j/123456703', 8881, ARRAY[8882], '2024-09-07T19:00:00Z'::timestamptz),
-    (10004, 20004, 'INTERVIEW', 'https://zoom.us/j/123456704', 8881, ARRAY[8882], '2024-09-09T01:00:00Z'::timestamptz),
-    (10005, 20005, 'INTERVIEW', 'https://zoom.us/j/123456705', 8881, ARRAY[8882], '2024-09-11T11:00:00Z'::timestamptz),
-    (10006, 20006, 'INTERVIEW', 'https://zoom.us/j/123456706', 8881, ARRAY[8882], '2024-09-13T20:00:00Z'::timestamptz),
-    (10007, 20007, 'INTERVIEW', 'https://zoom.us/j/123456707', 8881, ARRAY[8882], '2024-09-24T00:00:00Z'::timestamptz),
-    (10008, 20008, 'INTERVIEW', 'https://zoom.us/j/123456708', 8881, ARRAY[8882], '2024-09-26T10:00:00Z'::timestamptz),
-    (10009, 20009, 'INTERVIEW', 'https://zoom.us/j/123456709', 8881, ARRAY[8882], '2024-09-28T19:00:00Z'::timestamptz)
-) AS events (id, event_type_id, type, room_link, host_id, participant_id, start_time)
+    (10001, 'INTERVIEW', 'https://testlink/1', 8882, ARRAY[8881], '2025-02-21T12:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10002, 'INTERVIEW', 'https://testlink/2', 8882, ARRAY[8881], '2025-02-21T14:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10003, 'INTERVIEW', 'https://testlink/3', 8882, ARRAY[8881], '2025-02-21T16:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10004, 'INTERVIEW', 'https://testlink/4', 8882, ARRAY[8881], '2025-02-21T18:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10005, 'INTERVIEW', 'https://testlink/5', 8882, ARRAY[8881], '2025-02-21T20:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10006, 'INTERVIEW', 'https://testlink/6', 8882, ARRAY[8881], '2025-02-21T22:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10007, 'INTERVIEW', 'https://testlink/7', 8882, ARRAY[8881], '2025-02-22T10:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10008, 'INTERVIEW', 'https://testlink/8', 8882, ARRAY[8881], '2025-02-22T15:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10009, 'INTERVIEW', 'https://testlink/9', 8882, ARRAY[8881], '2025-02-22T18:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10010, 'INTERVIEW', 'https://testlink/10', 8882, ARRAY[8881], '2025-02-23T11:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10011, 'INTERVIEW', 'https://testlink/11', 8882, ARRAY[8881], '2025-02-24T14:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10012, 'INTERVIEW', 'https://testlink/12', 8882, ARRAY[8881], '2025-02-05T10:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10013, 'INTERVIEW', 'https://testlink/13', 8882, ARRAY[8881], '2025-03-01T09:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10014, 'INTERVIEW', 'https://testlink/14', 8882, ARRAY[8881], '2025-03-01T11:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10015, 'INTERVIEW', 'https://testlink/15', 8882, ARRAY[8881], '2025-03-01T13:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10016, 'INTERVIEW', 'https://testlink/16', 8882, ARRAY[8881], '2025-03-01T15:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10017, 'INTERVIEW', 'https://testlink/17', 8882, ARRAY[8881], '2025-02-06T17:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10018, 'INTERVIEW', 'https://testlink/18', 8882, ARRAY[8881], '2025-02-06T19:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10019, 'INTERVIEW', 'https://testlink/19', 8882, ARRAY[8881], '2025-03-02T09:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10020, 'INTERVIEW', 'https://testlink/20', 8882, ARRAY[8881], '2025-03-02T11:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10021, 'INTERVIEW', 'https://testlink/21', 8882, ARRAY[8881], '2025-03-02T13:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10022, 'INTERVIEW', 'https://testlink/22', 8882, ARRAY[8881], '2025-03-02T15:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10023, 'INTERVIEW', 'https://testlink/23', 8882, ARRAY[8881], '2025-03-02T17:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10024, 'INTERVIEW', 'https://testlink/24', 8882, ARRAY[8881], '2025-03-02T19:00:00Z'::timestamptz, 'Junior Frontend Developer')
+) AS new_events (id, type, room_link, host_id, participant_id, start_time, title)
 WHERE NOT EXISTS (SELECT 1
                   FROM events
-                  WHERE id = events.id);
+                  WHERE id = new_events.id);
 
 -- Create user-event relation records
 INSERT INTO user_event (user_id, event_id)
 SELECT * FROM (
 VALUES
-    (8881, 10001),
-    (8882, 10001),
-    (8881, 10002),
-    (8882, 10002),
-    (8881, 10003),
-    (8882, 10003),
-    (8881, 10004),
-    (8882, 10004),
-    (8881, 10005),
-    (8882, 10005),
-    (8881, 10006),
-    (8882, 10006),
-    (8881, 10007),
-    (8882, 10007),
-    (8881, 10008),
-    (8882, 10008),
-    (8881, 10009),
-    (8882, 10009)
-) AS user_event (user_id, event_id)
+    (8881, 10001), (8882, 10001),
+    (8881, 10002), (8882, 10002),
+    (8881, 10003), (8882, 10003),
+    (8881, 10004), (8882, 10004),
+    (8881, 10005), (8882, 10005),
+    (8881, 10006), (8882, 10006),
+    (8881, 10007), (8882, 10007),
+    (8881, 10008), (8882, 10008),
+    (8881, 10009), (8882, 10009),
+    (8881, 10010), (8882, 10010),
+    (8881, 10011), (8882, 10011),
+    (8881, 10012), (8882, 10012),
+    (8881, 10013), (8882, 10013),
+    (8881, 10014), (8882, 10014),
+    (8881, 10015), (8882, 10015),
+    (8881, 10016), (8882, 10016),
+    (8881, 10017), (8882, 10017),
+    (8881, 10018), (8882, 10018),
+    (8881, 10019), (8882, 10019),
+    (8881, 10020), (8882, 10020),
+    (8881, 10021), (8882, 10021),
+    (8881, 10022), (8882, 10022),
+    (8881, 10023), (8882, 10023),
+    (8881, 10024), (8882, 10024)
+) AS new_user_event (user_id, event_id)
 WHERE NOT EXISTS (SELECT 1
                   FROM user_event
-                  WHERE user_id = user_event.user_id AND event_id = user_event.event_id);
+                  WHERE user_id = new_user_event.user_id
+                  AND event_id = new_user_event.event_id);
 
 -- Create 50 test user records with names in Ukrainian, English, and Ukrainian transliteration
 INSERT INTO users (id, first_name, last_name, country, city, is_subscribed, picture, completed_interviews, conducted_interviews, email, password)
@@ -840,37 +1143,89 @@ WHERE NOT EXISTS (
     WHERE specializations.id = new_specializations.id
     );
 
--- Create test data for interview_feedback_details
-INSERT INTO interview_feedback_details (id, participant_role, start_time, interview_summary_id, evaluated_mastery_id, skill_id, participant_id, owner_id)
+--  Create interview requests records
+INSERT INTO interview_requests (id, role, mastery_id, desired_interview, matched_interview, average_mark, expired_at, language_code, comment, user_id)
 SELECT * FROM (
 VALUES
-    (40001, 'INTERVIEWER', '2024-09-08T09:00:00Z'::timestamptz, 3001, 10001, ARRAY[100001, 100002, 100003, 100004, 100005]::bigint[], 8882, 8881),
-    (40002, 'CANDIDATE', '2024-09-08T09:00:00Z'::timestamptz, 3001, 10001, ARRAY[100001, 100002, 100003, 100004, 100005, 100006, 100007, 100008, 100078, 100079, 100080]::bigint[], 8881, 8882)
-) AS interview_feedback_details (id, participant_role, start_time, interview_summary_id, evaluated_mastery_id, skill_id, participant_id, owner_id)
-WHERE NOT EXISTS (SELECT 1
-                  FROM interview_feedback_details
-                  WHERE id = interview_feedback_details.id);
-
--- Create test data for interview_summaries
-INSERT INTO interview_summaries (id, date, duration, candidate_id, interviewer_id)
-SELECT id, date::DATE, duration, candidate_id, interviewer_id
-FROM (
-         VALUES (3001, '2024-09-08', 60, 8881, 8882)
-     ) AS new_interview_summaries (id, date, duration, candidate_id, interviewer_id)
+    (99880, 'CANDIDATE', 10005, 5, 2, 0, '2025-12-30T12:00:00Z'::timestamptz, 'ua', 'I want to get a realistic interview experience, including technical questions, coding, and feedback to improve my skills. The goal is to prepare for real interviews.', 8881),
+    (99881, 'INTERVIEWER', 10005, 10, 4, 0, '2025-12-30T12:00:00Z'::timestamptz, 'en', 'I strive to create a realistic interview experience with technical questions, coding, and providing feedback. The goal is to improve my interviewing and candidate evaluation skills.', 8881),
+    (99882, 'CANDIDATE', 10001, 2, 1, 0, '2025-12-30T12:00:00Z'::timestamptz, 'pl', 'I want to get a realistic interview experience, including technical questions, coding, and feedback to improve my skills. The goal is to prepare for real interviews.', 8881),
+    (99883, 'CANDIDATE', 10010, 2, 2, 0, '2025-12-30T12:00:00Z'::timestamptz, 'en', 'I want to get a realistic interview experience, including technical questions, coding, and feedback to improve my skills. The goal is to prepare for real interviews.', 8882),
+    (99884, 'INTERVIEWER', 10009, 2, 2, 0, '2025-12-30T12:00:00Z'::timestamptz, 'pl', 'I want to get a realistic interview experience, including technical questions, coding, and feedback to improve my skills. The goal is to prepare for real interviews.', 8882)
+) AS new_interview_requests (id, role, mastery_id, desired_interview, matched_interview, average_mark, expired_at, language_code, comment, user_id)
 WHERE NOT EXISTS (
     SELECT 1
-    FROM interview_summaries
-    WHERE id = new_interview_summaries.id
+    FROM interview_requests
+    WHERE id = new_interview_requests.id
 );
 
--- Create test data interview_summaries_users relation records
-INSERT INTO interview_summaries_users (user_id, interview_summary_id)
+--  Create interview requests available dates records
+INSERT INTO interview_request_time_slots (id, interview_request_id, date_time, status)
 SELECT * FROM (
 VALUES
-    (8881, 3001),
-    (8882, 3001)
-) AS interview_summaries_users (user_id, interview_summary_id)
-WHERE NOT EXISTS (SELECT 1
-                  FROM interview_summaries_users
-                  WHERE user_id = interview_summaries_users.user_id
-                    AND interview_summary_id = interview_summaries_users.interview_summary_id);
+    (88990, 99880, '2025-02-17T11:00:00Z'::timestamptz, 'PENDING'),
+    (88991, 99880, '2025-02-17T12:00:00Z'::timestamptz, 'PENDING'),
+    (88992, 99880, '2025-02-17T13:00:00Z'::timestamptz, 'PENDING'),
+    (88993, 99880, '2025-02-17T14:00:00Z'::timestamptz, 'PENDING'),
+    (88994, 99880, '2025-02-18T09:00:00Z'::timestamptz, 'PENDING'),
+    (88995, 99880, '2025-03-10T11:00:00Z'::timestamptz, 'PENDING'),
+    (88996, 99880, '2025-03-10T12:00:00Z'::timestamptz, 'PENDING'),
+    (88997, 99880, '2025-03-11T11:00:00Z'::timestamptz, 'PENDING'),
+    (88998, 99880, '2025-03-11T12:00:00Z'::timestamptz, 'PENDING'),
+    (89030, 99880, '2025-02-18T08:00:00Z'::timestamptz, 'BOOKED'),
+    (89031, 99880, '2025-03-10T13:00:00Z'::timestamptz, 'BOOKED'),
+    (88999, 99881, '2025-02-20T09:00:00Z'::timestamptz, 'PENDING'),
+    (89000, 99881, '2025-02-20T10:00:00Z'::timestamptz, 'PENDING'),
+    (89001, 99881, '2025-02-20T11:00:00Z'::timestamptz, 'PENDING'),
+    (89002, 99881, '2025-02-20T12:00:00Z'::timestamptz, 'PENDING'),
+    (89003, 99881, '2025-02-21T08:00:00Z'::timestamptz, 'PENDING'),
+    (89004, 99881, '2025-02-21T09:00:00Z'::timestamptz, 'PENDING'),
+    (89005, 99881, '2025-02-21T10:00:00Z'::timestamptz, 'PENDING'),
+    (89006, 99881, '2025-02-21T11:00:00Z'::timestamptz, 'PENDING'),
+    (89007, 99881, '2025-03-12T10:00:00Z'::timestamptz, 'PENDING'),
+    (89008, 99881, '2025-03-12T11:00:00Z'::timestamptz, 'PENDING'),
+    (89009, 99881, '2025-03-12T12:00:00Z'::timestamptz, 'PENDING'),
+    (89010, 99881, '2025-03-24T09:00:00Z'::timestamptz, 'PENDING'),
+    (89011, 99881, '2025-03-24T10:00:00Z'::timestamptz, 'PENDING'),
+    (89012, 99881, '2025-03-24T11:00:00Z'::timestamptz, 'PENDING'),
+    (89013, 99881, '2025-03-24T12:00:00Z'::timestamptz, 'PENDING'),
+    (89014, 99881, '2025-03-24T14:00:00Z'::timestamptz, 'PENDING'),
+    (89015, 99881, '2025-04-01T15:00:00Z'::timestamptz, 'PENDING'),
+    (89016, 99881, '2025-04-01T17:00:00Z'::timestamptz, 'PENDING'),
+    (89017, 99881, '2025-04-01T18:00:00Z'::timestamptz, 'PENDING'),
+    (89018, 99881, '2025-04-01T20:00:00Z'::timestamptz, 'PENDING'),
+    (89032, 99881, '2025-03-12T09:00:00Z'::timestamptz, 'BOOKED'),
+    (89033, 99881, '2025-03-24T13:00:00Z'::timestamptz, 'BOOKED'),
+    (89034, 99881, '2025-04-01T16:00:00Z'::timestamptz, 'BOOKED'),
+    (89035, 99881, '2025-04-01T19:00:00Z'::timestamptz, 'BOOKED'),
+    (89019, 99882, '2025-03-10T10:00:00Z'::timestamptz, 'PENDING'),
+    (89020, 99882, '2025-03-10T12:00:00Z'::timestamptz, 'PENDING'),
+    (89021, 99882, '2025-03-10T13:00:00Z'::timestamptz, 'PENDING'),
+    (89036, 99882, '2025-03-10T11:00:00Z'::timestamptz, 'BOOKED'),
+    (89022, 99883, '2025-03-10T14:00:00Z'::timestamptz, 'PENDING'),
+    (89023, 99883, '2025-03-12T12:00:00Z'::timestamptz, 'PENDING'),
+    (89024, 99883, '2025-03-13T13:00:00Z'::timestamptz, 'PENDING'),
+    (89025, 99883, '2025-03-14T14:00:00Z'::timestamptz, 'PENDING'),
+    (89037, 99883, '2025-03-08T14:00:00Z'::timestamptz, 'BOOKED'),
+    (89038, 99883, '2025-03-09T12:00:00Z'::timestamptz, 'BOOKED'),
+    (89026, 99884, '2025-03-01T14:00:00Z'::timestamptz, 'PENDING'),
+    (89027, 99884, '2025-03-02T12:00:00Z'::timestamptz, 'PENDING'),
+    (89028, 99884, '2025-03-05T13:00:00Z'::timestamptz, 'PENDING'),
+    (89029, 99884, '2025-03-07T14:00:00Z'::timestamptz, 'PENDING'),
+    (89039, 99884, '2025-03-08T14:00:00Z'::timestamptz, 'BOOKED'),
+    (89040, 99884, '2025-03-09T12:00:00Z'::timestamptz, 'BOOKED')
+) AS interview_request_time_slots (id, interview_request_id, date_time, status)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM interview_request_time_slots
+    WHERE interview_request_id = interview_request_time_slots.interview_request_id
+);
+
+-- INSERT INTO interview_request_time_slots (interview_request_id, date_time, status)
+-- SELECT interview_request_id, available_dates, 'PENDING' FROM interview_request_available_dates;
+--
+-- INSERT INTO interview_request_time_slots (interview_request_id, date_time, status)
+-- SELECT interview_request_id, assigned_dates, 'BOOKED' FROM interview_request_assigned_dates;
+--
+-- DROP TABLE interview_request_available_dates;
+-- DROP TABLE interview_request_assigned_dates;

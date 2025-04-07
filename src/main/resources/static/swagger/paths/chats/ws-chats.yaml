@@ -1,0 +1,24 @@
+get:
+  tags:
+    - Chat
+  summary: Send a message via WebSocket.
+  description: |
+      Endpoint to send a message to a WebSocket topic. The message will also be saved in the database.
+  operationId: sendMessage
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
+  requestBody:
+    description: Chat message data to be sent via WebSocket.
+    required: true
+    content:
+      application/json:
+         schema:
+          $ref: '../../components/schemas/ChatMessageDto.yaml'
+  responses:
+    '200':
+      description: The message was successfully sent to the WebSocket topic and saved.
+    '400':
+      description: Bad Request. Invalid data provided in the message.
+    '500':
+      description: Internal server error.

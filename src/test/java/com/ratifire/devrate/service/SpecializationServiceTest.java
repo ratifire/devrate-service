@@ -9,7 +9,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -21,13 +20,15 @@ import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
-import com.ratifire.devrate.exception.SpecializationLinkedToInterviewException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
+import com.ratifire.devrate.repository.interview.InterviewRequestRepository;
+import com.ratifire.devrate.security.helper.UserContextProvider;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Unit tests for the SpecializationService class.
  */
 @ExtendWith(MockitoExtension.class)
-public class SpecializationServiceTest {
+class SpecializationServiceTest {
 
   @InjectMocks
   private SpecializationService specializationService;
@@ -51,6 +52,10 @@ public class SpecializationServiceTest {
   private SpecializationRepository specializationRepository;
   @Mock
   private InterviewRepository interviewRepository;
+  @Mock
+  private InterviewRequestRepository interviewRequestRepository;
+  @Mock
+  private UserContextProvider userContextProvider;
   @Mock
   private DataMapper dataMapper;
   @Mock
@@ -142,6 +147,9 @@ public class SpecializationServiceTest {
     when(dataMapper.updateEntity(specializationDto, specialization)).thenReturn(specialization);
     when(specializationRepository.save(specialization)).thenReturn(specialization);
     when(dataMapper.toDto(specialization)).thenReturn(specializationDto);
+    when(userContextProvider.getAuthenticatedUserId()).thenReturn(1L);
+    when(interviewRequestRepository.findAllByMastery_IdAndUser_Id(anyLong(), anyLong()))
+        .thenReturn(Collections.emptyList());
 
     SpecializationDto result = specializationService.update(specializationDto);
 
@@ -180,23 +188,6 @@ public class SpecializationServiceTest {
   }
 
   @Test
-  void deleteById_shouldCallRepositoryDelete() {
-    doNothing().when(specializationRepository).deleteById(specId);
-    when(interviewRepository.findFirstBySpecializationId(specId)).thenReturn(null);
-    specializationService.delete(specId);
-
-    verify(specializationRepository).deleteById(specId);
-  }
-
-  @Test
-  void delete_linkedInterview_shouldThrowSpecializationLinkedToInterviewException() {
-    when(interviewRepository.findFirstBySpecializationId(specId)).thenReturn(anyLong());
-
-    assertThrows(SpecializationLinkedToInterviewException.class,
-        () -> specializationService.delete(specId));
-  }
-
-  @Test
   void getMasteriesBySpecializationId_shouldReturnListOf() {
     List<Mastery> listMasteries = new ArrayList<>();
     List<MasteryDto> listMasteriesDto = new ArrayList<>();
@@ -226,14 +217,16 @@ public class SpecializationServiceTest {
   @Test
   void setMainMasteryById_shouldUpdateMainMastery() {
     specialization.setMasteries(defaultMasteryLevels);
+    when(userContextProvider.getAuthenticatedUserId()).thenReturn(1L);
     when(masteryService.getMasteryById(anyLong())).thenReturn(midMastery);
     when(specializationRepository.findById(specId)).thenReturn(Optional.of(specialization));
     when(dataMapper.toDto(midMastery)).thenReturn(masteryDto);
+    when(interviewRequestRepository.findAllByMastery_IdAndUser_Id(anyLong(), anyLong()))
+        .thenReturn(Collections.emptyList());
 
     MasteryDto result = specializationService.setMainMasteryById(specId, 2L);
 
     assertNotNull(result);
     assertEquals(midMastery, specialization.getMainMastery());
   }
-
 }

@@ -1,0 +1,9 @@
+type: object
+properties:
+  status:
+    $ref: './TimeSlotStatus.yaml'
+  dateTime:
+    description: A time slot for the interview request
+    items:
+      type: string
+      format: date-time

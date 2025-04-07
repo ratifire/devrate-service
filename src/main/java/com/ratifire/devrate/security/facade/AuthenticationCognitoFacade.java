@@ -8,6 +8,7 @@ import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.LoginDto;
 import com.ratifire.devrate.security.model.dto.OauthAuthorizationDto;
 import com.ratifire.devrate.security.model.dto.PasswordResetDto;
+import com.ratifire.devrate.security.model.dto.ResendConfirmCodeDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import com.ratifire.devrate.security.service.AuthenticationOauthService;
 import com.ratifire.devrate.security.service.AuthenticationService;
@@ -71,6 +72,11 @@ public class AuthenticationCognitoFacade implements AuthenticationFacade {
   @Override
   public void registerUser(UserRegistrationDto userRegistrationDto) {
     registrationService.registerUser(userRegistrationDto);
+  }
+
+  @Override
+  public void resendRegistrationConfirmCode(ResendConfirmCodeDto resendConfirmCodeDto) {
+    registrationService.resendRegistrationConfirmCode(resendConfirmCodeDto);
   }
 
   @Override

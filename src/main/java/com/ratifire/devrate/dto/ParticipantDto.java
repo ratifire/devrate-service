@@ -17,6 +17,7 @@ public class ParticipantDto {
   private long id;
   private String name;
   private String surname;
-  private String status;
+  private int masteryLevel;
+  private String specializationName;
   private InterviewRequestRole role;
 }

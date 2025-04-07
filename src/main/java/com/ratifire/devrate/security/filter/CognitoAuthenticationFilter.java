@@ -6,8 +6,8 @@ import static com.ratifire.devrate.security.model.enums.AuthenticationError.UNAU
 import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.ACCESS_TOKEN;
 import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.ID_TOKEN;
 
+import com.ratifire.devrate.security.configuration.properties.WhitelistPathProperties;
 import com.ratifire.devrate.security.exception.AuthTokenExpiredException;
-import com.ratifire.devrate.security.exception.AuthenticationException;
 import com.ratifire.devrate.security.service.CognitoTokenValidationService;
 import com.ratifire.devrate.security.util.TokenUtil;
 import jakarta.servlet.FilterChain;
@@ -18,11 +18,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.PathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
@@ -33,17 +35,19 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Profile("!local")
 public class CognitoAuthenticationFilter extends OncePerRequestFilter {
 
-  private final CognitoTokenValidationService validationService;
+  private static final int EXPIRED_AUTH_TOKEN_HTTP_STATUS = 498;
+  private final CognitoTokenValidationService cognitoTokenValidationService;
+  private final WhitelistPathProperties whitelistPathProperties;
+  private final PathMatcher pathMatcher;
 
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) {
-    Set<String> excludedPaths = Set.of(
-        "/auth/refresh-token",
-        "/auth/oauth/redirect/linkedIn",
-        "/auth/oauth/redirect/google",
-        "/auth/oauth/authorize"
-    );
-    return excludedPaths.contains(request.getServletPath());
+    String path = request.getServletPath();
+    if (StringUtils.isEmpty(path)) {
+      return false;
+    }
+    return whitelistPathProperties.getWhitelistedPaths().stream()
+        .anyMatch(pattern -> pathMatcher.match(pattern, path));
   }
 
   @Override
@@ -54,28 +58,24 @@ public class CognitoAuthenticationFilter extends OncePerRequestFilter {
     String idToken = TokenUtil.extractIdTokenFromRequest(request);
 
     if (accessToken == null || idToken == null) {
-      request.setAttribute(ATTRIBUTE_AUTHENTICATION_ERROR, UNAUTHORIZED);
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       filterChain.doFilter(request, response);
       return;
     }
 
     try {
 
-      if (validationService.validateToken(accessToken, ACCESS_TOKEN)
-          && validationService.validateToken(idToken, ID_TOKEN)) {
+      if (cognitoTokenValidationService.validateToken(accessToken, ACCESS_TOKEN)
+          && cognitoTokenValidationService.validateToken(idToken, ID_TOKEN)) {
         setUpAuthenticationContext(idToken);
       }
 
       filterChain.doFilter(request, response);
 
     } catch (AuthTokenExpiredException e) {
-      request.setAttribute(ATTRIBUTE_AUTHENTICATION_ERROR, AUTH_TOKEN_EXPIRED);
-      throw new AuthTokenExpiredException(
-          "Authentication process was failed. Token has been expired");
-
+      response.setStatus(EXPIRED_AUTH_TOKEN_HTTP_STATUS);
     } catch (Exception e) {
-      request.setAttribute(ATTRIBUTE_AUTHENTICATION_ERROR, UNAUTHORIZED);
-      throw new AuthenticationException("Authentication process was failed");
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
   }
 
