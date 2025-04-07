@@ -1,11 +1,10 @@
 package com.ratifire.devrate.security.configuration;
 
 
-import com.ratifire.devrate.security.configuration.properties.WhitelistPathProperties;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_AUTHORIZATION;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_ID_TOKEN;
 
-import com.ratifire.devrate.security.configuration.handler.AuthenticationFailureHandlerEntryPoint;
+import com.ratifire.devrate.security.configuration.properties.WhitelistPathProperties;
 import com.ratifire.devrate.security.filter.CognitoAuthenticationFilter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
