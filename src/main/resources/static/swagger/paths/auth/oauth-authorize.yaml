@@ -1,0 +1,40 @@
+post:
+  tags:
+    - OAuth
+  summary: Exchange authorization code for authentication tokens
+  description: Handles the final step of the OAuth 2.0 Authorization Code Flow.
+    It exchanges the provided authorization code for access, refresh, and ID tokens,
+    and returns user information
+  security: [ ]
+  operationId: handleOauthAuthorization
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/OauthAuthorizationDto.yaml'
+  responses:
+    '200':
+      description: Successful authentication
+      headers:
+        Set-Cookie:
+          description: Sets the refresh token cookie with the token value and appropriate security attributes.
+          schema:
+            type: string
+            example: Refresh-Token=eyJhbGciOiJIUzI1NiIsInR...; Path=/; HttpOnly; Secure
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/UserDto.yaml'
+    '400':
+      description: Bad Request.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
