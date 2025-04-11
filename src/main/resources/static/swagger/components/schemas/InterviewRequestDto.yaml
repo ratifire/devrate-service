@@ -27,6 +27,6 @@ properties:
     type: integer
     format: int64
     description: The number of desired interview for the interview request
-  contentStatus:
+  consentStatus:
     type: boolean
     description: Flag indicating whether the user has permitted the recording and sharing of interview data (by default this flag should be unchecked - false)
