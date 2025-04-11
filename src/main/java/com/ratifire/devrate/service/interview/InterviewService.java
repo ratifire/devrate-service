@@ -16,6 +16,7 @@ import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
+import com.ratifire.devrate.enums.ConsentStatus;
 import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.enums.SkillType;
@@ -251,12 +252,15 @@ public class InterviewService {
 
     String interviewerRequestComment = extractCommentForRole(requests, INTERVIEWER);
     String interviewerLanguageCode = extractLanguageCode(requests, INTERVIEWER);
+    ConsentStatus interviewerConsentStatus = extractContentStatus(requests, INTERVIEWER);
     Interview interviewer = buildInterview(interviewerId, interviewerRequestId, eventId,
-        INTERVIEWER, joinUrl, date, interviewerRequestComment, interviewerLanguageCode);
+        INTERVIEWER, joinUrl, date, interviewerRequestComment, interviewerLanguageCode,
+        interviewerConsentStatus);
     String candidateRequestComment = extractCommentForRole(requests, CANDIDATE);
     String candidateLanguageCode = extractLanguageCode(requests, CANDIDATE);
+    ConsentStatus candidateConsentStatus = extractContentStatus(requests, CANDIDATE);
     Interview candidate = buildInterview(candidateId, candidateRequestId, eventId, CANDIDATE,
-        joinUrl, date, candidateRequestComment, candidateLanguageCode);
+        joinUrl, date, candidateRequestComment, candidateLanguageCode, candidateConsentStatus);
     interviewRepository.saveAll(List.of(interviewer, candidate));
 
     interviewRequestService.markTimeSlotsAsBooked(requests, interviewer.getStartTime());
@@ -286,6 +290,17 @@ public class InterviewService {
         .findFirst()
         .orElse("");
   }
+
+  private ConsentStatus extractContentStatus(List<InterviewRequest> requests,
+      InterviewRequestRole role) {
+    return requests.stream()
+            .filter(r -> r.getRole() == role)
+            .map(InterviewRequest::getConsentStatus)
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElse(ConsentStatus.NOT_GIVEN);
+  }
+
 
   /**
    * Saves the given Interview entity to the repository.
@@ -401,7 +416,7 @@ public class InterviewService {
    */
   private Interview buildInterview(long userId, long requestId, long eventId,
       InterviewRequestRole role, String roomUrl, ZonedDateTime date, String requestComment,
-      String languageCode) {
+      String languageCode, ConsentStatus consentStatus) {
 
     long masteryId = interviewRequestService.findMasteryId(requestId)
         .orElseThrow(() -> new IllegalStateException(
@@ -412,6 +427,7 @@ public class InterviewService {
         .masteryId(masteryId)
         .eventId(eventId)
         .role(role)
+        .consentStatus(consentStatus)
         .roomUrl(roomUrl)
         .startTime(date)
         .languageCode(languageCode)
