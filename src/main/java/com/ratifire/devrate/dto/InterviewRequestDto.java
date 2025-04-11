@@ -24,4 +24,5 @@ public class InterviewRequestDto {
   private String languageCode;
   private List<ZonedDateTime> timeSlots;
   private ZonedDateTime expiredAt;
+  private boolean consentStatus;
 }

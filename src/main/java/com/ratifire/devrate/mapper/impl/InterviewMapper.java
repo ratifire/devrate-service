@@ -26,6 +26,7 @@ public abstract class InterviewMapper implements DataMapper<InterviewDto, Interv
   @Mapping(source = "interview.roomUrl", target = "roomUrl")
   @Mapping(target = "interview.userId", ignore = true)
   @Mapping(target = "interview.interviewId", ignore = true)
+  @Mapping(target = "interview.consentStatus", ignore = true)
   public abstract InterviewDto toDto(
       Interview interview,
       int masteryLevel,
