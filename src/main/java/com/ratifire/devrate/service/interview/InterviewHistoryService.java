@@ -223,6 +223,7 @@ public class InterviewHistoryService {
         .specialization(mastery.getSpecialization().getName())
         .masteryLevel(mastery.getLevel())
         .role(interview.getRole())
+        .consentStatus(interview.getConsentStatus())
         .attendeeId(attendeeId)
         .attendeeFirstName(attendeeFirstName)
         .attendeeLastName(attendeeLastName)

@@ -2,6 +2,7 @@ package com.ratifire.devrate.entity.interview;
 
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.enums.ConsentStatus;
 import com.ratifire.devrate.enums.InterviewRequestRole;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -44,6 +45,10 @@ public class InterviewRequest {
 
   @Enumerated(EnumType.STRING)
   private InterviewRequestRole role;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "consent_status", nullable = false)
+  private ConsentStatus consentStatus;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "mastery_id", nullable = false)

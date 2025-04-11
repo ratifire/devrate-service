@@ -1,5 +1,6 @@
 package com.ratifire.devrate.entity.interview;
 
+import com.ratifire.devrate.enums.ConsentStatus;
 import com.ratifire.devrate.enums.InterviewRequestRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,6 +39,10 @@ public class Interview {
 
   @Enumerated(EnumType.STRING)
   private InterviewRequestRole role;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "consent_status", nullable = false)
+  private ConsentStatus consentStatus;
 
   @Column(name = "event_id", nullable = false)
   private long eventId;
