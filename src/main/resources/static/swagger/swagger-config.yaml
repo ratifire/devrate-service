@@ -23,6 +23,8 @@ tags:
     description: Operations related to sending notifications
   - name: Authentication
     description: Endpoints for user authentication
+  - name: OAuth
+    description: Endpoints for user authentication via OAuth
   - name: Password-Reset
     description: Endpoints for password reset functionality
   - name: Refresh-Token
@@ -74,6 +76,12 @@ paths:
     $ref: './paths/auth/logout.yaml'
   /auth/refresh-token:
     $ref: './paths/auth/refresh-token.yaml'
+  /auth/oauth/redirect/linkedIn:
+    $ref: './paths/auth/oauth-redirect-linkedIn.yaml'
+  /auth/oauth/redirect/google:
+    $ref: './paths/auth/oauth-redirect-google.yaml'
+  /auth/oauth/authorize:
+    $ref: './paths/auth/oauth-authorize.yaml'
   /notifications:
     $ref: './paths/notifications/notifications.yaml'
   /ws/notifications:
