@@ -13,6 +13,9 @@ import com.ratifire.devrate.security.model.enums.AccessLevel;
 import com.ratifire.devrate.service.EmailService;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
@@ -103,7 +106,13 @@ public class RegistrationService {
         .type(ContactType.EMAIL)
         .value(email)
         .build();
-    user.getContacts()
+
+    Optional.ofNullable(user.getContacts())
+        .orElseGet(() -> {
+          List<Contact> newList = new ArrayList<>();
+          user.setContacts(newList);
+          return newList;
+        })
         .add(contact);
     sendGreetings(user, email);
   }
