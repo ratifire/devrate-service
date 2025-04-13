@@ -8,10 +8,10 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum OauthProvider {
+public enum OauthIdentityProvider {
 
-  LINKEDIN("linkedIn"),
-  GOOGLE("google");
+  LINKEDIN("LinkedIn"),
+  GOOGLE("Google");
 
   private final String provider;
 
