@@ -147,7 +147,8 @@ public class AuthenticationOauthService {
     log.info("LOG5 cognitoPrimaryUserSubject: {}", cognitoPrimaryUserSubject);
     log.info("LOG6 userInfo.linkedRecord: {}", userInfo.linkedRecord());
     log.info("LOG7 userInfo.isPrimaryRecord: {}", userInfo.isPrimaryRecord());
-    if (areCognitoUsersLinked(userInfo.linkedRecord(), userInfo.isPrimaryRecord(), //userInfo.linkedRecord() need to transfer linked record from not primary user
+    if (areCognitoUsersLinked(userInfo.linkedRecord(), userInfo.isPrimaryRecord(),
+        //userInfo.linkedRecord() need to transfer linked record from not primary user
         cognitoPrimaryUserSubject)) {
       setAuthTokensToResponse(response, accessToken, idToken, refreshToken);
       return;
