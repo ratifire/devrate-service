@@ -91,11 +91,12 @@ public class AuthenticationOauthService {
       String idToken = rawTokens.get(ID_TOKEN.getValue());
       String refreshToken = rawTokens.get(REFRESH_TOKEN.getValue());
 
+      log.info("LOG1 idToken: {}", idToken);
       CognitoUserInfo cognitoUserInfo = TokenUtil.getCognitoUserInfoFromIdToken(idToken);
-
+      log.info("LOG2 cognitoUserInfo: {}", cognitoUserInfo);
       User internalUser = processInternalUser(response, accessToken, idToken, refreshToken,
           cognitoUserInfo);
-
+      log.info("LOG10 I am here success");
       AuthenticationResultType refreshedTokens =
           cognitoApiClient.refreshAuthTokens(cognitoUserInfo.cognitoUsername(), refreshToken);
       setAuthTokensToResponse(response, refreshedTokens.getAccessToken(),
@@ -119,7 +120,7 @@ public class AuthenticationOauthService {
   private User processInternalUser(HttpServletResponse response, String accessToken, String idToken,
       String refreshToken, CognitoUserInfo userInfo) {
     User internalUser = userService.findByEmail(userInfo.email());
-
+    log.info("LOG3 internalUser: {}", internalUser);
     if (ObjectUtils.isNotEmpty(internalUser)) {
       linkAndSynchronizeInternalUserWithCognito(response, internalUser, accessToken, idToken,
           refreshToken, userInfo);
@@ -139,10 +140,14 @@ public class AuthenticationOauthService {
     if (cognitoPrimaryUserOptional.isEmpty()) {
       throw new OauthException("Primary user not found");
     }
+    log.info("LOG4 ProviderUserIdentifierType: {}", cognitoPrimaryUserOptional.get());
 
     ProviderUserIdentifierType cognitoPrimaryUser = cognitoPrimaryUserOptional.get();
     String cognitoPrimaryUserSubject = cognitoPrimaryUser.getProviderAttributeValue();
-    if (areCognitoUsersLinked(userInfo.linkedRecord(), userInfo.isPrimaryRecord(),
+    log.info("LOG5 cognitoPrimaryUserSubject: {}", cognitoPrimaryUserSubject);
+    log.info("LOG6 userInfo.linkedRecord: {}", userInfo.linkedRecord());
+    log.info("LOG7 userInfo.isPrimaryRecord: {}", userInfo.isPrimaryRecord());
+    if (areCognitoUsersLinked(userInfo.linkedRecord(), userInfo.isPrimaryRecord(), //userInfo.linkedRecord() need to transfer linked record from not primary user
         cognitoPrimaryUserSubject)) {
       setAuthTokensToResponse(response, accessToken, idToken, refreshToken);
       return;
@@ -187,9 +192,10 @@ public class AuthenticationOauthService {
 
     if (StringUtils.equals(cognitoUserLinkedRecord, cognitoPrimaryUserSubject)
         || isPrimaryRecord) {
+      log.info("LOG8 I am here");
       return true;
     }
-
+    log.info("LOG9 I am here exception");
     throw new OauthException(String.format(
         "Cognito pool user linked record (%s) does not match the primary pool user subject (%s)",
         cognitoUserLinkedRecord, cognitoPrimaryUserSubject));
