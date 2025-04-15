@@ -1,0 +1,5 @@
+type: string
+description: Enum representing the overall interview status indicator (green/red dot at the Scheduled tab)
+enum:
+  - IN_PROGRESS
+  - AWAITING_FEEDBACK
