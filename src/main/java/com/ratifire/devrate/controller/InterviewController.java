@@ -3,6 +3,7 @@ package com.ratifire.devrate.controller;
 import com.ratifire.devrate.dto.ClosestEventDto;
 import com.ratifire.devrate.dto.InterviewDto;
 import com.ratifire.devrate.dto.InterviewEventDto;
+import com.ratifire.devrate.dto.InterviewsOverallStatusDto;
 import com.ratifire.devrate.service.interview.InterviewService;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -79,5 +80,16 @@ public class InterviewController {
   public List<ClosestEventDto> findUpcomingEvents(
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime from) {
     return interviewService.findUpcomingEvents(from);
+  }
+
+  /**
+   * Retrieves a status for overall interviews.
+   *
+   * @param userTimeZone the user timezone
+   * @return status
+   */
+  @GetMapping("/status-indicator")
+  public InterviewsOverallStatusDto getInterviewStatusIndicator(@RequestParam String userTimeZone) {
+    return interviewService.getInterviewStatusIndicator(userTimeZone);
   }
 }

@@ -7,6 +7,7 @@ import com.ratifire.devrate.dto.ClosestEventDto;
 import com.ratifire.devrate.dto.InterviewDto;
 import com.ratifire.devrate.dto.InterviewEventDto;
 import com.ratifire.devrate.dto.InterviewFeedbackDetailDto;
+import com.ratifire.devrate.dto.InterviewsOverallStatusDto;
 import com.ratifire.devrate.dto.PairedParticipantDto;
 import com.ratifire.devrate.dto.ParticipantDto;
 import com.ratifire.devrate.dto.SkillShortDto;
@@ -18,6 +19,7 @@ import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.ConsentStatus;
 import com.ratifire.devrate.enums.InterviewRequestRole;
+import com.ratifire.devrate.enums.InterviewStatusIndicator;
 import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.enums.SkillType;
 import com.ratifire.devrate.exception.InterviewNotFoundException;
@@ -53,6 +55,8 @@ import org.springframework.util.CollectionUtils;
 @Service
 @RequiredArgsConstructor
 public class InterviewService {
+
+  private static final int INTERVIEW_DURATION = 1;    // hours
 
   private final MeetingService meetingService;
   private final InterviewRequestService interviewRequestService;
@@ -539,5 +543,39 @@ public class InterviewService {
 
     emailService.sendInterviewRejectionMessageEmail(
         recipient, rejector, scheduledTime, recipientEmail);
+  }
+
+  /**
+   * Determines the overall interview status for the currently authenticated user.
+   */
+  public InterviewsOverallStatusDto getInterviewStatusIndicator(String userTimeZone) {
+    long authUserId = userContextProvider.getAuthenticatedUserId();
+
+    List<Interview> interviews = interviewRepository.findAllByUserIdAndIsVisibleTrue(authUserId);
+
+    if (interviews.isEmpty()) {
+      return new InterviewsOverallStatusDto(null);
+    }
+
+    ZoneId userZoneId = ZoneId.of(userTimeZone);
+    ZonedDateTime now = ZonedDateTime.now(userZoneId);
+
+    boolean inProgress = interviews.stream()
+        .map(Interview::getStartTime)
+        .map(start -> start.withZoneSameInstant(userZoneId))
+        .anyMatch(start -> now.isAfter(start) && now.isBefore(start.plusHours(INTERVIEW_DURATION)));
+    if (inProgress) {
+      return new InterviewsOverallStatusDto(InterviewStatusIndicator.IN_PROGRESS);
+    }
+
+    boolean awaitingFeedback = interviews.stream()
+        .map(Interview::getStartTime)
+        .map(start -> start.withZoneSameInstant(userZoneId))
+        .anyMatch(start -> now.isAfter(start.plusHours(INTERVIEW_DURATION)));
+    if (awaitingFeedback) {
+      return new InterviewsOverallStatusDto(InterviewStatusIndicator.AWAITING_FEEDBACK);
+    }
+
+    return new InterviewsOverallStatusDto(null);
   }
 }
