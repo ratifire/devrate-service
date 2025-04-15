@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Upcoming Interview Details</title>
+  <title>Деталі майбутнього інтерв’ю</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -59,31 +59,31 @@
 <body>
 <div class="container">
 
-  <p>Dear <span th:text="${recipient?.firstName}"></span>,</p>
+  <p>Шановний(а)<span th:text="${recipient?.firstName}"></span>, </p>
 
-  <p>We are pleased to inform you that we have found a suitable applicant for you and your
-    interview has been successfully scheduled. Below are the details:</p>
+  <p>Раді повідомити, що ми знайшли для вас відповідного кандидата і ваше інтерв’ю успішно заплановано.
+    Нижче наведено деталі:</p>
 
   <table class="details-table">
     <tr>
-      <th>Interview Details</th>
+      <th>Деталі інтерв’ю</th>
     </tr>
     <tr>
-      <td><strong>Date and Time:</strong> <span
+      <td><strong>Дата та час:</strong> <span
           th:text="${#temporals.format(interviewDateTime, 'yyyy-MM-dd HH:mm')}"></span> (UTC)
       </td>
     </tr>
     <tr>
-      <td><strong>Candidate Name:</strong> <span
+      <td><strong>Ім’я кандидата:</strong> <span
           th:text="${interviewRequest?.user?.firstName} + ' ' + ${interviewRequest?.user?.lastName}"></span>
       </td>
     </tr>
     <tr>
-      <td><strong>Candidate Specialization:</strong> <span
+      <td><strong>Спеціалізація кандидата:</strong> <span
           th:text="${interviewRequest?.mastery?.specialization?.name}"></span></td>
     </tr>
     <tr>
-      <td class="no-border"><strong>Candidate Hard/Soft Skills:</strong>
+      <td class="no-border"><strong>Hard/Soft навички кандидата:</strong>
         <ul class="skill-list">
           <li th:each="skill : ${interviewRequest?.mastery?.skills}" th:text="${skill?.name}"></li>
         </ul>
@@ -92,17 +92,17 @@
   </table>
 
   <div class="zoom-info">
-    <p><strong>Meeting Link:</strong> <a th:href="${zoomJoinUrl}" th:text="${zoomJoinUrl}" target="_blank"></a></p>
+    <p><strong>Посилання на зустріч:</strong> <a th:href="${zoomJoinUrl}" th:text="${zoomJoinUrl}" target="_blank"></a></p>
   </div>
 
-  <p>We truly appreciate your commitment and the effort you put into providing valuable feedback.
-    Your insights are instrumental in helping us identify the best candidates.</p>
+  <p>Щиро вдячні вам за Вашу відданість та зусилля, які ви докладаєте, залишаючи цінний фідбек.
+    Ваші інсайти є надзвичайно важливими для відбору найкращих кандидатів.</p>
 
-  <p>If you have any questions or need further assistance, feel free to reach out to our support
-    team at <a href="mailto:skillzzy.noreply@gmail.com">support@skillzzy.com</a>.</p>
+  <p>Якщо у вас виникли запитання або потрібна допомога, звертайтесь до нашої служби підтримки
+    за адресою <a href="mailto:skillzzy.noreply@gmail.com">support@skillzzy.com</a>.</p>
 
-  <p>Thank you for using Skillzzy!</p>
-  <p>Best regards,<br/>The Ratifire Team</p>
+  <p>Дякуємо, що користуєтесь Skillzzy!</p>
+  <p>З повагою,<br/>Команда Ratifire</p>
 </div>
 </body>
 </html>

@@ -2,19 +2,21 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Interview Rejected</title>
+  <title>Інтерв'ю скасовано</title>
 </head>
 <body>
 <div class="container">
-  <p>Dear <span th:text="${recipientUser.firstName}"></span>,</p>
+  <p>Шановний(а)<span th:text="${recipientUser.firstName}"></span>, </p>
 
-  <p>The interview with <span th:text="${rejectionUser.firstName}"></span> that was scheduled at <span th:text="${scheduledTime}"></span>
-    <span>has been canceled, but fret not! We will arrange another one soon and keep you informed promptly.</span></p>
+  <p>Інтерв’ю з <span th:text="${rejectionUser.firstName}"></span>, яке було заплановано на <span th:text="${scheduledTime}"></span>,
+    <span>було скасовано. Але не хвилюйтесь! Ми вже у пошуках нового кандидата саме для вас, найближчим часом нове інтерв’ю буде створено і
+      ми оперативно повідомимо вас.</span></p>
 
-  <p>If you have any questions or need further assistance, feel free to reach out to our support team at <a href="mailto:skillzzy.noreply@gmail.com">support@skillzzy.com</a>.</p>
+  <p>Якщо у вас виникли запитання або потрібна додаткова допомога, будь ласка, зверніться до нашої служби підтримки за
+    адресою <a href="mailto:skillzzy.noreply@gmail.com">support@skillzzy.com</a>.</p>
 
-  <p>Thank you for using Skillzzy!</p>
-  <p>Best regards,<br/>The Ratifire Team</p>
+  <p>Дякуємо, що користуєтесь Skillzzy!</p>
+  <p>З повагою,<br/>Команда Ratifire</p>
 </div>
 </body>
 </html>
