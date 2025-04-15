@@ -192,6 +192,8 @@ paths:
     $ref: './paths/interview/interviews-events-id.yaml'
   /interviews/events/closest?from=2025-02-22T12:00:00Z:
     $ref: './paths/interview/interviews-events-closest.yaml'
+  /interviews/status-indicator?userTimeZone={zoneName}:
+    $ref: './paths/interview/interviews-status-indicator.yaml'
   /interview-feedbacks:
     $ref: './paths/interviewFeedback/interview-feedback.yaml'
   /interview-feedbacks/{id}:
