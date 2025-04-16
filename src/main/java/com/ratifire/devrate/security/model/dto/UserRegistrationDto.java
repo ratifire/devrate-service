@@ -15,8 +15,7 @@ import lombok.Getter;
 public class UserRegistrationDto {
 
   private static final String NAME_PATTERN = "^[\\p{L}\\s\\-']+$";
-  private static final String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)"
-      + "(?=.*[!@#$&*])[A-Za-z\\d!@#$&*]{8,}$";
+  private static final String PASSWORD_PATTERN = "^(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{6,}$";
 
   @NotBlank(message = "Email cannot be blank")
   @Size(max = 100)
@@ -43,9 +42,8 @@ public class UserRegistrationDto {
 
   @NotBlank(message = "Password cannot be blank")
   @Pattern(regexp = PASSWORD_PATTERN,
-      message = "Password must be at least 8 characters long, "
-          + "contain at least one lowercase letter, "
-          + "one uppercase letter, one number, and one special "
-          + "character (!@#$&*), and only Latin letters are allowed.")
+      message = "Password must be at least 6 characters long, "
+          + "contain at least one uppercase letter, "
+          + "one number, and one special character.")
   private String password;
 }
