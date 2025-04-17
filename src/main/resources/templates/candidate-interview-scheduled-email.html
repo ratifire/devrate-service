@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Upcoming Interview Details</title>
+  <title>Деталі майбутньої співбесіди</title>
 </head>
 <style>
   body {
@@ -48,52 +48,51 @@
 <body>
 <div class="container">
 
-  <p>Dear <span th:text="${recipient?.firstName}"></span>,</p>
+  <p>Шановний(а)<span th:text="${recipient?.firstName}"></span>, </p>
 
-  <p>We are pleased to inform you that we have found a suitable interviewer for you and your
-    interview has been successfully scheduled. Below are the details:</p>
+  <p>Раді повідомити, що ми знайшли для вас відповідного інтерв'юера, і ваше інтерв’ю успішно заплановано.
+    Нижче наведено деталі:</p>
 
   <table class="details-table">
     <tr>
-      <th>Interview Details</th>
+      <th>Деталі інтерв'ю</th>
     </tr>
     <tr>
-      <td><strong>Date and Time:</strong> <span
+      <td><strong>Дата та час:</strong> <span
           th:text="${#temporals.format(interviewDateTime, 'yyyy-MM-dd HH:mm')}"></span> (UTC)
       </td>
     </tr>
     <tr>
-      <td><strong>Interviewer Name:</strong> <span
+      <td><strong>Ім’я інтерв’юера:</strong> <span
           th:text="${interviewRequest?.user?.firstName} + ' ' + ${interviewRequest?.user?.lastName}"></span>
       </td>
     </tr>
     <tr>
-      <td><strong>Interviewer Specialization:</strong> <span
+      <td><strong>Спеціалізація інтерв’юера:</strong> <span
           th:text="${interviewRequest?.mastery?.specialization?.name}"></span></td>
     </tr>
     <tr>
-      <td><strong>Interviewer Soft Skills Rating:</strong> <span
+      <td><strong>Оцінка soft навичок інтерв’юера:</strong> <span
           th:text="${interviewRequest?.mastery?.softSkillMark}"></span></td>
     </tr>
     <tr>
-      <td><strong>Interviewer Hard Skills Rating:</strong> <span
+      <td><strong>Оцінка hard навичок інтерв’юера:</strong> <span
           th:text="${interviewRequest?.mastery?.hardSkillMark}"></span></td>
     </tr>
   </table>
 
   <div class="zoom-info">
-    <p><strong>Meeting Link:</strong> <a th:href="${zoomJoinUrl}" th:text="${zoomJoinUrl}" target="_blank"></a></p>
+    <p><strong>Посилання на зустріч:</strong> <a th:href="${zoomJoinUrl}" th:text="${zoomJoinUrl}" target="_blank"></a></p>
   </div>
 
-  <p>We are committed to providing you with a great interview experience. Please be prepared and
-    ready at the scheduled time, as your participation is crucial in helping us identify the best
-    interviewer.</p>
+  <p>Ми прагнемо забезпечити вам якісний досвід проходження інтерв’ю. Будь ласка, будьте готові та
+    підключіться в запланований час, адже ваша участь є важливою для того, щоб ми могли підібрати найкращого інтерв’юера.</p>
 
-  <p>If you have any questions or need further assistance, feel free to reach out to our support
-    team at <a href="mailto:skillzzy.noreply@gmail.com">support@skillzzy.com</a>.</p>
+  <p>Якщо у вас виникли запитання або потрібна додаткова допомога, не соромтеся звертатися до нашої
+    служби підтримки за адресою <a href="mailto:skillzzy.noreply@gmail.com">support@skillzzy.com</a>.</p>
 
-  <p>Thank you for using Skillzzy!</p>
-  <p>Best regards,<br/>The Ratifire Team</p>
+  <p>Дякуємо, що користуєтеся Skillzzy!</p>
+  <p>З повагою,<br/>Команда Ratifire</p>
 </div>
 </body>
 </html>
