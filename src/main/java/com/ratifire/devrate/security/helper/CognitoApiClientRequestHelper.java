@@ -30,6 +30,8 @@ import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARA
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARAM_USERNAME;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import com.amazonaws.services.cognitoidp.model.AdminGetUserRequest;
+import com.amazonaws.services.cognitoidp.model.AdminGetUserResult;
 import com.amazonaws.services.cognitoidp.model.AdminLinkProviderForUserRequest;
 import com.amazonaws.services.cognitoidp.model.AdminUpdateUserAttributesRequest;
 import com.amazonaws.services.cognitoidp.model.AttributeType;
@@ -221,6 +223,33 @@ public class CognitoApiClientRequestHelper {
   }
 
   /**
+   * Builds a request for updating user attributes in AWS Cognito.
+   *
+   * @param attributes the list of AttributeType objects to update for the user
+   * @param subject    the Cognito username
+   * @return a configured AdminUpdateUserAttributesRequest with the specified attributes and user
+   */
+  public AdminUpdateUserAttributesRequest buildAdminUpdateUserAttributesRequest(
+      List<AttributeType> attributes, String subject) {
+    return new AdminUpdateUserAttributesRequest()
+        .withUserPoolId(cognitoConfig.getUserPoolId())
+        .withUsername(subject)
+        .withUserAttributes(attributes);
+  }
+
+  /**
+   * Builds a request to get user details from AWS Cognito for a specified user.
+   *
+   * @param username the username of the user to get.
+   * @return an AdminGetUserRequest configured with the provided details.
+   */
+  public AdminGetUserRequest buildAdminGetUserRequest(String username) {
+    return new AdminGetUserRequest()
+        .withUserPoolId(cognitoConfig.getUserPoolId())
+        .withUsername(username);
+  }
+
+  /**
    * Builds a request to link two users in AWS Cognito based on the specified source and destination
    * user details.
    *
@@ -255,6 +284,19 @@ public class CognitoApiClientRequestHelper {
     ListUsersRequest request = new ListUsersRequest();
     request.setUserPoolId(cognitoConfig.getUserPoolId());
     request.setFilter(String.format("email=\"%s\"", email));
+    return request;
+  }
+
+  /**
+   * Builds a request to list users from AWS Cognito.
+   *
+   * @return a ListUsersRequest configured the cognito user.
+   */
+  public ListUsersRequest buildListUsersRequest(int limit, String paginationToken) {
+    ListUsersRequest request = new ListUsersRequest();
+    request.setUserPoolId(cognitoConfig.getUserPoolId());
+    request.withPaginationToken(paginationToken);
+    request.withLimit(limit);
     return request;
   }
 

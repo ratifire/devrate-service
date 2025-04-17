@@ -1,7 +1,9 @@
 package com.ratifire.devrate.security.service;
 
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
+import com.amazonaws.services.cognitoidp.model.AdminGetUserResult;
 import com.amazonaws.services.cognitoidp.model.AdminLinkProviderForUserRequest;
+import com.amazonaws.services.cognitoidp.model.AttributeType;
 import com.amazonaws.services.cognitoidp.model.AuthenticationResultType;
 import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordRequest;
 import com.amazonaws.services.cognitoidp.model.ConfirmSignUpRequest;
@@ -15,6 +17,7 @@ import com.amazonaws.services.cognitoidp.model.ResendConfirmationCodeRequest;
 import com.amazonaws.services.cognitoidp.model.SignUpRequest;
 import com.ratifire.devrate.security.helper.CognitoApiClientRequestHelper;
 import com.ratifire.devrate.security.util.TokenUtil;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -149,6 +152,15 @@ public class CognitoApiClientService {
   }
 
   /**
+   * Gets the details of a Cognito user by their username.
+   *
+   * @param username The username of the Cognito user.
+   */
+  public AdminGetUserResult getCognitoUserDetails(String username) {
+    return cognitoClient.adminGetUser(requestHelper.buildAdminGetUserRequest(username));
+  }
+
+  /**
    * Updates the attributes of a Cognito user with the specified details.
    *
    * @param subject             The subject identifier for the Cognito user.
@@ -162,6 +174,17 @@ public class CognitoApiClientService {
     cognitoClient.adminUpdateUserAttributes(
         requestHelper.buildAdminUpdateUserAttributesRequest(subject, userId, role, isPrimaryRecord,
             linkedRecordSubject));
+  }
+
+  /**
+   * Updates user attributes in AWS Cognito for the specified user.
+   *
+   * @param attributesToUpdate the list of AttributeType values to be updated
+   * @param subject            the Cognito username
+   */
+  public void updateCognitoUserAttributes(List<AttributeType> attributesToUpdate, String subject) {
+    cognitoClient.adminUpdateUserAttributes(
+        requestHelper.buildAdminUpdateUserAttributesRequest(attributesToUpdate, subject));
   }
 
   /**
@@ -187,6 +210,16 @@ public class CognitoApiClientService {
    */
   public ListUsersResult getListCognitoUsersByEmail(String email) {
     ListUsersRequest request = requestHelper.buildListUsersRequest(email);
+    return cognitoClient.listUsers(request);
+  }
+
+  /**
+   * Retrieves a list of Cognito users.
+   *
+   * @return A ListUsersResult object containing the users.
+   */
+  public ListUsersResult getAllListCognitoUsersWithPagination(int limit, String paginationToken) {
+    ListUsersRequest request = requestHelper.buildListUsersRequest(limit, paginationToken);
     return cognitoClient.listUsers(request);
   }
 }

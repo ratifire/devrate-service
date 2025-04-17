@@ -17,7 +17,6 @@ import com.ratifire.devrate.security.service.RefreshTokenService;
 import com.ratifire.devrate.security.service.RegistrationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
@@ -43,18 +42,16 @@ public class AuthenticationCognitoFacade implements AuthenticationFacade {
   }
 
   @Override
-  public void redirectToLinkedIn(HttpServletResponse response, HttpSession session)
+  public void redirectToLinkedIn(HttpServletResponse response)
       throws IOException {
-    String url = authenticationOauthService.generateOauthRedirectUrl(session,
-        LINKEDIN.getProvider());
+    String url = authenticationOauthService.generateOauthRedirectUrl(LINKEDIN.getProvider());
     response.sendRedirect(url);
   }
 
   @Override
-  public void redirectToGoogle(HttpServletResponse response, HttpSession session)
+  public void redirectToGoogle(HttpServletResponse response)
       throws IOException {
-    String url = authenticationOauthService.generateOauthRedirectUrl(session,
-        GOOGLE.getProvider());
+    String url = authenticationOauthService.generateOauthRedirectUrl(GOOGLE.getProvider());
     response.sendRedirect(url);
   }
 

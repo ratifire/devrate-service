@@ -27,11 +27,9 @@ import com.ratifire.devrate.security.model.enums.AccessLevel;
 import com.ratifire.devrate.security.util.TokenUtil;
 import com.ratifire.devrate.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -53,6 +51,7 @@ public class AuthenticationOauthService {
   private final CognitoApiClientService cognitoApiClient;
   private final UserService userService;
   private final RegistrationService registrationService;
+  private final OauthStateTokenService stateTokenService;
   private final CognitoApiClientRequestHelper apiRequestHelper;
   private final CognitoAuthenticationHelper authHelper;
   private final RefreshTokenCookieHelper cookieHelper;
@@ -61,14 +60,12 @@ public class AuthenticationOauthService {
   /**
    * Generates an OAuth redirect URL for the specified OAuth provider.
    *
-   * @param session       the current HTTP session used to store the OAuth state parameter
    * @param oauthProvider the name of the OAuth provider
    * @return the constructed redirect URL for the specified OAuth provider
    */
-  public String generateOauthRedirectUrl(HttpSession session, String oauthProvider) {
-    String oauthState = UUID.randomUUID().toString();
-    session.setAttribute("oauth2State", oauthState);
-    return apiRequestHelper.buildOauthRedirectUrl(oauthProvider, oauthState);
+  public String generateOauthRedirectUrl(String oauthProvider) {
+    String signedStateToken = stateTokenService.generateSignedStateToken();
+    return apiRequestHelper.buildOauthRedirectUrl(oauthProvider, signedStateToken);
   }
 
   /**
@@ -84,6 +81,8 @@ public class AuthenticationOauthService {
   public UserDto handleOauthAuthorization(HttpServletResponse response,
       OauthAuthorizationDto request) {
     try {
+      stateTokenService.validateStateToken(request.getState());
+
       Map<String, String> rawTokens =
           cognitoApiClient.fetchRawTokensFromCognito(request.getAuthorizationCode());
 
@@ -116,8 +115,12 @@ public class AuthenticationOauthService {
     }
   }
 
-  private User processInternalUser(HttpServletResponse response, String accessToken, String idToken,
-      String refreshToken, CognitoUserInfo userInfo) {
+  private User processInternalUser(
+      HttpServletResponse response,
+      String accessToken,
+      String idToken,
+      String refreshToken,
+      CognitoUserInfo userInfo) {
     User internalUser = userService.findByEmail(userInfo.email());
 
     if (ObjectUtils.isNotEmpty(internalUser)) {
@@ -130,8 +133,12 @@ public class AuthenticationOauthService {
     return internalUser;
   }
 
-  private void linkAndSynchronizeInternalUserWithCognito(HttpServletResponse response,
-      User internalUser, String accessToken, String idToken, String refreshToken,
+  private void linkAndSynchronizeInternalUserWithCognito(
+      HttpServletResponse response,
+      User internalUser,
+      String accessToken,
+      String idToken,
+      String refreshToken,
       CognitoUserInfo userInfo) {
     Optional<ProviderUserIdentifierType> cognitoPrimaryUserOptional =
         findCognitoPrimaryUserByEmail(userInfo.email());
@@ -218,8 +225,11 @@ public class AuthenticationOauthService {
         .orElse(ATTRIBUTE_DEFAULT_PROVIDER_NAME);
   }
 
-  private void setAuthTokensToResponse(HttpServletResponse response, String accessToken,
-      String idToken, String refreshToken) {
+  private void setAuthTokensToResponse(
+      HttpServletResponse response,
+      String accessToken,
+      String idToken,
+      String refreshToken) {
     TokenUtil.setAuthTokensToHeaders(response, accessToken, idToken);
     cookieHelper.setRefreshTokenToCookie(response, refreshToken);
   }

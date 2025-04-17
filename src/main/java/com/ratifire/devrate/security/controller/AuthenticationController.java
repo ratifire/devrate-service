@@ -10,7 +10,6 @@ import com.ratifire.devrate.security.model.dto.ResendConfirmCodeDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -49,24 +48,20 @@ public class AuthenticationController {
    * Redirects the user to LinkedIn for OAuth authentication.
    *
    * @param response the HttpServletResponse object required to send the redirect
-   * @param session  the HttpSession object to store user-related session data
    */
   @GetMapping("/oauth/redirect/linkedIn")
-  public void redirectToLinkedIn(HttpServletResponse response, HttpSession session)
-      throws IOException {
-    authenticationFacade.redirectToLinkedIn(response, session);
+  public void redirectToLinkedIn(HttpServletResponse response) throws IOException {
+    authenticationFacade.redirectToLinkedIn(response);
   }
 
   /**
    * Redirects the user to Google's OAuth authorization page.
    *
    * @param response The HttpServletResponse used to redirect the user.
-   * @param session  The HttpSession containing the user's session data.
    */
   @GetMapping("/oauth/redirect/google")
-  public void redirectToGoogle(HttpServletResponse response, HttpSession session)
-      throws IOException {
-    authenticationFacade.redirectToGoogle(response, session);
+  public void redirectToGoogle(HttpServletResponse response) throws IOException {
+    authenticationFacade.redirectToGoogle(response);
   }
 
   /**

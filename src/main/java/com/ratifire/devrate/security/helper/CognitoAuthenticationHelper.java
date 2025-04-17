@@ -12,7 +12,6 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +24,7 @@ import org.springframework.stereotype.Component;
 public class CognitoAuthenticationHelper {
 
   private static final int PASSWORD_BYTE_LENGTH = 64;
-  private final CognitoRegistrationProperties properties;
+  private final CognitoRegistrationProperties cognitoProperties;
 
   /**
    * Generates a secret hash using the user's identifier (email or subject) and client credentials.
@@ -36,8 +35,8 @@ public class CognitoAuthenticationHelper {
    */
   public String generateSecretHash(String identifier) {
     try {
-      byte[] clientSecret = properties.getClientSecret().getBytes(UTF_8);
-      byte[] clientId = properties.getClientId().getBytes(UTF_8);
+      byte[] clientSecret = cognitoProperties.getClientSecret().getBytes(UTF_8);
+      byte[] clientId = cognitoProperties.getClientId().getBytes(UTF_8);
       byte[] identifierBytes = identifier.getBytes(UTF_8);
 
       Key signingKey = new SecretKeySpec(clientSecret, HMAC_SHA256_ALGORITHM);

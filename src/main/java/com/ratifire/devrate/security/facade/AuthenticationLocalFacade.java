@@ -22,7 +22,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
@@ -60,6 +59,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Profile("local")
 public class AuthenticationLocalFacade implements AuthenticationFacade {
 
+  private static final String MSG_UNSUPPORTED_OPERATION = "Unsupported operation locally.";
   private final UserService userService;
   private final DataMapper<UserDto, User> userMapper;
   private final RefreshTokenCookieHelper refreshTokenCookieHelper;
@@ -82,19 +82,19 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
   }
 
   @Override
-  public void redirectToLinkedIn(HttpServletResponse response, HttpSession session) {
-    throw new UnsupportedOperationException("Unsupported operation locally.");
+  public void redirectToLinkedIn(HttpServletResponse response) {
+    throw new UnsupportedOperationException(MSG_UNSUPPORTED_OPERATION);
   }
 
   @Override
-  public void redirectToGoogle(HttpServletResponse response, HttpSession session) {
-    throw new UnsupportedOperationException("Unsupported operation locally.");
+  public void redirectToGoogle(HttpServletResponse response) {
+    throw new UnsupportedOperationException(MSG_UNSUPPORTED_OPERATION);
   }
 
   @Override
   public UserDto handleOauthAuthorization(HttpServletResponse response,
       OauthAuthorizationDto request) {
-    throw new UnsupportedOperationException("Unsupported operation locally.");
+    throw new UnsupportedOperationException(MSG_UNSUPPORTED_OPERATION);
   }
 
   @Override
@@ -130,7 +130,7 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
 
   @Override
   public void resendRegistrationConfirmCode(ResendConfirmCodeDto resendConfirmCodeDto) {
-    throw new UnsupportedOperationException("Unsupported operation locally.");
+    throw new UnsupportedOperationException(MSG_UNSUPPORTED_OPERATION);
   }
 
   @Override
@@ -141,17 +141,17 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
 
   @Override
   public void confirmResetPassword(PasswordResetDto passwordResetDto) {
-    throw new UnsupportedOperationException("Unsupported operation locally.");
+    throw new UnsupportedOperationException(MSG_UNSUPPORTED_OPERATION);
   }
 
   @Override
   public void resetPassword(String email) {
-    throw new UnsupportedOperationException("Unsupported operation locally.");
+    throw new UnsupportedOperationException(MSG_UNSUPPORTED_OPERATION);
   }
 
   @Override
   public void refreshAuthTokens(HttpServletRequest request, HttpServletResponse response) {
-    throw new UnsupportedOperationException("Unsupported operation locally.");
+    throw new UnsupportedOperationException(MSG_UNSUPPORTED_OPERATION);
   }
 
   /**

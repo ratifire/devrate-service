@@ -1,8 +1,5 @@
 package com.ratifire.devrate.security.filter;
 
-import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_AUTHENTICATION_ERROR;
-import static com.ratifire.devrate.security.model.enums.AuthenticationError.AUTH_TOKEN_EXPIRED;
-import static com.ratifire.devrate.security.model.enums.AuthenticationError.UNAUTHORIZED;
 import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.ACCESS_TOKEN;
 import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.ID_TOKEN;
 
@@ -16,7 +13,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Profile;

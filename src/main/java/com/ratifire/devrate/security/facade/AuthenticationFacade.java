@@ -9,7 +9,6 @@ import com.ratifire.devrate.security.model.dto.ResendConfirmCodeDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
@@ -19,9 +18,9 @@ public interface AuthenticationFacade {
 
   UserDto login(LoginDto loginDto, HttpServletResponse response);
 
-  void redirectToLinkedIn(HttpServletResponse response, HttpSession session) throws IOException;
+  void redirectToLinkedIn(HttpServletResponse response) throws IOException;
 
-  void redirectToGoogle(HttpServletResponse response, HttpSession session) throws IOException;
+  void redirectToGoogle(HttpServletResponse response) throws IOException;
 
   UserDto handleOauthAuthorization(HttpServletResponse response,
       OauthAuthorizationDto request);
