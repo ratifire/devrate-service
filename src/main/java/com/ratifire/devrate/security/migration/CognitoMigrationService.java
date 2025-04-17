@@ -19,6 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+/**
+ * Service for migrating user attributes in AWS Cognito.
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -26,6 +29,9 @@ public class CognitoMigrationService {
 
   private final CognitoApiClientService cognitoApiClient;
 
+  /**
+   * Migrates attributes for all Cognito users by iterating through paginated user lists.
+   */
   public void migrateAllUsers() {
     String paginationToken = null;
 
@@ -46,6 +52,11 @@ public class CognitoMigrationService {
     } while (paginationToken != null);
   }
 
+  /**
+   * Migrates a single Cognito user's attributes to the new attribute schema..
+   *
+   * @param username the Cognito username whose attributes are to be migrated
+   */
   public void migrateUserAttributes(String username) {
     log.info("Migration started for user: {}", username);
 
