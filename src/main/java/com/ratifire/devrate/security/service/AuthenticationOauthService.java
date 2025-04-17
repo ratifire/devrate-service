@@ -165,8 +165,6 @@ public class AuthenticationOauthService {
     UserDto userDto = UserDto.builder()
         .firstName(userInfo.firstName())
         .lastName(userInfo.lastName())
-        .country("Ukraine")
-        .subscribed(false)
         .build();
     User newUser = userService.create(userDto, email, authHelper.generateRandomPassword());
     registrationService.finalizeUserRegistration(newUser, email);

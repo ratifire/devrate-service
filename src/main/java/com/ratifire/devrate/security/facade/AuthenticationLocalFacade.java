@@ -110,8 +110,6 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
     UserDto userDto = UserDto.builder()
         .firstName(userRegistrationDto.getFirstName())
         .lastName(userRegistrationDto.getLastName())
-        .country(userRegistrationDto.getCountry())
-        .subscribed(userRegistrationDto.isSubscribed())
         .build();
 
     if (userService.existsByEmail(email)) {
