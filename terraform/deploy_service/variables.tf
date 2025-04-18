@@ -102,3 +102,13 @@ variable "db_instance_identifier" {
 variable "deploy_profile" {
   default = "dev"
 }
+
+variable "new_relic_app_name" {
+  type        = string
+  description = "New Relic application name"
+}
+
+variable "new_relic_license_key" {
+  type        = string
+  description = "New Relic license key"
+}
