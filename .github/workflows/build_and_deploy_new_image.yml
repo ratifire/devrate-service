@@ -80,6 +80,10 @@ jobs:
             sed -i "s|$key|${REPLACEMENTS[$key]}|g" "$FILE"
           done
 
+      - name: Inject New Relic license key
+        run: |
+          sed -i "s|<NEW_RELIC_LICENSE_KEY>|${{ secrets.NEW_RELIC_LICENSE_KEY }}|g" src/main/resources/newrelic.yml
+
       - name: Run tests
         run: mvn test
 
