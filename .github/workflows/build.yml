@@ -29,10 +29,10 @@ on:
       environment:
         description: 'Select environment to deploy (prod, dev)'
         required: true
-        default: 'dev'
+#        default: 'dev'
         type: choice
         options:
-          - dev
+#          - dev
           - prod
 
 permissions:
