@@ -11,7 +11,7 @@ public record CognitoUserInfo(
     String provider,
     String linkedRecord,
     String cognitoUsername,
-    boolean isPrimaryRecord
+    String isPrimaryRecord
 ) {
 
 }

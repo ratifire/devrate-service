@@ -156,8 +156,8 @@ public class TokenUtil {
     String cognitoUsername = extractStringClaim(claimsSet, ATTRIBUTE_USERNAME).orElse(null);
     String linkedRecord = extractStringClaim(claimsSet, ATTRIBUTE_LINKED_RECORD_SUBJECT)
         .orElse(null);
-    boolean isPrimaryRecord = extractBooleanClaim(claimsSet, ATTRIBUTE_IS_PRIMARY_RECORD)
-        .orElse(false);
+    String isPrimaryRecord = extractStringClaim(claimsSet, ATTRIBUTE_IS_PRIMARY_RECORD)
+        .orElse(null);
     String providerName = getProviderNameFromIdentities(claimsSet.getClaim(ATTRIBUTE_IDENTITIES));
 
     return new CognitoUserInfo(firstName, lastName, email, subject, providerName, linkedRecord,

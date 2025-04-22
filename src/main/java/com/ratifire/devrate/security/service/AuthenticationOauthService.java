@@ -185,14 +185,14 @@ public class AuthenticationOauthService {
         .map(this::mapToProviderUserIdentifier);
   }
 
-  private boolean areCognitoUsersLinked(String cognitoUserLinkedRecord, boolean isPrimaryRecord,
+  private boolean areCognitoUsersLinked(String cognitoUserLinkedRecord, String isPrimaryRecord,
       String cognitoPrimaryUserSubject) {
     if (StringUtils.isEmpty(cognitoUserLinkedRecord)) {
       return false;
     }
 
     if (StringUtils.equals(cognitoUserLinkedRecord, cognitoPrimaryUserSubject)
-        || isPrimaryRecord) {
+        || Boolean.TRUE.toString().equals(isPrimaryRecord)) {
       return true;
     }
 
