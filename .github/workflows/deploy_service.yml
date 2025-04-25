@@ -49,7 +49,6 @@ jobs:
 
       - name: Verify New Relic Agent location
         run: |
-          # Проверим, что файл агента действительно скачан
           if [ -f newrelic/newrelic.jar ]; then
             echo "New Relic Agent found at newrelic/newrelic.jar"
           else
@@ -65,7 +64,13 @@ jobs:
             distributed_tracing:
               enabled: true
             logging:
-              level: info" > newrelic/newrelic.yml
+              level: debug" > newrelic/newrelic.yml
+
+      - name: Check current working directory
+        run: |
+          echo "Current directory: $(pwd)"
+            ls -l newrelic
+
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
