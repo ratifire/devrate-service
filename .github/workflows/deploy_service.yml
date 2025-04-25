@@ -42,42 +42,42 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download New Relic Java Agent
-        run: |
-          mkdir -p newrelic
-          curl -o newrelic/newrelic.jar https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-agent.jar
-
-      - name: Verify New Relic Agent location
-        run: |
-          if [ -f newrelic/newrelic.jar ]; then
-            echo "New Relic Agent found at newrelic/newrelic.jar"
-          else
-            echo "New Relic Agent NOT found!"
-            exit 1
-          fi
-
-      - name: Configure New Relic
-        run: |
-          echo "common: &default_settings
-            license_key: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
-            app_name: '${{ vars.NEW_RELIC_APP_NAME }}-${{ github.event.inputs.environment }}'
-            distributed_tracing:
-              enabled: true
-            logging:
-              level: debug" > newrelic/newrelic.yml
-
-      - name: Check current working directory
-        run: |
-          echo "Current directory: $(pwd)"
-            ls -l newrelic
-
-      - name: List all files in the repository
-        run: |
-            ls -lR
-
-      - name: Run Application with New Relic Agent
-        run: |
-          java -javaagent=newrelic/newrelic.jar -jar /devRate.jar
+#      - name: Download New Relic Java Agent
+#        run: |
+#          mkdir -p newrelic
+#          curl -o newrelic/newrelic.jar https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-agent.jar
+#
+#      - name: Verify New Relic Agent location
+#        run: |
+#          if [ -f newrelic/newrelic.jar ]; then
+#            echo "New Relic Agent found at newrelic/newrelic.jar"
+#          else
+#            echo "New Relic Agent NOT found!"
+#            exit 1
+#          fi
+#
+#      - name: Configure New Relic
+#        run: |
+#          echo "common: &default_settings
+#            license_key: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
+#            app_name: '${{ vars.NEW_RELIC_APP_NAME }}-${{ github.event.inputs.environment }}'
+#            distributed_tracing:
+#              enabled: true
+#            logging:
+#              level: debug" > newrelic/newrelic.yml
+#
+#      - name: Check current working directory
+#        run: |
+#          echo "Current directory: $(pwd)"
+#            ls -l newrelic
+#
+#      - name: List all files in the repository
+#        run: |
+#            ls -lR
+#
+#      - name: Run Application with New Relic Agent
+#        run: |
+#          java -javaagent=newrelic/newrelic.jar -jar /devRate.jar
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
