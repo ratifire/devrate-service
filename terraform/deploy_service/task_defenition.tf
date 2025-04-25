@@ -79,7 +79,7 @@ resource "aws_ecs_task_definition" "task_definition" {
       command = [
         "sh",
         "-c",
-        "if [ -f /newrelic/newrelic.jar ]; then echo 'New Relic Agent found'; else echo 'New Relic Agent NOT found!'; exit 1; fi && java -javaagent:/newrelic/newrelic.jar -jar /devRate.jar"
+        "if [ -f /newrelic/newrelic.jar ]; then echo 'New Relic Agent found: $(java -jar /newrelic/newrelic.jar -version)'; else echo 'New Relic Agent NOT found!'; exit 1; fi && java -javaagent:/newrelic/newrelic.jar -jar /devRate.jar"
       ]
     }
   ])
