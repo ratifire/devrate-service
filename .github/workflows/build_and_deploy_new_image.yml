@@ -107,7 +107,7 @@ jobs:
         run: |
           echo "common: &default_settings
             license_key: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
-            app_name: '${{ vars.NEW_RELIC_APP_NAME }}-${{ github.event.inputs.environment }}'
+            app_name: '${{ vars.NEW_RELIC_APP_NAME }}'
             distributed_tracing:
               enabled: true
             logging:

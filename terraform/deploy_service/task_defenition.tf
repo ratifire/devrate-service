@@ -57,10 +57,6 @@ resource "aws_ecs_task_definition" "task_definition" {
         {
           name  = "NEW_RELIC_LOG_LEVEL"
           value = "info"
-        },
-        {
-          name  = "JAVA_OPTS"
-          value = "-javaagent:/path/to/newrelic.jar"
         }
       ],
       mountPoints = [],
@@ -75,12 +71,7 @@ resource "aws_ecs_task_definition" "task_definition" {
         },
         secretOptions = []
       },
-      systemControls = [],
-      command = [
-        "sh",
-        "-c",
-        "if [ -f /newrelic/newrelic.jar ]; then echo 'New Relic Agent found: $(java -jar /newrelic/newrelic.jar -version)'; else echo 'New Relic Agent NOT found!'; exit 1; fi && java -javaagent:/newrelic/newrelic.jar -jar /devRate.jar"
-      ]
+      systemControls = []
     }
   ])
 
