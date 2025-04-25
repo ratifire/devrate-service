@@ -77,11 +77,6 @@ jobs:
           for key in "${!REPLACEMENTS[@]}"; do
             sed -i "s|$key|${REPLACEMENTS[$key]}|g" "$FILE"
           done
-#
-#      - name: Inject New Relic license key
-#        run: |
-#          sed -i "s|<NEW_RELIC_LICENSE_KEY>|${{ secrets.NEW_RELIC_LICENSE_KEY }}|g" src/main/resources/newrelic.yml
-
 
       - name: run tests
         run: mvn test
@@ -102,8 +97,9 @@ jobs:
 
       - name: Download New Relic Java Agent
         run: |
-          mkdir -p newrelic-dev
-          curl -o newrelic-dev/newrelic-dev.jar https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-agent.jar
+          ENV_DIR="newrelic-${{ github.event.inputs.environment }}"
+          mkdir -p $ENV_DIR
+          curl -o "$ENV_DIR/$ENV_DIR.jar" https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-agent.jar
 
       - name: Configure New Relic
         run: |
@@ -113,10 +109,7 @@ jobs:
             distributed_tracing:
               enabled: true
             logging:
-              level: info" > newrelic-dev/newrelic-dev.yml
-
-      - name: Display newrelic.yml content
-        run: cat newrelic-dev/newrelic-dev.yml
+              level: info" > newrelic-${{ github.event.inputs.environment }}/newrelic-${{ github.event.inputs.environment }}.yml
 
       - name: Build image
         id: build-image
