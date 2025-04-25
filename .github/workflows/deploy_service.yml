@@ -71,6 +71,9 @@ jobs:
           echo "Current directory: $(pwd)"
             ls -l newrelic
 
+      - name: Run Application with New Relic Agent
+        run: |
+          java -javaagent=newrelic/newrelic.jar -jar target/devRate.jar
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
