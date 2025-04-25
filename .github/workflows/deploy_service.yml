@@ -71,6 +71,10 @@ jobs:
           echo "Current directory: $(pwd)"
             ls -l newrelic
 
+      - name: List all files in the repository
+        run: |
+            ls -lR
+
       - name: Run Application with New Relic Agent
         run: |
           java -javaagent=newrelic/newrelic.jar -jar /devRate.jar
