@@ -122,7 +122,7 @@ jobs:
             distributed_tracing:
               enabled: true
             logging:
-              level: debug" > newrelic/newrelic.yml
+              level: info" > newrelic/newrelic.yml
 
       - name: Build image
         id: build-image
