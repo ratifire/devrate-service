@@ -57,6 +57,10 @@ resource "aws_ecs_task_definition" "task_definition" {
         {
           name  = "NEW_RELIC_LOG_LEVEL"
           value = "info"
+        },
+        {
+          name  = "NEW_RELIC_AGENT_PATH",
+          value = "/newrelic/newrelic.jar"
         }
       ],
       mountPoints = [],
@@ -71,7 +75,13 @@ resource "aws_ecs_task_definition" "task_definition" {
         },
         secretOptions = []
       },
-      systemControls = []
+      systemControls = [],
+      command = [
+        "java",
+        "-javaagent:/newrelic/newrelic.jar",
+        "-jar",
+        "/devRate.jar"
+      ]
     }
   ])
 

@@ -42,6 +42,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Download New Relic Java Agent
+        run: |
+          mkdir -p newrelic
+          curl -o newrelic/newrelic.jar https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-agent.jar
+
+      - name: Configure New Relic
+        run: |
+          echo "common: &default_settings
+            license_key: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
+            app_name: '${{ vars.NEW_RELIC_APP_NAME }}-${{ github.event.inputs.environment }}'
+            distributed_tracing:
+              enabled: true
+            logging:
+              level: info" > newrelic/newrelic.yml
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 

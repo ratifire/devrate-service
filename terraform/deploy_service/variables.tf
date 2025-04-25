@@ -106,7 +106,7 @@ variable "deploy_profile" {
 variable "new_relic_app_name" {
   type        = string
   description = "New Relic application name"
-  default     = "Skillzzy-dev"
+  default     = "skillzzy-new-relic"
 }
 
 variable "new_relic_license_key" {
