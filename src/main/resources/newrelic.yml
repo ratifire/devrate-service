@@ -5,4 +5,4 @@ common: &default_settings
     enabled: true
   logging:
     level: info
-    file_path: logs/newrelic_agent.log
+    forward: true
