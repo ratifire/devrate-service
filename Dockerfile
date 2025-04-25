@@ -4,4 +4,4 @@ ENV JAR_FILE=target/devRate-*.jar
 COPY ${JAR_FILE} /devRate.jar
 COPY newrelic-dev/newrelic-dev.jar /newrelic-dev.jar
 COPY newrelic-dev/newrelic-dev.yml /newrelic-dev.yml
-ENTRYPOINT ["java", "-javaagent:/newrelic-dev.jar", "-jar", "/devRate.jar"]
+ENTRYPOINT ["java", "-javaagent:/newrelic-dev.jar", "-Dnewrelic.config.file=/newrelic-dev/newrelic-dev.yml", "-jar", "/devRate.jar"]
