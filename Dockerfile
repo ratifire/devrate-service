@@ -1,6 +1,7 @@
 FROM openjdk:21
 EXPOSE 8080
 ARG ENVIRONMENT=dev
+ENV ENVIRONMENT=${ENVIRONMENT}
 ENV JAR_FILE=target/devRate-*.jar
 COPY ${JAR_FILE} /devRate.jar
 COPY newrelic-${ENVIRONMENT}/newrelic-${ENVIRONMENT}.jar /newrelic-${ENVIRONMENT}.jar
