@@ -109,6 +109,10 @@ jobs:
           # Build a docker container 
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
 
+      - name: List all files in the repository
+        run: |
+          ls -lR
+
       - name: Push image to Amazon ECR
         id: push-image
         env:
