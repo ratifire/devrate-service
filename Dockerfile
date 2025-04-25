@@ -1,7 +1,8 @@
 FROM openjdk:21
 EXPOSE 8080
+ARG ENVIRONMENT=dev
 ENV JAR_FILE=target/devRate-*.jar
 COPY ${JAR_FILE} /devRate.jar
-COPY newrelic-dev/newrelic-dev.jar /newrelic-dev.jar
-COPY newrelic-dev/newrelic-dev.yml /newrelic-dev.yml
-ENTRYPOINT ["java", "-javaagent:/newrelic-dev.jar", "-Dnewrelic.config.file=/newrelic-dev.yml", "-jar", "/devRate.jar"]
+COPY newrelic-${ENVIRONMENT}/newrelic-${ENVIRONMENT}.jar /newrelic-${ENVIRONMENT}.jar
+COPY newrelic-${ENVIRONMENT}/newrelic-${ENVIRONMENT}.yml /newrelic-${ENVIRONMENT}.yml
+ENTRYPOINT ["java", "-javaagent:/newrelic-${ENVIRONMENT}.jar", "-Dnewrelic.config.file=/newrelic-${ENVIRONMENT}.yml", "-jar", "/devRate.jar"]

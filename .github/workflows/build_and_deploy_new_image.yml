@@ -101,6 +101,22 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Download New Relic Java Agent
+        run: |
+          ENV_DIR="newrelic-${{ github.event.inputs.environment }}"
+          mkdir -p $ENV_DIR
+          curl -o "$ENV_DIR/$ENV_DIR.jar" https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-agent.jar
+
+      - name: Configure New Relic
+        run: |
+          echo "common: &default_settings
+            license_key: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
+            app_name: '${{ vars.NEW_RELIC_APP_NAME }}-${{ github.event.inputs.environment }}'
+            distributed_tracing:
+              enabled: true
+            logging:
+              level: info" > newrelic-${{ github.event.inputs.environment }}/newrelic-${{ github.event.inputs.environment }}.yml
+
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
@@ -112,12 +128,13 @@ jobs:
           TF_VAR_pg_database: ${{ secrets.PG_DATABASE }}
           TF_VAR_new_relic_app_name: ${{ vars.NEW_RELIC_APP_NAME }}
           TF_VAR_new_relic_license_key: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
+          ENVIRONMENT: ${{ github.event.inputs.environment }}
 
         run: |
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build --build-arg ENVIRONMENT=$ENVIRONMENT -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
