@@ -73,7 +73,7 @@ jobs:
 
       - name: Run Application with New Relic Agent
         run: |
-          java -javaagent=newrelic/newrelic.jar -jar target/devRate.jar
+          java -javaagent=newrelic/newrelic.jar -jar /devRate.jar
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
