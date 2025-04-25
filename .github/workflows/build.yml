@@ -116,7 +116,7 @@ jobs:
               level: info" > newrelic-dev/newrelic-dev.yml
 
       - name: Display newrelic.yml content
-        run: cat newrelic/newrelic-dev.yml
+        run: cat newrelic-dev/newrelic-dev.yml
 
       - name: Build image
         id: build-image
