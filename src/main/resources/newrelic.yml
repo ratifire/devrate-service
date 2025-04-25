@@ -1,8 +1,0 @@
-common: &default_settings
-  license_key: '<NEW_RELIC_LICENSE_KEY>'
-  app_name: 'Skillzzy-dev'
-  distributed_tracing:
-    enabled: true
-  logging:
-    level: info
-    forward: true
