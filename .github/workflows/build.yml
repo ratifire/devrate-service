@@ -124,6 +124,9 @@ jobs:
             logging:
               level: info" > newrelic/newrelic.yml
 
+      - name: Display newrelic.yml content
+        run: cat newrelic/newrelic.yml
+
       - name: Build image
         id: build-image
         env:
