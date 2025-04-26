@@ -35,6 +35,7 @@ env:
   AWS_MIROTALK_API_KEY: ${{secrets.AWS_MIROTALK_API_KEY}}
 
 permissions:
+  id-token: write
   contents: read
 
 jobs:
@@ -122,8 +123,6 @@ jobs:
           TF_VAR_pg_username: ${{ secrets.PG_USERNAME }}
           TF_VAR_pg_password: ${{ secrets.PG_PASSWORD }}
           TF_VAR_pg_database: ${{ secrets.PG_DATABASE }}
-          TF_VAR_new_relic_app_name: ${{ vars.NEW_RELIC_APP_NAME }}
-          TF_VAR_new_relic_license_key: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
           ENVIRONMENT: ${{ github.event.inputs.environment }}
 
         run: |
