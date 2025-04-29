@@ -38,8 +38,6 @@ public class WebSocketConfig extends AbstractWebSocketHandler
   public void registerStompEndpoints(StompEndpointRegistry registry) {
     registry.addEndpoint("/chat").setAllowedOriginPatterns("*").withSockJS();
     registry.addEndpoint("/chat").setAllowedOriginPatterns("*");
-    registry.addEndpoint("/queue").setAllowedOriginPatterns("*").withSockJS();
-    registry.addEndpoint("/queue").setAllowedOriginPatterns("*");
   }
 
   @Override
