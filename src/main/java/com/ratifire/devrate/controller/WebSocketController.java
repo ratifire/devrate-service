@@ -23,10 +23,10 @@ public class WebSocketController {
    */
   @MessageMapping("/chat")
   public void sendMessage(@RequestBody ChatMessageDto chatMessageDto) {
-    simpMessagingTemplate.convertAndSend(
-        String.format("/topic/messages/%s", chatMessageDto.getSenderId()), chatMessageDto);
-    simpMessagingTemplate.convertAndSend(
-        String.format("/topic/messages/%s", chatMessageDto.getReceiverId()), chatMessageDto);
+    simpMessagingTemplate.convertAndSendToUser(String.valueOf(chatMessageDto.getSenderId()),
+            "/queue/messages", chatMessageDto);
+    simpMessagingTemplate.convertAndSendToUser(String.valueOf(chatMessageDto.getReceiverId()),
+            "/queue/messages", chatMessageDto);
 
     chatService.createMessage(chatMessageDto);
   }
