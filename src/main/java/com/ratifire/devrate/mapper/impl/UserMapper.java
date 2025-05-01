@@ -25,6 +25,7 @@ public abstract class UserMapper implements DataMapper<UserDto, User> {
   @Mapping(target = "interviewRequests", ignore = true)
   @Mapping(target = "interviewHistories", ignore = true)
   @Mapping(target = "feedbacks", ignore = true)
+  @Mapping(target = "createdAt", ignore = true)
   public abstract User toEntity(UserDto dto);
 
   @Mapping(target = "contacts", ignore = true)
@@ -39,6 +40,7 @@ public abstract class UserMapper implements DataMapper<UserDto, User> {
   @Mapping(target = "interviewRequests", ignore = true)
   @Mapping(target = "interviewHistories", ignore = true)
   @Mapping(target = "feedbacks", ignore = true)
+  @Mapping(target = "createdAt", ignore = true)
   public abstract User updateEntity(UserDto dto, @MappingTarget User entity);
 
   @Mapping(target = "hardSkillMark", expression = "java(java.math.BigDecimal.ZERO)")
