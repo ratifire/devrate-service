@@ -21,9 +21,15 @@ public class WebSocketConfig extends AbstractWebSocketHandler
 
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
-    registry.addEndpoint("/chat").setAllowedOriginPatterns("*").withSockJS();
-    registry.addEndpoint("/chat").setAllowedOriginPatterns("*");
-    registry.addEndpoint("/notifications-ws").setAllowedOriginPatterns("*").withSockJS();
+    registry.addEndpoint("/chat").setAllowedOriginPatterns("*")
+            .withSockJS()
+            .setHeartbeatTime(10000);
+    registry.addEndpoint("/chat")
+            .setAllowedOriginPatterns("*");
+    registry.addEndpoint("/notifications-ws")
+            .setAllowedOriginPatterns("*")
+            .withSockJS()
+            .setHeartbeatTime(10000);
     registry.addEndpoint("/notifications-ws").setAllowedOriginPatterns("*");
   }
 
