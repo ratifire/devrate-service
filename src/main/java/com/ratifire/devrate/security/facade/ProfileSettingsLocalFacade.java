@@ -72,7 +72,7 @@ public class ProfileSettingsLocalFacade implements ProfileSettingsFacade {
   public void forceUserProfileDeactivation(HttpServletRequest request,
       HttpServletResponse response) {
     long currentUserId = userContextProvider.getAuthenticatedUserId();
-    profileSettingsService.deactivateUserIfNoBlockingData(currentUserId);
+    profileSettingsService.deactivateAccountIfNoBlockingData(currentUserId);
     refreshTokenCookieHelper.deleteRefreshTokenFromCookie(response);
   }
 

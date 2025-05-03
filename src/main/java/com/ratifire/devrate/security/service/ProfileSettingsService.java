@@ -2,6 +2,7 @@ package com.ratifire.devrate.security.service;
 
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_EMAIL;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_EMAIL_VERIFIED;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_IS_ACCOUNT_ACTIVE;
 import static com.ratifire.devrate.security.util.CognitoUtil.createAttribute;
 
 import com.amazonaws.services.cognitoidp.model.AttributeType;
@@ -21,6 +22,7 @@ import com.ratifire.devrate.security.model.dto.PasswordChangeDto;
 import com.ratifire.devrate.security.model.dto.ProfileDeactivationDto;
 import com.ratifire.devrate.security.model.enums.AccountLanguage;
 import com.ratifire.devrate.security.model.enums.RegistrationSourceType;
+import com.ratifire.devrate.security.util.CognitoUtil;
 import com.ratifire.devrate.security.util.TokenUtil;
 import com.ratifire.devrate.service.MasteryService;
 import com.ratifire.devrate.service.UserService;
@@ -148,8 +150,15 @@ public class ProfileSettingsService {
   public void forceUserProfileDeactivation(HttpServletRequest request,
       HttpServletResponse response) {
     final long currentUserId = userContextProvider.getAuthenticatedUserId();
+    final String accessToken = TokenUtil.extractAccessTokenFromRequest(request);
+    final String username = TokenUtil.getSubjectFromAccessToken(accessToken);
 
-    deactivateUserIfNoBlockingData(currentUserId);
+    deactivateAccountIfNoBlockingData(currentUserId);
+
+    List<AttributeType> attributeToUpdate = List.of(
+        CognitoUtil.createAttribute(ATTRIBUTE_IS_ACCOUNT_ACTIVE, Boolean.FALSE.toString()));
+    cognitoClient.updateCognitoUserAttributes(attributeToUpdate, username);
+
     authenticationService.logout(request, response);
   }
 
@@ -161,7 +170,7 @@ public class ProfileSettingsService {
    * @throws ProfileDeactivationConflictException if there are blocking interview requests or
    *                                              upcoming interviews
    */
-  public void deactivateUserIfNoBlockingData(long userId) {
+  public void deactivateAccountIfNoBlockingData(long userId) {
     List<InterviewRequest> interviewRequestsWithFutureTimeSlots =
         interviewRequestService.findAllWithFutureTimeSlots(userId);
     List<Interview> upcomingInterviews =
