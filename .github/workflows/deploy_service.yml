@@ -7,13 +7,14 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Select environment to deploy (prod, dev)'
+        description: 'Select environment to deploy (prod, dev or qa)'
         required: true
         default: 'dev'
         type: choice
         options:
           - dev
           - prod
+          - qa
 
 permissions:
   id-token: write
@@ -72,4 +73,6 @@ jobs:
           TF_VAR_db_username: ${{ secrets.DB_USERNAME }}
           TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
           TF_VAR_db_name: ${{ secrets.DB_NAME }}
+          TF_VAR_new_relic_app_name: ${{ vars.NEW_RELIC_APP_NAME }}
+          TF_VAR_new_relic_license_key: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
         run: terraform apply -var="image_tag=${{ env.IMAGE_TAG }}" -var-file="${{ github.workspace }}/${{ env.working-directory }}/${{ github.event.inputs.environment }}.tfvars" -auto-approve -input=false

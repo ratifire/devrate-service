@@ -45,6 +45,18 @@ resource "aws_ecs_task_definition" "task_definition" {
         {
           name  = "ACTIVE_PROFILE",
           value = var.deploy_profile
+        },
+        {
+          name  = "NEW_RELIC_APP_NAME"
+          value = var.new_relic_app_name
+        },
+        {
+          name  = "NEW_RELIC_LICENSE_KEY"
+          value = var.new_relic_license_key
+        },
+        {
+          name  = "NEW_RELIC_LOG_LEVEL"
+          value = "info"
         }
       ],
       mountPoints = [],

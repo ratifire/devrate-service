@@ -27,13 +27,14 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Select environment to deploy (prod, dev)'
+        description: 'Select environment to deploy (prod, dev or qa)'
         required: true
         default: 'dev'
         type: choice
         options:
           - dev
           - prod
+          - qa
 
 permissions:
   id-token: write
@@ -107,14 +108,31 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Download New Relic Java Agent
+        run: |
+          ENV_DIR="newrelic-${{ github.event.inputs.environment }}"
+          mkdir -p $ENV_DIR
+          curl -o "$ENV_DIR/$ENV_DIR.jar" https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-agent.jar
+
+      - name: Configure New Relic
+        run: |
+          echo "common: &default_settings
+            license_key: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
+            app_name: '${{ vars.NEW_RELIC_APP_NAME }}'
+            distributed_tracing:
+              enabled: true
+            logging:
+              level: info" > newrelic-${{ github.event.inputs.environment }}/newrelic-${{ github.event.inputs.environment }}.yml
+
       - name: Build image
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          ENVIRONMENT: ${{ github.event.inputs.environment }}
         run: |
-          # Build a docker container 
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          # Build a docker container with environment-specific settings
+          docker build -f Dockerfile.aws --build-arg ENVIRONMENT=$ENVIRONMENT -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
 
       - name: Push image to Amazon ECR
         id: push-image

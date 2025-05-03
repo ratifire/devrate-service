@@ -29,6 +29,8 @@ import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
 import java.math.BigDecimal;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -154,6 +156,7 @@ public class UserService {
     User user = userMapper.toEntity(userDto);
     user.setEmail(email);
     user.setPassword(password);
+    user.setCreatedAt(ZonedDateTime.now(ZoneOffset.UTC));
     return userRepository.save(user);
   }
 
