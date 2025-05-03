@@ -59,9 +59,13 @@ tags:
     description: Endpoints for managing calendar event histories
   - name: Chat
     description: Endpoints for managing chat messaging
+  - name: Profile Settings
+    description: Endpoints for managing profile settings
 paths:
   /auth/signup:
     $ref: './paths/auth/signup.yaml'
+  /auth/confirm-activation-account:
+    $ref: './paths/auth/confirm-activation-account.yaml'
   /auth/signup/confirm:
     $ref: './paths/auth/signup-code.yaml'
   /auth/signup/resend-code:
@@ -212,6 +216,16 @@ paths:
     $ref: './paths/chats/chats-opponentUserId.yaml'
   /chat:
     $ref: './paths/chats/ws-chats.yaml'
+  /profile-settings/change-email:
+    $ref: './paths/profileSettings/change-email.yaml'
+  /profile-settings/change-password:
+    $ref: './paths/profileSettings/change-password.yaml'
+  /profile-settings/account-language:
+    $ref: './paths/profileSettings/account-language.yaml'
+  /profile-settings/profile-deactivation:
+    $ref: './paths/profileSettings/profile-deactivation.yaml'
+  /profile-settings/email-subscription:
+    $ref: './paths/profileSettings/email-subscription.yaml'
 components:
   securitySchemes:
     accessToken:

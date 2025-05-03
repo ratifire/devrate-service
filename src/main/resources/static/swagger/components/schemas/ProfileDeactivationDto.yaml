@@ -1,0 +1,10 @@
+type: object
+properties:
+  interviewRequestsToDelete:
+    type: array
+    items:
+      $ref: '#/components/schemas/InterviewRequestShortDto.yaml'
+  interviewsToDelete:
+    type: array
+    items:
+      $ref: '#/components/schemas/InterviewShortDto.yaml'

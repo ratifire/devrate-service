@@ -1,0 +1,20 @@
+patch:
+  tags:
+    - Profile Settings
+  summary: Force user profile deactivation
+  description: Deactivate the currently authenticated user's profile.
+  operationId: forceUserProfileDeactivation
+  security:
+    - accessToken: []
+    - idToken: []
+  responses:
+    '200':
+      description: Profile deactivated successfully
+    '409':
+      description: Conflict. Profile cannot be deactivated due to linked future interviews or requests.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ProfileDeactivationDto.yaml'
+    '500':
+      description: Internal Server Error
