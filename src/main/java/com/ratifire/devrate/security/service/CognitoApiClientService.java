@@ -5,6 +5,7 @@ import com.amazonaws.services.cognitoidp.model.AdminGetUserResult;
 import com.amazonaws.services.cognitoidp.model.AdminLinkProviderForUserRequest;
 import com.amazonaws.services.cognitoidp.model.AttributeType;
 import com.amazonaws.services.cognitoidp.model.AuthenticationResultType;
+import com.amazonaws.services.cognitoidp.model.ChangePasswordRequest;
 import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordRequest;
 import com.amazonaws.services.cognitoidp.model.ConfirmSignUpRequest;
 import com.amazonaws.services.cognitoidp.model.ForgotPasswordRequest;
@@ -48,9 +49,9 @@ public class CognitoApiClientService {
    * @param role     The user's role.
    */
   public void register(String email, String password, long userId, String role,
-      boolean isPrimaryRecord) {
+      boolean isPrimaryRecord, String isAccounrActivated) {
     SignUpRequest request = requestHelper.buildRegisterRequest(email, password, userId, role,
-        isPrimaryRecord);
+        isPrimaryRecord, isAccounrActivated);
     cognitoClient.signUp(request).getUserSub();
   }
 
@@ -170,10 +171,10 @@ public class CognitoApiClientService {
    * @param linkedRecordSubject The subject identifier of the linked record, if any.
    */
   public void updateCognitoUserAttributes(String subject, long userId, String role,
-      boolean isPrimaryRecord, String linkedRecordSubject) {
+      boolean isPrimaryRecord, String linkedRecordSubject, String isAccountActivated) {
     cognitoClient.adminUpdateUserAttributes(
         requestHelper.buildAdminUpdateUserAttributesRequest(subject, userId, role, isPrimaryRecord,
-            linkedRecordSubject));
+            linkedRecordSubject, isAccountActivated));
   }
 
   /**
@@ -185,6 +186,19 @@ public class CognitoApiClientService {
   public void updateCognitoUserAttributes(List<AttributeType> attributesToUpdate, String subject) {
     cognitoClient.adminUpdateUserAttributes(
         requestHelper.buildAdminUpdateUserAttributesRequest(attributesToUpdate, subject));
+  }
+
+  /**
+   * Changes the password for an authenticated user in Cognito.
+   *
+   * @param accessToken the access token of the user.
+   * @param oldPassword the user's current password.
+   * @param newPassword the new password to set for the user.
+   */
+  public void changePassword(String accessToken, String oldPassword, String newPassword) {
+    ChangePasswordRequest request = requestHelper.buildChangePasswordRequest(
+        accessToken, oldPassword, newPassword);
+    cognitoClient.changePassword(request);
   }
 
   /**

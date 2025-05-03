@@ -1,6 +1,7 @@
 package com.ratifire.devrate.security.service;
 
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_DEFAULT_PROVIDER_NAME;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_IS_ACCOUNT_ACTIVE;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_IS_PRIMARY_RECORD;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_PROVIDER_NAME;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.NONE_VALUE;
@@ -14,6 +15,7 @@ import com.amazonaws.services.cognitoidp.model.AuthenticationResultType;
 import com.amazonaws.services.cognitoidp.model.ListUsersResult;
 import com.amazonaws.services.cognitoidp.model.ProviderUserIdentifierType;
 import com.amazonaws.services.cognitoidp.model.UserType;
+import com.ratifire.devrate.dto.LoginResponseDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.mapper.DataMapper;
@@ -24,7 +26,12 @@ import com.ratifire.devrate.security.helper.RefreshTokenCookieHelper;
 import com.ratifire.devrate.security.model.CognitoUserInfo;
 import com.ratifire.devrate.security.model.dto.OauthAuthorizationDto;
 import com.ratifire.devrate.security.model.enums.AccessLevel;
+import com.ratifire.devrate.security.model.enums.AccountLanguage;
+import com.ratifire.devrate.security.model.enums.LoginStatus;
+import com.ratifire.devrate.security.model.enums.RegistrationSourceType;
+import com.ratifire.devrate.security.util.CognitoUtil;
 import com.ratifire.devrate.security.util.TokenUtil;
+import com.ratifire.devrate.service.EmailService;
 import com.ratifire.devrate.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -52,6 +59,8 @@ public class AuthenticationOauthService {
   private final UserService userService;
   private final RegistrationService registrationService;
   private final OauthStateTokenService stateTokenService;
+  private final EmailConfirmationCodeService emailConfirmationCodeService;
+  private final EmailService emailService;
   private final CognitoApiClientRequestHelper apiRequestHelper;
   private final CognitoAuthenticationHelper authHelper;
   private final RefreshTokenCookieHelper cookieHelper;
@@ -78,7 +87,7 @@ public class AuthenticationOauthService {
    *                 details for OAuth processing
    * @return a UserDto object representing the internal user mapped from the processed data
    */
-  public UserDto handleOauthAuthorization(HttpServletResponse response,
+  public LoginResponseDto handleOauthAuthorization(HttpServletResponse response,
       OauthAuthorizationDto request) {
     try {
       stateTokenService.validateStateToken(request.getState());
@@ -95,12 +104,21 @@ public class AuthenticationOauthService {
       User internalUser = processInternalUser(response, accessToken, idToken, refreshToken,
           cognitoUserInfo);
 
+      if (Boolean.FALSE.equals(internalUser.getAccountActivated())) {
+        synchronizeAccountStatusWithCognito(cognitoUserInfo.cognitoUsername(), refreshToken,
+            response);
+        String activationCode = emailConfirmationCodeService.createConfirmationCode(
+            internalUser.getId());
+        emailService.sendAccountActivationCodeEmail(internalUser.getEmail(), activationCode);
+        return buildLoginResponseDto(LoginStatus.ACTIVATION_REQUIRED, null);
+      }
+
       AuthenticationResultType refreshedTokens =
           cognitoApiClient.refreshAuthTokens(cognitoUserInfo.cognitoUsername(), refreshToken);
       setAuthTokensToResponse(response, refreshedTokens.getAccessToken(),
           refreshedTokens.getIdToken(), refreshToken);
 
-      return userMapper.toDto(internalUser);
+      return buildLoginResponseDto(LoginStatus.AUTHENTICATED, userMapper.toDto(internalUser));
 
     } catch (HttpClientErrorException e) {
       log.error("HTTP Error during token exchange: {}", e.getMessage(), e);
@@ -126,6 +144,8 @@ public class AuthenticationOauthService {
     if (ObjectUtils.isNotEmpty(internalUser)) {
       linkAndSynchronizeInternalUserWithCognito(response, internalUser, accessToken, idToken,
           refreshToken, userInfo);
+      internalUser.setRegistrationSource(RegistrationSourceType.FEDERATED_IDENTITY);
+      userService.updateByEntity(internalUser);
     } else {
       internalUser = createInternalUser(userInfo);
     }
@@ -157,7 +177,19 @@ public class AuthenticationOauthService {
     }
     linkCognitoUsersInPool(cognitoPrimaryUser, userInfo);
     cognitoApiClient.updateCognitoUserAttributes(userInfo.subject(), internalUser.getId(),
-        AccessLevel.getDefaultRole(), false, cognitoPrimaryUserSubject);
+        AccessLevel.getDefaultRole(), false, cognitoPrimaryUserSubject,
+        userInfo.isAccountActivated());
+  }
+
+  private void synchronizeAccountStatusWithCognito(String username, String refreshToken,
+      HttpServletResponse response) {
+    cognitoApiClient.updateCognitoUserAttributes(
+        List.of(CognitoUtil.createAttribute(ATTRIBUTE_IS_ACCOUNT_ACTIVE, Boolean.FALSE.toString())),
+        username);
+    AuthenticationResultType refreshedTokens =
+        cognitoApiClient.refreshAuthTokens(username, refreshToken);
+    setAuthTokensToResponse(response, refreshedTokens.getAccessToken(),
+        refreshedTokens.getIdToken(), refreshToken);
   }
 
   private User createInternalUser(CognitoUserInfo userInfo) {
@@ -165,11 +197,14 @@ public class AuthenticationOauthService {
     UserDto userDto = UserDto.builder()
         .firstName(userInfo.firstName())
         .lastName(userInfo.lastName())
+        .registrationSource(RegistrationSourceType.FEDERATED_IDENTITY)
+        .accountLanguage(AccountLanguage.UKRAINE)
+        .accountActivated(true)
         .build();
     User newUser = userService.create(userDto, email, authHelper.generateRandomPassword());
     registrationService.finalizeUserRegistration(newUser, email);
     cognitoApiClient.updateCognitoUserAttributes(userInfo.subject(), newUser.getId(),
-        AccessLevel.getDefaultRole(), true, NONE_VALUE);
+        AccessLevel.getDefaultRole(), true, NONE_VALUE, Boolean.TRUE.toString());
     return newUser;
   }
 
@@ -179,7 +214,7 @@ public class AuthenticationOauthService {
         .filter(user -> user.getAttributes().stream()
             .anyMatch(attribute ->
                 StringUtils.equals(attribute.getName(), ATTRIBUTE_IS_PRIMARY_RECORD)
-                    && StringUtils.equals(attribute.getValue(), "true")
+                    && StringUtils.equals(attribute.getValue(), Boolean.TRUE.toString())
             ))
         .findFirst()
         .map(this::mapToProviderUserIdentifier);
@@ -230,5 +265,12 @@ public class AuthenticationOauthService {
       String refreshToken) {
     TokenUtil.setAuthTokensToHeaders(response, accessToken, idToken);
     cookieHelper.setRefreshTokenToCookie(response, refreshToken);
+  }
+
+  private LoginResponseDto buildLoginResponseDto(LoginStatus status, UserDto user) {
+    return LoginResponseDto.builder()
+        .status(status)
+        .userInfo(user)
+        .build();
   }
 }

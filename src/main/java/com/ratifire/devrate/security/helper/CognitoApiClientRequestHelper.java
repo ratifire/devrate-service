@@ -4,6 +4,7 @@ import static com.amazonaws.services.cognitoidp.model.AuthFlowType.REFRESH_TOKEN
 import static com.amazonaws.services.cognitoidp.model.AuthFlowType.USER_PASSWORD_AUTH;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_COGNITO_SUBJECT;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_EMAIL;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_IS_ACCOUNT_ACTIVE;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_IS_PRIMARY_RECORD;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_LINKED_RECORD_SUBJECT;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_ROLE;
@@ -28,13 +29,14 @@ import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARA
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARAM_SECRET_HASH;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARAM_STATE;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARAM_USERNAME;
+import static com.ratifire.devrate.security.util.CognitoUtil.createAttribute;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.amazonaws.services.cognitoidp.model.AdminGetUserRequest;
-import com.amazonaws.services.cognitoidp.model.AdminGetUserResult;
 import com.amazonaws.services.cognitoidp.model.AdminLinkProviderForUserRequest;
 import com.amazonaws.services.cognitoidp.model.AdminUpdateUserAttributesRequest;
 import com.amazonaws.services.cognitoidp.model.AttributeType;
+import com.amazonaws.services.cognitoidp.model.ChangePasswordRequest;
 import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordRequest;
 import com.amazonaws.services.cognitoidp.model.ConfirmSignUpRequest;
 import com.amazonaws.services.cognitoidp.model.ForgotPasswordRequest;
@@ -76,7 +78,7 @@ public class CognitoApiClientRequestHelper {
    * @return a {@link SignUpRequest} object configured with the provided details.
    */
   public SignUpRequest buildRegisterRequest(String email, String password,
-      long userId, String role, boolean isPrimaryRecord) {
+      long userId, String role, boolean isPrimaryRecord, String isAccounrActivated) {
     return new SignUpRequest()
         .withClientId(cognitoConfig.getClientId())
         .withSecretHash(cognitoAuthHelper.generateSecretHash(email))
@@ -87,7 +89,8 @@ public class CognitoApiClientRequestHelper {
             createAttribute(ATTRIBUTE_USER_ID, String.valueOf(userId)),
             createAttribute(ATTRIBUTE_ROLE, role),
             createAttribute(ATTRIBUTE_IS_PRIMARY_RECORD, String.valueOf(isPrimaryRecord)),
-            createAttribute(ATTRIBUTE_LINKED_RECORD_SUBJECT, NONE_VALUE)
+            createAttribute(ATTRIBUTE_LINKED_RECORD_SUBJECT, NONE_VALUE),
+            createAttribute(ATTRIBUTE_IS_ACCOUNT_ACTIVE, isAccounrActivated)
         ));
   }
 
@@ -210,7 +213,8 @@ public class CognitoApiClientRequestHelper {
    * @return an AdminUpdateUserAttributesRequest configured with the provided details.
    */
   public AdminUpdateUserAttributesRequest buildAdminUpdateUserAttributesRequest(String subject,
-      long userId, String role, boolean isPrimaryRecord, String linkedRecordSubject) {
+      long userId, String role, boolean isPrimaryRecord, String linkedRecordSubject,
+      String isAccountActivated) {
     return new AdminUpdateUserAttributesRequest()
         .withUserPoolId(cognitoConfig.getUserPoolId())
         .withUsername(subject)
@@ -218,7 +222,8 @@ public class CognitoApiClientRequestHelper {
             createAttribute(ATTRIBUTE_USER_ID, String.valueOf(userId)),
             createAttribute(ATTRIBUTE_ROLE, role),
             createAttribute(ATTRIBUTE_IS_PRIMARY_RECORD, String.valueOf(isPrimaryRecord)),
-            createAttribute(ATTRIBUTE_LINKED_RECORD_SUBJECT, linkedRecordSubject)
+            createAttribute(ATTRIBUTE_LINKED_RECORD_SUBJECT, linkedRecordSubject),
+            createAttribute(ATTRIBUTE_IS_ACCOUNT_ACTIVE, isAccountActivated)
         ));
   }
 
@@ -339,6 +344,24 @@ public class CognitoApiClientRequestHelper {
   }
 
   /**
+   * Builds a ChangePasswordRequest for updating a user's password in AWS Cognito.
+   *
+   * @param accessToken the access token of the user.
+   * @param oldPassword the user's current password.
+   * @param newPassword the new password to set for the user.
+   * @return a configured ChangePasswordRequest with the provided credentials.
+   */
+  public ChangePasswordRequest buildChangePasswordRequest(
+      String accessToken,
+      String oldPassword,
+      String newPassword) {
+    return new ChangePasswordRequest()
+        .withAccessToken(accessToken)
+        .withPreviousPassword(oldPassword)
+        .withProposedPassword(newPassword);
+  }
+
+  /**
    * Constructs the URL for obtaining an OAuth token using the configured Cognito domain.
    *
    * @return the complete token URL as a String
@@ -362,9 +385,4 @@ public class CognitoApiClientRequestHelper {
         .encodeToString(credentials.getBytes(UTF_8));
   }
 
-  private AttributeType createAttribute(String name, String value) {
-    return new AttributeType()
-        .withName(name)
-        .withValue(value);
-  }
 }

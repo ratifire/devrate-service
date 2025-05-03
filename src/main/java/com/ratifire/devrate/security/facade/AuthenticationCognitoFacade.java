@@ -3,7 +3,8 @@ package com.ratifire.devrate.security.facade;
 import static com.ratifire.devrate.security.model.enums.OauthIdentityProvider.GOOGLE;
 import static com.ratifire.devrate.security.model.enums.OauthIdentityProvider.LINKEDIN;
 
-import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.dto.LoginResponseDto;
+import com.ratifire.devrate.security.model.dto.ConfirmActivationAccountDto;
 import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.LoginDto;
 import com.ratifire.devrate.security.model.dto.OauthAuthorizationDto;
@@ -37,8 +38,14 @@ public class AuthenticationCognitoFacade implements AuthenticationFacade {
   private final RefreshTokenService refreshTokenService;
 
   @Override
-  public UserDto login(LoginDto loginDto, HttpServletResponse response) {
+  public LoginResponseDto login(LoginDto loginDto, HttpServletResponse response) {
     return authenticationService.login(loginDto, response);
+  }
+
+  @Override
+  public LoginResponseDto confirmAccountActivation(ConfirmActivationAccountDto dto,
+      HttpServletResponse response, HttpServletRequest request) {
+    return authenticationService.confirmAccountActivation(dto, response, request);
   }
 
   @Override
@@ -56,7 +63,7 @@ public class AuthenticationCognitoFacade implements AuthenticationFacade {
   }
 
   @Override
-  public UserDto handleOauthAuthorization(HttpServletResponse response,
+  public LoginResponseDto handleOauthAuthorization(HttpServletResponse response,
       OauthAuthorizationDto request) {
     return authenticationOauthService.handleOauthAuthorization(response, request);
   }

@@ -29,4 +29,14 @@ public interface InterviewRequestRepository extends JpaRepository<InterviewReque
 
   List<InterviewRequest> findByMastery_IdInAndRoleIn(List<Long> masteryIds,
       List<InterviewRequestRole> roles);
+
+  @Query("""
+      SELECT DISTINCT ir
+      FROM InterviewRequest ir
+      JOIN ir.timeSlots ts
+      WHERE ts.dateTime > CURRENT_TIMESTAMP
+        AND ir.user.id = :userId
+      """)
+  List<InterviewRequest> findAllWithFutureTimeSlotsByUserId(@Param("userId") Long userId);
+
 }

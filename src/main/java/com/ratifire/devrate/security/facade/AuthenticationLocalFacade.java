@@ -3,6 +3,7 @@ package com.ratifire.devrate.security.facade;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_AUTHORIZATION;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_ID_TOKEN;
 
+import com.ratifire.devrate.dto.LoginResponseDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.mapper.DataMapper;
@@ -10,12 +11,17 @@ import com.ratifire.devrate.security.exception.AuthenticationException;
 import com.ratifire.devrate.security.exception.UserAlreadyExistsException;
 import com.ratifire.devrate.security.exception.UserRegistrationException;
 import com.ratifire.devrate.security.helper.RefreshTokenCookieHelper;
+import com.ratifire.devrate.security.model.dto.ConfirmActivationAccountDto;
 import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.LoginDto;
 import com.ratifire.devrate.security.model.dto.OauthAuthorizationDto;
 import com.ratifire.devrate.security.model.dto.PasswordResetDto;
 import com.ratifire.devrate.security.model.dto.ResendConfirmCodeDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
+import com.ratifire.devrate.security.model.enums.AccountLanguage;
+import com.ratifire.devrate.security.model.enums.LoginStatus;
+import com.ratifire.devrate.security.model.enums.RegistrationSourceType;
+import com.ratifire.devrate.security.service.AuthenticationService;
 import com.ratifire.devrate.security.util.TokenUtil;
 import com.ratifire.devrate.service.UserService;
 import jakarta.servlet.FilterChain;
@@ -61,24 +67,51 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
 
   private static final String MSG_UNSUPPORTED_OPERATION = "Unsupported operation locally.";
   private final UserService userService;
+  private final AuthenticationService authenticationService;
   private final DataMapper<UserDto, User> userMapper;
   private final RefreshTokenCookieHelper refreshTokenCookieHelper;
 
   @Override
-  public UserDto login(LoginDto loginDto, HttpServletResponse response) {
-    String email = loginDto.getEmail();
+  public LoginResponseDto login(LoginDto loginDto, HttpServletResponse response) {
+    final String email = loginDto.getEmail();
     try {
       User user = userService.findByEmail(email);
+
+      if (Boolean.FALSE.equals(user.getAccountActivated())) {
+        return authenticationService.handleInactiveAccount(user);
+      }
+
       String encodedUserId =
           Base64.getEncoder().encodeToString(String.valueOf(user.getId()).getBytes());
       TokenUtil.setAuthTokensToHeaders(response, encodedUserId, encodedUserId);
-
-      return userMapper.toDto(user);
+      return LoginResponseDto.builder()
+          .status(LoginStatus.AUTHENTICATED)
+          .userInfo(userMapper.toDto(user))
+          .build();
 
     } catch (Exception e) {
       log.error("Authentication process was failed for email {}: {}", email, e.getMessage());
       throw new AuthenticationException("Authentication process was failed.");
     }
+  }
+
+  @Override
+  public LoginResponseDto confirmAccountActivation(ConfirmActivationAccountDto dto,
+      HttpServletResponse response, HttpServletRequest request) {
+    User activatedUser = authenticationService.activateAccountByConfirmationCode(
+        dto.getActivationCode());
+
+    if (activatedUser.getRegistrationSource().equals(RegistrationSourceType.FEDERATED_IDENTITY)) {
+      throw new UnsupportedOperationException(MSG_UNSUPPORTED_OPERATION);
+    }
+
+    String encodedUserId =
+        Base64.getEncoder().encodeToString(String.valueOf(activatedUser.getId()).getBytes());
+    TokenUtil.setAuthTokensToHeaders(response, encodedUserId, encodedUserId);
+    return LoginResponseDto.builder()
+        .status(LoginStatus.AUTHENTICATED)
+        .userInfo(userMapper.toDto(activatedUser))
+        .build();
   }
 
   @Override
@@ -92,7 +125,7 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
   }
 
   @Override
-  public UserDto handleOauthAuthorization(HttpServletResponse response,
+  public LoginResponseDto handleOauthAuthorization(HttpServletResponse response,
       OauthAuthorizationDto request) {
     throw new UnsupportedOperationException(MSG_UNSUPPORTED_OPERATION);
   }
@@ -110,6 +143,8 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
     UserDto userDto = UserDto.builder()
         .firstName(userRegistrationDto.getFirstName())
         .lastName(userRegistrationDto.getLastName())
+        .accountLanguage(AccountLanguage.UKRAINE)
+        .registrationSource(RegistrationSourceType.LOCAL)
         .build();
 
     if (userService.existsByEmail(email)) {

@@ -42,13 +42,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
   @Query("SELECT new com.ratifire.devrate.dto.UserNameSearchDto(u.id, u.firstName, u.lastName, "
       + "(SELECT s.name FROM Specialization s WHERE s.user = u AND s.main = true), u.picture) "
       + "FROM User u "
-      + "WHERE "
+      + "WHERE u.accountActivated = true AND ("
       + "(LOWER(u.firstName) LIKE LOWER(CONCAT('%', :firstParam, '%')) "
       + "AND LOWER(u.lastName) LIKE LOWER(CONCAT('%', :secondParam, '%'))) "
       + "OR (LOWER(u.lastName) LIKE LOWER(CONCAT('%', :firstParam, '%')) "
       + "AND LOWER(u.firstName) LIKE LOWER(CONCAT('%', :secondParam, '%'))) "
       + "OR LOWER(u.firstName) LIKE LOWER(CONCAT('%', :query, '%')) "
-      + "OR LOWER(u.lastName) LIKE LOWER(CONCAT('%', :query, '%'))")
+      + "OR LOWER(u.lastName) LIKE LOWER(CONCAT('%', :query, '%')))")
   List<UserNameSearchDto> findUsersByName(@Param("firstParam") String firstParam,
       @Param("secondParam") String secondParam, @Param("query") String query, Pageable pageable);
 

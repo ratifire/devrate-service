@@ -87,6 +87,10 @@ public class InterviewService {
     return interviewRepository.findByIdAndUserId(id, currentUserId);
   }
 
+  public List<Interview> getUpcomingInterviews(long userId, ZonedDateTime time) {
+    return interviewRepository.findAllByUserIdAndStartTimeAfter(userId, time);
+  }
+
   /**
    * Retrieves a all interviews associated with the currently authenticated user.
    *

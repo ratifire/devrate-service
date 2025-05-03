@@ -20,6 +20,8 @@ import org.springframework.stereotype.Repository;
 @RepositoryRestResource(exported = false)
 public interface InterviewRepository extends JpaRepository<Interview, Long> {
 
+  List<Interview> findAllByUserIdAndStartTimeAfter(long userId, ZonedDateTime time);
+
   Optional<Interview> findByIdAndUserId(long id, long userId);
 
   Page<Interview> findByUserIdAndIsVisibleTrue(long userId, Pageable pageable);

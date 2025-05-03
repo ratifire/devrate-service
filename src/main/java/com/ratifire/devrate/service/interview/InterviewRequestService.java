@@ -70,6 +70,10 @@ public class InterviewRequestService {
         .toList();
   }
 
+  public List<InterviewRequest> findAllWithFutureTimeSlots(long userId) {
+    return repository.findAllWithFutureTimeSlotsByUserId(userId);
+  }
+
   /**
    * Retrieves a list of interview requests by mastery ID for the authenticated user.
    *

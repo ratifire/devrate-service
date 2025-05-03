@@ -61,6 +61,18 @@ public class EmailService {
   }
 
   /**
+   * Sends an email with code for account activation.
+   *
+   * @param email          The user's email address.
+   * @param activationCode The activation code.
+   */
+  public void sendAccountActivationCodeEmail(String email, String activationCode) {
+    String subject = "Account Activation Code";
+    String text = "Your activation code is: " + activationCode;
+    sendEmail(email, subject, text);
+  }
+
+  /**
    * Sends an email to notify the user that their interview request has expired.
    *
    * @param user  The user whose interview request has expired.
