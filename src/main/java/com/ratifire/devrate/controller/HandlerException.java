@@ -53,7 +53,7 @@ public class HandlerException {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public Map<String, String> handleArgumentErrors(MethodArgumentNotValidException ex) {
-    log.error("Handling MethodArgumentNotValidException: {}", ex.getMessage());
+    log.error("Handling Exception: {}", ex.getMessage());
     Map<String, String> errors = new HashMap<>();
     ex.getBindingResult().getFieldErrors()
         .forEach((error -> errors.put(error.getField(), error.getDefaultMessage())));
