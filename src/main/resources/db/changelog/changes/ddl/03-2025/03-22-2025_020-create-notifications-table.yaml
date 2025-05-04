@@ -23,7 +23,7 @@ databaseChangeLog:
                   type: JSONB
               - column:
                   name: type
-                  type: VARCHAR(255)
+                  type: SMALLINT
                   constraints:
                     nullable: false
               - column:

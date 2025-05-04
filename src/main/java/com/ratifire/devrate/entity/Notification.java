@@ -39,7 +39,6 @@ public class Notification {
   @Column(columnDefinition = "JSONB")
   private String payload;
 
-  @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private NotificationType type;
 
