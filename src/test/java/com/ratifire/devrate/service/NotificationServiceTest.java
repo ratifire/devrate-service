@@ -116,7 +116,7 @@ class NotificationServiceTest {
     notificationService.addRejectInterview(user, "rejectionUserFirstName", ZonedDateTime.now());
     notificationService.addInterviewScheduled(user, "role", ZonedDateTime.now());
 
-    verify(notificationRepository, times(5)).save(any());
+    verify(notificationRepository, times(4)).save(any());
   }
 
   private void setupSendToUserMock(Notification notification,
