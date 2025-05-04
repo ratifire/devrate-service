@@ -22,6 +22,8 @@ public interface AuthenticationFacade {
   LoginResponseDto confirmAccountActivation(ConfirmActivationAccountDto confirmActivationAccountDto,
       HttpServletResponse response, HttpServletRequest request);
 
+  void resendActivationAccountConfirmCode(ResendConfirmCodeDto resendConfirmCodeDto);
+
   void redirectToLinkedIn(HttpServletResponse response) throws IOException;
 
   void redirectToGoogle(HttpServletResponse response) throws IOException;

@@ -18,6 +18,7 @@ import com.ratifire.devrate.security.helper.RefreshTokenCookieHelper;
 import com.ratifire.devrate.security.model.LoginResponseWrapper;
 import com.ratifire.devrate.security.model.dto.ConfirmActivationAccountDto;
 import com.ratifire.devrate.security.model.dto.LoginDto;
+import com.ratifire.devrate.security.model.dto.ResendConfirmCodeDto;
 import com.ratifire.devrate.security.model.enums.LoginStatus;
 import com.ratifire.devrate.security.model.enums.RegistrationSourceType;
 import com.ratifire.devrate.security.util.CognitoUtil;
@@ -109,21 +110,20 @@ public class AuthenticationService {
     return responseWrapper.loginResponse();
   }
 
-  private void updateCognitoIsAccountActiveAttribute(HttpServletResponse response,
-      String accessToken, String refreshToken) {
-    String username = TokenUtil.getSubjectFromAccessToken(accessToken);
-    List<AttributeType> attributeToUpdate = List.of(
-        CognitoUtil.createAttribute(ATTRIBUTE_IS_ACCOUNT_ACTIVE, Boolean.TRUE.toString()));
-    cognitoApiClientService.updateCognitoUserAttributes(attributeToUpdate, username);
-    refreshAuthTokens(response, refreshToken, username);
-  }
+  /**
+   * Resends a new account activation confirmation code to the user's email address.
+   *
+   * @param resendConfirmCodeDto DTO containing the user's email address.
+   */
+  public void resendActivationAccountConfirmCode(ResendConfirmCodeDto resendConfirmCodeDto) {
+    final User user = userService.findByEmail(resendConfirmCodeDto.getEmail());
+    final long userId = user.getId();
 
-  private void refreshAuthTokens(HttpServletResponse response, String refreshToken,
-      String username) {
-    AuthenticationResultType refreshedTokens =
-        cognitoApiClientService.refreshAuthTokens(username, refreshToken);
-    TokenUtil.setAuthTokensToHeaders(response, refreshedTokens.getAccessToken(),
-        refreshedTokens.getIdToken());
+    EmailConfirmationCode code = emailConfirmationCodeService.findByUserId(userId);
+    emailConfirmationCodeService.deleteConfirmedCode(code.getId());
+
+    String newCode = emailConfirmationCodeService.createConfirmationCode(userId);
+    emailService.sendAccountActivationCodeEmail(user.getEmail(), newCode);
   }
 
   /**
@@ -206,6 +206,23 @@ public class AuthenticationService {
     userService.updateByEntity(user);
 
     return user;
+  }
+
+  private void updateCognitoIsAccountActiveAttribute(HttpServletResponse response,
+      String accessToken, String refreshToken) {
+    String username = TokenUtil.getSubjectFromAccessToken(accessToken);
+    List<AttributeType> attributeToUpdate = List.of(
+        CognitoUtil.createAttribute(ATTRIBUTE_IS_ACCOUNT_ACTIVE, Boolean.TRUE.toString()));
+    cognitoApiClientService.updateCognitoUserAttributes(attributeToUpdate, username);
+    refreshAuthTokens(response, refreshToken, username);
+  }
+
+  private void refreshAuthTokens(HttpServletResponse response, String refreshToken,
+      String username) {
+    AuthenticationResultType refreshedTokens =
+        cognitoApiClientService.refreshAuthTokens(username, refreshToken);
+    TokenUtil.setAuthTokensToHeaders(response, refreshedTokens.getAccessToken(),
+        refreshedTokens.getIdToken());
   }
 
   private LoginResponseDto buildLoginResponseDto(LoginStatus status, UserDto user) {

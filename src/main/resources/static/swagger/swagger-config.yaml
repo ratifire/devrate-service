@@ -66,6 +66,8 @@ paths:
     $ref: './paths/auth/signup.yaml'
   /auth/confirm-activation-account:
     $ref: './paths/auth/confirm-activation-account.yaml'
+  /auth/activation-account/resend-code:
+    $ref: './paths/auth/activation-account-resent-code.yaml'
   /auth/signup/confirm:
     $ref: './paths/auth/signup-code.yaml'
   /auth/signup/resend-code:

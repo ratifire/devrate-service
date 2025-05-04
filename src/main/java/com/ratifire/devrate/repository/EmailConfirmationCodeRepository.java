@@ -15,4 +15,6 @@ public interface EmailConfirmationCodeRepository extends
     JpaRepository<EmailConfirmationCode, Long> {
 
   Optional<EmailConfirmationCode> findByCode(String code);
+
+  Optional<EmailConfirmationCode> findByUserId(Long userId);
 }

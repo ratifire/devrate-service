@@ -49,6 +49,11 @@ public class AuthenticationCognitoFacade implements AuthenticationFacade {
   }
 
   @Override
+  public void resendActivationAccountConfirmCode(ResendConfirmCodeDto resendConfirmCodeDto) {
+    authenticationService.resendActivationAccountConfirmCode(resendConfirmCodeDto);
+  }
+
+  @Override
   public void redirectToLinkedIn(HttpServletResponse response)
       throws IOException {
     String url = authenticationOauthService.generateOauthRedirectUrl(LINKEDIN.getProvider());

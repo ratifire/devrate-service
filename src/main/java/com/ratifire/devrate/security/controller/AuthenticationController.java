@@ -52,6 +52,17 @@ public class AuthenticationController {
   }
 
   /**
+   * Resends the confirmation code for user activation account.
+   *
+   * @param resendConfirmCodeDto The DTO containing the user's email.
+   */
+  @PostMapping("/activation-account/resend-code")
+  public void resendActivationAccountConfirmCode(
+      @RequestBody @Valid ResendConfirmCodeDto resendConfirmCodeDto) {
+    authenticationFacade.resendActivationAccountConfirmCode(resendConfirmCodeDto);
+  }
+
+  /**
    * Redirects the user to LinkedIn for OAuth authentication.
    *
    * @param response the HttpServletResponse object required to send the redirect

@@ -115,6 +115,11 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
   }
 
   @Override
+  public void resendActivationAccountConfirmCode(ResendConfirmCodeDto resendConfirmCodeDto) {
+    authenticationService.resendActivationAccountConfirmCode(resendConfirmCodeDto);
+  }
+
+  @Override
   public void redirectToLinkedIn(HttpServletResponse response) {
     throw new UnsupportedOperationException(MSG_UNSUPPORTED_OPERATION);
   }

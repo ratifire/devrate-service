@@ -61,6 +61,17 @@ public class EmailConfirmationCodeService {
   }
 
   /**
+   * Retrieves the {@link EmailConfirmationCode} entity for a requested user ID.
+   *
+   * @return The {@link EmailConfirmationCode} entity associated with the specified user ID.
+   */
+  public EmailConfirmationCode findByUserId(long userId) {
+    return emailConfirmationCodeRepository.findByUserId(userId)
+        .orElseThrow(() ->
+            new MailConfirmationCodeException("The confirmation code for user not found"));
+  }
+
+  /**
    * Validates whether the given email confirmation code has expired and handles the expiration if
    * it has.
    *
