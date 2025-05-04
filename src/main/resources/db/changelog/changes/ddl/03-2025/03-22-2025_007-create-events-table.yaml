@@ -1,0 +1,48 @@
+databaseChangeLog:
+  - changeSet:
+      id: 03-22-2025_008
+      author: Dmytro Abalmas
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: events
+      changes:
+        - createTable:
+            tableName: events
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: type
+                  type: VARCHAR(255)
+              - column:
+                  name: room_link
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: host_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: participant_id
+                  type: BIGINT[]
+                  constraints:
+                    nullable: false
+              - column:
+                  name: start_time
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
