@@ -53,7 +53,7 @@ public class HandlerException {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public Map<String, String> handleArgumentErrors(MethodArgumentNotValidException ex) {
-    log.error("Handling Exception: {}", ex.getMessage());
+    log.error("Handling MethodArgumentNotValidException: {}", ex.getMessage());
     Map<String, String> errors = new HashMap<>();
     ex.getBindingResult().getFieldErrors()
         .forEach((error -> errors.put(error.getField(), error.getDefaultMessage())));
@@ -68,7 +68,7 @@ public class HandlerException {
    */
   @ExceptionHandler(Exception.class)
   public ResponseEntity<?> handleExceptionErrors(Exception ex) {
-    log.error("Handling Exception: {}, message: {}", ex, ex.getMessage());
+    log.error("Handling Exception: {}", ex.getMessage());
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Oops! Something went wrong:( We're working to fix it! Please try again later:)");
   }
