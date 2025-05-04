@@ -21,13 +21,14 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Select environment to deploy (prod, dev)'
+        description: 'Select environment to deploy (prod, dev or qa)'
         required: true
         default: 'dev'
         type: choice
         options:
           - dev
           - prod
+          - qa
 
 permissions:
   id-token: write
@@ -119,7 +120,7 @@ jobs:
           ENVIRONMENT: ${{ github.event.inputs.environment }}
         run: |
           # Build a docker container with environment-specific settings
-          docker build --build-arg ENVIRONMENT=$ENVIRONMENT -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build -f Dockerfile.aws --build-arg ENVIRONMENT=$ENVIRONMENT -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
 
       - name: Push image to Amazon ECR
         id: push-image

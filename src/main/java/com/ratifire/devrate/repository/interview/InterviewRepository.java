@@ -2,7 +2,6 @@ package com.ratifire.devrate.repository.interview;
 
 import com.ratifire.devrate.dto.projection.InterviewUserMasteryProjection;
 import com.ratifire.devrate.entity.interview.Interview;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -37,9 +36,6 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
       + "(SELECT sub.eventId FROM Interview sub WHERE sub.id = :interviewId) "
       + "AND i.id != :interviewId")
   Optional<Interview> findOppositeInterview(@Param("interviewId") long interviewId);
-
-  List<Interview> findByStartTimeGreaterThanEqualAndStartTimeLessThan(ZonedDateTime start,
-      ZonedDateTime end);
 
   List<Interview> findByMasteryIdAndUserId(long masteryId, long userId);
 

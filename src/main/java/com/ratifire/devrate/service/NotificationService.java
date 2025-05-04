@@ -3,7 +3,6 @@ package com.ratifire.devrate.service;
 import com.ratifire.devrate.dto.NotificationDto;
 import com.ratifire.devrate.entity.Notification;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.entity.notification.payload.InterviewFeedbackPayload;
 import com.ratifire.devrate.entity.notification.payload.InterviewRejectedPayload;
 import com.ratifire.devrate.entity.notification.payload.InterviewRequestExpiredPayload;
 import com.ratifire.devrate.entity.notification.payload.InterviewScheduledPayload;
@@ -100,24 +99,6 @@ public class NotificationService {
 
     Notification notification = create(NotificationType.INTERVIEW_SCHEDULED,
         scheduledPayload, recipient);
-
-    save(notification, recipient);
-  }
-
-  /**
-   * Adds an interview feedback notification for a specified user.
-   *
-   * @param recipient  The user who will receive the notification.
-   * @param interviewId The user interview ID to include in the notification payload.
-   * @param userEmail  The user email to add the notification for.
-   */
-  public void addInterviewFeedbackDetail(User recipient, long interviewId, String userEmail) {
-    InterviewFeedbackPayload feedbackPayload = InterviewFeedbackPayload.builder()
-        .interviewId(interviewId)
-        .build();
-
-    Notification notification = create(NotificationType.INTERVIEW_FEEDBACK,
-        feedbackPayload, recipient);
 
     save(notification, recipient);
   }

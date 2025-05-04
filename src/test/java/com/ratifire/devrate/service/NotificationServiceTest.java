@@ -115,7 +115,6 @@ class NotificationServiceTest {
     notificationService.addInterviewRequestExpiry(user);
     notificationService.addRejectInterview(user, "rejectionUserFirstName", ZonedDateTime.now());
     notificationService.addInterviewScheduled(user, "role", ZonedDateTime.now());
-    notificationService.addInterviewFeedbackDetail(user, 1L, anyString());
 
     verify(notificationRepository, times(5)).save(any());
   }
