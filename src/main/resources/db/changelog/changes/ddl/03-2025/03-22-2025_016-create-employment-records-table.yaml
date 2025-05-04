@@ -1,0 +1,57 @@
+databaseChangeLog:
+  - changeSet:
+      id: 03-22-2025_016
+      author: Dmytro Abalmas
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: employment_records
+      changes:
+        - createTable:
+            tableName: employment_records
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: start_year
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: end_year
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: position
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: company_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(1000)
+              - column:
+                  name: responsibilities
+                  type: text[]
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: employment_records
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_employment_records_user_id

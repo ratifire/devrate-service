@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 03-22-2025_004
+      author: Dmytro Abalmas
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            primaryKeyExists:
+              tableName: soft_skills
+      changes:
+        - addPrimaryKey:
+            tableName: soft_skills
+            columnNames: interview_history_id, skill_name

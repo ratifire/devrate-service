@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: 03-22-2025_008
+      author: Dmytro Abalmas
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: interview_histories_users
+      changes:
+        - createTable:
+            tableName: interview_histories_users
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: interview_history_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false

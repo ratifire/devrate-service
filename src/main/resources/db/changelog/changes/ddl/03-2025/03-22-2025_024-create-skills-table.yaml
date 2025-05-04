@@ -1,0 +1,55 @@
+databaseChangeLog:
+  - changeSet:
+      id: 03-22-2025_024
+      author: Dmytro Abalmas
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: skills
+      changes:
+        - createTable:
+            tableName: skills
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: average_mark
+                  type: DECIMAL(4, 2)
+              - column:
+                  name: counter
+                  type: BIGINT
+              - column:
+                  name: is_hidden
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: VARCHAR(255)
+              - column:
+                  name: is_grows
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: mastery_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: skills
+            baseColumnNames: mastery_id
+            referencedTableName: masteries
+            referencedColumnNames: id
+            constraintName: fk_skills_mastery_id
