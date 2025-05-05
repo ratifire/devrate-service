@@ -6,7 +6,7 @@ on:
       environment:
         description: 'Select environment to deploy (prod, dev or qa)'
         required: true
-        default: 'dev'
+        default: 'qa'
         type: choice
         options:
           - dev
