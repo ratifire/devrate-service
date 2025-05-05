@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 03-22-2025_011
+      author: Dmytro Abalmas
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            primaryKeyExists:
+              tableName: user_event
+      changes:
+        - addPrimaryKey:
+            tableName: user_event
+            columnNames: user_id, event_id

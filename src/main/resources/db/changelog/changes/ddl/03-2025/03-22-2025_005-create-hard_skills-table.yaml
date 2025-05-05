@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: 03-22-2025_005
+      author: Dmytro Abalmas
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: hard_skills
+      changes:
+        - createTable:
+            tableName: hard_skills
+            columns:
+              - column:
+                  name: interview_history_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: skill_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: skill_value
+                  type: DECIMAL(4, 2)

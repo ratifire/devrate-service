@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: 03-22-2025_023
+      author: Dmytro Abalmas
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: masteries
+      changes:
+        - createTable:
+            tableName: masteries
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: specialization_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: level
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: soft_skill_mark
+                  type: DECIMAL(4, 2)
+              - column:
+                  name: hard_skill_mark
+                  type: DECIMAL(4, 2)
+        - addForeignKeyConstraint:
+            baseTableName: masteries
+            baseColumnNames: specialization_id
+            referencedTableName: specializations
+            referencedColumnNames: id
+            constraintName: fk_masteries_specialization_id

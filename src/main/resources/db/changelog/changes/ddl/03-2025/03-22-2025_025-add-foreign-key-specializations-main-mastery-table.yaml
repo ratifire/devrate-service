@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: 03-22-2025_025
+      author: Dmytro Abalmas
+preConditions:
+  onFail: MARK_RAN
+  onError: MARK_RAN
+  and:
+    - tableExists:
+        tableName: specializations
+    - tableExists:
+        tableName: masteries
+    - not:
+        sqlCheck:
+          expectedResult: 1
+          sql: >
+            SELECT COUNT(*)
+            FROM information_schema.key_column_usage kcu
+            JOIN information_schema.table_constraints tc
+              ON kcu.constraint_name = tc.constraint_name
+             AND kcu.constraint_schema = tc.constraint_schema
+            WHERE tc.constraint_type = 'FOREIGN KEY'
+              AND kcu.table_name = 'specializations'
+              AND kcu.column_name = 'main_mastery_id'
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: specializations
+            baseColumnNames: main_mastery_id
+            referencedTableName: masteries
+            referencedColumnNames: id
+            constraintName: fk_specializations_main_mastery_id
