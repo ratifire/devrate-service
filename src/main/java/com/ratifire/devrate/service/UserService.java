@@ -505,7 +505,6 @@ public class UserService {
    */
   // TODO: ATTENTION!!! Remove this method after testing is completed.
   public void sendTestNotification(long userId, NotificationDto notificationDto) {
-    String userEmail = findEmailByUserId(userId);
     User user = findById(userId);
     Notification notification = Notification.builder()
         .user(user)
@@ -514,6 +513,6 @@ public class UserService {
         .type(notificationDto.getType())
         .createdAt(notificationDto.getCreatedAt())
         .build();
-    notificationService.sendTestNotification(userEmail, notification);
+    notificationService.sendTestNotification(user, notification);
   }
 }

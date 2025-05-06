@@ -2,6 +2,7 @@
   "/actuator/**",
   "/auth/**",
   "/chat/**",
+  "/notifications-ws/**",
   "/swagger/**",
   "/swagger-ui/**",
   "/swagger-config.yaml",

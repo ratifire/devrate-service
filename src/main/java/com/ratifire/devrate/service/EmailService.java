@@ -39,12 +39,11 @@ public class EmailService {
    * Sends a welcome email to the user.
    *
    * @param user  The user object containing user information.
-   * @param email The user's email address.
    */
-  public void sendGreetingsEmail(User user, String email) {
+  public void sendGreetingsEmail(User user) {
     String subject = "Welcome to DevRate!";
     String text = buildTemplateEmailText("greeting-email", Map.of("user", user));
-    sendEmail(email, subject, text);
+    sendEmail(user.getEmail(), subject, text);
   }
 
   /**

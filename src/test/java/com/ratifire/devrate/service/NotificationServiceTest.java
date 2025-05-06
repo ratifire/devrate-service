@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -25,6 +24,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 /**
  * Unit tests for the {@link NotificationService} class.
@@ -37,7 +37,7 @@ class NotificationServiceTest {
   @Mock
   private DataMapper<NotificationDto, Notification> mapper;
   @Mock
-  private WebSocketSender webSocketSender;
+  private SimpMessagingTemplate simpMessagingTemplate;
   @InjectMocks
   private NotificationService notificationService;
 
@@ -111,20 +111,17 @@ class NotificationServiceTest {
 
     setupSendToUserMock(Notification.builder().build(), expectedNotifications);
 
-    notificationService.addGreeting(user, anyString());
-    notificationService.addInterviewRequestExpiry(user, anyString());
-    notificationService.addRejectInterview(user, "rejectionUserFirstName", ZonedDateTime.now(),
-        anyString());
-    notificationService.addInterviewScheduled(user, "role", ZonedDateTime.now(), anyString());
+    notificationService.addGreeting(user);
+    notificationService.addInterviewRequestExpiry(user);
+    notificationService.addRejectInterview(user, "rejectionUserFirstName", ZonedDateTime.now());
+    notificationService.addInterviewScheduled(user, "role", ZonedDateTime.now());
 
     verify(notificationRepository, times(4)).save(any());
-    verify(webSocketSender, times(4)).sendNotificationByUserEmail(any(), anyString());
   }
 
   private void setupSendToUserMock(Notification notification,
       NotificationDto expectedNotification) {
     when(notificationRepository.save(any(Notification.class))).thenReturn(any());
     when(mapper.toDto(notification)).thenReturn(expectedNotification);
-    doNothing().when(webSocketSender).sendNotificationByUserEmail(any(), anyString());
   }
 }
