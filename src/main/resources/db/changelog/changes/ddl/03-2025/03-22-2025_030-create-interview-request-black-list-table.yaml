@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-22-2025_030
+      author: Dmytro Abalmas
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: interview_request_black_list
+      changes:
+        - createTable:
+            tableName: interview_request_black_list
+            columns:
+              - column:
+                  name: interview_request_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: black_list
+                  type: INT
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: interview_request_black_list
+            columnNames: interview_request_id, black_list
