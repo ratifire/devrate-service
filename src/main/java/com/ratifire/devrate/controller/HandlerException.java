@@ -20,8 +20,7 @@ import com.ratifire.devrate.security.exception.UserRegistrationException;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -38,9 +37,9 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
  * Global exception handler class for REST controllers.
  */
 @RestControllerAdvice
+@Slf4j
 public class HandlerException {
 
-  private static final Logger log = LogManager.getLogger(HandlerException.class);
   private static final int EXPIRED_REFRESH_TOKEN_HTTP_STATUS = 497;
 
   /**

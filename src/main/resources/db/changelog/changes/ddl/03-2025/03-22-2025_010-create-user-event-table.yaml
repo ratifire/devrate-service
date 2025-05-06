@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: 03-22-2025_010
+      author: Dmytro Abalmas
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: user_event
+      changes:
+        - createTable:
+            tableName: user_event
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: event_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false

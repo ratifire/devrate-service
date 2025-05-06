@@ -3,7 +3,6 @@ package com.ratifire.devrate.service;
 import com.ratifire.devrate.dto.NotificationDto;
 import com.ratifire.devrate.entity.Notification;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.entity.notification.payload.InterviewFeedbackPayload;
 import com.ratifire.devrate.entity.notification.payload.InterviewRejectedPayload;
 import com.ratifire.devrate.entity.notification.payload.InterviewRequestExpiredPayload;
 import com.ratifire.devrate.entity.notification.payload.InterviewScheduledPayload;
@@ -18,7 +17,8 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 /**
@@ -26,34 +26,32 @@ import org.springframework.stereotype.Service;
  * and deleting notifications.
  */
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class NotificationService {
 
   private static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSSS";
 
   private final NotificationRepository repository;
   private final DataMapper<NotificationDto, Notification> mapper;
-  private final WebSocketSender webSocketSender;
+  private final SimpMessagingTemplate simpMessagingTemplate;
 
   /**
    * Adds a greeting notification for the given user.
    *
    * @param user      The user to add the greeting notification for.
-   * @param userEmail The user email to add the notification for.
    */
-  public void addGreeting(User user, String userEmail) {
+  public void addGreeting(User user) {
     Notification notification = create(NotificationType.GREETING, null, user);
 
-    save(notification, userEmail);
+    save(notification, user);
   }
 
   /**
    * Adds a notification to inform the user that their interview request has expired.
    *
    * @param user      The user to whom the expiration notification will be sent.
-   * @param userEmail The user email to add the notification for.
    */
-  public void addInterviewRequestExpiry(User user, String userEmail) {
+  public void addInterviewRequestExpiry(User user) {
     InterviewRequestExpiredPayload expiredPayload = InterviewRequestExpiredPayload.builder()
         .userFirstName(user.getFirstName())
         .build();
@@ -61,7 +59,7 @@ public class NotificationService {
     Notification notification = create(NotificationType.INTERVIEW_REQUEST_EXPIRED,
         expiredPayload, user);
 
-    save(notification, userEmail);
+    save(notification, user);
   }
 
   /**
@@ -70,10 +68,9 @@ public class NotificationService {
    * @param recipient              The user for whom the interview was rejected.
    * @param rejectionUserFirstName The first name of the user who rejected the interview.
    * @param scheduleTime           The scheduled time of the interview.
-   * @param userEmail              The user email to add the notification for.
    */
   public void addRejectInterview(User recipient,
-      String rejectionUserFirstName, ZonedDateTime scheduleTime, String userEmail) {
+      String rejectionUserFirstName, ZonedDateTime scheduleTime) {
     InterviewRejectedPayload rejectedPayload = InterviewRejectedPayload.builder()
         .rejectionName(rejectionUserFirstName)
         .scheduledDateTime(scheduleTime.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)))
@@ -82,7 +79,7 @@ public class NotificationService {
     Notification notification = create(NotificationType.INTERVIEW_REJECTED,
         rejectedPayload, recipient);
 
-    save(notification, userEmail);
+    save(notification, recipient);
   }
 
   /**
@@ -92,10 +89,8 @@ public class NotificationService {
    * @param interviewDateTime The date and time of the scheduled interview.
    * @param role              The role of the recipient in the interview (e.g., 'Interviewer' or
    *                          'Candidate').
-   * @param userEmail         The user email to add the notification for.
    */
-  public void addInterviewScheduled(User recipient, String role, ZonedDateTime interviewDateTime,
-      String userEmail) {
+  public void addInterviewScheduled(User recipient, String role, ZonedDateTime interviewDateTime) {
     InterviewScheduledPayload scheduledPayload = InterviewScheduledPayload.builder()
         .role(role)
         .scheduledDateTime(
@@ -105,25 +100,7 @@ public class NotificationService {
     Notification notification = create(NotificationType.INTERVIEW_SCHEDULED,
         scheduledPayload, recipient);
 
-    save(notification, userEmail);
-  }
-
-  /**
-   * Adds an interview feedback notification for a specified user.
-   *
-   * @param recipient  The user who will receive the notification.
-   * @param interviewId The user interview ID to include in the notification payload.
-   * @param userEmail  The user email to add the notification for.
-   */
-  public void addInterviewFeedbackDetail(User recipient, long interviewId, String userEmail) {
-    InterviewFeedbackPayload feedbackPayload = InterviewFeedbackPayload.builder()
-        .interviewId(interviewId)
-        .build();
-
-    Notification notification = create(NotificationType.INTERVIEW_FEEDBACK,
-        feedbackPayload, recipient);
-
-    save(notification, userEmail);
+    save(notification, recipient);
   }
 
   /**
@@ -149,12 +126,11 @@ public class NotificationService {
    * Adds a notification for the given user with the specified text and send updated notifications.
    *
    * @param notification The notification that will be saved.
-   * @param userEmail    The user email to add the notification for.
+   * @param user    The user email to add the notification for.
    */
-  private void save(Notification notification, String userEmail) {
+  private void save(Notification notification, User user) {
     repository.save(notification);
-
-    sendToUser(userEmail, mapper.toDto(notification));
+    sendToUser(user, mapper.toDto(notification));
   }
 
   /**
@@ -169,11 +145,12 @@ public class NotificationService {
   /**
    * Sends a notification to the specified user via WebSocket.
    *
-   * @param userEmail    The email of the user to send fresh notification for.
+   * @param user    The email of the user to send fresh notification for.
    * @param notification The notification data to be sent.
    */
-  private void sendToUser(String userEmail, NotificationDto notification) {
-    webSocketSender.sendNotificationByUserEmail(notification, userEmail);
+  private void sendToUser(User user, NotificationDto notification) {
+    simpMessagingTemplate.convertAndSend(
+            String.format("/topic/notifications/%s", user.getId()), notification);
   }
 
   /**
@@ -211,7 +188,7 @@ public class NotificationService {
    * Sends a test notification to a specified user.
    */
   // TODO: ATTENTION!!! Remove this method after testing is completed.
-  public void sendTestNotification(String userEmail, Notification notification) {
-    save(notification, userEmail);
+  public void sendTestNotification(User user, Notification notification) {
+    save(notification, user);
   }
 }

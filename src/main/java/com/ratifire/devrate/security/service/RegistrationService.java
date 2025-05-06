@@ -112,7 +112,7 @@ public class RegistrationService {
           return newList;
         })
         .add(contact);
-    sendGreetings(user, email);
+    sendGreetings(user);
   }
 
   /**
@@ -135,10 +135,9 @@ public class RegistrationService {
    * Sends greetings to a user via email and adds a greeting notification.
    *
    * @param user  The user to whom greetings are sent.
-   * @param email The email address of the user.
    */
-  private void sendGreetings(User user, String email) {
-    notificationService.addGreeting(user, email);
-    emailService.sendGreetingsEmail(user, email);
+  private void sendGreetings(User user) {
+    notificationService.addGreeting(user);
+    emailService.sendGreetingsEmail(user);
   }
 }
