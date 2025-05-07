@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@Profile("!local")
 public class CognitoMigrationService {
 
   private final CognitoApiClientService cognitoApiClient;
@@ -53,7 +55,7 @@ public class CognitoMigrationService {
   }
 
   /**
-   * Migrates a single Cognito user's attributes to the new attribute schema..
+   * Migrates a single Cognito user's attributes to the new attribute schema.
    *
    * @param username the Cognito username whose attributes are to be migrated
    */
@@ -67,8 +69,23 @@ public class CognitoMigrationService {
     String oldUserId = oldAttrs.getOrDefault("custom:userId", null);
     String oldRole = oldAttrs.getOrDefault("custom:role", null);
 
+    String newUserId = oldAttrs.getOrDefault(ATTRIBUTE_USER_ID, null);
+    String newRole = oldAttrs.getOrDefault(ATTRIBUTE_ROLE, null);
+    String primaryRecord = oldAttrs.getOrDefault(ATTRIBUTE_IS_PRIMARY_RECORD, null);
+    String linkedRecordSubject = oldAttrs.getOrDefault(ATTRIBUTE_LINKED_RECORD_SUBJECT, null);
+
     if (StringUtils.isEmpty(oldUserId) || StringUtils.isEmpty(oldRole)) {
       log.warn("Skipped: user '{}' is missing required attributes 'custom:userId' or 'custom:role'",
+          username);
+      return;
+    }
+
+    if (StringUtils.isNotEmpty(newUserId)
+        && StringUtils.isNotEmpty(newRole)
+        && StringUtils.isNotEmpty(primaryRecord)
+        && StringUtils.isNotEmpty(linkedRecordSubject)
+    ) {
+      log.warn("Skipped: user '{}' already has required attributes'",
           username);
       return;
     }

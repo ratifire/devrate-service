@@ -2,9 +2,11 @@ package com.ratifire.devrate.security.facade;
 
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_AUTHORIZATION;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_ID_TOKEN;
+import static com.ratifire.devrate.security.model.enums.LoginStatus.ACTIVATION_REQUIRED;
 
 import com.ratifire.devrate.dto.LoginResponseDto;
 import com.ratifire.devrate.dto.UserDto;
+import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.security.exception.AuthenticationException;
@@ -21,8 +23,9 @@ import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import com.ratifire.devrate.security.model.enums.AccountLanguage;
 import com.ratifire.devrate.security.model.enums.LoginStatus;
 import com.ratifire.devrate.security.model.enums.RegistrationSourceType;
-import com.ratifire.devrate.security.service.AuthenticationService;
+import com.ratifire.devrate.security.service.EmailConfirmationCodeService;
 import com.ratifire.devrate.security.util.TokenUtil;
+import com.ratifire.devrate.service.EmailService;
 import com.ratifire.devrate.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -67,7 +70,8 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
 
   private static final String MSG_UNSUPPORTED_OPERATION = "Unsupported operation locally.";
   private final UserService userService;
-  private final AuthenticationService authenticationService;
+  private final EmailConfirmationCodeService emailConfirmationCodeService;
+  private final EmailService emailService;
   private final DataMapper<UserDto, User> userMapper;
   private final RefreshTokenCookieHelper refreshTokenCookieHelper;
 
@@ -78,7 +82,12 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
       User user = userService.findByEmail(email);
 
       if (Boolean.FALSE.equals(user.getAccountActivated())) {
-        return authenticationService.handleInactiveAccount(user);
+        String activationCode = emailConfirmationCodeService.createConfirmationCode(user.getId());
+        emailService.sendAccountActivationCodeEmail(user.getEmail(), activationCode);
+        return LoginResponseDto.builder()
+            .status(ACTIVATION_REQUIRED)
+            .userInfo(null)
+            .build();
       }
 
       String encodedUserId =
@@ -98,25 +107,38 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
   @Override
   public LoginResponseDto confirmAccountActivation(ConfirmActivationAccountDto dto,
       HttpServletResponse response, HttpServletRequest request) {
-    User activatedUser = authenticationService.activateAccountByConfirmationCode(
-        dto.getActivationCode());
+    final String code = dto.getActivationCode();
+    EmailConfirmationCode codeEntity = emailConfirmationCodeService.findByCode(code);
+    emailConfirmationCodeService.validateExpiration(codeEntity);
+    emailConfirmationCodeService.deleteConfirmedCode(codeEntity.getId());
 
-    if (activatedUser.getRegistrationSource().equals(RegistrationSourceType.FEDERATED_IDENTITY)) {
+    User user = userService.findById(codeEntity.getUserId());
+    user.setAccountActivated(true);
+    userService.updateByEntity(user);
+
+    if (user.getRegistrationSource().equals(RegistrationSourceType.FEDERATED_IDENTITY)) {
       throw new UnsupportedOperationException(MSG_UNSUPPORTED_OPERATION);
     }
 
     String encodedUserId =
-        Base64.getEncoder().encodeToString(String.valueOf(activatedUser.getId()).getBytes());
+        Base64.getEncoder().encodeToString(String.valueOf(user.getId()).getBytes());
     TokenUtil.setAuthTokensToHeaders(response, encodedUserId, encodedUserId);
     return LoginResponseDto.builder()
         .status(LoginStatus.AUTHENTICATED)
-        .userInfo(userMapper.toDto(activatedUser))
+        .userInfo(userMapper.toDto(user))
         .build();
   }
 
   @Override
   public void resendActivationAccountConfirmCode(ResendConfirmCodeDto resendConfirmCodeDto) {
-    authenticationService.resendActivationAccountConfirmCode(resendConfirmCodeDto);
+    final User user = userService.findByEmail(resendConfirmCodeDto.getEmail());
+    final long userId = user.getId();
+
+    EmailConfirmationCode code = emailConfirmationCodeService.findByUserId(userId);
+    emailConfirmationCodeService.deleteConfirmedCode(code.getId());
+
+    String newCode = emailConfirmationCodeService.createConfirmationCode(userId);
+    emailService.sendAccountActivationCodeEmail(user.getEmail(), newCode);
   }
 
   @Override
@@ -236,7 +258,7 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
      */
     @Bean
     public ServletContextInitializer servletContextInitializer(
-            @Value("${server.servlet.session.cookie.domain}") String domain) {
+        @Value("${server.servlet.session.cookie.domain}") String domain) {
       return servletContext -> {
         servletContext.getSessionCookieConfig().setDomain(domain);
         servletContext.getSessionCookieConfig().setPath("/");

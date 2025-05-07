@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: 05-06-2025_031
+      author: Dmytro Abalmas
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+              columnExists:
+                tableName: users
+                columnName: account_language
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: account_language
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: registration_source
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_account_activated
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
