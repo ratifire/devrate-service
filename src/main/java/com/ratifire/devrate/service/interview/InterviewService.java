@@ -520,7 +520,7 @@ public class InterviewService {
     String role = String.valueOf(recipientRequest.getRole());
 
     notificationService.addInterviewScheduled(recipient, role,
-        interviewStartTimeInUtc, recipientEmail);
+        interviewStartTimeInUtc);
 
     emailService.sendInterviewScheduledEmail(recipient, recipientEmail,
         interviewStartTimeInUtc, secondParticipantRequest, zoomJoinUrl);
@@ -534,15 +534,13 @@ public class InterviewService {
    * @param scheduledTime The scheduled time of the interview.
    */
   private void notifyParticipants(User recipient, User rejector, ZonedDateTime scheduledTime) {
-    String recipientEmail = recipient.getEmail();
     notificationService.addRejectInterview(recipient, rejector.getFirstName(),
-        scheduledTime, recipientEmail);
-    String rejectorEmail = rejector.getEmail();
+        scheduledTime);
     notificationService.addRejectInterview(rejector, recipient.getFirstName(),
-        scheduledTime, rejectorEmail);
+        scheduledTime);
 
     emailService.sendInterviewRejectionMessageEmail(
-        recipient, rejector, scheduledTime, recipientEmail);
+        recipient, rejector, scheduledTime, recipient.getEmail());
   }
 
   /**
