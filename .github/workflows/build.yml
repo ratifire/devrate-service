@@ -38,7 +38,7 @@ jobs:
   build-and-push:
     name: Build and Push
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment || 'dev' }}
+    environment: ${{ github.event.inputs.environment || 'qa' }}
 
     steps:
       - name: Checkout
