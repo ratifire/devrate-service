@@ -78,7 +78,7 @@ public class CognitoApiClientRequestHelper {
    * @return a {@link SignUpRequest} object configured with the provided details.
    */
   public SignUpRequest buildRegisterRequest(String email, String password,
-      long userId, String role, boolean isPrimaryRecord, String isAccounrActivated) {
+      long userId, String role, boolean isPrimaryRecord, String isAccountActivated) {
     return new SignUpRequest()
         .withClientId(cognitoConfig.getClientId())
         .withSecretHash(cognitoAuthHelper.generateSecretHash(email))
@@ -90,7 +90,7 @@ public class CognitoApiClientRequestHelper {
             createAttribute(ATTRIBUTE_ROLE, role),
             createAttribute(ATTRIBUTE_IS_PRIMARY_RECORD, String.valueOf(isPrimaryRecord)),
             createAttribute(ATTRIBUTE_LINKED_RECORD_SUBJECT, NONE_VALUE),
-            createAttribute(ATTRIBUTE_IS_ACCOUNT_ACTIVE, isAccounrActivated)
+            createAttribute(ATTRIBUTE_IS_ACCOUNT_ACTIVE, isAccountActivated)
         ));
   }
 
