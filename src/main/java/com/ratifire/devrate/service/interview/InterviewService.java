@@ -11,6 +11,7 @@ import com.ratifire.devrate.dto.InterviewsOverallStatusDto;
 import com.ratifire.devrate.dto.PairedParticipantDto;
 import com.ratifire.devrate.dto.ParticipantDto;
 import com.ratifire.devrate.dto.SkillShortDto;
+import com.ratifire.devrate.dto.projection.InterviewIdProjection;
 import com.ratifire.devrate.dto.projection.InterviewUserMasteryProjection;
 import com.ratifire.devrate.entity.Event;
 import com.ratifire.devrate.entity.Mastery;
@@ -87,7 +88,7 @@ public class InterviewService {
     return interviewRepository.findByIdAndUserId(id, currentUserId);
   }
 
-  public List<Interview> getUpcomingInterviews(long userId, ZonedDateTime time) {
+  public List<InterviewIdProjection> getUpcomingInterviewIds(long userId, ZonedDateTime time) {
     return interviewRepository.findAllByUserIdAndStartTimeAfter(userId, time);
   }
 

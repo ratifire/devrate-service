@@ -6,20 +6,16 @@ import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTR
 import static com.ratifire.devrate.security.util.CognitoUtil.createAttribute;
 
 import com.amazonaws.services.cognitoidp.model.AttributeType;
-import com.ratifire.devrate.dto.InterviewRequestShortDto;
-import com.ratifire.devrate.dto.InterviewShortDto;
-import com.ratifire.devrate.entity.Mastery;
+import com.ratifire.devrate.dto.projection.InterviewIdProjection;
+import com.ratifire.devrate.dto.projection.InterviewRequestTimeSlotProjection;
+import com.ratifire.devrate.dto.record.InterviewRequestWithFutureSlotsRecord;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.entity.interview.Interview;
-import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.security.exception.EmailChangeException;
 import com.ratifire.devrate.security.exception.PasswordChangeException;
-import com.ratifire.devrate.security.exception.ProfileDeactivationConflictException;
 import com.ratifire.devrate.security.exception.UserAlreadyExistsException;
 import com.ratifire.devrate.security.helper.UserContextProvider;
 import com.ratifire.devrate.security.model.dto.EmailChangeDto;
 import com.ratifire.devrate.security.model.dto.PasswordChangeDto;
-import com.ratifire.devrate.security.model.dto.ProfileDeactivationDto;
 import com.ratifire.devrate.security.model.enums.AccountLanguage;
 import com.ratifire.devrate.security.model.enums.RegistrationSourceType;
 import com.ratifire.devrate.security.util.CognitoUtil;
@@ -32,14 +28,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -146,16 +141,15 @@ public class ProfileSettingsService {
    *
    * @param request  the HttpServletRequest containing authentication details
    * @param response the HttpServletResponse used to clear authentication tokens
-   * @throws ProfileDeactivationConflictException if there are pending interview requests or
-   *                                              upcoming interviews
    */
+  @Transactional
   public void forceUserProfileDeactivation(HttpServletRequest request,
       HttpServletResponse response) {
     final long currentUserId = userContextProvider.getAuthenticatedUserId();
     final String accessToken = TokenUtil.extractAccessTokenFromRequest(request);
     final String username = TokenUtil.getSubjectFromAccessToken(accessToken);
 
-    deactivateAccountIfNoBlockingData(currentUserId);
+    deactivateAccountIfNoBlockingFutureActivity(currentUserId);
 
     List<AttributeType> attributeToUpdate = List.of(
         CognitoUtil.createAttribute(ATTRIBUTE_IS_ACCOUNT_ACTIVE, Boolean.FALSE.toString()));
@@ -169,23 +163,35 @@ public class ProfileSettingsService {
    * or upcoming interviews.
    *
    * @param userId the ID of the user to deactivate
-   * @throws ProfileDeactivationConflictException if there are blocking interview requests or
-   *                                              upcoming interviews
    */
-  public void deactivateAccountIfNoBlockingData(long userId) {
-    List<InterviewRequest> interviewRequestsWithFutureTimeSlots =
-        interviewRequestService.findAllWithFutureTimeSlots(userId);
-    List<Interview> upcomingInterviews =
-        interviewService.getUpcomingInterviews(userId, ZonedDateTime.now());
+  public void deactivateAccountIfNoBlockingFutureActivity(long userId) {
+    List<InterviewRequestWithFutureSlotsRecord> requestWithFutureTimeSlotsAggregation =
+        interviewRequestService.findAllInterviewRequestWithFutureTimeSlots(
+                ZonedDateTime.now()).stream()
+            .collect(Collectors.groupingBy(
+                InterviewRequestTimeSlotProjection::getId,
+                Collectors.mapping(InterviewRequestTimeSlotProjection::getDateTime,
+                    Collectors.toList())
+            ))
+            .entrySet().stream()
+            .map(entry ->
+                new InterviewRequestWithFutureSlotsRecord(entry.getKey(), entry.getValue()))
+            .toList();
 
-    if (!CollectionUtils.isEmpty(interviewRequestsWithFutureTimeSlots)
-        && !CollectionUtils.isEmpty(upcomingInterviews)) {
-      ProfileDeactivationDto dto = ProfileDeactivationDto.builder()
-          .interviewRequestsToDelete(
-              mapToInterviewRequestShortDtos(interviewRequestsWithFutureTimeSlots))
-          .interviewsToDelete(mapToInterviewShortDtos(upcomingInterviews))
-          .build();
-      throw new ProfileDeactivationConflictException(dto);
+    if (!CollectionUtils.isEmpty(requestWithFutureTimeSlotsAggregation)) {
+      requestWithFutureTimeSlotsAggregation.forEach(
+          request ->
+              interviewRequestService.deleteTimeSlots(request.id(), request.futureTimeSlots())
+      );
+    }
+
+    List<InterviewIdProjection> upcomingInterviewIds =
+        interviewService.getUpcomingInterviewIds(userId, ZonedDateTime.now());
+
+    if (!CollectionUtils.isEmpty(upcomingInterviewIds)) {
+      upcomingInterviewIds.forEach(
+          interview -> interviewService.deleteRejected(interview.getId())
+      );
     }
 
     User user = userService.findById(userId);
@@ -218,39 +224,6 @@ public class ProfileSettingsService {
     if (RegistrationSourceType.FEDERATED_IDENTITY.equals(user.getRegistrationSource())) {
       throw new PasswordChangeException("Password change is not allowed for SSO accounts.");
     }
-  }
-
-  private List<InterviewRequestShortDto> mapToInterviewRequestShortDtos(
-      List<InterviewRequest> requests) {
-    return requests.stream()
-        .map(request -> InterviewRequestShortDto.builder()
-            .id(request.getId())
-            .role(request.getRole())
-            .specializationName(request.getMastery().getSpecialization().getName())
-            .build())
-        .toList();
-  }
-
-  private List<InterviewShortDto> mapToInterviewShortDtos(List<Interview> interviews) {
-    List<Long> masteryIds = interviews.stream()
-        .map(Interview::getMasteryId)
-        .distinct()
-        .toList();
-    List<Mastery> masteries = masteryService.findByIds(masteryIds);
-    Map<Long, Mastery> masteryMap = masteries.stream()
-        .collect(Collectors.toMap(Mastery::getId, Function.identity()));
-    return interviews.stream()
-        .map(interview -> {
-          Mastery mastery = masteryMap.get(interview.getMasteryId());
-          return InterviewShortDto.builder()
-              .id(interview.getId())
-              .masteryLevel(mastery.getLevel())
-              .specializationName(mastery.getSpecialization().getName())
-              .startTime(interview.getStartTime())
-              .role(interview.getRole())
-              .build();
-        })
-        .toList();
   }
 
 }

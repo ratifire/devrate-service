@@ -1,5 +1,6 @@
 package com.ratifire.devrate.repository.interview;
 
+import com.ratifire.devrate.dto.projection.InterviewIdProjection;
 import com.ratifire.devrate.dto.projection.InterviewUserMasteryProjection;
 import com.ratifire.devrate.entity.interview.Interview;
 import java.time.ZonedDateTime;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Repository;
 @RepositoryRestResource(exported = false)
 public interface InterviewRepository extends JpaRepository<Interview, Long> {
 
-  List<Interview> findAllByUserIdAndStartTimeAfter(long userId, ZonedDateTime time);
+  List<InterviewIdProjection> findAllByUserIdAndStartTimeAfter(long userId, ZonedDateTime time);
 
   Optional<Interview> findByIdAndUserId(long id, long userId);
 

@@ -18,7 +18,6 @@ import com.ratifire.devrate.security.exception.LogoutException;
 import com.ratifire.devrate.security.exception.PasswordChangeException;
 import com.ratifire.devrate.security.exception.PasswordResetException;
 import com.ratifire.devrate.security.exception.ProfileActivationException;
-import com.ratifire.devrate.security.exception.ProfileDeactivationConflictException;
 import com.ratifire.devrate.security.exception.RefreshTokenException;
 import com.ratifire.devrate.security.exception.RefreshTokenExpiredException;
 import com.ratifire.devrate.security.exception.UserAlreadyExistsException;
@@ -207,14 +206,6 @@ public class HandlerException {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   public void handleMethodArgumentTypeMismatchException() {
-  }
-
-  /**
-   * Handles ProfileDeactivationConflictException by returning an HTTP status 409.
-   */
-  @ResponseStatus(HttpStatus.CONFLICT)
-  @ExceptionHandler(ProfileDeactivationConflictException.class)
-  public void handleProfileDeactivationConflictException() {
   }
 
   /**

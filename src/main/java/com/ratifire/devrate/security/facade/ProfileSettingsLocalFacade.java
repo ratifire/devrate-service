@@ -1,20 +1,16 @@
 package com.ratifire.devrate.security.facade;
 
-import com.ratifire.devrate.dto.InterviewRequestShortDto;
-import com.ratifire.devrate.dto.InterviewShortDto;
-import com.ratifire.devrate.entity.Mastery;
+import com.ratifire.devrate.dto.projection.InterviewIdProjection;
+import com.ratifire.devrate.dto.projection.InterviewRequestTimeSlotProjection;
+import com.ratifire.devrate.dto.record.InterviewRequestWithFutureSlotsRecord;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.entity.interview.Interview;
-import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.security.exception.EmailChangeException;
 import com.ratifire.devrate.security.exception.PasswordChangeException;
-import com.ratifire.devrate.security.exception.ProfileDeactivationConflictException;
 import com.ratifire.devrate.security.exception.UserAlreadyExistsException;
 import com.ratifire.devrate.security.helper.RefreshTokenCookieHelper;
 import com.ratifire.devrate.security.helper.UserContextProvider;
 import com.ratifire.devrate.security.model.dto.EmailChangeDto;
 import com.ratifire.devrate.security.model.dto.PasswordChangeDto;
-import com.ratifire.devrate.security.model.dto.ProfileDeactivationDto;
 import com.ratifire.devrate.security.model.enums.AccountLanguage;
 import com.ratifire.devrate.security.model.enums.RegistrationSourceType;
 import com.ratifire.devrate.service.MasteryService;
@@ -25,8 +21,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -92,58 +86,40 @@ public class ProfileSettingsLocalFacade implements ProfileSettingsFacade {
       HttpServletResponse response) {
     final long userId = userContextProvider.getAuthenticatedUserId();
 
-    List<InterviewRequest> interviewRequestsWithFutureTimeSlots =
-        interviewRequestService.findAllWithFutureTimeSlots(userId);
-    List<Interview> upcomingInterviews =
-        interviewService.getUpcomingInterviews(userId, ZonedDateTime.now());
+    List<InterviewRequestWithFutureSlotsRecord> requestWithFutureTimeSlotsAggregation =
+        interviewRequestService.findAllInterviewRequestWithFutureTimeSlots(
+                ZonedDateTime.now()).stream()
+            .collect(Collectors.groupingBy(
+                InterviewRequestTimeSlotProjection::getId,
+                Collectors.mapping(InterviewRequestTimeSlotProjection::getDateTime,
+                    Collectors.toList())
+            ))
+            .entrySet().stream()
+            .map(entry ->
+                new InterviewRequestWithFutureSlotsRecord(entry.getKey(), entry.getValue()))
+            .toList();
 
-    if (!CollectionUtils.isEmpty(interviewRequestsWithFutureTimeSlots)
-        && !CollectionUtils.isEmpty(upcomingInterviews)) {
-      ProfileDeactivationDto dto = ProfileDeactivationDto.builder()
-          .interviewRequestsToDelete(
-              mapToInterviewRequestShortDtos(interviewRequestsWithFutureTimeSlots))
-          .interviewsToDelete(mapToInterviewShortDtos(upcomingInterviews))
-          .build();
-      throw new ProfileDeactivationConflictException(dto);
+    if (!CollectionUtils.isEmpty(requestWithFutureTimeSlotsAggregation)) {
+      requestWithFutureTimeSlotsAggregation.forEach(
+          interviewRequest ->
+              interviewRequestService.deleteTimeSlots(interviewRequest.id(),
+                  interviewRequest.futureTimeSlots())
+      );
+    }
+
+    List<InterviewIdProjection> upcomingInterviewIds =
+        interviewService.getUpcomingInterviewIds(userId, ZonedDateTime.now());
+
+    if (!CollectionUtils.isEmpty(upcomingInterviewIds)) {
+      upcomingInterviewIds.forEach(
+          interview -> interviewService.deleteRejected(interview.getId())
+      );
     }
 
     User user = userService.findById(userId);
     user.setAccountActivated(false);
     userService.updateByEntity(user);
     refreshTokenCookieHelper.deleteRefreshTokenFromCookie(response);
-  }
-
-  private List<InterviewRequestShortDto> mapToInterviewRequestShortDtos(
-      List<InterviewRequest> requests) {
-    return requests.stream()
-        .map(request -> InterviewRequestShortDto.builder()
-            .id(request.getId())
-            .role(request.getRole())
-            .specializationName(request.getMastery().getSpecialization().getName())
-            .build())
-        .toList();
-  }
-
-  private List<InterviewShortDto> mapToInterviewShortDtos(List<Interview> interviews) {
-    List<Long> masteryIds = interviews.stream()
-        .map(Interview::getMasteryId)
-        .distinct()
-        .toList();
-    List<Mastery> masteries = masteryService.findByIds(masteryIds);
-    Map<Long, Mastery> masteryMap = masteries.stream()
-        .collect(Collectors.toMap(Mastery::getId, Function.identity()));
-    return interviews.stream()
-        .map(interview -> {
-          Mastery mastery = masteryMap.get(interview.getMasteryId());
-          return InterviewShortDto.builder()
-              .id(interview.getId())
-              .masteryLevel(mastery.getLevel())
-              .specializationName(mastery.getSpecialization().getName())
-              .startTime(interview.getStartTime())
-              .role(interview.getRole())
-              .build();
-        })
-        .toList();
   }
 
   @Override

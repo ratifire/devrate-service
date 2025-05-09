@@ -10,11 +10,7 @@ patch:
   responses:
     '200':
       description: Profile deactivated successfully
-    '409':
-      description: Conflict. Profile cannot be deactivated due to linked future interviews or requests.
-      content:
-        application/json:
-          schema:
-            $ref: '../../components/schemas/ProfileDeactivationDto.yaml'
+    '400':
+      description: Bad Request
     '500':
       description: Internal Server Error

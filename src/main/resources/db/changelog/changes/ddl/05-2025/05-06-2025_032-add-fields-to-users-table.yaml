@@ -16,14 +16,14 @@ databaseChangeLog:
                   name: account_language
                   type: VARCHAR(255)
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: registration_source
                   type: VARCHAR(255)
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: is_account_activated
                   type: BOOLEAN
                   constraints:
-                    nullable: false
+                    nullable: true
