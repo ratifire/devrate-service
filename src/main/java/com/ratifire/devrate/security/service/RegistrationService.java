@@ -10,6 +10,8 @@ import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.ResendConfirmCodeDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import com.ratifire.devrate.security.model.enums.AccessLevel;
+import com.ratifire.devrate.security.model.enums.AccountLanguage;
+import com.ratifire.devrate.security.model.enums.RegistrationSourceType;
 import com.ratifire.devrate.service.EmailService;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserService;
@@ -51,6 +53,9 @@ public class RegistrationService {
     UserDto userDto = UserDto.builder()
         .firstName(userRegistrationDto.getFirstName())
         .lastName(userRegistrationDto.getLastName())
+        .registrationSource(RegistrationSourceType.COGNITO_USER_POOL)
+        .accountLanguage(AccountLanguage.UKRAINE)
+        .accountActivated(true)
         .build();
 
     if (userService.existsByEmail(email)) {
@@ -61,7 +66,7 @@ public class RegistrationService {
     try {
       User user = userService.create(userDto, email, passwordEncoder.encode(password));
       cognitoApiClientService.register(email, password, user.getId(),
-          AccessLevel.getDefaultRole(), true);
+          AccessLevel.getDefaultRole(), true, Boolean.TRUE.toString());
     } catch (Exception e) {
       log.error("Initiate registration process was failed for email {}: {}",
           userRegistrationDto.getEmail(), e.getMessage(), e);

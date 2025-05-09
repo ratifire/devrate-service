@@ -1,0 +1,25 @@
+post:
+  tags:
+    - Authentication
+  summary: Confirm account activation
+  description: Confirms user account activation using an activation code. For federated users, tokens must be present in the request.
+  operationId: confirmActivationAccount
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/ConfirmActivationAccountDto.yaml'
+  responses:
+    '200':
+      description: Account successfully activated
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/LoginResponseDto.yaml'
+    '400':
+      description: Bad Request. Activation code is missing or invalid.
+    '401':
+      description: Unauthorized. Missing or invalid tokens for federated accounts.
+    '500':
+      description: Internal Server Error
