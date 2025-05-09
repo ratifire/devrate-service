@@ -3,11 +3,13 @@ package com.ratifire.devrate.security.facade;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.LoginDto;
+import com.ratifire.devrate.security.model.dto.OauthAuthorizationDto;
 import com.ratifire.devrate.security.model.dto.PasswordResetDto;
 import com.ratifire.devrate.security.model.dto.ResendConfirmCodeDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * Authentication facade interface.
@@ -15,6 +17,13 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface AuthenticationFacade {
 
   UserDto login(LoginDto loginDto, HttpServletResponse response);
+
+  void redirectToLinkedIn(HttpServletResponse response) throws IOException;
+
+  void redirectToGoogle(HttpServletResponse response) throws IOException;
+
+  UserDto handleOauthAuthorization(HttpServletResponse response,
+      OauthAuthorizationDto request);
 
   String logout(HttpServletRequest request, HttpServletResponse response);
 

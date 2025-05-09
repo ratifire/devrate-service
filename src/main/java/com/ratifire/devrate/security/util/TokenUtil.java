@@ -1,16 +1,40 @@
 package com.ratifire.devrate.security.util;
 
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_EMAIL;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_FAMILY_NAME;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_GIVEN_NAME;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_IDENTITIES;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_IS_PRIMARY_RECORD;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_LINKED_RECORD_SUBJECT;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_ROLE;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_SUBJECT;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_USERNAME;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_USER_ID;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_AUTHORIZATION;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_ID_TOKEN;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.REFRESH_TOKEN_COOKIE_NAME;
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.TOKEN_BEARER_PREFIX;
+import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.ACCESS_TOKEN;
+import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.ID_TOKEN;
+import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.REFRESH_TOKEN;
+import static com.ratifire.devrate.util.JsonConverter.deserialize;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.ratifire.devrate.security.exception.InvalidTokenException;
 import com.ratifire.devrate.security.exception.RefreshTokenException;
+import com.ratifire.devrate.security.model.CognitoUserInfo;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.util.function.ThrowingFunction;
 
@@ -20,14 +44,6 @@ import org.springframework.util.function.ThrowingFunction;
 @Slf4j
 public class TokenUtil {
 
-  private static final String AUTHORIZATION_HEADER = "Authorization";
-  private static final String ID_TOKEN_HEADER = "ID-Token";
-  private static final String REFRESH_TOKEN_COOKIE_NAME = "Refresh-Token";
-  private static final String BEARER_PREFIX = "Bearer ";
-  public static final String CLAIM_USER_ID = "custom:userId";
-  public static final String CLAIM_USER_ROLE = "custom:role";
-  public static final String CLAIM_SUBJECT = "sub";
-
   private TokenUtil() {
   }
 
@@ -36,8 +52,8 @@ public class TokenUtil {
    */
   public static void setAuthTokensToHeaders(HttpServletResponse response, String accessToken,
       String idToken) {
-    response.setHeader(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken);
-    response.setHeader(ID_TOKEN_HEADER, idToken);
+    response.setHeader(HEADER_AUTHORIZATION, TOKEN_BEARER_PREFIX + accessToken);
+    response.setHeader(HEADER_ID_TOKEN, idToken);
   }
 
   /**
@@ -47,9 +63,9 @@ public class TokenUtil {
    * @return the access token or an empty string if the header is invalid or missing
    */
   public static String extractAccessTokenFromRequest(HttpServletRequest request) {
-    String header = request.getHeader(AUTHORIZATION_HEADER);
-    if (header != null && header.startsWith(BEARER_PREFIX)) {
-      return header.substring(BEARER_PREFIX.length());
+    String header = request.getHeader(HEADER_AUTHORIZATION);
+    if (header != null && header.startsWith(TOKEN_BEARER_PREFIX)) {
+      return header.substring(TOKEN_BEARER_PREFIX.length());
     } else {
       return null;
     }
@@ -62,7 +78,7 @@ public class TokenUtil {
    * @return the ID token or an empty string if the header is missing
    */
   public static String extractIdTokenFromRequest(HttpServletRequest request) {
-    return request.getHeader(ID_TOKEN_HEADER);
+    return request.getHeader(HEADER_ID_TOKEN);
   }
 
   /**
@@ -87,12 +103,12 @@ public class TokenUtil {
    * Retrieves the "subject" claim from the specified access token.
    *
    * @param accessToken the JWT access token containing user claims
-   * @return the "sub" claim as a String, representing the subject of the token
-   * @throws InvalidTokenException if the "sub" claim is missing or cannot be parsed
+   * @return the "subject" claim as a String, representing the subject of the token
+   * @throws InvalidTokenException if the "subject" claim is missing or cannot be parsed
    */
   public static String getSubjectFromAccessToken(String accessToken) {
     JWTClaimsSet claimsSet = TokenUtil.parseToken(accessToken);
-    return TokenUtil.extractStringClaim(claimsSet, CLAIM_SUBJECT)
+    return TokenUtil.extractStringClaim(claimsSet, ATTRIBUTE_SUBJECT)
         .orElseThrow(() -> new InvalidTokenException("Sub claim is missing"));
   }
 
@@ -105,7 +121,7 @@ public class TokenUtil {
    */
   public static long getUserIdFromIdToken(String idToken) {
     JWTClaimsSet claimsSet = TokenUtil.parseToken(idToken);
-    String userId = TokenUtil.extractStringClaim(claimsSet, CLAIM_USER_ID)
+    String userId = TokenUtil.extractStringClaim(claimsSet, ATTRIBUTE_USER_ID)
         .orElseThrow(() -> new InvalidTokenException("User ID claim is missing"));
     return Long.parseLong(userId);
   }
@@ -119,9 +135,51 @@ public class TokenUtil {
    */
   public static List<SimpleGrantedAuthority> getAuthoritiesFromIdToken(String idToken) {
     JWTClaimsSet claimsSet = TokenUtil.parseToken(idToken);
-    String role = TokenUtil.extractStringClaim(claimsSet, CLAIM_USER_ROLE)
+    String role = TokenUtil.extractStringClaim(claimsSet, ATTRIBUTE_ROLE)
         .orElseThrow(() -> new InvalidTokenException("Role claim is missing"));
     return List.of(new SimpleGrantedAuthority(role));
+  }
+
+  /**
+   * Extracts user information from the provided Cognito ID token.
+   *
+   * @param idToken the Cognito ID token from which user information needs to be extracted
+   * @return a CognitoUserInfo containing the extracted user details
+   */
+  public static CognitoUserInfo getCognitoUserInfoFromIdToken(String idToken) {
+    JWTClaimsSet claimsSet = parseToken(idToken);
+
+    String firstName = extractStringClaim(claimsSet, ATTRIBUTE_GIVEN_NAME).orElse(null);
+    String lastName = extractStringClaim(claimsSet, ATTRIBUTE_FAMILY_NAME).orElse(null);
+    String subject = extractStringClaim(claimsSet, ATTRIBUTE_SUBJECT).orElse(null);
+    String email = extractStringClaim(claimsSet, ATTRIBUTE_EMAIL).orElse(null);
+    String cognitoUsername = extractStringClaim(claimsSet, ATTRIBUTE_USERNAME).orElse(null);
+    String linkedRecord = extractStringClaim(claimsSet, ATTRIBUTE_LINKED_RECORD_SUBJECT)
+        .orElse(null);
+    String isPrimaryRecord = extractStringClaim(claimsSet, ATTRIBUTE_IS_PRIMARY_RECORD)
+        .orElse(null);
+    String providerName = getProviderNameFromIdentities(claimsSet.getClaim(ATTRIBUTE_IDENTITIES));
+
+    return new CognitoUserInfo(firstName, lastName, email, subject, providerName, linkedRecord,
+        cognitoUsername, isPrimaryRecord);
+  }
+
+  private static String getProviderNameFromIdentities(Object identityClaims) {
+    if (ObjectUtils.isEmpty(identityClaims)) {
+      return null;
+    }
+
+    try {
+      List<Map<String, Object>> identities = (List<Map<String, Object>>) identityClaims;
+      return identities.stream()
+          .map(identity -> identity.get("providerName"))
+          .filter(Objects::nonNull)
+          .map(Object::toString)
+          .findFirst()
+          .orElse(null);
+    } catch (Exception e) {
+      throw new InvalidTokenException("Failed to parse 'identities' claim from token", e);
+    }
   }
 
   /**
@@ -132,8 +190,27 @@ public class TokenUtil {
       SignedJWT signedJwt = SignedJWT.parse(token);
       return signedJwt.getJWTClaimsSet();
     } catch (Exception e) {
-      throw new InvalidTokenException("Parse token process was failed");
+      throw new InvalidTokenException("Parse token process was failed", e);
     }
+  }
+
+  /**
+   * Parses a JSON string containing token data and converts it into a map of tokens.
+   *
+   * @param json the JSON string containing the token data to be parsed
+   * @return a map containing the token data
+   */
+  public static Map<String, String> parseTokensFromJson(String json) {
+    Map<String, String> tokenMap = deserialize(json, new TypeReference<>() {
+    });
+
+    if (!tokenMap.containsKey(ACCESS_TOKEN.getValue())
+        || !tokenMap.containsKey(ID_TOKEN.getValue())
+        || !tokenMap.containsKey(REFRESH_TOKEN.getValue())) {
+      throw new InvalidTokenException("Missing required tokens in response");
+    }
+
+    return tokenMap;
   }
 
   /**
