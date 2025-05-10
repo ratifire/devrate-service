@@ -1,6 +1,6 @@
-data "aws_region" "current_region" {}
+# data "aws_region" "current_region" {}
 
-data "aws_caller_identity" "current_user" {}
+# data "aws_caller_identity" "current_user" {}
 
 data "aws_availability_zones" "availability_zones" {}
 
@@ -13,7 +13,7 @@ data "aws_ami" "aws_linux_latest_ecs" {
   }
 }
 
-data "aws_db_instance" "db_host" {
-  db_instance_identifier = var.db_instance_identifier
-  depends_on             = [aws_db_instance.pg_db_backend]
-}
+# data "aws_db_instance" "db_host" {
+#   db_instance_identifier = var.db_instance_identifier
+#   depends_on             = [aws_db_instance.pg_db_backend]
+# }
