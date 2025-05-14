@@ -1,14 +1,14 @@
 name: Destroy
 
 on:
-  # schedule:
-  #   - cron: '00 01 * * *'
+  schedule:
+    - cron: '00 21 * * *'
   workflow_dispatch:
     inputs:
       environment:
         description: 'Select environment to deploy (prod, dev or qa)'
         required: true
-        default: 'dev'
+        default: 'qa'
         type: choice
         options:
           - dev
@@ -18,7 +18,7 @@ on:
 jobs:
   destroy:
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment || 'dev' }}
+    environment: ${{ github.event.inputs.environment || 'qa' }}
 
     steps:
       - name: Checkout code
