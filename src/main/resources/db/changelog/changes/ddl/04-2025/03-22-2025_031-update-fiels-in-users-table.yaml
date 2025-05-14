@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 04-25-2025_031
+      author: Dmytro Abalmas
+      preConditions:
+        - onFail: MARK_RAN
+          tableExists:
+            tableName: users
+      changes:
+        - dropNotNullConstraint:
+            tableName: users
+            columnName: country
+            columnDataType: VARCHAR(255)
+        - dropNotNullConstraint:
+            tableName: users
+            columnName: is_subscribed
+            columnDataType: BOOLEAN

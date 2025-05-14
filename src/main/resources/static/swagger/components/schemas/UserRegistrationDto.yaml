@@ -11,12 +11,6 @@ properties:
   lastName:
     type: string
     description: The last name inputted by the user
-  country:
-    type: string
-    description: The country chosen by the user for their account
-  subscribed:
-    type: boolean
-    description: Flag indicating whether the user is subscribed to the newsletter
   password:
     type: string
     description: The password chosen by the user for their account
@@ -24,5 +18,4 @@ required:
   - email
   - firstName
   - lastName
-  - country
   - password

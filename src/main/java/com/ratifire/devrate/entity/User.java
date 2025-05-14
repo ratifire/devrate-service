@@ -47,13 +47,12 @@ public class User {
 
   private String status;
 
-  @Column(nullable = false)
   private String country;
 
   private String city;
 
-  @Column(name = "is_subscribed", nullable = false)
-  private boolean subscribed;
+  @Column(name = "is_subscribed")
+  private Boolean subscribed;
 
   @Column(length = 480)
   private String description;

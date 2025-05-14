@@ -1,5 +1,7 @@
 package com.ratifire.devrate.security.token.validation;
 
+import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARAM_CLIENT_ID;
+
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.ratifire.devrate.security.configuration.properties.CognitoProviderProperties;
 import com.ratifire.devrate.security.configuration.properties.CognitoRegistrationProperties;
@@ -36,7 +38,7 @@ public class AccessTokenClaimsValidator extends BaseTokenClaimsValidator {
   }
 
   private boolean isClientIdValid(JWTClaimsSet claimsSet) {
-    return TokenUtil.extractStringClaim(claimsSet, "client_id")
+    return TokenUtil.extractStringClaim(claimsSet, PARAM_CLIENT_ID)
         .map(cognitoRegistrationProperties.getClientId()::equals)
         .orElse(false);
   }

@@ -1,6 +1,5 @@
 package com.ratifire.devrate.security.configuration.properties;
 
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldNameConstants;
@@ -20,6 +19,10 @@ public class CognitoRegistrationProperties {
   private String clientName;
   private String clientId;
   private String clientSecret;
-  private List<String> scope;
+  private String scope;
+  private String redirectUri;
+  private String domain;
+  private String authorizationGrantType;
+  private String userPoolId;
 
 }
