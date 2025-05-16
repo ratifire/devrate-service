@@ -134,7 +134,7 @@ resource "aws_ecs_service" "back_services" {
 
 resource "aws_lb" "back_ecs_alb" {
   name               = var.back_ecs_alb
-  internal           = false
+  internal           = true
   load_balancer_type = "application"
   security_groups    = [data.aws_security_group.vpc_backend_security_group.id]
   subnets            = data.aws_subnets.private_subnets.ids
