@@ -16,14 +16,18 @@ data "aws_iam_instance_profile" "aws_iam_instance_profile_backend" {
   name = "ecs-instance-profile-backend-${var.deploy_profile}"
 }
 
-data "aws_vpcs" "all_vpcs" {}
-
+data "aws_vpc" "skillzzy_vpc" {
+  filter {
+    name   = "tag:Name"
+    values = ["skillzzy-main-vpc"]
+  }
+}
 
 data "aws_db_instance" "db_host" {
   db_instance_identifier = var.db_instance_identifier
 }
 
-data "aws_subnets" "default_subnets" {
+data "aws_subnets" "private_subnets" {
   filter {
     name   = "vpc-id"
     values = [var.vpc]
@@ -33,8 +37,8 @@ data "aws_subnets" "default_subnets" {
   filter {
     name = "tag:Name"
     values = [
-      "Default subnet for eu-north-1b", "Default subnet for eu-north-1a",
-      "Default subnet for eu-north-1c"
+      "Private subnet for eu-north-1b", "Private subnet for eu-north-1a",
+      "Private subnet for eu-north-1c"
     ]
   }
 
