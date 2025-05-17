@@ -135,12 +135,11 @@ public class EmailService {
       helper.setSubject(subject);
 
       mailSender.send(mimeMessage);
+      log.info("Email sent to '{}'. Subject:\n '{}'", recipient, subject);
     } catch (MessagingException e) {
-      log.error("Failed to construct the email to '" + recipient + "'."
-          + " Subject: '" + subject + "'", e);
+      log.error("Failed to construct the email to '{}'. Subject: '{}'", recipient, subject, e);
     } catch (MailException e) {
-      log.error("Failed to send the email to '" + recipient + "'."
-          + " Subject: '" + subject + "'", e);
+      log.error("Failed to send the email to '{}'. Subject: '{}'", recipient, subject, e);
     }
   }
 
