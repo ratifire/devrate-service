@@ -51,6 +51,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
@@ -74,12 +75,20 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
   private final EmailService emailService;
   private final DataMapper<UserDto, User> userMapper;
   private final RefreshTokenCookieHelper refreshTokenCookieHelper;
+  private final PasswordEncoder passwordEncoder;
 
   @Override
   public LoginResponseDto login(LoginDto loginDto, HttpServletResponse response) {
-    final String email = loginDto.getEmail();
+    final String providedEmail = loginDto.getEmail();
+    final String providedPassword = loginDto.getPassword();
     try {
-      User user = userService.findByEmail(email);
+      User user = userService.findByEmail(providedEmail);
+      final String currentEncodedPassword = user.getPassword();
+
+      if (!passwordEncoder.matches(providedPassword, currentEncodedPassword)) {
+        throw new AuthenticationException(
+            "Authentication process was failed due to invalid password.");
+      }
 
       if (Boolean.FALSE.equals(user.getAccountActivated())) {
         String activationCode = emailConfirmationCodeService.createConfirmationCode(user.getId());
@@ -99,7 +108,7 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
           .build();
 
     } catch (Exception e) {
-      log.error("Authentication process was failed for email {}: {}", email, e.getMessage());
+      log.error("Authentication process was failed for email {}: {}", providedEmail, e.getMessage());
       throw new AuthenticationException("Authentication process was failed.");
     }
   }

@@ -32,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +50,7 @@ public class AuthenticationService {
   private final EmailConfirmationCodeService emailConfirmationCodeService;
   private final EmailService emailService;
   private final RefreshTokenCookieHelper refreshTokenCookieHelper;
+  private final PasswordEncoder passwordEncoder;
   private final DataMapper<UserDto, User> userMapper;
 
   /**
@@ -58,14 +60,21 @@ public class AuthenticationService {
    * @return A UserDto object representing the authenticated user.
    */
   public LoginResponseDto login(LoginDto loginDto, HttpServletResponse response) {
-    final String email = loginDto.getEmail();
-    final String password = loginDto.getPassword();
-    User user = userService.findByEmail(email);
+    final String providedEmail = loginDto.getEmail();
+    final String providedPassword = loginDto.getPassword();
+    User user = userService.findByEmail(providedEmail);
+    final String currentEncodedPassword = user.getPassword();
+
+    if (!passwordEncoder.matches(providedPassword, currentEncodedPassword)) {
+      throw new AuthenticationException(
+          "Authentication process was failed due to invalid password.");
+    }
+
 
     if (Boolean.FALSE.equals(user.getAccountActivated())) {
       return handleInactiveAccount(user);
     }
-    LoginResponseWrapper responseWrapper = processLogin(response, user, password);
+    LoginResponseWrapper responseWrapper = processLogin(response, user, providedPassword);
     return responseWrapper.loginResponse();
 
   }
