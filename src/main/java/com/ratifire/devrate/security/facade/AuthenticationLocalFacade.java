@@ -108,7 +108,8 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
           .build();
 
     } catch (Exception e) {
-      log.error("Authentication process was failed for email {}: {}", providedEmail, e.getMessage());
+      log.error("Authentication process was failed for email {}: {}",
+          providedEmail, e.getMessage());
       throw new AuthenticationException("Authentication process was failed.");
     }
   }
@@ -292,6 +293,14 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
       UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
       source.registerCorsConfiguration("/**", configuration);
       return source;
+    }
+
+    /**
+     * Provides a PasswordEncoder bean that uses BCrypt hashing algorithm.
+     */
+    @Bean
+    public static PasswordEncoder passwordEncoder() {
+      return new BCryptPasswordEncoder();
     }
 
   }
