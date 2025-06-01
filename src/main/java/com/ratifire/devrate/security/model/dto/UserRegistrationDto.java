@@ -35,12 +35,6 @@ public class UserRegistrationDto {
       + "and apostrophes")
   private String lastName;
 
-  @NotBlank(message = "Country name cannot be blank")
-  @Size(max = 100)
-  private String country;
-
-  private boolean subscribed;
-
   @NotBlank(message = "Password cannot be blank")
   @Pattern(regexp = PASSWORD_PATTERN,
       message = "Password must be at least 6 characters long, "

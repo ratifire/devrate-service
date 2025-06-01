@@ -13,6 +13,9 @@ import com.ratifire.devrate.security.model.enums.AccessLevel;
 import com.ratifire.devrate.service.EmailService;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
@@ -48,8 +51,6 @@ public class RegistrationService {
     UserDto userDto = UserDto.builder()
         .firstName(userRegistrationDto.getFirstName())
         .lastName(userRegistrationDto.getLastName())
-        .country(userRegistrationDto.getCountry())
-        .subscribed(userRegistrationDto.isSubscribed())
         .build();
 
     if (userService.existsByEmail(email)) {
@@ -59,7 +60,8 @@ public class RegistrationService {
 
     try {
       User user = userService.create(userDto, email, passwordEncoder.encode(password));
-      cognitoApiClientService.register(email, password, user.getId(), AccessLevel.getDefaultRole());
+      cognitoApiClientService.register(email, password, user.getId(),
+          AccessLevel.getDefaultRole(), true);
     } catch (Exception e) {
       log.error("Initiate registration process was failed for email {}: {}",
           userRegistrationDto.getEmail(), e.getMessage(), e);
@@ -80,20 +82,37 @@ public class RegistrationService {
       String code = confirmationCodeDto.getConfirmationCode();
       cognitoApiClientService.confirmRegistration(email, code);
       User user = userService.findByEmail(email);
-      Contact contact = Contact
-          .builder()
-          .type(ContactType.EMAIL)
-          .value(email)
-          .build();
-      user.getContacts()
-          .add(contact);
-      sendGreetings(user);
+      finalizeUserRegistration(user, email);
       return user.getId();
     } catch (Exception e) {
       log.error("Confirmation registration process was failed for email {}: {}",
           confirmationCodeDto.getEmail(), e.getMessage(), e);
       throw new UserRegistrationException("Confirmation registration process was failed.");
     }
+  }
+
+  /**
+   * Finalizes the registration process for a user by adding an email contact and sending
+   * greetings.
+   *
+   * @param user  The user whose registration is being finalized.
+   * @param email The email address to be added as the user's contact.
+   */
+  public void finalizeUserRegistration(User user, String email) {
+    Contact contact = Contact
+        .builder()
+        .type(ContactType.EMAIL)
+        .value(email)
+        .build();
+
+    Optional.ofNullable(user.getContacts())
+        .orElseGet(() -> {
+          List<Contact> newList = new ArrayList<>();
+          user.setContacts(newList);
+          return newList;
+        })
+        .add(contact);
+    sendGreetings(user);
   }
 
   /**

@@ -1,0 +1,11 @@
+type: object
+properties:
+  authorizationCode:
+    type: string
+    description: Authorization code received from the OAuth provider
+  state:
+    type: string
+    description: State parameter received from the OAuth provider
+required:
+  - authorizationCode
+  - state

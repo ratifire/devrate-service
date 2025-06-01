@@ -1,18 +1,31 @@
 package com.ratifire.devrate.security.service;
 
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
+import com.amazonaws.services.cognitoidp.model.AdminGetUserResult;
+import com.amazonaws.services.cognitoidp.model.AdminLinkProviderForUserRequest;
+import com.amazonaws.services.cognitoidp.model.AttributeType;
 import com.amazonaws.services.cognitoidp.model.AuthenticationResultType;
 import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordRequest;
 import com.amazonaws.services.cognitoidp.model.ConfirmSignUpRequest;
 import com.amazonaws.services.cognitoidp.model.ForgotPasswordRequest;
 import com.amazonaws.services.cognitoidp.model.GlobalSignOutRequest;
 import com.amazonaws.services.cognitoidp.model.InitiateAuthRequest;
+import com.amazonaws.services.cognitoidp.model.ListUsersRequest;
+import com.amazonaws.services.cognitoidp.model.ListUsersResult;
+import com.amazonaws.services.cognitoidp.model.ProviderUserIdentifierType;
 import com.amazonaws.services.cognitoidp.model.ResendConfirmationCodeRequest;
 import com.amazonaws.services.cognitoidp.model.SignUpRequest;
 import com.ratifire.devrate.security.helper.CognitoApiClientRequestHelper;
+import com.ratifire.devrate.security.util.TokenUtil;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 
 /**
  * Service class for interacting with AWS Cognito API.
@@ -22,6 +35,7 @@ import org.springframework.stereotype.Service;
 @Profile("!local")
 public class CognitoApiClientService {
 
+  private final RestTemplateBuilder restTemplate;
   private final AWSCognitoIdentityProvider cognitoClient;
   private final CognitoApiClientRequestHelper requestHelper;
 
@@ -33,8 +47,10 @@ public class CognitoApiClientService {
    * @param userId   The unique identifier for the user.
    * @param role     The user's role.
    */
-  public void register(String email, String password, long userId, String role) {
-    SignUpRequest request = requestHelper.buildRegisterRequest(email, password, userId, role);
+  public void register(String email, String password, long userId, String role,
+      boolean isPrimaryRecord) {
+    SignUpRequest request = requestHelper.buildRegisterRequest(email, password, userId, role,
+        isPrimaryRecord);
     cognitoClient.signUp(request).getUserSub();
   }
 
@@ -108,14 +124,102 @@ public class CognitoApiClientService {
   /**
    * Refreshes the user's authentication tokens using a refresh token.
    *
-   * @param sub          the unique identifier (subject) of the user whose tokens are being
+   * @param subject      the unique identifier (subject) of the user whose tokens are being
    *                     refreshed.
    * @param refreshToken the refresh token issued during the initial authentication process.
    * @return an {@link AuthenticationResultType} object containing the new access token, ID token,
    *     and other authentication details.
    */
-  public AuthenticationResultType refreshAuthTokens(String sub, String refreshToken) {
-    InitiateAuthRequest request = requestHelper.buildRefreshAuthRequest(sub, refreshToken);
+  public AuthenticationResultType refreshAuthTokens(String subject, String refreshToken) {
+    InitiateAuthRequest request = requestHelper.buildRefreshAuthRequest(subject, refreshToken);
     return cognitoClient.initiateAuth(request).getAuthenticationResult();
+  }
+
+  /**
+   * Fetches raw tokens from Cognito using the provided authorization code.
+   *
+   * @param code The authorization code used to exchange for access and refresh tokens.
+   * @return A map containing the raw tokens retrieved from Cognito.
+   */
+  public Map<String, String> fetchRawTokensFromCognito(String code) {
+    String url = requestHelper.buildTokenUrl();
+    HttpEntity<MultiValueMap<String, String>> request =
+        requestHelper.buildTokenExchangeRequest(code);
+
+    ResponseEntity<String> response = restTemplate.build()
+        .postForEntity(url, request, String.class);
+    return TokenUtil.parseTokensFromJson(response.getBody());
+  }
+
+  /**
+   * Gets the details of a Cognito user by their username.
+   *
+   * @param username The username of the Cognito user.
+   */
+  public AdminGetUserResult getCognitoUserDetails(String username) {
+    return cognitoClient.adminGetUser(requestHelper.buildAdminGetUserRequest(username));
+  }
+
+  /**
+   * Updates the attributes of a Cognito user with the specified details.
+   *
+   * @param subject             The subject identifier for the Cognito user.
+   * @param userId              The unique ID of the user whose attributes are being updated.
+   * @param role                The role of the user in the application.
+   * @param isPrimaryRecord     A flag indicating if this is the primary record for the user.
+   * @param linkedRecordSubject The subject identifier of the linked record, if any.
+   */
+  public void updateCognitoUserAttributes(String subject, long userId, String role,
+      boolean isPrimaryRecord, String linkedRecordSubject) {
+    cognitoClient.adminUpdateUserAttributes(
+        requestHelper.buildAdminUpdateUserAttributesRequest(subject, userId, role, isPrimaryRecord,
+            linkedRecordSubject));
+  }
+
+  /**
+   * Updates user attributes in AWS Cognito for the specified user.
+   *
+   * @param attributesToUpdate the list of AttributeType values to be updated
+   * @param subject            the Cognito username
+   */
+  public void updateCognitoUserAttributes(List<AttributeType> attributesToUpdate, String subject) {
+    cognitoClient.adminUpdateUserAttributes(
+        requestHelper.buildAdminUpdateUserAttributesRequest(attributesToUpdate, subject));
+  }
+
+  /**
+   * Links a user from one identity provider to another within the specified Cognito user pool.
+   *
+   * @param destinationUser The identifier of the destination user in the Cognito user pool.
+   * @param provider        The name of the identity provider of the source user to be linked.
+   * @param subject         The unique identifier of the source user in the specified identity
+   *                        provider.
+   */
+  public void linkCognitoUsersInPool(ProviderUserIdentifierType destinationUser, String provider,
+      String subject) {
+    AdminLinkProviderForUserRequest request = requestHelper.buildAdminLinkProviderForUserRequest(
+        destinationUser, provider, subject);
+    cognitoClient.adminLinkProviderForUser(request);
+  }
+
+  /**
+   * Retrieves a list of Cognito users filtered by the specified email address.
+   *
+   * @param email The email address used as a filter to list Cognito users.
+   * @return A ListUsersResult object containing the users that match the specified email filter.
+   */
+  public ListUsersResult getListCognitoUsersByEmail(String email) {
+    ListUsersRequest request = requestHelper.buildListUsersRequest(email);
+    return cognitoClient.listUsers(request);
+  }
+
+  /**
+   * Retrieves a list of Cognito users.
+   *
+   * @return A ListUsersResult object containing the users.
+   */
+  public ListUsersResult getAllListCognitoUsersWithPagination(int limit, String paginationToken) {
+    ListUsersRequest request = requestHelper.buildListUsersRequest(limit, paginationToken);
+    return cognitoClient.listUsers(request);
   }
 }

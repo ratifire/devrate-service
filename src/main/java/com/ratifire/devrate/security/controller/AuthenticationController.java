@@ -4,15 +4,18 @@ import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.security.facade.AuthenticationFacade;
 import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.LoginDto;
+import com.ratifire.devrate.security.model.dto.OauthAuthorizationDto;
 import com.ratifire.devrate.security.model.dto.PasswordResetDto;
 import com.ratifire.devrate.security.model.dto.ResendConfirmCodeDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,6 +42,40 @@ public class AuthenticationController {
   @PostMapping("/signin")
   public UserDto login(@RequestBody LoginDto loginDto, HttpServletResponse response) {
     return authenticationFacade.login(loginDto, response);
+  }
+
+  /**
+   * Redirects the user to LinkedIn for OAuth authentication.
+   *
+   * @param response the HttpServletResponse object required to send the redirect
+   */
+  @GetMapping("/oauth/redirect/linkedIn")
+  public void redirectToLinkedIn(HttpServletResponse response) throws IOException {
+    authenticationFacade.redirectToLinkedIn(response);
+  }
+
+  /**
+   * Redirects the user to Google's OAuth authorization page.
+   *
+   * @param response The HttpServletResponse used to redirect the user.
+   */
+  @GetMapping("/oauth/redirect/google")
+  public void redirectToGoogle(HttpServletResponse response) throws IOException {
+    authenticationFacade.redirectToGoogle(response);
+  }
+
+  /**
+   * Handles the OAuth authorization request, processing the provided authorization details and
+   * returning the resulting user details and tokens.
+   *
+   * @param response the HttpServletResponse object to send HTTP responses
+   * @param request  the OAuth authorization request
+   * @return the UserDto object containing details of the authenticated user
+   */
+  @PostMapping("/oauth/authorize")
+  public UserDto handleOauthAuthorization(HttpServletResponse response,
+      @Valid @RequestBody OauthAuthorizationDto request) {
+    return authenticationFacade.handleOauthAuthorization(response, request);
   }
 
   /**
