@@ -6,12 +6,14 @@ import com.ratifire.devrate.security.configuration.properties.CookieProperties;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 /**
  * A helper class for managing refresh token cookies.
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class RefreshTokenCookieHelper {
@@ -27,6 +29,8 @@ public class RefreshTokenCookieHelper {
    */
   public void setRefreshTokenToCookie(HttpServletResponse response, String refreshToken) {
     Cookie cookie = buildCookie(refreshToken, properties.getLifeTime());
+    log.info("TEST LOG2 - Setting refresh token cookie: {}, value: {}", cookie.getName(),
+        cookie.getValue());
     response.addCookie(cookie);
   }
 

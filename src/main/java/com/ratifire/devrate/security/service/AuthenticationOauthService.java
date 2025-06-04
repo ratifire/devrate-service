@@ -97,6 +97,7 @@ public class AuthenticationOauthService {
 
       AuthenticationResultType refreshedTokens =
           cognitoApiClient.refreshAuthTokens(cognitoUserInfo.cognitoUsername(), refreshToken);
+      log.info("TEST LOG4 - Refresh token: {}", refreshToken);
       setAuthTokensToResponse(response, refreshedTokens.getAccessToken(),
           refreshedTokens.getIdToken(), refreshToken);
 
@@ -152,6 +153,7 @@ public class AuthenticationOauthService {
 
     if (areCognitoUsersLinked(userInfo.linkedRecord(), userInfo.isPrimaryRecord(),
         cognitoPrimaryUserSubject)) {
+      log.info("TEST LOG3 - Refresh token: {}", refreshToken);
       setAuthTokensToResponse(response, accessToken, idToken, refreshToken);
       return;
     }
@@ -229,6 +231,7 @@ public class AuthenticationOauthService {
       String idToken,
       String refreshToken) {
     TokenUtil.setAuthTokensToHeaders(response, accessToken, idToken);
+    log.info("TEST LOG1 - Refresh token: {}", refreshToken);
     cookieHelper.setRefreshTokenToCookie(response, refreshToken);
   }
 }
