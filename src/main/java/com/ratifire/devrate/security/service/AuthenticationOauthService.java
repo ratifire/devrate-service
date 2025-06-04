@@ -154,7 +154,6 @@ public class AuthenticationOauthService {
     if (areCognitoUsersLinked(userInfo.linkedRecord(), userInfo.isPrimaryRecord(),
         cognitoPrimaryUserSubject)) {
       log.info("TEST LOG3 - Refresh token: {}", refreshToken);
-      setAuthTokensToResponse(response, accessToken, idToken, refreshToken);
       return;
     }
     linkCognitoUsersInPool(cognitoPrimaryUser, userInfo);
