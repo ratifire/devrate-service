@@ -44,11 +44,9 @@ public class RefreshTokenService {
       TokenUtil.setAuthTokensToHeaders(response, newAccessToken, newIdToken);
 
     } catch (NotAuthorizedException e) {
-      log.error("Refresh token has expired: {}", e.getMessage());
-      throw new RefreshTokenExpiredException("Refresh token has expired.");
+      throw new RefreshTokenExpiredException("Refresh token has expired.", e);
     } catch (Exception e) {
-      log.error("Refresh token process was failed: {}", e.getMessage());
-      throw new RefreshTokenException("Refresh token process was failed.");
+      throw new RefreshTokenException("Refresh token process was failed.", e);
     }
   }
 }
