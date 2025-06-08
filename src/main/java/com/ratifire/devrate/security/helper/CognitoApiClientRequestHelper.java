@@ -33,6 +33,10 @@ import static com.ratifire.devrate.security.util.CognitoUtil.createAttribute;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.amazonaws.services.cognitoidp.model.AdminGetUserRequest;
+import com.amazonaws.services.cognitoidp.model.AdminGetUserResult;
+import com.amazonaws.services.cognitoidp.model.AdminLinkProviderForUserRequest;
+import com.amazonaws.services.cognitoidp.model.AdminUpdateUserAttributesRequest;
+import com.amazonaws.services.cognitoidp.model.AdminGetUserRequest;
 import com.amazonaws.services.cognitoidp.model.AdminLinkProviderForUserRequest;
 import com.amazonaws.services.cognitoidp.model.AdminUpdateUserAttributesRequest;
 import com.amazonaws.services.cognitoidp.model.AttributeType;
@@ -322,6 +326,173 @@ public class CognitoApiClientRequestHelper {
     body.add(PARAM_CODE, authorizationCode);
     body.add(PARAM_REDIRECT_URI, cognitoConfig.getRedirectUri());
     return new HttpEntity<>(body, headers);
+  /**
+   * Builds a request to update user attributes in AWS Cognito for a specified user.
+   *
+   * @param subject             the unique identifier (subject) of the user to update.
+   * @param userId              the unique identifier ID of the user.
+   * @param role                the role to be assigned to the user.
+   * @param isPrimaryRecord     a boolean indicating if this is the primary record of the user.
+   * @param linkedRecordSubject the subject of the linked record, if any.
+   * @return an AdminUpdateUserAttributesRequest configured with the provided details.
+   */
+  public AdminUpdateUserAttributesRequest buildAdminUpdateUserAttributesRequest(String subject,
+      long userId, String role, boolean isPrimaryRecord, String linkedRecordSubject) {
+    return new AdminUpdateUserAttributesRequest()
+        .withUserPoolId(cognitoConfig.getUserPoolId())
+        .withUsername(subject)
+        .withUserAttributes(List.of(
+            createAttribute(ATTRIBUTE_USER_ID, String.valueOf(userId)),
+            createAttribute(ATTRIBUTE_ROLE, role),
+            createAttribute(ATTRIBUTE_IS_PRIMARY_RECORD, String.valueOf(isPrimaryRecord)),
+            createAttribute(ATTRIBUTE_LINKED_RECORD_SUBJECT, linkedRecordSubject)
+        ));
+  }
+
+  /**
+   * Builds a request for updating user attributes in AWS Cognito.
+   *
+   * @param attributes the list of AttributeType objects to update for the user
+   * @param subject    the Cognito username
+   * @return a configured AdminUpdateUserAttributesRequest with the specified attributes and user
+   */
+  public AdminUpdateUserAttributesRequest buildAdminUpdateUserAttributesRequest(
+      List<AttributeType> attributes, String subject) {
+    return new AdminUpdateUserAttributesRequest()
+        .withUserPoolId(cognitoConfig.getUserPoolId())
+        .withUsername(subject)
+        .withUserAttributes(attributes);
+  }
+
+  /**
+   * Builds a request to get user details from AWS Cognito for a specified user.
+   *
+   * @param username the username of the user to get.
+   * @return an AdminGetUserRequest configured with the provided details.
+   */
+  public AdminGetUserRequest buildAdminGetUserRequest(String username) {
+    return new AdminGetUserRequest()
+        .withUserPoolId(cognitoConfig.getUserPoolId())
+        .withUsername(username);
+  }
+
+  /**
+   * Builds a request to link two users in AWS Cognito based on the specified source and destination
+   * user details.
+   *
+   * @param destinationUser    the identifier of the user to be linked to.
+   * @param sourceUserProvider the provider name of the source user.
+   * @param sourceUserSubject  the unique identifier of the source user within the provider.
+   * @return a configured AdminLinkProviderForUserRequest for the user link operation.
+   */
+  public AdminLinkProviderForUserRequest buildAdminLinkProviderForUserRequest(
+      ProviderUserIdentifierType destinationUser, String sourceUserProvider,
+      String sourceUserSubject) {
+    AdminLinkProviderForUserRequest request = new AdminLinkProviderForUserRequest();
+    request.withUserPoolId(cognitoConfig.getUserPoolId());
+    request.withDestinationUser(destinationUser);
+
+    ProviderUserIdentifierType sourceUser = new ProviderUserIdentifierType();
+    sourceUser.setProviderName(sourceUserProvider);
+    sourceUser.setProviderAttributeName(ATTRIBUTE_COGNITO_SUBJECT);
+    sourceUser.setProviderAttributeValue(sourceUserSubject);
+
+    request.withSourceUser(sourceUser);
+    return request;
+  }
+
+  /**
+   * Builds a request to list users from AWS Cognito based on a given email filter.
+   *
+   * @param email the email of the user to filter the list of users.
+   * @return a ListUsersRequest configured with the specified email filter.
+   */
+  public ListUsersRequest buildListUsersRequest(String email) {
+    ListUsersRequest request = new ListUsersRequest();
+    request.setUserPoolId(cognitoConfig.getUserPoolId());
+    request.setFilter(String.format("email=\"%s\"", email));
+    return request;
+  }
+
+  /**
+   * Builds a request to list users from AWS Cognito.
+   *
+   * @return a ListUsersRequest configured the cognito user.
+   */
+  public ListUsersRequest buildListUsersRequest(int limit, String paginationToken) {
+    ListUsersRequest request = new ListUsersRequest();
+    request.setUserPoolId(cognitoConfig.getUserPoolId());
+    request.withPaginationToken(paginationToken);
+    request.withLimit(limit);
+    return request;
+  }
+
+  /**
+   * Builds an HTTP entity for a token exchange request in AWS Cognito.
+   *
+   * @param authorizationCode the authorization code received during the OAuth2 authentication
+   *                          flow.
+   * @return a HttpEntity containing the headers and body for the token exchange request.
+   */
+  public HttpEntity<MultiValueMap<String, String>> buildTokenExchangeRequest(
+      String authorizationCode) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.set(HEADER_CONTENT_TYPE, CONTENT_TYPE_FORM_URLENCODED);
+    headers.set(HEADER_AUTHORIZATION, generateAuthorizationHeader());
+    MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+    body.add(PARAM_GRANT_TYPE, cognitoConfig.getAuthorizationGrantType());
+    body.add(PARAM_CODE, authorizationCode);
+    body.add(PARAM_REDIRECT_URI, cognitoConfig.getRedirectUri());
+    return new HttpEntity<>(body, headers);
+  }
+
+  /**
+   * Builds the OAuth redirect URL based on the specified OAuth2 provider and state.
+   *
+   * @param provider the name of the OAuth2 identity provider to use for login.
+   * @param state    a unique state parameter to include in the URL for CSRF protection.
+   * @return the complete OAuth redirect URL as a String.
+   */
+  public String buildOauthRedirectUrl(String provider, String state) {
+    return UriComponentsBuilder.fromUriString(OAUTH_AUTHORIZE_URL)
+        .queryParam(PARAM_RESPONSE_TYPE, PARAM_CODE)
+        .queryParam(PARAM_CLIENT_ID, cognitoConfig.getClientId())
+        .queryParam(PARAM_REDIRECT_URI, cognitoConfig.getRedirectUri())
+        .queryParam(PARAM_SCOPE, cognitoConfig.getScope())
+        .queryParam(PARAM_IDENTITY_PROVIDER, provider)
+        .queryParam(PARAM_STATE, state)
+        .buildAndExpand(Map.of(PARAM_DOMAIN, cognitoConfig.getDomain()))
+        .toUriString();
+  }
+
+  /**
+   * Constructs the URL for obtaining an OAuth token using the configured Cognito domain.
+   *
+   * @return the complete token URL as a String
+   */
+  public String buildTokenUrl() {
+    return UriComponentsBuilder.fromUriString(OAUTH_TOKEN_URL)
+        .buildAndExpand(Map.of(PARAM_DOMAIN, cognitoConfig.getDomain()))
+        .toUriString();
+  }
+
+  /**
+   * Generates an authorization header containing basic authentication credentials in the format
+   * "Basic {Base64EncodedCredentials}".
+   *
+   * @return a String representing the authorization header.
+   */
+  private String generateAuthorizationHeader() {
+    String credentials = String.format("%s:%s", cognitoConfig.getClientId(),
+        cognitoConfig.getClientSecret());
+    return AUTHORIZATION_BASIC_PREFIX + Base64.getEncoder()
+        .encodeToString(credentials.getBytes(UTF_8));
+  }
+
+  private AttributeType createAttribute(String name, String value) {
+    return new AttributeType()
+        .withName(name)
+        .withValue(value);
   }
 
   /**

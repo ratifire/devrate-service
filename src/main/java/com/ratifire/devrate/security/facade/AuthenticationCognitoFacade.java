@@ -3,6 +3,10 @@ package com.ratifire.devrate.security.facade;
 import static com.ratifire.devrate.security.model.enums.OauthIdentityProvider.GOOGLE;
 import static com.ratifire.devrate.security.model.enums.OauthIdentityProvider.LINKEDIN;
 
+import com.ratifire.devrate.dto.UserDto;
+import static com.ratifire.devrate.security.model.enums.OauthIdentityProvider.GOOGLE;
+import static com.ratifire.devrate.security.model.enums.OauthIdentityProvider.LINKEDIN;
+
 import com.ratifire.devrate.dto.LoginResponseDto;
 import com.ratifire.devrate.security.model.dto.ConfirmActivationAccountDto;
 import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
@@ -40,6 +44,26 @@ public class AuthenticationCognitoFacade implements AuthenticationFacade {
   @Override
   public LoginResponseDto login(LoginDto loginDto, HttpServletResponse response) {
     return authenticationService.login(loginDto, response);
+  }
+
+  @Override
+  public void redirectToLinkedIn(HttpServletResponse response)
+      throws IOException {
+    String url = authenticationOauthService.generateOauthRedirectUrl(LINKEDIN.getProvider());
+    response.sendRedirect(url);
+  }
+
+  @Override
+  public void redirectToGoogle(HttpServletResponse response)
+      throws IOException {
+    String url = authenticationOauthService.generateOauthRedirectUrl(GOOGLE.getProvider());
+    response.sendRedirect(url);
+  }
+
+  @Override
+  public UserDto handleOauthAuthorization(HttpServletResponse response,
+      OauthAuthorizationDto request) {
+    return authenticationOauthService.handleOauthAuthorization(response, request);
   }
 
   @Override

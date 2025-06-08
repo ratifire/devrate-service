@@ -113,7 +113,6 @@ public class InterviewRequestService {
 
     if (hasExpiredSlots) {
       repository.saveAll(interviewRequests);
-      interviewRequests.forEach(matcherServiceQueueSender::update);
     }
   }
 

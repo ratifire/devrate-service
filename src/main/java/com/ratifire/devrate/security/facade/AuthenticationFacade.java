@@ -31,6 +31,13 @@ public interface AuthenticationFacade {
   LoginResponseDto handleOauthAuthorization(HttpServletResponse response,
       OauthAuthorizationDto request);
 
+  void redirectToLinkedIn(HttpServletResponse response) throws IOException;
+
+  void redirectToGoogle(HttpServletResponse response) throws IOException;
+
+  UserDto handleOauthAuthorization(HttpServletResponse response,
+      OauthAuthorizationDto request);
+
   String logout(HttpServletRequest request, HttpServletResponse response);
 
   void registerUser(UserRegistrationDto userRegistrationDto);
