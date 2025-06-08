@@ -4,7 +4,6 @@ import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTR
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_IS_PRIMARY_RECORD;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_PROVIDER_NAME;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.NONE_VALUE;
-import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.ACCESS_TOKEN;
 import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.ID_TOKEN;
 import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.REFRESH_TOKEN;
 
@@ -86,14 +85,12 @@ public class AuthenticationOauthService {
       Map<String, String> rawTokens =
           cognitoApiClient.fetchRawTokensFromCognito(request.getAuthorizationCode());
 
-      String accessToken = rawTokens.get(ACCESS_TOKEN.getValue());
       String idToken = rawTokens.get(ID_TOKEN.getValue());
       String refreshToken = rawTokens.get(REFRESH_TOKEN.getValue());
 
       CognitoUserInfo cognitoUserInfo = TokenUtil.getCognitoUserInfoFromIdToken(idToken);
 
-      User internalUser = processInternalUser(response, accessToken, idToken, refreshToken,
-          cognitoUserInfo);
+      User internalUser = processInternalUser(cognitoUserInfo);
 
       AuthenticationResultType refreshedTokens =
           cognitoApiClient.refreshAuthTokens(cognitoUserInfo.cognitoUsername(), refreshToken);
@@ -115,17 +112,11 @@ public class AuthenticationOauthService {
     }
   }
 
-  private User processInternalUser(
-      HttpServletResponse response,
-      String accessToken,
-      String idToken,
-      String refreshToken,
-      CognitoUserInfo userInfo) {
+  private User processInternalUser(CognitoUserInfo userInfo) {
     User internalUser = userService.findByEmail(userInfo.email());
 
     if (ObjectUtils.isNotEmpty(internalUser)) {
-      linkAndSynchronizeInternalUserWithCognito(response, internalUser, accessToken, idToken,
-          refreshToken, userInfo);
+      linkAndSynchronizeInternalUserWithCognito(internalUser, userInfo);
     } else {
       internalUser = createInternalUser(userInfo);
     }
@@ -134,11 +125,7 @@ public class AuthenticationOauthService {
   }
 
   private void linkAndSynchronizeInternalUserWithCognito(
-      HttpServletResponse response,
       User internalUser,
-      String accessToken,
-      String idToken,
-      String refreshToken,
       CognitoUserInfo userInfo) {
     Optional<ProviderUserIdentifierType> cognitoPrimaryUserOptional =
         findCognitoPrimaryUserByEmail(userInfo.email());
@@ -152,7 +139,6 @@ public class AuthenticationOauthService {
 
     if (areCognitoUsersLinked(userInfo.linkedRecord(), userInfo.isPrimaryRecord(),
         cognitoPrimaryUserSubject)) {
-      setAuthTokensToResponse(response, accessToken, idToken, refreshToken);
       return;
     }
     linkCognitoUsersInPool(cognitoPrimaryUser, userInfo);
