@@ -3,10 +3,6 @@ package com.ratifire.devrate.security.facade;
 import static com.ratifire.devrate.security.model.enums.OauthIdentityProvider.GOOGLE;
 import static com.ratifire.devrate.security.model.enums.OauthIdentityProvider.LINKEDIN;
 
-import com.ratifire.devrate.dto.UserDto;
-import static com.ratifire.devrate.security.model.enums.OauthIdentityProvider.GOOGLE;
-import static com.ratifire.devrate.security.model.enums.OauthIdentityProvider.LINKEDIN;
-
 import com.ratifire.devrate.dto.LoginResponseDto;
 import com.ratifire.devrate.security.model.dto.ConfirmActivationAccountDto;
 import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
@@ -61,7 +57,7 @@ public class AuthenticationCognitoFacade implements AuthenticationFacade {
   }
 
   @Override
-  public UserDto handleOauthAuthorization(HttpServletResponse response,
+  public LoginResponseDto handleOauthAuthorization(HttpServletResponse response,
       OauthAuthorizationDto request) {
     return authenticationOauthService.handleOauthAuthorization(response, request);
   }
@@ -75,26 +71,6 @@ public class AuthenticationCognitoFacade implements AuthenticationFacade {
   @Override
   public void resendActivationAccountConfirmCode(ResendConfirmCodeDto resendConfirmCodeDto) {
     authenticationService.resendActivationAccountConfirmCode(resendConfirmCodeDto);
-  }
-
-  @Override
-  public void redirectToLinkedIn(HttpServletResponse response)
-      throws IOException {
-    String url = authenticationOauthService.generateOauthRedirectUrl(LINKEDIN.getProvider());
-    response.sendRedirect(url);
-  }
-
-  @Override
-  public void redirectToGoogle(HttpServletResponse response)
-      throws IOException {
-    String url = authenticationOauthService.generateOauthRedirectUrl(GOOGLE.getProvider());
-    response.sendRedirect(url);
-  }
-
-  @Override
-  public LoginResponseDto handleOauthAuthorization(HttpServletResponse response,
-      OauthAuthorizationDto request) {
-    return authenticationOauthService.handleOauthAuthorization(response, request);
   }
 
   @Override

@@ -2,9 +2,6 @@ package com.ratifire.devrate.security.facade;
 
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_AUTHORIZATION;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_ID_TOKEN;
-
-import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_AUTHORIZATION;
-import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_ID_TOKEN;
 import static com.ratifire.devrate.security.model.enums.LoginStatus.ACTIVATION_REQUIRED;
 
 import com.ratifire.devrate.dto.LoginResponseDto;
@@ -103,7 +100,7 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
       }
 
       String encodedUserId =
-              Base64.getEncoder().encodeToString(String.valueOf(user.getId()).getBytes());
+          Base64.getEncoder().encodeToString(String.valueOf(user.getId()).getBytes());
       TokenUtil.setAuthTokensToHeaders(response, encodedUserId, encodedUserId);
       return LoginResponseDto.builder()
           .status(LoginStatus.AUTHENTICATED)
@@ -128,7 +125,7 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
   }
 
   @Override
-  public UserDto handleOauthAuthorization(HttpServletResponse response,
+  public LoginResponseDto handleOauthAuthorization(HttpServletResponse response,
       OauthAuthorizationDto request) {
     throw new UnsupportedOperationException(MSG_UNSUPPORTED_OPERATION);
   }
@@ -168,22 +165,6 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
 
     String newCode = emailConfirmationCodeService.createConfirmationCode(userId);
     emailService.sendAccountActivationCodeEmail(user.getEmail(), newCode);
-  }
-
-  @Override
-  public void redirectToLinkedIn(HttpServletResponse response) {
-    throw new UnsupportedOperationException(MSG_UNSUPPORTED_OPERATION);
-  }
-
-  @Override
-  public void redirectToGoogle(HttpServletResponse response) {
-    throw new UnsupportedOperationException(MSG_UNSUPPORTED_OPERATION);
-  }
-
-  @Override
-  public LoginResponseDto handleOauthAuthorization(HttpServletResponse response,
-      OauthAuthorizationDto request) {
-    throw new UnsupportedOperationException(MSG_UNSUPPORTED_OPERATION);
   }
 
   @Override

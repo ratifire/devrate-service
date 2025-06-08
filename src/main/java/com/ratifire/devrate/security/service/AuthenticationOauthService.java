@@ -135,8 +135,6 @@ public class AuthenticationOauthService {
 
     if (ObjectUtils.isNotEmpty(internalUser)) {
       linkAndSynchronizeInternalUserWithCognito(internalUser, userInfo);
-      linkAndSynchronizeInternalUserWithCognito(response, internalUser, accessToken, idToken,
-          refreshToken, userInfo);
       internalUser.setRegistrationSource(RegistrationSourceType.FEDERATED_IDENTITY);
       userService.updateByEntity(internalUser);
     } else {
