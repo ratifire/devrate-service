@@ -1,4 +1,4 @@
-package com.ratifire.devrate.security.service;
+package com.ratifire.devrate.security.service.account;
 
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_IS_ACCOUNT_ACTIVE;
 
@@ -18,6 +18,9 @@ import com.ratifire.devrate.security.model.LoginResponseWrapper;
 import com.ratifire.devrate.security.model.dto.ConfirmActivationAccountDto;
 import com.ratifire.devrate.security.model.dto.ResendConfirmCodeDto;
 import com.ratifire.devrate.security.model.enums.RegistrationSourceType;
+import com.ratifire.devrate.security.service.AuthenticationService;
+import com.ratifire.devrate.security.service.CognitoUserSyncService;
+import com.ratifire.devrate.security.service.EmailConfirmationCodeService;
 import com.ratifire.devrate.security.util.CognitoUtil;
 import com.ratifire.devrate.security.util.TokenUtil;
 import com.ratifire.devrate.service.UserService;

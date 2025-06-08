@@ -1,4 +1,4 @@
-package com.ratifire.devrate.security.service;
+package com.ratifire.devrate.security.service.account;
 
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_EMAIL;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_EMAIL_VERIFIED;
@@ -9,11 +9,16 @@ import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.security.exception.EmailChangeException;
 import com.ratifire.devrate.security.exception.PasswordChangeException;
 import com.ratifire.devrate.security.exception.UserAlreadyExistsException;
+import com.ratifire.devrate.security.facade.AccountActivationEmailFacade;
 import com.ratifire.devrate.security.helper.UserContextProvider;
 import com.ratifire.devrate.security.model.dto.EmailChangeDto;
 import com.ratifire.devrate.security.model.dto.PasswordChangeDto;
 import com.ratifire.devrate.security.model.enums.AccountLanguage;
 import com.ratifire.devrate.security.model.enums.RegistrationSourceType;
+import com.ratifire.devrate.security.service.AuthenticationService;
+import com.ratifire.devrate.security.service.CognitoApiClientService;
+import com.ratifire.devrate.security.service.CognitoUserSyncService;
+import com.ratifire.devrate.security.service.RefreshTokenService;
 import com.ratifire.devrate.security.util.TokenUtil;
 import com.ratifire.devrate.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,9 +41,8 @@ public class ProfileSettingsService {
   private final UserContextProvider userContextProvider;
   private final CognitoApiClientService cognitoClient;
   private final UserService userService;
-  private final AuthenticationService authenticationService;
   private final RefreshTokenService refreshTokenService;
-  private final AccountLifecycleService accountLifecycleService;
+  private final CognitoUserSyncService cognitoUserSyncService;
   private final PasswordEncoder passwordEncoder;
 
   /**
@@ -64,10 +68,9 @@ public class ProfileSettingsService {
 
     validateCurrentEmailBeforeProcessingChange(currentUser, providedEmail);
 
-    List<AttributeType> attributeToUpdate = List.of(
+    cognitoUserSyncService.synchronizeAttributeWithCognito(providedEmail, List.of(
         createAttribute(ATTRIBUTE_EMAIL, newEmail),
-        createAttribute(ATTRIBUTE_EMAIL_VERIFIED, Boolean.TRUE.toString()));
-    cognitoClient.updateCognitoUserAttributes(attributeToUpdate, providedEmail);
+        createAttribute(ATTRIBUTE_EMAIL_VERIFIED, Boolean.TRUE.toString())));
 
     currentUser.setEmail(newEmail);
     userService.updateByEntity(currentUser);

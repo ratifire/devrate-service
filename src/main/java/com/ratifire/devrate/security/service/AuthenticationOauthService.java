@@ -14,6 +14,7 @@ import com.ratifire.devrate.security.helper.AuthTokenHelper;
 import com.ratifire.devrate.security.helper.CognitoApiClientRequestHelper;
 import com.ratifire.devrate.security.model.CognitoUserInfo;
 import com.ratifire.devrate.security.model.dto.OauthAuthorizationDto;
+import com.ratifire.devrate.security.service.account.AccountLifecycleService;
 import com.ratifire.devrate.security.util.TokenUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
