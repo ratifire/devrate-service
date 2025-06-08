@@ -17,4 +17,6 @@ public interface EmailConfirmationCodeRepository extends
   Optional<EmailConfirmationCode> findByCode(String code);
 
   Optional<EmailConfirmationCode> findByUserId(Long userId);
+
+  void deleteByUserId(Long userId);
 }

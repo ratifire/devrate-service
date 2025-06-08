@@ -11,6 +11,7 @@ import com.ratifire.devrate.security.model.dto.OauthAuthorizationDto;
 import com.ratifire.devrate.security.model.dto.PasswordResetDto;
 import com.ratifire.devrate.security.model.dto.ResendConfirmCodeDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
+import com.ratifire.devrate.security.service.AccountLifecycleService;
 import com.ratifire.devrate.security.service.AuthenticationOauthService;
 import com.ratifire.devrate.security.service.AuthenticationService;
 import com.ratifire.devrate.security.service.PasswordResetService;
@@ -36,6 +37,7 @@ public class AuthenticationCognitoFacade implements AuthenticationFacade {
   private final RegistrationService registrationService;
   private final PasswordResetService passwordResetService;
   private final RefreshTokenService refreshTokenService;
+  private final AccountLifecycleService accountLifecycleService;
 
   @Override
   public LoginResponseDto login(LoginDto loginDto, HttpServletResponse response) {
@@ -65,12 +67,12 @@ public class AuthenticationCognitoFacade implements AuthenticationFacade {
   @Override
   public LoginResponseDto confirmAccountActivation(ConfirmActivationAccountDto dto,
       HttpServletResponse response, HttpServletRequest request) {
-    return authenticationService.confirmAccountActivation(dto, response, request);
+    return accountLifecycleService.confirmAccountActivation(dto, response, request);
   }
 
   @Override
   public void resendActivationAccountConfirmCode(ResendConfirmCodeDto resendConfirmCodeDto) {
-    authenticationService.resendActivationAccountConfirmCode(resendConfirmCodeDto);
+    accountLifecycleService.resendActivationAccountConfirmCode(resendConfirmCodeDto);
   }
 
   @Override

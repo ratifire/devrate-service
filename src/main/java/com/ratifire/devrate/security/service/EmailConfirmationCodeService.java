@@ -99,4 +99,7 @@ public class EmailConfirmationCodeService {
     emailConfirmationCodeRepository.deleteById(confirmedCodeId);
   }
 
+  public void deleteConfirmedCodeByUserId(long userId) {
+    emailConfirmationCodeRepository.deleteByUserId(userId);
+  }
 }
