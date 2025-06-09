@@ -156,8 +156,8 @@ public class AccountLifecycleService {
   @Transactional
   public void processAccountDeactivation(HttpServletRequest request,
       HttpServletResponse response) {
-    final String accessToken = TokenUtil.extractAccessTokenFromRequest(request);
-    final String email = TokenUtil.getEmailFromIdToken(accessToken);
+    final String idToken = TokenUtil.extractIdTokenFromRequest(request);
+    final String email = TokenUtil.getEmailFromIdToken(idToken);
     final long currentUserId = userContextProvider.getAuthenticatedUserId();
 
     deactivateAccountIfNoBlockingFutureActivity(currentUserId);
