@@ -57,7 +57,7 @@ public class CognitoUserSyncService {
         AccessLevel.getDefaultRole(),
         false,
         cognitoPrimaryUserSubject,
-        userInfo.isAccountActivated());
+        Boolean.TRUE.toString());
   }
 
   public void synchronizeAttributeWithCognito(String username, List<AttributeType> attributes) {
