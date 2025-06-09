@@ -1,7 +1,9 @@
 package com.ratifire.devrate.repository.interview;
 
+import com.ratifire.devrate.dto.projection.InterviewRequestTimeSlotProjection;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.InterviewRequestRole;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RepositoryRestResource(exported = false)
 public interface InterviewRequestRepository extends JpaRepository<InterviewRequest, Long> {
+
   Optional<InterviewRequest> findByIdAndUser_Id(long id, long userId);
 
   void deleteByIdAndUser_Id(long id, long userId);
@@ -29,4 +32,14 @@ public interface InterviewRequestRepository extends JpaRepository<InterviewReque
 
   List<InterviewRequest> findByMastery_IdInAndRoleIn(List<Long> masteryIds,
       List<InterviewRequestRole> roles);
+
+  @Query("""
+          SELECT ir.id AS id, irts.dateTime AS dateTime
+          FROM InterviewRequest ir
+          JOIN ir.timeSlots irts
+          WHERE irts.dateTime > :dateTime
+      """)
+  List<InterviewRequestTimeSlotProjection> findAllInterviewRequestWithFutureTimeSlots(
+      @Param("dateTime") ZonedDateTime dateTime);
+
 }
