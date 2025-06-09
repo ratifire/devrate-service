@@ -74,7 +74,7 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
   desired_capacity          = 2
   health_check_type         = "EC2"
   health_check_grace_period = 180
-  vpc_zone_identifier       = data.aws_subnets.default_subnets.ids
+  vpc_zone_identifier       = data.aws_subnets.private_subnets.ids
   force_delete              = true
   termination_policies      = ["OldestInstance"]
   initial_lifecycle_hook {
@@ -134,10 +134,10 @@ resource "aws_ecs_service" "back_services" {
 
 resource "aws_lb" "back_ecs_alb" {
   name               = var.back_ecs_alb
-  internal           = false
+  internal           = true
   load_balancer_type = "application"
   security_groups    = [data.aws_security_group.vpc_backend_security_group.id]
-  subnets            = data.aws_subnets.default_subnets.ids
+  subnets            = data.aws_subnets.private_subnets.ids
 
 }
 
@@ -145,7 +145,7 @@ resource "aws_lb_target_group" "http_ecs_back_tg" {
   name                 = var.target_group_name
   port                 = var.back_port
   protocol             = "HTTP"
-  vpc_id               = data.aws_vpcs.all_vpcs.ids[0]
+  vpc_id               = data.aws_vpc.skillzzy_vpc.id
   deregistration_delay = "30"
 
   health_check {
