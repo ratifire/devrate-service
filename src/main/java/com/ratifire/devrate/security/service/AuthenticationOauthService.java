@@ -35,12 +35,11 @@ import org.springframework.web.client.HttpClientErrorException;
 public class AuthenticationOauthService {
 
   private final CognitoApiClientService cognitoApiClient;
-  private final UserService userService;
-  private final RegistrationService registrationService;
+  private final AccountLifecycleService accountLifecycleService;
   private final OauthStateTokenService stateTokenService;
   private final CognitoApiClientRequestHelper apiRequestHelper;
-  private final CognitoAuthenticationHelper authHelper;
-  private final RefreshTokenCookieHelper cookieHelper;
+  private final OauthInternalUserResolver internalUserResolver;
+  private final AuthTokenHelper authTokenHelper;
   private final DataMapper<UserDto, User> userMapper;
 
   /**
