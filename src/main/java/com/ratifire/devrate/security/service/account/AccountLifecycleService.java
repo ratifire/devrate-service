@@ -86,7 +86,7 @@ public class AccountLifecycleService {
             "Profile cannot be activated via federated identity flow due to missing tokens.");
       }
 
-      cognitoUserSyncService.synchronizeAttributeWithCognito(
+      cognitoUserSyncService.synchronizeAttributeWithCognitoForSingleUser(
           TokenUtil.getSubjectFromAccessToken(accessToken), attributes);
       responseWrapper = authenticationService.processLogin(response, activatedUser,
           dto.getPassword());
@@ -96,7 +96,7 @@ public class AccountLifecycleService {
       accessToken = responseWrapper.accessToken();
       refreshToken = responseWrapper.refreshToken();
       String subject = TokenUtil.getSubjectFromAccessToken(accessToken);
-      cognitoUserSyncService.synchronizeAttributeWithCognito(subject, attributes);
+      cognitoUserSyncService.synchronizeAttributeWithCognitoForSingleUser(subject, attributes);
       authTokenHelper.setAuthTokensToResponse(
           response, subject, null, null, refreshToken, true, false);
     }
@@ -134,7 +134,7 @@ public class AccountLifecycleService {
       boolean isSyncWithCognitoNeeded) {
 
     if (isSyncWithCognitoNeeded) {
-      cognitoUserSyncService.synchronizeAttributeWithCognito(username,
+      cognitoUserSyncService.synchronizeAttributeWithCognitoForSingleUser(username,
           List.of(
               CognitoUtil.createAttribute(ATTRIBUTE_IS_ACCOUNT_ACTIVE, Boolean.FALSE.toString())));
 
@@ -157,11 +157,12 @@ public class AccountLifecycleService {
   public void processAccountDeactivation(HttpServletRequest request,
       HttpServletResponse response) {
     final String accessToken = TokenUtil.extractAccessTokenFromRequest(request);
-    final String subject = TokenUtil.getSubjectFromAccessToken(accessToken);
+    final String email = TokenUtil.getEmailFromIdToken(accessToken);
     final long currentUserId = userContextProvider.getAuthenticatedUserId();
 
     deactivateAccountIfNoBlockingFutureActivity(currentUserId);
-    cognitoUserSyncService.synchronizeAttributeWithCognito(subject, List.of(
+
+    cognitoUserSyncService.synchronizeAttributeWithCognitoForAllLinkedUser(email, List.of(
         CognitoUtil.createAttribute(ATTRIBUTE_IS_ACCOUNT_ACTIVE, Boolean.FALSE.toString())));
     authenticationService.logout(request, response);
   }

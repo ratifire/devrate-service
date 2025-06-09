@@ -60,7 +60,22 @@ public class CognitoUserSyncService {
         Boolean.TRUE.toString());
   }
 
-  public void synchronizeAttributeWithCognito(String username, List<AttributeType> attributes) {
+  /**
+   * Synchronizes specified attributes with Cognito for all users linked to the given email.
+   *
+   * @param email      The email address used to identify linked Cognito users.
+   * @param attributes A list of attributes to be synchronized with each linked Cognito user.
+   */
+  public void synchronizeAttributeWithCognitoForAllLinkedUser(String email,
+      List<AttributeType> attributes) {
+    List<UserType> users = cognitoApiClient.getListCognitoUsersByEmail(email).getUsers();
+    for (UserType user : users) {
+      synchronizeAttributeWithCognitoForSingleUser(user.getUsername(), attributes);
+    }
+  }
+
+  public void synchronizeAttributeWithCognitoForSingleUser(String username,
+      List<AttributeType> attributes) {
     cognitoApiClient.updateCognitoUserAttributes(attributes, username);
   }
 

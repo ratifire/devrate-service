@@ -128,6 +128,19 @@ public class TokenUtil {
   }
 
   /**
+   * Retrieves the email from the specified ID token.
+   *
+   * @param idToken the Cognito ID token containing user claims
+   * @return the email of the user
+   * @throws InvalidTokenException if the user email claim is missing or cannot be parsed
+   */
+  public static String getEmailFromIdToken(String idToken) {
+    JWTClaimsSet claimsSet = TokenUtil.parseToken(idToken);
+    return TokenUtil.extractStringClaim(claimsSet, ATTRIBUTE_EMAIL)
+        .orElseThrow(() -> new InvalidTokenException("Email claim is missing"));
+  }
+
+  /**
    * Retrieves the list of authorities (roles) from the specified ID token.
    *
    * @param idToken the Cognito ID token containing user claims

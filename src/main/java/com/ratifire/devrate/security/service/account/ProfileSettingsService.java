@@ -4,18 +4,15 @@ import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTR
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_EMAIL_VERIFIED;
 import static com.ratifire.devrate.security.util.CognitoUtil.createAttribute;
 
-import com.amazonaws.services.cognitoidp.model.AttributeType;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.security.exception.EmailChangeException;
 import com.ratifire.devrate.security.exception.PasswordChangeException;
 import com.ratifire.devrate.security.exception.UserAlreadyExistsException;
-import com.ratifire.devrate.security.facade.AccountActivationEmailFacade;
 import com.ratifire.devrate.security.helper.UserContextProvider;
 import com.ratifire.devrate.security.model.dto.EmailChangeDto;
 import com.ratifire.devrate.security.model.dto.PasswordChangeDto;
 import com.ratifire.devrate.security.model.enums.AccountLanguage;
 import com.ratifire.devrate.security.model.enums.RegistrationSourceType;
-import com.ratifire.devrate.security.service.AuthenticationService;
 import com.ratifire.devrate.security.service.CognitoApiClientService;
 import com.ratifire.devrate.security.service.CognitoUserSyncService;
 import com.ratifire.devrate.security.service.RefreshTokenService;
@@ -68,7 +65,7 @@ public class ProfileSettingsService {
 
     validateCurrentEmailBeforeProcessingChange(currentUser, providedEmail);
 
-    cognitoUserSyncService.synchronizeAttributeWithCognito(providedEmail, List.of(
+    cognitoUserSyncService.synchronizeAttributeWithCognitoForSingleUser(providedEmail, List.of(
         createAttribute(ATTRIBUTE_EMAIL, newEmail),
         createAttribute(ATTRIBUTE_EMAIL_VERIFIED, Boolean.TRUE.toString())));
 
