@@ -509,11 +509,11 @@ public class InterviewService {
    * @param secondParticipantRequest the interview request of the other participant in the
    *                                 interview
    * @param interviewStartTimeInUtc  the start time of the interview in UTC
-   * @param zoomJoinUrl              the join url to the zoom meeting
+   * @param roomUrl                  the join url to the meeting
    */
   private void notifyParticipant(InterviewRequest recipientRequest,
       InterviewRequest secondParticipantRequest, ZonedDateTime interviewStartTimeInUtc,
-      String zoomJoinUrl) {
+      String roomUrl) {
 
     User recipient = recipientRequest.getUser();
     String recipientEmail = recipient.getEmail();
@@ -523,7 +523,7 @@ public class InterviewService {
         interviewStartTimeInUtc);
 
     emailService.sendInterviewScheduledEmail(recipient, recipientEmail,
-        interviewStartTimeInUtc, secondParticipantRequest, zoomJoinUrl);
+        interviewStartTimeInUtc, secondParticipantRequest, roomUrl);
   }
 
   /**
