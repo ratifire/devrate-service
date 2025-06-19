@@ -186,6 +186,8 @@ paths:
     $ref: './paths/interviewRequest/interview-requests-id-add-timeslots.yaml'
   /interview-requests/{id}/delete-timeslots:
     $ref: './paths/interviewRequest/interview-requests-id-delete-timeslots.yaml'
+  /interview-requests/timeslots/{id}/interview-id:
+    $ref: './paths/interviewRequest/interview-requests-timeslots-id-interview-id.yaml'
   /events?from=2025-02-01&to=2025-02-28:
     $ref: './paths/events/events.yaml'
   /event-histories/events/{id}:

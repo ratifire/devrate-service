@@ -11,6 +11,7 @@ import com.ratifire.devrate.enums.TimeSlotStatus;
 import com.ratifire.devrate.exception.InterviewRequestDoesntExistException;
 import com.ratifire.devrate.exception.InterviewRequestNotFoundException;
 import com.ratifire.devrate.exception.InvalidInterviewRequestException;
+import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.mapper.impl.InterviewRequestMapper;
 import com.ratifire.devrate.mapper.impl.InterviewRequestTimeSlotMapper;
 import com.ratifire.devrate.repository.interview.InterviewRequestRepository;
@@ -70,6 +71,19 @@ public class InterviewRequestService {
     return interviewRequests.stream()
         .map(this::convertToInterviewRequestViewDto)
         .toList();
+  }
+
+  /**
+   * Retrieves the interview ID associated with the given time slot ID.
+   *
+   * @param timeSlotId the ID of the InterviewRequestTimeSlot
+   * @return the ID of the associated interview, or {@code null} if none
+   * @throws ResourceNotFoundException if the time slot is not found
+   */
+  public Long getInterviewIdByTimeSlotId(long timeSlotId) {
+    return timeSlotRepository.findById(timeSlotId).orElseThrow(
+            () -> new ResourceNotFoundException("Time slot not found with ID: " + timeSlotId))
+        .getInterviewId();
   }
 
   /**
