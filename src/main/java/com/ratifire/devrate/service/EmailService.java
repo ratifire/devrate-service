@@ -5,7 +5,10 @@ import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.InterviewRequestRole;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -84,7 +87,7 @@ public class EmailService {
     Map<String, Object> model = new HashMap<>();
     model.put("recipientUser", recipientUser);
     model.put("rejectionUser", rejectionUser);
-    model.put("scheduledTime", scheduledTime);
+    model.put("scheduledTime", scheduledTime.withZoneSameInstant(ZoneId.of("Europe/Kyiv")));
 
     String subject = "Interview Rejected";
     String text = buildTemplateEmailText("interview-rejected-email", model);
@@ -98,16 +101,28 @@ public class EmailService {
    * @param email             the email address of the recipient
    * @param interviewDateTime the date and time of the interview
    * @param interviewRequest  the interview request containing details about the interview
-   * @param zoomJoinUrl       the join url to the zoom meeting
+   * @param roomUrl           the join url to the meeting
    */
   public void sendInterviewScheduledEmail(User recipient, String email,
-      ZonedDateTime interviewDateTime, InterviewRequest interviewRequest, String zoomJoinUrl) {
+      ZonedDateTime interviewDateTime, InterviewRequest interviewRequest, String roomUrl) {
 
     Map<String, Object> model = new HashMap<>();
     model.put("recipient", recipient);
-    model.put("interviewDateTime", interviewDateTime);
+    model.put("interviewDateTime", interviewDateTime.withZoneSameInstant(ZoneId.of("Europe/Kyiv")));
     model.put("interviewRequest", interviewRequest);
-    model.put("zoomJoinUrl", zoomJoinUrl);
+    model.put("roomUrl", roomUrl);
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'");
+
+    String googleCalendarUrl = "https://www.google.com/calendar/render?action=TEMPLATE"
+        + "&text=" + URLEncoder.encode("Інтерв’ю Skillzzy", StandardCharsets.UTF_8)
+        + "&dates=" + formatter.format(interviewDateTime) + "/" + formatter.format(
+        interviewDateTime.plusMinutes(60))
+        + "&details=" + URLEncoder.encode("Посилання на співбесіду: " + roomUrl,
+        StandardCharsets.UTF_8)
+        + "&location=" + URLEncoder.encode(roomUrl, StandardCharsets.UTF_8);
+
+    model.put("googleCalendarUrl", googleCalendarUrl);
 
     String template =
         interviewRequest.getRole().equals(InterviewRequestRole.CANDIDATE)
