@@ -265,9 +265,10 @@ public class InterviewService {
     ConsentStatus candidateConsentStatus = extractContentStatus(requests, CANDIDATE);
     Interview candidate = buildInterview(candidateId, candidateRequestId, eventId, CANDIDATE,
         joinUrl, date, candidateRequestComment, candidateLanguageCode, candidateConsentStatus);
-    interviewRepository.saveAll(List.of(interviewer, candidate));
+    List<Interview> interviews = interviewRepository.saveAll(List.of(interviewer, candidate));
 
-    interviewRequestService.markTimeSlotsAsBooked(requests, interviewer.getStartTime());
+    interviewRequestService.updateTimeSlots(interviewerRequestId, candidateRequestId, date,
+        interviews);
     interviewRequestService.incrementMatchedInterviewCount(requests);
 
     Map<Long, InterviewRequest> requestMap = requests.stream()

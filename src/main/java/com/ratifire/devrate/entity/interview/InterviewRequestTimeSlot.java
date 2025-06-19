@@ -43,4 +43,7 @@ public class InterviewRequestTimeSlot {
   @Enumerated(EnumType.STRING)
   @Column(name = "status", nullable = false)
   private TimeSlotStatus status;
+
+  @Column(name = "interview_id")
+  private Long interviewId;
 }

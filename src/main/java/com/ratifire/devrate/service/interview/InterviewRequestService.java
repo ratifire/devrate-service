@@ -22,8 +22,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -204,20 +206,44 @@ public class InterviewRequestService {
   }
 
   /**
-   * Updates the time slots for the specified interview requests.
+   * Updates the status and interview ID for time slots corresponding to the provided interviewer
+   * and candidate interview requests on the specified scheduled date.
    *
-   * @param scheduledInterviewRequests the list of interview requests
-   * @param scheduledDate              the date to assign to the requests
+   * @param interviewerRequestId the ID of the interviewer's {@link InterviewRequest}
+   * @param candidateRequestId   the ID of the candidate's {@link InterviewRequest}
+   * @param scheduledDate        the scheduled interview date and time
+   * @param interviews           the list of {@link Interview} entities;
    */
   @Transactional
-  public void markTimeSlotsAsBooked(List<InterviewRequest> scheduledInterviewRequests,
-      ZonedDateTime scheduledDate) {
-    if (scheduledInterviewRequests.isEmpty()) {
-      return;
-    }
+  public void updateTimeSlots(long interviewerRequestId, long candidateRequestId,
+      ZonedDateTime scheduledDate, List<Interview> interviews) {
 
-    timeSlotRepository.updateTimeSlotStatus(scheduledInterviewRequests, scheduledDate,
-        TimeSlotStatus.BOOKED);
+    Map<InterviewRequestRole, Long> roleToId = interviews.stream()
+        .collect(Collectors.toMap(Interview::getRole, Interview::getId));
+
+    List<InterviewRequestTimeSlot> slotsToSave = Stream.of(
+            updateTimeSlot(interviewerRequestId, scheduledDate,
+                roleToId.get(InterviewRequestRole.INTERVIEWER)),
+            updateTimeSlot(candidateRequestId, scheduledDate,
+                roleToId.get(InterviewRequestRole.CANDIDATE))).filter(Objects::nonNull)
+        .collect(Collectors.toList());
+
+    timeSlotRepository.saveAll(slotsToSave);
+  }
+
+  private InterviewRequestTimeSlot updateTimeSlot(long requestId, ZonedDateTime scheduledDate,
+      Long interviewId) {
+    return timeSlotRepository
+        .findInterviewRequestTimeSlotsByInterviewRequestIdAndDateTime(requestId, scheduledDate)
+        .map(slot -> {
+          slot.setStatus(TimeSlotStatus.BOOKED);
+          slot.setInterviewId(interviewId);
+          return slot;
+        })
+        .orElseGet(() -> {
+          log.warn("Time slot not found for requestId: {} and date: {}", requestId, scheduledDate);
+          return null;
+        });
   }
 
   /**
@@ -268,7 +294,7 @@ public class InterviewRequestService {
     }
 
     ZonedDateTime interviewStartTime = interviews.getFirst().getStartTime();
-    timeSlotRepository.updateTimeSlotStatus(interviewRequestsToUpdate, interviewStartTime,
+    timeSlotRepository.markTimeSlotsAsPending(interviewRequestsToUpdate, interviewStartTime,
         TimeSlotStatus.PENDING);
 
     // Fetch the latest updated InterviewRequests from DB
