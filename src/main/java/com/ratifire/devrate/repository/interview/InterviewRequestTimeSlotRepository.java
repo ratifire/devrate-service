@@ -5,6 +5,7 @@ import com.ratifire.devrate.entity.interview.InterviewRequestTimeSlot;
 import com.ratifire.devrate.enums.TimeSlotStatus;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -21,9 +22,13 @@ public interface InterviewRequestTimeSlotRepository extends
     JpaRepository<InterviewRequestTimeSlot, Long> {
 
   @Modifying
-  @Query("UPDATE InterviewRequestTimeSlot t SET t.status = :updatedStatus "
+  @Query("UPDATE InterviewRequestTimeSlot t SET t.status = :updatedStatus, t.interviewId = null "
       + "WHERE t.interviewRequest IN :requests AND t.dateTime = :scheduledDate")
-  void updateTimeSlotStatus(@Param("requests") List<InterviewRequest> scheduledInterviewRequests,
+  void markTimeSlotsAsPending(
+      @Param("requests") List<InterviewRequest> scheduledInterviewRequests,
       @Param("scheduledDate") ZonedDateTime scheduledDate,
       @Param("updatedStatus") TimeSlotStatus updatedStatus);
+
+  Optional<InterviewRequestTimeSlot> findInterviewRequestTimeSlotsByInterviewRequestIdAndDateTime(
+      long interviewRequestId, ZonedDateTime dateTime);
 }

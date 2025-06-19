@@ -48,6 +48,17 @@ public class InterviewRequestController {
   }
 
   /**
+   * Returns the interview ID associated with the given time slot ID.
+   *
+   * @param id the ID of the time slot
+   * @return the ID of the associated interview, or {@code null} if no interview is linked
+   */
+  @GetMapping("/timeslots/{id}/interview-id")
+  public Long getInterviewIdByTimeSlot(@PathVariable long id) {
+    return interviewRequestService.getInterviewIdByTimeSlotId(id);
+  }
+
+  /**
    * Creates a new interview request and sends it to the matcher-service.
    *
    * @param interviewRequest the interview request data
