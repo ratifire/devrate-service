@@ -17,6 +17,8 @@ get:
   responses:
     '200':
       description: Return specific interview Id or empty if time slot doesn't have linked interview.
+    '204':
+      description: Existing time slot doesn't have linked interview id.
     '404':
       description: The time slot is not found.
     '500':
