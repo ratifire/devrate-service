@@ -14,7 +14,6 @@ import org.mapstruct.Mapping;
 public abstract class InterviewRequestTimeSlotMapper implements
     DataMapper<InterviewRequestTimeSlotDto, InterviewRequestTimeSlot> {
 
-  @Mapping(target = "id", ignore = true)
   @Mapping(target = "interviewRequest", ignore = true)
   public abstract List<InterviewRequestTimeSlotDto> toDto(List<InterviewRequestTimeSlot> entity);
 
