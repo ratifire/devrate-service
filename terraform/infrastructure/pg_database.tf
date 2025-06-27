@@ -1,6 +1,6 @@
 resource "aws_db_instance" "pg_db_backend" {
   engine              = "postgres"
-  engine_version      = "16.3"
+  engine_version      = "16.8"
   instance_class      = "db.${var.instance_type}"
   storage_type        = "gp2"
   allocated_storage   = 20
