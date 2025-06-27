@@ -119,16 +119,19 @@ variable "vapid_public_key" {
   description = "VAPID public key"
   type        = string
   sensitive   = true
+  default     = "not_found"
 }
 
 variable "vapid_private_key" {
   description = "VAPID private key"
   type        = string
   sensitive   = true
+  default     = "not_found"
 }
 
 variable "vapid_subject" {
   description = "VAPID subject (contact)"
   type        = string
   sensitive   = true
+  default     = "not_found"
 }
