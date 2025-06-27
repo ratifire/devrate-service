@@ -1,0 +1,8 @@
+type: object
+properties:
+  status:
+    type: string
+    enum: [AUTHENTICATED, ACTIVATION_REQUIRED]
+    description: Indicates result of login attempt
+  userInfo:
+    $ref: '../../components/schemas/UserDto.yaml'

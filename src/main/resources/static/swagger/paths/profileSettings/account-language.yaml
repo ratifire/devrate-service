@@ -1,0 +1,24 @@
+patch:
+  tags:
+    - Profile Settings
+  summary: Update account language
+  description: Change the language of the user interface for the authenticated user.
+  operationId: updateAccountLanguage
+  parameters:
+    - name: language
+      in: query
+      required: true
+      description: Preferred account language
+      schema:
+        type: string
+        enum: [UKRAINE, ENGLISH]
+  security:
+    - accessToken: []
+    - idToken: []
+  responses:
+    '200':
+      description: Language updated successfully
+    '400':
+      description: Bad Request. Invalid language value or missing parameter.
+    '500':
+      description: Internal Server Error
