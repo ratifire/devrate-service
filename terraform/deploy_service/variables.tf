@@ -114,3 +114,21 @@ variable "new_relic_license_key" {
   description = "New Relic license key"
   default     = "not_found"
 }
+
+variable "vapid_public_key" {
+  description = "VAPID public key"
+  type        = string
+  sensitive   = true
+}
+
+variable "vapid_private_key" {
+  description = "VAPID private key"
+  type        = string
+  sensitive   = true
+}
+
+variable "vapid_subject" {
+  description = "VAPID subject (contact)"
+  type        = string
+  sensitive   = true
+}

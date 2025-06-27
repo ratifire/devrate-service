@@ -21,4 +21,6 @@ public class InterviewScheduledPayload implements NotificationPayload  {
   private String role;
   @JsonProperty
   private String scheduledDateTime;
+  @JsonProperty
+  private long interviewId;
 }
