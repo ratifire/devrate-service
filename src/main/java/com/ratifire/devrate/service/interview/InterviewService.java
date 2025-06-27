@@ -267,6 +267,9 @@ public class InterviewService {
         joinUrl, date, candidateRequestComment, candidateLanguageCode, candidateConsentStatus);
     List<Interview> interviews = interviewRepository.saveAll(List.of(interviewer, candidate));
 
+    // TODO: need refactoring related to the interview list that use only for getting interviewIds
+    //  for each users
+
     interviewRequestService.updateTimeSlots(interviewerRequestId, candidateRequestId, date,
         interviews);
     interviewRequestService.incrementMatchedInterviewCount(requests);
@@ -275,7 +278,8 @@ public class InterviewService {
         .collect(Collectors.toMap(InterviewRequest::getId, request -> request));
 
     sendInterviewScheduledAlerts(
-        requestMap.get(interviewerRequestId), requestMap.get(candidateRequestId), date, joinUrl);
+        requestMap.get(interviewerRequestId), requestMap.get(candidateRequestId), date, joinUrl,
+        interviews);
   }
 
   private String extractCommentForRole(List<InterviewRequest> requests, InterviewRequestRole role) {
@@ -497,9 +501,13 @@ public class InterviewService {
    * @param roomUrl            the URL of the interview room
    */
   private void sendInterviewScheduledAlerts(InterviewRequest interviewerRequest,
-      InterviewRequest candidateRequest, ZonedDateTime date, String roomUrl) {
-    notifyParticipant(candidateRequest, interviewerRequest, date, roomUrl);
-    notifyParticipant(interviewerRequest, candidateRequest, date, roomUrl);
+      InterviewRequest candidateRequest, ZonedDateTime date, String roomUrl,
+      List<Interview> interviews) {
+    Map<InterviewRequestRole, Long> roleToId = interviews.stream()
+        .collect(Collectors.toMap(Interview::getRole, Interview::getId));
+    notifyParticipant(candidateRequest, interviewerRequest, date, roomUrl, roleToId.get(CANDIDATE));
+    notifyParticipant(interviewerRequest, candidateRequest, date, roomUrl,
+        roleToId.get(INTERVIEWER));
   }
 
   /**
@@ -514,14 +522,14 @@ public class InterviewService {
    */
   private void notifyParticipant(InterviewRequest recipientRequest,
       InterviewRequest secondParticipantRequest, ZonedDateTime interviewStartTimeInUtc,
-      String roomUrl) {
+      String roomUrl, long interviewId) {
 
     User recipient = recipientRequest.getUser();
     String recipientEmail = recipient.getEmail();
     String role = String.valueOf(recipientRequest.getRole());
 
     notificationService.addInterviewScheduled(recipient, role,
-        interviewStartTimeInUtc);
+        interviewStartTimeInUtc, interviewId);
 
     emailService.sendInterviewScheduledEmail(recipient, recipientEmail,
         interviewStartTimeInUtc, secondParticipantRequest, roomUrl);

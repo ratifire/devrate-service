@@ -34,6 +34,7 @@ public class NotificationService {
   private final NotificationRepository repository;
   private final DataMapper<NotificationDto, Notification> mapper;
   private final SimpMessagingTemplate simpMessagingTemplate;
+  private final WebPushNotificationService webPushNotificationService;
 
   /**
    * Adds a greeting notification for the given user.
@@ -90,11 +91,13 @@ public class NotificationService {
    * @param role              The role of the recipient in the interview (e.g., 'Interviewer' or
    *                          'Candidate').
    */
-  public void addInterviewScheduled(User recipient, String role, ZonedDateTime interviewDateTime) {
+  public void addInterviewScheduled(User recipient, String role, ZonedDateTime interviewDateTime,
+      long interviewId) {
     InterviewScheduledPayload scheduledPayload = InterviewScheduledPayload.builder()
         .role(role)
         .scheduledDateTime(
             interviewDateTime.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)))
+        .interviewId(interviewId)
         .build();
 
     Notification notification = create(NotificationType.INTERVIEW_SCHEDULED,
@@ -151,6 +154,7 @@ public class NotificationService {
   private void sendToUser(User user, NotificationDto notification) {
     simpMessagingTemplate.convertAndSend(
             String.format("/topic/notifications/%s", user.getId()), notification);
+    webPushNotificationService.sendNotification(user.getId(), notification);
   }
 
   /**

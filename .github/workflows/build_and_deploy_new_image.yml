@@ -137,6 +137,9 @@ jobs:
           TF_VAR_pg_password: ${{ secrets.PG_PASSWORD }}
           TF_VAR_pg_database: ${{ secrets.PG_DATABASE }}
           ENVIRONMENT: ${{ github.event.inputs.environment }}
+          TF_VAR_vapid_public_key: ${{ secrets.VAPID_PUBLIC_KEY }}
+          TF_VAR_vapid_private_key: ${{ secrets.VAPID_PRIVATE_KEY }}
+          TF_VAR_vapid_subject: ${{ secrets.VAPID_SUBJECT }}
 
         run: |
           # Build a docker container and

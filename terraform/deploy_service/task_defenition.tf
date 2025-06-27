@@ -57,6 +57,18 @@ resource "aws_ecs_task_definition" "task_definition" {
         {
           name  = "NEW_RELIC_LOG_LEVEL"
           value = "info"
+        },
+        {
+          name  = "VAPID_PUBLIC_KEY"
+          value = var.vapid_public_key
+        },
+        {
+          name  = "VAPID_PRIVATE_KEY"
+          value = var.vapid_private_key
+        },
+        {
+          name  = "VAPID_SUBJECT"
+          value = var.vapid_subject
         }
       ],
       mountPoints = [],
