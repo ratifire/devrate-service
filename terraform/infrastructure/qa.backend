@@ -1,3 +1,0 @@
-bucket  = "skillzzy-bucket-back-qa"
-key     = "AWS/build-backend-infrastructure-skillzzy/terraform.tfstate"
-region  = "eu-north-1"
