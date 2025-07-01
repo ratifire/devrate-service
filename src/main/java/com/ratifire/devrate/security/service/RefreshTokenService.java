@@ -43,8 +43,9 @@ public class RefreshTokenService {
       String newIdToken = result.getIdToken();
       TokenUtil.setAuthTokensToHeaders(response, newAccessToken, newIdToken);
 
-    } catch (NotAuthorizedException e) {
-      throw new RefreshTokenExpiredException("Refresh token has expired.", e);
+    } catch (NotAuthorizedException | RefreshTokenException e) {
+      throw new RefreshTokenExpiredException(
+          "Refresh token has expired or cannot be found in the cookie.", e);
     } catch (Exception e) {
       throw new RefreshTokenException("Refresh token process was failed.", e);
     }
