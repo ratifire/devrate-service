@@ -7,14 +7,14 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Select environment to deploy (prod, dev or qa)'
+        description: 'Select environment to deploy (prod, dev)'
         required: true
         default: 'dev'
         type: choice
         options:
           - dev
           - prod
-          - qa
+
   push:
     branches:
       - main
