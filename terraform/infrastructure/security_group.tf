@@ -1,7 +1,7 @@
 resource "aws_security_group" "backend_security_group" {
   name        = var.backend_security_group_name
   description = "Allow tcp inbound traffic and all outbound traffic"
-  vpc_id      = aws_default_vpc.default_vpc.id
+  vpc_id      = aws_vpc.skillzzy_main_vpc.id
 
   dynamic "ingress" {
     for_each = var.list_of_ports
@@ -18,29 +18,5 @@ resource "aws_security_group" "backend_security_group" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = var.cidr_blocks
-  }
-}
-
-resource "aws_default_subnet" "default_az1" {
-  availability_zone = data.aws_availability_zones.availability_zones.names[0]
-
-  tags = {
-    Name = "Default subnet for ${data.aws_availability_zones.availability_zones.names[0]}"
-  }
-}
-
-resource "aws_default_subnet" "default_az2" {
-  availability_zone = data.aws_availability_zones.availability_zones.names[1]
-
-  tags = {
-    Name = "Default subnet for ${data.aws_availability_zones.availability_zones.names[1]}"
-  }
-}
-
-resource "aws_default_subnet" "default_az3" {
-  availability_zone = data.aws_availability_zones.availability_zones.names[2]
-
-  tags = {
-    Name = "Default subnet for ${data.aws_availability_zones.availability_zones.names[2]}"
   }
 }
