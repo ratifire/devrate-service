@@ -69,3 +69,15 @@ variable "back_kay" {
 variable "deploy_profile" {
   default = "dev"
 }
+
+variable "matched_participant_name" {
+  type = string
+}
+
+variable "participant_queue_name" {
+  type = string
+}
+
+variable "participant_queue_name_dlq" {
+  type = string
+}
