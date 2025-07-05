@@ -1,0 +1,39 @@
+package com.ratifire.devrate.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+/**
+ * Represents an entity for email confirmation in the system.
+ */
+@Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Table(name = "email_confirmation_code")
+public class EmailConfirmationCode {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
+
+  @Column(nullable = false, unique = true)
+  private String code;
+
+  @Column(nullable = false)
+  private LocalDateTime createdAt;
+
+  @Column(name = "user_id", nullable = false)
+  private long userId;
+
+}

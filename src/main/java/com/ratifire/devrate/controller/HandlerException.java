@@ -3,6 +3,8 @@ package com.ratifire.devrate.controller;
 import com.ratifire.devrate.exception.FeedbackSubmissionLimitException;
 import com.ratifire.devrate.exception.InterviewRequestDoesntExistException;
 import com.ratifire.devrate.exception.InvalidInterviewRequestException;
+import com.ratifire.devrate.exception.MailConfirmationCodeException;
+import com.ratifire.devrate.exception.MailConfirmationCodeExpiredException;
 import com.ratifire.devrate.exception.MailException;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
 import com.ratifire.devrate.exception.ResourceNotFoundException;
@@ -11,8 +13,11 @@ import com.ratifire.devrate.exception.SpecializationLinkedToInterviewRequestExce
 import com.ratifire.devrate.exception.UserSearchInvalidInputException;
 import com.ratifire.devrate.security.exception.AuthTokenExpiredException;
 import com.ratifire.devrate.security.exception.AuthenticationException;
+import com.ratifire.devrate.security.exception.EmailChangeException;
 import com.ratifire.devrate.security.exception.LogoutException;
+import com.ratifire.devrate.security.exception.PasswordChangeException;
 import com.ratifire.devrate.security.exception.PasswordResetException;
+import com.ratifire.devrate.security.exception.ProfileActivationException;
 import com.ratifire.devrate.security.exception.RefreshTokenException;
 import com.ratifire.devrate.security.exception.RefreshTokenExpiredException;
 import com.ratifire.devrate.security.exception.UserAlreadyExistsException;
@@ -201,6 +206,46 @@ public class HandlerException {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   public void handleMethodArgumentTypeMismatchException() {
+  }
+
+  /**
+   * Handles EmailChangeException by returning an HTTP status 400.
+   */
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(EmailChangeException.class)
+  public void handleEmailChangeExceptionException() {
+  }
+
+  /**
+   * Handles PasswordChangeException by returning an HTTP status 400.
+   */
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(PasswordChangeException.class)
+  public void handlePasswordChangeException() {
+  }
+
+  /**
+   * Handles MailConfirmationCodeException by returning an HTTP status 400.
+   */
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(MailConfirmationCodeException.class)
+  public void handleMailConfirmationCodeException() {
+  }
+
+  /**
+   * Handles ProfileActivationException by returning an HTTP status 400.
+   */
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(ProfileActivationException.class)
+  public void handleProfileActivationException() {
+  }
+
+  /**
+   * Handles MailConfirmationCodeExpiredException by returning an HTTP status 410.
+   */
+  @ResponseStatus(HttpStatus.GONE)
+  @ExceptionHandler(MailConfirmationCodeExpiredException.class)
+  public void handleMailConfirmationCodeExpiredExceptionException() {
   }
 
   /**
