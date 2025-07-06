@@ -11,3 +11,9 @@ db_instance_identifier = "pg-backend-prod"
 back_kay = "terraform_ec2_back_key_pair_prod"
 
 deploy_profile = "prod"
+
+matched_participant_name = "matchedParticipantProd"
+
+participant_queue_name = "participantQueueProd"
+
+participant_queue_name_dlq = "participantQueueProd-dlq"
