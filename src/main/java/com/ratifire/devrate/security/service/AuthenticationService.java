@@ -40,7 +40,7 @@ public class AuthenticationService {
    * @return A UserDto object representing the authenticated user.
    */
   public UserDto login(LoginDto loginDto, HttpServletResponse response) {
-    String email = loginDto.getEmail();
+    String email = loginDto.getEmail().toLowerCase();
     String password = loginDto.getPassword();
     try {
       AuthenticationResultType result = cognitoApiClientService.login(email, password);
