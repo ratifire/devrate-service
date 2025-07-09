@@ -102,7 +102,7 @@ public class UserService {
    * @return true if a user with the given email exists
    */
   public boolean existsByEmail(String email) {
-    return userRepository.existsByEmail(email);
+    return userRepository.existsByEmailIgnoreCase(email);
   }
 
   /**

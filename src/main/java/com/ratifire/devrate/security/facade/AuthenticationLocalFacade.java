@@ -66,7 +66,7 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
 
   @Override
   public UserDto login(LoginDto loginDto, HttpServletResponse response) {
-    String email = loginDto.getEmail();
+    String email = loginDto.getEmail().toLowerCase();
     try {
       User user = userService.findByEmail(email);
       String encodedUserId =
@@ -105,7 +105,7 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
 
   @Override
   public void registerUser(UserRegistrationDto userRegistrationDto) {
-    String email = userRegistrationDto.getEmail();
+    String email = userRegistrationDto.getEmail().toLowerCase();
     String password = userRegistrationDto.getPassword();
     UserDto userDto = UserDto.builder()
         .firstName(userRegistrationDto.getFirstName())

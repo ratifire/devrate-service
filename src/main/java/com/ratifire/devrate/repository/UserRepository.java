@@ -24,7 +24,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
   @Query("SELECT u.firstName AS firstName, u.lastName AS lastName FROM User u WHERE u.id = :userId")
   UserNameProjection findUserNameByUserId(@Param("userId") long userId);
 
-  boolean existsByEmail(String email);
+  boolean existsByEmailIgnoreCase(String email);
 
   User findByEmail(String email);
 

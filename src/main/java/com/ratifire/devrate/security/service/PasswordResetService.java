@@ -33,7 +33,7 @@ public class PasswordResetService {
    */
   public void resetPassword(String email) {
     try {
-      cognitoApiClientService.resetPassword(email);
+      cognitoApiClientService.resetPassword(email.toLowerCase());
     } catch (Exception e) {
       log.error("Password reset process was failed for email {}: {}", email, e.getMessage());
       throw new PasswordResetException("Password reset process was failed.");
@@ -51,7 +51,7 @@ public class PasswordResetService {
     try {
 
       String code = passwordResetDto.getCode();
-      String email = passwordResetDto.getEmail();
+      String email = passwordResetDto.getEmail().toLowerCase();
       String newPassword = passwordResetDto.getNewPassword();
 
       cognitoApiClientService.confirmResetPassword(email, code, newPassword);
