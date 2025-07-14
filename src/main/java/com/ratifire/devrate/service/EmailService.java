@@ -38,9 +38,6 @@ public class EmailService {
   @Value("${from.email.address}")
   private String fromEmailAddress;
 
-  @Value("${app.domain}")
-  private String domain;
-
   /**
    * Sends a welcome email to the user.
    *
@@ -109,23 +106,17 @@ public class EmailService {
   public void sendInterviewScheduledEmail(User recipient, String email,
       ZonedDateTime interviewDateTime, InterviewRequest interviewRequest, long interviewId) {
 
-    String interviewScheduledUrl = domain + "/interviews/scheduled/" + interviewId;
-
     Map<String, Object> model = new HashMap<>();
     model.put("recipient", recipient);
     model.put("interviewDateTime", interviewDateTime.withZoneSameInstant(ZoneId.of("Europe/Kyiv")));
     model.put("interviewRequest", interviewRequest);
-    model.put("interviewScheduledUrl", interviewScheduledUrl);
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'");
 
     String googleCalendarUrl = "https://www.google.com/calendar/render?action=TEMPLATE"
         + "&text=" + URLEncoder.encode("Інтерв’ю Skillzzy", StandardCharsets.UTF_8)
         + "&dates=" + formatter.format(interviewDateTime) + "/" + formatter.format(
-        interviewDateTime.plusMinutes(60))
-        + "&details=" + URLEncoder.encode("Посилання на співбесіду: " + interviewScheduledUrl,
-        StandardCharsets.UTF_8)
-        + "&location=" + URLEncoder.encode(interviewScheduledUrl, StandardCharsets.UTF_8);
+        interviewDateTime.plusMinutes(60));
 
     model.put("googleCalendarUrl", googleCalendarUrl);
 
