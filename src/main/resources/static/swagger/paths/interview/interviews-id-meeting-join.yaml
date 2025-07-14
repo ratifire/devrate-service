@@ -1,11 +1,11 @@
 get:
   tags:
     - Interview
-  summary: Redirect to interview meeting room
+  summary: Retrieve the interview meeting room url
   description: >
-    Redirects the user to the interview meeting. 
-    The endpoint checks if a meeting link exists for the interview and either redirects to an existing link 
-    or creates a new one and redirects the user.
+    Retrieve the interview meeting room url. 
+    The endpoint checks if a meeting link exists for the interview and either retrieve 
+    or creates a new one and retrieve it.
   operationId: redirectToInterviewMeetingRoom
   parameters:
     - in: path
@@ -16,8 +16,8 @@ get:
         type: integer
         format: int64
   responses:
-    '302':
-      description: Redirect to the meeting room link.
+    '200':
+      description: Retrieve the meeting room link.
       headers:
         Location:
           description: The URL of the meeting room
@@ -31,6 +31,12 @@ get:
             $ref: '../../components/schemas/ErrorResponse.yaml'
     '500':
       description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
+    '503':
+      description: Meeting service unavailable
       content:
         application/json:
           schema:
