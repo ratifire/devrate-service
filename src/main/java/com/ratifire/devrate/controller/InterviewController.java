@@ -96,11 +96,11 @@ public class InterviewController {
   /**
    * Retrieve the interview meeting room link.
    *
-   * @param id the ID of the interview
+   * @param id the ID of the event
    * @return A valid meeting room URL.
    */
-  @GetMapping("/{id}/meeting/join")
-  public String redirectToInterviewRoom(@PathVariable long id) {
-    return interviewService.getOrCreateInterviewRoom(id);
+  @GetMapping("/{id}/meeting")
+  public String resolveMeetingUrl(@PathVariable long id) {
+    return interviewService.resolveMeetingUrl(id);
   }
 }

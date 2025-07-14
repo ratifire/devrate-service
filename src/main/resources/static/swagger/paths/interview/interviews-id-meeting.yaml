@@ -6,7 +6,7 @@ get:
     Retrieve the interview meeting room url. 
     The endpoint checks if a meeting link exists for the interview and either retrieve 
     or creates a new one and retrieve it.
-  operationId: redirectToInterviewMeetingRoom
+  operationId: resolveMeetingUrl
   parameters:
     - in: path
       name: id
@@ -31,12 +31,6 @@ get:
             $ref: '../../components/schemas/ErrorResponse.yaml'
     '500':
       description: Internal server error
-      content:
-        application/json:
-          schema:
-            $ref: '../../components/schemas/ErrorResponse.yaml'
-    '503':
-      description: Meeting service unavailable
       content:
         application/json:
           schema:

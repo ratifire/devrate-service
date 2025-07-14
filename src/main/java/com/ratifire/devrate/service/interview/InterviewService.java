@@ -584,53 +584,22 @@ public class InterviewService {
   /**
    * Retrieves or creates a meeting room link for the interview pair.
    *
-   * @param interviewId ID of the interview for which the meeting link is requested.
+   * @param id ID of the interview for which the meeting link is requested.
    * @return A valid meeting room URL.
-   * @throws InterviewNotFoundException if no interview pair is found for the given ID.
    */
   @Transactional
-  public String getOrCreateInterviewRoom(long interviewId) {
-    List<Interview> pair = interviewRepository.findInterviewPairById(interviewId);
+  public String resolveMeetingUrl(long id) {
+    Interview interview =
+        interviewRepository.findByIdAndUserId(id, userContextProvider.getAuthenticatedUserId())
+        .orElseThrow(() -> new InterviewNotFoundException(id));
 
-    if (CollectionUtils.isEmpty(pair)) {
-      throw new InterviewNotFoundException(interviewId);
+    if (interview.getRoomUrl() != null) {
+      return interview.getRoomUrl();
     }
 
-    // Check if any interview in the pair already has a meeting room link
-    Optional<String> existingRoomUrl = pair.stream()
-        .map(Interview::getRoomUrl)
-        .filter(roomUrl -> roomUrl != null && !roomUrl.isBlank())
-        .findFirst();
+    String roomUrl = meetingService.createMeeting();
 
-    if (existingRoomUrl.isPresent()) {
-      String roomUrl = existingRoomUrl.get();
-
-      // Update missing roomUrl for the other participant if necessary
-      boolean needToUpdate = pair.stream()
-          .anyMatch(i -> i.getRoomUrl() == null || i.getRoomUrl().isEmpty());
-
-      if (needToUpdate) {
-        pair.forEach(i -> {
-          if (i.getRoomUrl() == null || i.getRoomUrl().isEmpty()) {
-            i.setRoomUrl(roomUrl);
-          }
-        });
-        interviewRepository.saveAll(pair);
-      }
-
-      return roomUrl;
-    }
-
-    // No room link exists, create a new meeting and save it for both participants
-    Interview anyInterview = pair.getFirst();
-    String roomUrl = meetingService.createMeeting(
-        "Interview " + interviewId,
-        "Interview auto-created",
-        anyInterview.getStartTime()
-    );
-
-    pair.forEach(i -> i.setRoomUrl(roomUrl));
-    interviewRepository.saveAll(pair);
+    interviewRepository.updateInterviewsRoomUrlByEventId(interview.getEventId(), roomUrl);
 
     return roomUrl;
   }

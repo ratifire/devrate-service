@@ -7,4 +7,6 @@ import java.time.ZonedDateTime;
  */
 public interface MeetingService {
   String createMeeting(String topic, String description, ZonedDateTime startTime);
+
+  String createMeeting();
 }

@@ -36,12 +36,10 @@ public class MiroTalkMeetingService implements MeetingService {
   /**
    * Creates a new meeting in MiroTalk by sending a POST request to the MiroTalk API.
    *
-   * @param topic not used.
-   * @param meetDescription not used.
-   * @param startTime not used.
    * @return the URL of the created meeting if successful, or an empty string if failed.
    */
-  public String createMeeting(String topic, String meetDescription, ZonedDateTime startTime) {
+  @Override
+  public String createMeeting() {
     String url = miroTalkApiUrl + "/api/v1/meeting";
 
     HttpHeaders headers = new HttpHeaders();
@@ -60,10 +58,15 @@ public class MiroTalkMeetingService implements MeetingService {
         return response.getBody().getMeeting();
       }
 
-      throw new MiroTalkException("Failed to create meeting. Status code: "
+      throw new MeetingServiceException("Failed to create meeting. Status code: "
           + response.getStatusCode());
     } catch (Exception e) {
-      throw new MiroTalkException("Error creating meeting with MiroTalk API", e);
+      throw new MeetingServiceException("Error creating meeting with MiroTalk API", e);
     }
+  }
+
+  // TODO: remove with Zoom
+  public String createMeeting(String topic, String meetDescription, ZonedDateTime startTime) {
+    return "";
   }
 }
