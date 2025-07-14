@@ -101,26 +101,22 @@ public class EmailService {
    * @param email             the email address of the recipient
    * @param interviewDateTime the date and time of the interview
    * @param interviewRequest  the interview request containing details about the interview
-   * @param roomUrl           the join url to the meeting
+   * @param interviewId       the interview id
    */
   public void sendInterviewScheduledEmail(User recipient, String email,
-      ZonedDateTime interviewDateTime, InterviewRequest interviewRequest, String roomUrl) {
+      ZonedDateTime interviewDateTime, InterviewRequest interviewRequest, long interviewId) {
 
     Map<String, Object> model = new HashMap<>();
     model.put("recipient", recipient);
     model.put("interviewDateTime", interviewDateTime.withZoneSameInstant(ZoneId.of("Europe/Kyiv")));
     model.put("interviewRequest", interviewRequest);
-    model.put("roomUrl", roomUrl);
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'");
 
     String googleCalendarUrl = "https://www.google.com/calendar/render?action=TEMPLATE"
         + "&text=" + URLEncoder.encode("Інтерв’ю Skillzzy", StandardCharsets.UTF_8)
         + "&dates=" + formatter.format(interviewDateTime) + "/" + formatter.format(
-        interviewDateTime.plusMinutes(60))
-        + "&details=" + URLEncoder.encode("Посилання на співбесіду: " + roomUrl,
-        StandardCharsets.UTF_8)
-        + "&location=" + URLEncoder.encode(roomUrl, StandardCharsets.UTF_8);
+        interviewDateTime.plusMinutes(60));
 
     model.put("googleCalendarUrl", googleCalendarUrl);
 

@@ -47,7 +47,7 @@ public class Interview {
   @Column(name = "event_id", nullable = false)
   private long eventId;
 
-  @Column(name = "room_url", nullable = false)
+  @Column(name = "room_url")
   private String roomUrl;
 
   @Column(name = "start_time", nullable = false)

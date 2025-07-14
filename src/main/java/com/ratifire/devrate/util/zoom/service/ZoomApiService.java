@@ -52,6 +52,12 @@ public class ZoomApiService implements MeetingService {
         .orElseThrow(() -> new ZoomApiException("Cannot create meeting by URL" + url));
   }
 
+  // TODO: remove Zoom implementation
+  @Override
+  public String createMeeting() {
+    return "";
+  }
+
   private String buildJsonCreateMeetingRequest(String topic, String meetDescription,
       ZonedDateTime startTime) {
     try {

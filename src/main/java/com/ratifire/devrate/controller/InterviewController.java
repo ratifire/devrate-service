@@ -92,4 +92,15 @@ public class InterviewController {
   public InterviewsOverallStatusDto getInterviewStatusIndicator(@RequestParam String userTimeZone) {
     return interviewService.getInterviewStatusIndicator(userTimeZone);
   }
+
+  /**
+   * Retrieve the interview meeting room link.
+   *
+   * @param id the ID of the event
+   * @return A valid meeting room URL.
+   */
+  @GetMapping("/{id}/meeting")
+  public String resolveMeetingUrl(@PathVariable long id) {
+    return interviewService.resolveMeetingUrl(id);
+  }
 }

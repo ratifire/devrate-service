@@ -278,8 +278,7 @@ public class InterviewService {
         .collect(Collectors.toMap(InterviewRequest::getId, request -> request));
 
     sendInterviewScheduledAlerts(
-        requestMap.get(interviewerRequestId), requestMap.get(candidateRequestId), date, joinUrl,
-        interviews);
+        requestMap.get(interviewerRequestId), requestMap.get(candidateRequestId), date, interviews);
   }
 
   private String extractCommentForRole(List<InterviewRequest> requests, InterviewRequestRole role) {
@@ -498,16 +497,13 @@ public class InterviewService {
    *                           interviewer
    * @param candidateRequest   the interview request object containing details about the candidate
    * @param date               the date and time of the scheduled interview
-   * @param roomUrl            the URL of the interview room
    */
   private void sendInterviewScheduledAlerts(InterviewRequest interviewerRequest,
-      InterviewRequest candidateRequest, ZonedDateTime date, String roomUrl,
-      List<Interview> interviews) {
+      InterviewRequest candidateRequest, ZonedDateTime date, List<Interview> interviews) {
     Map<InterviewRequestRole, Long> roleToId = interviews.stream()
         .collect(Collectors.toMap(Interview::getRole, Interview::getId));
-    notifyParticipant(candidateRequest, interviewerRequest, date, roomUrl, roleToId.get(CANDIDATE));
-    notifyParticipant(interviewerRequest, candidateRequest, date, roomUrl,
-        roleToId.get(INTERVIEWER));
+    notifyParticipant(candidateRequest, interviewerRequest, date, roleToId.get(CANDIDATE));
+    notifyParticipant(interviewerRequest, candidateRequest, date, roleToId.get(INTERVIEWER));
   }
 
   /**
@@ -518,11 +514,10 @@ public class InterviewService {
    * @param secondParticipantRequest the interview request of the other participant in the
    *                                 interview
    * @param interviewStartTimeInUtc  the start time of the interview in UTC
-   * @param roomUrl                  the join url to the meeting
    */
   private void notifyParticipant(InterviewRequest recipientRequest,
       InterviewRequest secondParticipantRequest, ZonedDateTime interviewStartTimeInUtc,
-      String roomUrl, long interviewId) {
+      long interviewId) {
 
     User recipient = recipientRequest.getUser();
     String recipientEmail = recipient.getEmail();
@@ -532,7 +527,7 @@ public class InterviewService {
         interviewStartTimeInUtc, interviewId);
 
     emailService.sendInterviewScheduledEmail(recipient, recipientEmail,
-        interviewStartTimeInUtc, secondParticipantRequest, roomUrl);
+        interviewStartTimeInUtc, secondParticipantRequest, interviewId);
   }
 
   /**
@@ -584,5 +579,28 @@ public class InterviewService {
     }
 
     return new InterviewsOverallStatusDto(null);
+  }
+
+  /**
+   * Retrieves or creates a meeting room link for the interview pair.
+   *
+   * @param id ID of the interview for which the meeting link is requested.
+   * @return A valid meeting room URL.
+   */
+  @Transactional
+  public String resolveMeetingUrl(long id) {
+    Interview interview =
+        interviewRepository.findByIdAndUserId(id, userContextProvider.getAuthenticatedUserId())
+        .orElseThrow(() -> new InterviewNotFoundException(id));
+
+    if (interview.getRoomUrl() != null) {
+      return interview.getRoomUrl();
+    }
+
+    String roomUrl = meetingService.createMeeting();
+
+    interviewRepository.updateInterviewsRoomUrlByEventId(interview.getEventId(), roomUrl);
+
+    return roomUrl;
   }
 }

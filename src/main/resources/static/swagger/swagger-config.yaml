@@ -204,6 +204,8 @@ paths:
     $ref: './paths/interview/interviews-events-closest.yaml'
   /interviews/status-indicator?userTimeZone={zoneName}:
     $ref: './paths/interview/interviews-status-indicator.yaml'
+  /interviews/{id}/meeting:
+    $ref: './paths/interview/interviews-id-meeting.yaml'
   /interview-feedbacks:
     $ref: './paths/interviewFeedback/interview-feedback.yaml'
   /interview-feedbacks/{id}:

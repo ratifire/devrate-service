@@ -17,6 +17,7 @@ import com.ratifire.devrate.security.exception.RefreshTokenException;
 import com.ratifire.devrate.security.exception.RefreshTokenExpiredException;
 import com.ratifire.devrate.security.exception.UserAlreadyExistsException;
 import com.ratifire.devrate.security.exception.UserRegistrationException;
+import com.ratifire.devrate.util.mirotalk.MeetingServiceException;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
@@ -226,5 +227,13 @@ public class HandlerException {
   @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
   @ExceptionHandler(FeedbackSubmissionLimitException.class)
   public void handleFeedbackFrequencyLimitReached(FeedbackSubmissionLimitException e) {
+  }
+
+  /**
+   * Handles {@link MeetingServiceException} thrown during the meeting creation process.
+   */
+  @ExceptionHandler(MeetingServiceException.class)
+  public void handleMeetingException(MeetingServiceException ex) {
+    log.error("Meeting creation failed", ex);
   }
 }
