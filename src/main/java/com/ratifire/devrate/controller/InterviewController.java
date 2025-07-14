@@ -5,6 +5,8 @@ import com.ratifire.devrate.dto.InterviewDto;
 import com.ratifire.devrate.dto.InterviewEventDto;
 import com.ratifire.devrate.dto.InterviewsOverallStatusDto;
 import com.ratifire.devrate.service.interview.InterviewService;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -91,5 +93,19 @@ public class InterviewController {
   @GetMapping("/status-indicator")
   public InterviewsOverallStatusDto getInterviewStatusIndicator(@RequestParam String userTimeZone) {
     return interviewService.getInterviewStatusIndicator(userTimeZone);
+  }
+
+  /**
+   * Redirects the user to the interview meeting room.
+   *
+   * @param id       the ID of the interview
+   * @param response the {@link HttpServletResponse} used to perform the HTTP redirect
+   * @throws IOException if an input or output exception occurs during the redirect
+   */
+  @GetMapping("/{id}/meeting/join")
+  public void redirectToInterviewRoom(@PathVariable long id, HttpServletResponse response)
+      throws IOException {
+    String roomUrl = interviewService.getOrCreateInterviewRoom(id);
+    response.sendRedirect(roomUrl);
   }
 }

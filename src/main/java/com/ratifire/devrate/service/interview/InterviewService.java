@@ -278,8 +278,7 @@ public class InterviewService {
         .collect(Collectors.toMap(InterviewRequest::getId, request -> request));
 
     sendInterviewScheduledAlerts(
-        requestMap.get(interviewerRequestId), requestMap.get(candidateRequestId), date, joinUrl,
-        interviews);
+        requestMap.get(interviewerRequestId), requestMap.get(candidateRequestId), date, interviews);
   }
 
   private String extractCommentForRole(List<InterviewRequest> requests, InterviewRequestRole role) {
@@ -498,16 +497,13 @@ public class InterviewService {
    *                           interviewer
    * @param candidateRequest   the interview request object containing details about the candidate
    * @param date               the date and time of the scheduled interview
-   * @param roomUrl            the URL of the interview room
    */
   private void sendInterviewScheduledAlerts(InterviewRequest interviewerRequest,
-      InterviewRequest candidateRequest, ZonedDateTime date, String roomUrl,
-      List<Interview> interviews) {
+      InterviewRequest candidateRequest, ZonedDateTime date, List<Interview> interviews) {
     Map<InterviewRequestRole, Long> roleToId = interviews.stream()
         .collect(Collectors.toMap(Interview::getRole, Interview::getId));
-    notifyParticipant(candidateRequest, interviewerRequest, date, roomUrl, roleToId.get(CANDIDATE));
-    notifyParticipant(interviewerRequest, candidateRequest, date, roomUrl,
-        roleToId.get(INTERVIEWER));
+    notifyParticipant(candidateRequest, interviewerRequest, date, roleToId.get(CANDIDATE));
+    notifyParticipant(interviewerRequest, candidateRequest, date, roleToId.get(INTERVIEWER));
   }
 
   /**
@@ -518,11 +514,10 @@ public class InterviewService {
    * @param secondParticipantRequest the interview request of the other participant in the
    *                                 interview
    * @param interviewStartTimeInUtc  the start time of the interview in UTC
-   * @param roomUrl                  the join url to the meeting
    */
   private void notifyParticipant(InterviewRequest recipientRequest,
       InterviewRequest secondParticipantRequest, ZonedDateTime interviewStartTimeInUtc,
-      String roomUrl, long interviewId) {
+      long interviewId) {
 
     User recipient = recipientRequest.getUser();
     String recipientEmail = recipient.getEmail();
@@ -532,7 +527,7 @@ public class InterviewService {
         interviewStartTimeInUtc, interviewId);
 
     emailService.sendInterviewScheduledEmail(recipient, recipientEmail,
-        interviewStartTimeInUtc, secondParticipantRequest, roomUrl);
+        interviewStartTimeInUtc, secondParticipantRequest, interviewId);
   }
 
   /**
@@ -584,5 +579,59 @@ public class InterviewService {
     }
 
     return new InterviewsOverallStatusDto(null);
+  }
+
+  /**
+   * Retrieves or creates a meeting room link for the interview pair.
+   *
+   * @param interviewId ID of the interview for which the meeting link is requested.
+   * @return A valid meeting room URL.
+   * @throws InterviewNotFoundException if no interview pair is found for the given ID.
+   */
+  @Transactional
+  public String getOrCreateInterviewRoom(long interviewId) {
+    List<Interview> pair = interviewRepository.findInterviewPairById(interviewId);
+
+    if (CollectionUtils.isEmpty(pair)) {
+      throw new InterviewNotFoundException(interviewId);
+    }
+
+    // Check if any interview in the pair already has a meeting room link
+    Optional<String> existingRoomUrl = pair.stream()
+        .map(Interview::getRoomUrl)
+        .filter(roomUrl -> roomUrl != null && !roomUrl.isBlank())
+        .findFirst();
+
+    if (existingRoomUrl.isPresent()) {
+      String roomUrl = existingRoomUrl.get();
+
+      // Update missing roomUrl for the other participant if necessary
+      boolean needToUpdate = pair.stream()
+          .anyMatch(i -> i.getRoomUrl() == null || i.getRoomUrl().isEmpty());
+
+      if (needToUpdate) {
+        pair.forEach(i -> {
+          if (i.getRoomUrl() == null || i.getRoomUrl().isEmpty()) {
+            i.setRoomUrl(roomUrl);
+          }
+        });
+        interviewRepository.saveAll(pair);
+      }
+
+      return roomUrl;
+    }
+
+    // No room link exists, create a new meeting and save it for both participants
+    Interview anyInterview = pair.getFirst();
+    String roomUrl = meetingService.createMeeting(
+        "Interview " + interviewId,
+        "Interview auto-created",
+        anyInterview.getStartTime()
+    );
+
+    pair.forEach(i -> i.setRoomUrl(roomUrl));
+    interviewRepository.saveAll(pair);
+
+    return roomUrl;
   }
 }
