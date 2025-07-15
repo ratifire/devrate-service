@@ -239,7 +239,7 @@ public class InterviewService {
     long candidateRequestId = matchedUsers.getCandidateParticipantId();
     ZonedDateTime date = matchedUsers.getDate();
 
-    String joinUrl = meetingService.createMeeting("Topic", "Agenda", date);
+    String joinUrl = meetingService.createMeeting();
 
     Mastery mastery =
         masteryService.getMasteryById(interviewRequestService.findMasteryId(candidateRequestId)

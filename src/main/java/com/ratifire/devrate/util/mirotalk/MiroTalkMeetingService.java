@@ -1,7 +1,6 @@
 package com.ratifire.devrate.util.mirotalk;
 
 import com.ratifire.devrate.service.MeetingService;
-import java.time.ZonedDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,10 +62,5 @@ public class MiroTalkMeetingService implements MeetingService {
     } catch (Exception e) {
       throw new MeetingServiceException("Error creating meeting with MiroTalk API", e);
     }
-  }
-
-  // TODO: remove with Zoom
-  public String createMeeting(String topic, String meetDescription, ZonedDateTime startTime) {
-    return "";
   }
 }
