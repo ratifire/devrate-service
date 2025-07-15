@@ -7,6 +7,5 @@
   "/swagger-ui/**",
   "/swagger-config.yaml",
   "/v3/api-docs/**",
-  "/data/user/countries.json",
-  "/zoom/webhook/events"
+  "/data/user/countries.json"
 ]
