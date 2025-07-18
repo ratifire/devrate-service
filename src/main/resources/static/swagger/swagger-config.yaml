@@ -196,6 +196,8 @@ paths:
     $ref: './paths/interview/interviews.yaml'
   /interviews/{id}:
     $ref: './paths/interview/interviews-id.yaml'
+  /interviews/{id}/not-conducted:
+    $ref: './paths/interview/interviews-id-not-conducted.yaml'
   /interviews/{id}/visible:
     $ref: './paths/interview/interviews-id-visible.yaml'
   /interviews/events/{id}:

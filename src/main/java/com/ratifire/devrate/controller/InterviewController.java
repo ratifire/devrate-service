@@ -60,6 +60,16 @@ public class InterviewController {
   }
 
   /**
+   * Deletes not conducted interview by its ID.
+   *
+   * @param id the ID of the interview to be deleted
+   */
+  @DeleteMapping("/{id}/not-conducted")
+  public void deleteInterviewAsNotConducted(@PathVariable long id) {
+    interviewService.deleteRejected(id);
+  }
+
+  /**
    * Retrieves the details of a specific interview event by its ID.
    *
    * @param id the ID of the event
