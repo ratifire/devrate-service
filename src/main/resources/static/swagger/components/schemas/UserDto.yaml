@@ -37,9 +37,6 @@ properties:
   conductedInterviews:
     type: integer
     description: The count of completed user interviews
-  accountActivated:
-    type: boolean
-    description: Flag indicating whether the user account is activated
   registrationSource:
     type: string
     enum: [LOCAL, COGNITO_USER_POOL, FEDERATED_IDENTITY]

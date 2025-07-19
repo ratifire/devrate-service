@@ -87,9 +87,6 @@ public class User {
   @Column(name = "registration_source", nullable = false)
   private RegistrationSourceType registrationSource;
 
-  @Column(name = "is_account_activated", nullable = false)
-  private Boolean accountActivated;
-
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "user_id", nullable = false)
   private List<Contact> contacts;

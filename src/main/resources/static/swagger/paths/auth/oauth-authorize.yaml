@@ -25,7 +25,7 @@ post:
       content:
         application/json:
           schema:
-            $ref: '../../components/schemas/LoginResponseDto.yaml'
+            $ref: '../../components/schemas/UserDto.yaml'
     '400':
       description: Bad Request.
       content:

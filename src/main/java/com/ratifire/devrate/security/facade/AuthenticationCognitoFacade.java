@@ -3,8 +3,7 @@ package com.ratifire.devrate.security.facade;
 import static com.ratifire.devrate.security.model.enums.OauthIdentityProvider.GOOGLE;
 import static com.ratifire.devrate.security.model.enums.OauthIdentityProvider.LINKEDIN;
 
-import com.ratifire.devrate.dto.LoginResponseDto;
-import com.ratifire.devrate.security.model.dto.ConfirmActivationAccountDto;
+import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.LoginDto;
 import com.ratifire.devrate.security.model.dto.OauthAuthorizationDto;
@@ -16,7 +15,6 @@ import com.ratifire.devrate.security.service.AuthenticationService;
 import com.ratifire.devrate.security.service.PasswordResetService;
 import com.ratifire.devrate.security.service.RefreshTokenService;
 import com.ratifire.devrate.security.service.RegistrationService;
-import com.ratifire.devrate.security.service.account.AccountLifecycleService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -37,10 +35,9 @@ public class AuthenticationCognitoFacade implements AuthenticationFacade {
   private final RegistrationService registrationService;
   private final PasswordResetService passwordResetService;
   private final RefreshTokenService refreshTokenService;
-  private final AccountLifecycleService accountLifecycleService;
 
   @Override
-  public LoginResponseDto login(LoginDto loginDto, HttpServletResponse response) {
+  public UserDto login(LoginDto loginDto, HttpServletResponse response) {
     return authenticationService.login(loginDto, response);
   }
 
@@ -59,20 +56,9 @@ public class AuthenticationCognitoFacade implements AuthenticationFacade {
   }
 
   @Override
-  public LoginResponseDto handleOauthAuthorization(HttpServletResponse response,
+  public UserDto handleOauthAuthorization(HttpServletResponse response,
       OauthAuthorizationDto request) {
     return authenticationOauthService.handleOauthAuthorization(response, request);
-  }
-
-  @Override
-  public LoginResponseDto confirmAccountActivation(ConfirmActivationAccountDto dto,
-      HttpServletResponse response, HttpServletRequest request) {
-    return accountLifecycleService.confirmAccountActivation(dto, response, request);
-  }
-
-  @Override
-  public void resendActivationAccountConfirmCode(ResendConfirmCodeDto resendConfirmCodeDto) {
-    accountLifecycleService.resendActivationAccountConfirmCode(resendConfirmCodeDto);
   }
 
   @Override

@@ -11,7 +11,6 @@ import com.ratifire.devrate.dto.InterviewsOverallStatusDto;
 import com.ratifire.devrate.dto.PairedParticipantDto;
 import com.ratifire.devrate.dto.ParticipantDto;
 import com.ratifire.devrate.dto.SkillShortDto;
-import com.ratifire.devrate.dto.projection.InterviewIdProjection;
 import com.ratifire.devrate.dto.projection.InterviewUserMasteryProjection;
 import com.ratifire.devrate.entity.Event;
 import com.ratifire.devrate.entity.Mastery;
@@ -88,9 +87,6 @@ public class InterviewService {
     return interviewRepository.findByIdAndUserId(id, currentUserId);
   }
 
-  public List<InterviewIdProjection> getUpcomingInterviewIds(long userId, ZonedDateTime time) {
-    return interviewRepository.findAllByUserIdAndStartTimeAfter(userId, time);
-  }
 
   /**
    * Retrieves a all interviews associated with the currently authenticated user.
@@ -303,13 +299,12 @@ public class InterviewService {
   private ConsentStatus extractContentStatus(List<InterviewRequest> requests,
       InterviewRequestRole role) {
     return requests.stream()
-            .filter(r -> r.getRole() == role)
-            .map(InterviewRequest::getConsentStatus)
-            .filter(Objects::nonNull)
-            .findFirst()
-            .orElse(ConsentStatus.NOT_GIVEN);
+        .filter(r -> r.getRole() == role)
+        .map(InterviewRequest::getConsentStatus)
+        .filter(Objects::nonNull)
+        .findFirst()
+        .orElse(ConsentStatus.NOT_GIVEN);
   }
-
 
   /**
    * Saves the given Interview entity to the repository.

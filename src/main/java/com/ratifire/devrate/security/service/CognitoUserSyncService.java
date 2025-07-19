@@ -56,8 +56,7 @@ public class CognitoUserSyncService {
         internalUser.getId(),
         AccessLevel.getDefaultRole(),
         false,
-        cognitoPrimaryUserSubject,
-        Boolean.TRUE.toString());
+        cognitoPrimaryUserSubject);
   }
 
   /**
@@ -74,6 +73,12 @@ public class CognitoUserSyncService {
     }
   }
 
+  /**
+   * Synchronizes specified attributes with Cognito for single users linked to the given username.
+   *
+   * @param username      The username used to identify linked Cognito users.
+   * @param attributes A list of attributes to be synchronized with each linked Cognito user.
+   */
   public void synchronizeAttributeWithCognitoForSingleUser(String username,
       List<AttributeType> attributes) {
     cognitoApiClient.updateCognitoUserAttributes(attributes, username);

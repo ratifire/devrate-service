@@ -17,7 +17,3 @@ databaseChangeLog:
             tableName: users
             columnName: registration_source
             columnDataType: VARCHAR(255)
-        - addNotNullConstraint:
-            tableName: users
-            columnName: is_account_activated
-            columnDataType: BOOLEAN

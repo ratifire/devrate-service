@@ -2,7 +2,6 @@ package com.ratifire.devrate.security.token.validation;
 
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_AUDIENCE;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_EMAIL_VERIFIED;
-import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_IS_ACCOUNT_ACTIVE;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.ratifire.devrate.security.configuration.properties.CognitoProviderProperties;
@@ -32,19 +31,12 @@ public class IdTokenClaimsValidator extends BaseTokenClaimsValidator {
   public boolean validate(JWTClaimsSet claimsSet) {
     return validateCommonClaims(claimsSet, EXPECTED_TOKEN_USE)
         && isAudienceValid(claimsSet)
-        && isEmailVerified(claimsSet)
-        && isAccountActivated(claimsSet);
+        && isEmailVerified(claimsSet);
   }
 
   @Override
   public CognitoTypeToken getTokenType() {
     return CognitoTypeToken.ID_TOKEN;
-  }
-
-  private boolean isAccountActivated(JWTClaimsSet claimsSet) {
-    return TokenUtil.extractStringClaim(claimsSet, ATTRIBUTE_IS_ACCOUNT_ACTIVE)
-        .map(Boolean.TRUE.toString()::equals)
-        .orElse(false);
   }
 
   private boolean isAudienceValid(JWTClaimsSet claimsSet) {

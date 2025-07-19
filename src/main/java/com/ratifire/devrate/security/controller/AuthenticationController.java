@@ -1,8 +1,7 @@
 package com.ratifire.devrate.security.controller;
 
-import com.ratifire.devrate.dto.LoginResponseDto;
+import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.security.facade.AuthenticationFacade;
-import com.ratifire.devrate.security.model.dto.ConfirmActivationAccountDto;
 import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.LoginDto;
 import com.ratifire.devrate.security.model.dto.OauthAuthorizationDto;
@@ -41,25 +40,8 @@ public class AuthenticationController {
    * @return A UserDto object representing the authenticated user.
    */
   @PostMapping("/signin")
-  public LoginResponseDto login(@RequestBody LoginDto loginDto, HttpServletResponse response) {
+  public UserDto login(@RequestBody LoginDto loginDto, HttpServletResponse response) {
     return authenticationFacade.login(loginDto, response);
-  }
-
-  @PostMapping("/confirm-activation-account")
-  public LoginResponseDto confirmActivationAccount(@RequestBody ConfirmActivationAccountDto dto,
-      HttpServletResponse response, HttpServletRequest request) {
-    return authenticationFacade.confirmAccountActivation(dto, response, request);
-  }
-
-  /**
-   * Resends the confirmation code for user activation account.
-   *
-   * @param resendConfirmCodeDto The DTO containing the user's email.
-   */
-  @PostMapping("/activation-account/resend-code")
-  public void resendActivationAccountConfirmCode(
-      @RequestBody @Valid ResendConfirmCodeDto resendConfirmCodeDto) {
-    authenticationFacade.resendActivationAccountConfirmCode(resendConfirmCodeDto);
   }
 
   /**
@@ -91,7 +73,7 @@ public class AuthenticationController {
    * @return the UserDto object containing details of the authenticated user
    */
   @PostMapping("/oauth/authorize")
-  public LoginResponseDto handleOauthAuthorization(HttpServletResponse response,
+  public UserDto handleOauthAuthorization(HttpServletResponse response,
       @Valid @RequestBody OauthAuthorizationDto request) {
     return authenticationFacade.handleOauthAuthorization(response, request);
   }

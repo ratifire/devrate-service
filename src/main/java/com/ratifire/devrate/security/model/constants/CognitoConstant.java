@@ -38,7 +38,6 @@ public class CognitoConstant {
   public static final String ATTRIBUTE_DEFAULT_PROVIDER_NAME = "Cognito";
   public static final String ATTRIBUTE_IS_PRIMARY_RECORD = "custom:isPrimaryRecord-v2";
   public static final String ATTRIBUTE_LINKED_RECORD_SUBJECT = "custom:linkedRecord-v2";
-  public static final String ATTRIBUTE_IS_ACCOUNT_ACTIVE = "custom:isAccountActive";
 
   public static final String BASE_PROTOCOL = "https://";
   public static final String HEADER_CONTENT_TYPE = "Content-Type";

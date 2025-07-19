@@ -4,7 +4,6 @@ import static com.amazonaws.services.cognitoidp.model.AuthFlowType.REFRESH_TOKEN
 import static com.amazonaws.services.cognitoidp.model.AuthFlowType.USER_PASSWORD_AUTH;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_COGNITO_SUBJECT;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_EMAIL;
-import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_IS_ACCOUNT_ACTIVE;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_IS_PRIMARY_RECORD;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_LINKED_RECORD_SUBJECT;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_ROLE;
@@ -77,7 +76,7 @@ public class CognitoApiClientRequestHelper {
    * @return a {@link SignUpRequest} object configured with the provided details.
    */
   public SignUpRequest buildRegisterRequest(String email, String password,
-      long userId, String role, boolean isPrimaryRecord, String isAccountActivated) {
+      long userId, String role, boolean isPrimaryRecord) {
     return new SignUpRequest()
         .withClientId(cognitoConfig.getClientId())
         .withSecretHash(cognitoAuthHelper.generateSecretHash(email))
@@ -88,8 +87,7 @@ public class CognitoApiClientRequestHelper {
             createAttribute(ATTRIBUTE_USER_ID, String.valueOf(userId)),
             createAttribute(ATTRIBUTE_ROLE, role),
             createAttribute(ATTRIBUTE_IS_PRIMARY_RECORD, String.valueOf(isPrimaryRecord)),
-            createAttribute(ATTRIBUTE_LINKED_RECORD_SUBJECT, NONE_VALUE),
-            createAttribute(ATTRIBUTE_IS_ACCOUNT_ACTIVE, isAccountActivated)
+            createAttribute(ATTRIBUTE_LINKED_RECORD_SUBJECT, NONE_VALUE)
         ));
   }
 
@@ -294,8 +292,7 @@ public class CognitoApiClientRequestHelper {
    * @return an AdminUpdateUserAttributesRequest configured with the provided details.
    */
   public AdminUpdateUserAttributesRequest buildAdminUpdateUserAttributesRequest(String subject,
-      long userId, String role, boolean isPrimaryRecord, String linkedRecordSubject,
-      String isAccountActivated) {
+      long userId, String role, boolean isPrimaryRecord, String linkedRecordSubject) {
     return new AdminUpdateUserAttributesRequest()
         .withUserPoolId(cognitoConfig.getUserPoolId())
         .withUsername(subject)
@@ -303,8 +300,7 @@ public class CognitoApiClientRequestHelper {
             createAttribute(ATTRIBUTE_USER_ID, String.valueOf(userId)),
             createAttribute(ATTRIBUTE_ROLE, role),
             createAttribute(ATTRIBUTE_IS_PRIMARY_RECORD, String.valueOf(isPrimaryRecord)),
-            createAttribute(ATTRIBUTE_LINKED_RECORD_SUBJECT, linkedRecordSubject),
-            createAttribute(ATTRIBUTE_IS_ACCOUNT_ACTIVE, isAccountActivated)
+            createAttribute(ATTRIBUTE_LINKED_RECORD_SUBJECT, linkedRecordSubject)
         ));
   }
 

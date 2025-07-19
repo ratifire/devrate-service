@@ -12,7 +12,4 @@ databaseChangeLog:
               - column:
                   name: registration_source
                   value: 'COGNITO_USER_POOL'
-              - column:
-                  name: is_account_activated
-                  valueBoolean: "true"
-            where: account_language IS NULL OR registration_source IS NULL OR is_account_activated IS NULL
+            where: account_language IS NULL OR registration_source IS NULL

@@ -4,17 +4,14 @@ import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.ID_TOKE
 import static com.ratifire.devrate.security.model.enums.CognitoTypeToken.REFRESH_TOKEN;
 
 import com.amazonaws.services.cognitoidp.model.AWSCognitoIdentityProviderException;
-import com.ratifire.devrate.dto.LoginResponseDto;
 import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.security.exception.OauthException;
-import com.ratifire.devrate.security.factory.LoginResponseFactory;
 import com.ratifire.devrate.security.helper.AuthTokenHelper;
 import com.ratifire.devrate.security.helper.CognitoApiClientRequestHelper;
 import com.ratifire.devrate.security.model.CognitoUserInfo;
 import com.ratifire.devrate.security.model.dto.OauthAuthorizationDto;
-import com.ratifire.devrate.security.service.account.AccountLifecycleService;
 import com.ratifire.devrate.security.util.TokenUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -35,7 +32,6 @@ import org.springframework.web.client.HttpClientErrorException;
 public class AuthenticationOauthService {
 
   private final CognitoApiClientService cognitoApiClient;
-  private final AccountLifecycleService accountLifecycleService;
   private final OauthStateTokenService stateTokenService;
   private final CognitoApiClientRequestHelper apiRequestHelper;
   private final OauthInternalUserResolver internalUserResolver;
@@ -63,7 +59,7 @@ public class AuthenticationOauthService {
    *                 details for OAuth processing
    * @return a UserDto object representing the internal user mapped from the processed data
    */
-  public LoginResponseDto handleOauthAuthorization(HttpServletResponse response,
+  public UserDto handleOauthAuthorization(HttpServletResponse response,
       OauthAuthorizationDto request) {
     try {
       stateTokenService.validateStateToken(request.getState());
@@ -78,15 +74,10 @@ public class AuthenticationOauthService {
 
       User internalUser = internalUserResolver.resolveOrCreateInternalUser(cognitoUserInfo);
 
-      if (Boolean.FALSE.equals(internalUser.getAccountActivated())) {
-        return accountLifecycleService.handleInactiveAccountFlow(
-            response, internalUser, cognitoUserInfo.cognitoUsername(), refreshToken, true);
-      }
-
       authTokenHelper.setAuthTokensToResponse(
           response, cognitoUserInfo.cognitoUsername(), null, idToken, refreshToken, true, true);
 
-      return LoginResponseFactory.success(userMapper.toDto(internalUser));
+      return userMapper.toDto(internalUser);
 
     } catch (HttpClientErrorException e) {
       log.error("HTTP Error during token exchange: {}", e.getMessage(), e);

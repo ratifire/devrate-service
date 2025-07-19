@@ -19,9 +19,6 @@ public interface ProfileSettingsFacade {
 
   void updateAccountLanguage(@RequestParam("lang") AccountLanguage language);
 
-  void forceUserProfileDeactivation(HttpServletRequest request,
-      HttpServletResponse response);
-
   void updateEmailSubscriptionFlag(@RequestParam("enabled") boolean isEnabled);
 
 }

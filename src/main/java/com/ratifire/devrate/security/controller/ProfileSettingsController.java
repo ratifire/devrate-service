@@ -41,12 +41,6 @@ public class ProfileSettingsController {
     profileSettingsFacade.updateAccountLanguage(language);
   }
 
-  @PatchMapping("/profile-deactivation")
-  public void forceUserProfileDeactivation(HttpServletRequest request,
-      HttpServletResponse response) {
-    profileSettingsFacade.forceUserProfileDeactivation(request, response);
-  }
-
   @PatchMapping("/email-subscription")
   public void updateEmailSubscriptionFlag(@RequestParam("enabled") boolean isEnabled) {
     profileSettingsFacade.updateEmailSubscriptionFlag(isEnabled);

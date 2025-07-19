@@ -6,6 +6,7 @@ import com.ratifire.devrate.security.util.TokenUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
+@Profile("!local")
 public class AuthTokenHelper {
 
   private final CognitoApiClientService cognitoApiClient;

@@ -2,7 +2,6 @@ package com.ratifire.devrate.service.interview;
 
 import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.dto.InterviewRequestViewDto;
-import com.ratifire.devrate.dto.projection.InterviewRequestTimeSlotProjection;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
@@ -69,11 +68,6 @@ public class InterviewRequestService {
     return interviewRequests.stream()
         .map(this::convertToInterviewRequestViewDto)
         .toList();
-  }
-
-  public List<InterviewRequestTimeSlotProjection> findAllInterviewRequestWithFutureTimeSlots(
-      ZonedDateTime from) {
-    return repository.findAllInterviewRequestWithFutureTimeSlots(from);
   }
 
   /**

@@ -2,18 +2,14 @@ package com.ratifire.devrate.security.facade;
 
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_AUTHORIZATION;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.HEADER_ID_TOKEN;
-import static com.ratifire.devrate.security.model.enums.LoginStatus.ACTIVATION_REQUIRED;
 
-import com.ratifire.devrate.dto.LoginResponseDto;
 import com.ratifire.devrate.dto.UserDto;
-import com.ratifire.devrate.entity.EmailConfirmationCode;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.security.exception.AuthenticationException;
 import com.ratifire.devrate.security.exception.UserAlreadyExistsException;
 import com.ratifire.devrate.security.exception.UserRegistrationException;
 import com.ratifire.devrate.security.helper.RefreshTokenCookieHelper;
-import com.ratifire.devrate.security.model.dto.ConfirmActivationAccountDto;
 import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.LoginDto;
 import com.ratifire.devrate.security.model.dto.OauthAuthorizationDto;
@@ -21,11 +17,8 @@ import com.ratifire.devrate.security.model.dto.PasswordResetDto;
 import com.ratifire.devrate.security.model.dto.ResendConfirmCodeDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import com.ratifire.devrate.security.model.enums.AccountLanguage;
-import com.ratifire.devrate.security.model.enums.LoginStatus;
 import com.ratifire.devrate.security.model.enums.RegistrationSourceType;
-import com.ratifire.devrate.security.service.EmailConfirmationCodeService;
 import com.ratifire.devrate.security.util.TokenUtil;
-import com.ratifire.devrate.service.EmailService;
 import com.ratifire.devrate.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -71,14 +64,12 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
 
   private static final String MSG_UNSUPPORTED_OPERATION = "Unsupported operation locally.";
   private final UserService userService;
-  private final EmailConfirmationCodeService emailConfirmationCodeService;
-  private final EmailService emailService;
   private final DataMapper<UserDto, User> userMapper;
   private final RefreshTokenCookieHelper refreshTokenCookieHelper;
   private final PasswordEncoder passwordEncoder;
 
   @Override
-  public LoginResponseDto login(LoginDto loginDto, HttpServletResponse response) {
+  public UserDto login(LoginDto loginDto, HttpServletResponse response) {
     final String providedEmail = loginDto.getEmail();
     final String providedPassword = loginDto.getPassword();
     try {
@@ -90,22 +81,10 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
             "Authentication process was failed due to invalid password.");
       }
 
-      if (Boolean.FALSE.equals(user.getAccountActivated())) {
-        String activationCode = emailConfirmationCodeService.createConfirmationCode(user.getId());
-        emailService.sendAccountActivationCodeEmail(user.getEmail(), activationCode);
-        return LoginResponseDto.builder()
-            .status(ACTIVATION_REQUIRED)
-            .userInfo(null)
-            .build();
-      }
-
       String encodedUserId =
           Base64.getEncoder().encodeToString(String.valueOf(user.getId()).getBytes());
       TokenUtil.setAuthTokensToHeaders(response, encodedUserId, encodedUserId);
-      return LoginResponseDto.builder()
-          .status(LoginStatus.AUTHENTICATED)
-          .userInfo(userMapper.toDto(user))
-          .build();
+      return userMapper.toDto(user);
 
     } catch (Exception e) {
       log.error("Authentication process was failed for email {}: {}",
@@ -125,46 +104,9 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
   }
 
   @Override
-  public LoginResponseDto handleOauthAuthorization(HttpServletResponse response,
+  public UserDto handleOauthAuthorization(HttpServletResponse response,
       OauthAuthorizationDto request) {
     throw new UnsupportedOperationException(MSG_UNSUPPORTED_OPERATION);
-  }
-
-  @Override
-  public LoginResponseDto confirmAccountActivation(ConfirmActivationAccountDto dto,
-      HttpServletResponse response, HttpServletRequest request) {
-    final String code = dto.getActivationCode();
-    EmailConfirmationCode codeEntity = emailConfirmationCodeService.findByCode(code);
-    emailConfirmationCodeService.validateExpiration(codeEntity);
-    emailConfirmationCodeService.deleteConfirmedCode(codeEntity.getId());
-
-    User user = userService.findById(codeEntity.getUserId());
-    user.setAccountActivated(true);
-    userService.updateByEntity(user);
-
-    if (user.getRegistrationSource().equals(RegistrationSourceType.FEDERATED_IDENTITY)) {
-      throw new UnsupportedOperationException(MSG_UNSUPPORTED_OPERATION);
-    }
-
-    String encodedUserId =
-        Base64.getEncoder().encodeToString(String.valueOf(user.getId()).getBytes());
-    TokenUtil.setAuthTokensToHeaders(response, encodedUserId, encodedUserId);
-    return LoginResponseDto.builder()
-        .status(LoginStatus.AUTHENTICATED)
-        .userInfo(userMapper.toDto(user))
-        .build();
-  }
-
-  @Override
-  public void resendActivationAccountConfirmCode(ResendConfirmCodeDto resendConfirmCodeDto) {
-    final User user = userService.findByEmail(resendConfirmCodeDto.getEmail());
-    final long userId = user.getId();
-
-    EmailConfirmationCode code = emailConfirmationCodeService.findByUserId(userId);
-    emailConfirmationCodeService.deleteConfirmedCode(code.getId());
-
-    String newCode = emailConfirmationCodeService.createConfirmationCode(userId);
-    emailService.sendAccountActivationCodeEmail(user.getEmail(), newCode);
   }
 
   @Override

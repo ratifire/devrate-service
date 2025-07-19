@@ -22,8 +22,3 @@ databaseChangeLog:
                   type: VARCHAR(255)
                   constraints:
                     nullable: true
-              - column:
-                  name: is_account_activated
-                  type: BOOLEAN
-                  constraints:
-                    nullable: true

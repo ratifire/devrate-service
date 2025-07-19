@@ -4,7 +4,6 @@ import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTR
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_FAMILY_NAME;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_GIVEN_NAME;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_IDENTITIES;
-import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_IS_ACCOUNT_ACTIVE;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_IS_PRIMARY_RECORD;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_LINKED_RECORD_SUBJECT;
 import static com.ratifire.devrate.security.model.constants.CognitoConstant.ATTRIBUTE_ROLE;
@@ -128,19 +127,6 @@ public class TokenUtil {
   }
 
   /**
-   * Retrieves the email from the specified ID token.
-   *
-   * @param idToken the Cognito ID token containing user claims
-   * @return the email of the user
-   * @throws InvalidTokenException if the user email claim is missing or cannot be parsed
-   */
-  public static String getEmailFromIdToken(String idToken) {
-    JWTClaimsSet claimsSet = TokenUtil.parseToken(idToken);
-    return TokenUtil.extractStringClaim(claimsSet, ATTRIBUTE_EMAIL)
-        .orElseThrow(() -> new InvalidTokenException("Email claim is missing"));
-  }
-
-  /**
    * Retrieves the list of authorities (roles) from the specified ID token.
    *
    * @param idToken the Cognito ID token containing user claims
@@ -170,14 +156,12 @@ public class TokenUtil {
     String cognitoUsername = extractStringClaim(claimsSet, ATTRIBUTE_USERNAME).orElse(null);
     String linkedRecord = extractStringClaim(claimsSet, ATTRIBUTE_LINKED_RECORD_SUBJECT)
         .orElse(null);
-    String isAccountActivated = extractStringClaim(claimsSet, ATTRIBUTE_IS_ACCOUNT_ACTIVE)
-        .orElse(null);
     String isPrimaryRecord = extractStringClaim(claimsSet, ATTRIBUTE_IS_PRIMARY_RECORD)
         .orElse(null);
     String providerName = getProviderNameFromIdentities(claimsSet.getClaim(ATTRIBUTE_IDENTITIES));
 
     return new CognitoUserInfo(firstName, lastName, email, subject, providerName, linkedRecord,
-        cognitoUsername, isPrimaryRecord, isAccountActivated);
+        cognitoUsername, isPrimaryRecord);
   }
 
   private static String getProviderNameFromIdentities(Object identityClaims) {

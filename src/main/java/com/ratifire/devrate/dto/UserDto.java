@@ -64,8 +64,6 @@ public class UserDto {
 
   private int conductedInterviews;
 
-  private Boolean accountActivated;
-
   private RegistrationSourceType registrationSource;
 
   private AccountLanguage accountLanguage;

@@ -1,7 +1,6 @@
 package com.ratifire.devrate.security.facade;
 
-import com.ratifire.devrate.dto.LoginResponseDto;
-import com.ratifire.devrate.security.model.dto.ConfirmActivationAccountDto;
+import com.ratifire.devrate.dto.UserDto;
 import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.LoginDto;
 import com.ratifire.devrate.security.model.dto.OauthAuthorizationDto;
@@ -17,18 +16,13 @@ import java.io.IOException;
  */
 public interface AuthenticationFacade {
 
-  LoginResponseDto login(LoginDto loginDto, HttpServletResponse response);
-
-  LoginResponseDto confirmAccountActivation(ConfirmActivationAccountDto confirmActivationAccountDto,
-      HttpServletResponse response, HttpServletRequest request);
-
-  void resendActivationAccountConfirmCode(ResendConfirmCodeDto resendConfirmCodeDto);
+  UserDto login(LoginDto loginDto, HttpServletResponse response);
 
   void redirectToLinkedIn(HttpServletResponse response) throws IOException;
 
   void redirectToGoogle(HttpServletResponse response) throws IOException;
 
-  LoginResponseDto handleOauthAuthorization(HttpServletResponse response,
+  UserDto handleOauthAuthorization(HttpServletResponse response,
       OauthAuthorizationDto request);
 
   String logout(HttpServletRequest request, HttpServletResponse response);

@@ -49,10 +49,10 @@ public class CognitoApiClientService {
    * @param role     The user's role.
    */
   public void register(String email, String password, long userId, String role,
-      boolean isPrimaryRecord, String isAccounrActivated) {
+      boolean isPrimaryRecord) {
     SignUpRequest request = requestHelper.buildRegisterRequest(email, password, userId, role,
-        isPrimaryRecord, isAccounrActivated);
-    cognitoClient.signUp(request).getUserSub();
+        isPrimaryRecord);
+    cognitoClient.signUp(request);
   }
 
   /**
@@ -171,10 +171,10 @@ public class CognitoApiClientService {
    * @param linkedRecordSubject The subject identifier of the linked record, if any.
    */
   public void updateCognitoUserAttributes(String subject, long userId, String role,
-      boolean isPrimaryRecord, String linkedRecordSubject, String isAccountActivated) {
+      boolean isPrimaryRecord, String linkedRecordSubject) {
     cognitoClient.adminUpdateUserAttributes(
         requestHelper.buildAdminUpdateUserAttributesRequest(subject, userId, role, isPrimaryRecord,
-            linkedRecordSubject, isAccountActivated));
+            linkedRecordSubject));
   }
 
   /**

@@ -3,7 +3,6 @@ package com.ratifire.devrate.security.facade;
 import com.ratifire.devrate.security.model.dto.EmailChangeDto;
 import com.ratifire.devrate.security.model.dto.PasswordChangeDto;
 import com.ratifire.devrate.security.model.enums.AccountLanguage;
-import com.ratifire.devrate.security.service.account.AccountLifecycleService;
 import com.ratifire.devrate.security.service.account.ProfileSettingsService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Component;
 public class ProfileSettingsCognitoFacade implements ProfileSettingsFacade {
 
   private final ProfileSettingsService profileSettingsService;
-  private final AccountLifecycleService accountLifecycleService;
 
   @Override
   public void changeEmail(HttpServletRequest request, HttpServletResponse response,
@@ -36,12 +34,6 @@ public class ProfileSettingsCognitoFacade implements ProfileSettingsFacade {
   @Override
   public void updateAccountLanguage(AccountLanguage language) {
     profileSettingsService.updateAccountLanguage(language);
-  }
-
-  @Override
-  public void forceUserProfileDeactivation(HttpServletRequest request,
-      HttpServletResponse response) {
-    accountLifecycleService.processAccountDeactivation(request, response);
   }
 
   @Override

@@ -49,8 +49,7 @@ public class OauthInternalUserResolver {
           internalUser.getId(),
           AccessLevel.getDefaultRole(),
           true,
-          NONE_VALUE,
-          Boolean.TRUE.toString());
+          NONE_VALUE);
     }
 
     return internalUser;
@@ -63,7 +62,6 @@ public class OauthInternalUserResolver {
         .lastName(userInfo.lastName())
         .registrationSource(RegistrationSourceType.FEDERATED_IDENTITY)
         .accountLanguage(AccountLanguage.UKRAINE)
-        .accountActivated(true)
         .build();
     String password = cognitoAuthenticationHelper.generateRandomPassword();
     User newInternalUser = userService.create(userDto, email, password);

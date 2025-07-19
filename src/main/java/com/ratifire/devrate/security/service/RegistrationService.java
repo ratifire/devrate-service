@@ -55,7 +55,6 @@ public class RegistrationService {
         .lastName(userRegistrationDto.getLastName())
         .registrationSource(RegistrationSourceType.COGNITO_USER_POOL)
         .accountLanguage(AccountLanguage.UKRAINE)
-        .accountActivated(true)
         .build();
 
     if (userService.existsByEmail(email)) {
@@ -66,7 +65,7 @@ public class RegistrationService {
     try {
       User user = userService.create(userDto, email, passwordEncoder.encode(password));
       cognitoApiClientService.register(email, password, user.getId(),
-          AccessLevel.getDefaultRole(), true, Boolean.TRUE.toString());
+          AccessLevel.getDefaultRole(), true);
     } catch (Exception e) {
       log.error("Initiate registration process was failed for email {}: {}",
           userRegistrationDto.getEmail(), e.getMessage(), e);
@@ -139,7 +138,7 @@ public class RegistrationService {
   /**
    * Sends greetings to a user via email and adds a greeting notification.
    *
-   * @param user  The user to whom greetings are sent.
+   * @param user The user to whom greetings are sent.
    */
   private void sendGreetings(User user) {
     notificationService.addGreeting(user);
