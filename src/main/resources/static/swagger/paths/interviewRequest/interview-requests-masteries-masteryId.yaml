@@ -29,6 +29,8 @@ get:
               desiredInterview: 0
               matchedInterview: 0
               comment: "string"
+              hardSkillCount: 0
+              softSkillCount: 0
               timeSlots: [
                 {
                   "dateTime": "2025-04-01T08:10:00Z",
@@ -40,6 +42,8 @@ get:
               desiredInterview: 0
               matchedInterview: 0
               comment: "string"
+              hardSkillCount: 0
+              softSkillCount: 0
               timeSlots: [
                 {
                   "dateTime": "2025-04-01T08:10:00Z",
