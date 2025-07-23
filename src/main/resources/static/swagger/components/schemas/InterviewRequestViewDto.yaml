@@ -17,6 +17,14 @@ properties:
   comment:
     type: string
     description: The interview request comment which is indicated when create request
+  hardSkillCount:
+    type: integer
+    format: int64
+    description: The number of the hard skill by main mastery
+  softSkillCount:
+    type: integer
+    format: int64
+    description: The number of the soft skill by main mastery
   languageCode:
     $ref: './InterviewRequestLanguageCode.yaml'
   timeSlots:

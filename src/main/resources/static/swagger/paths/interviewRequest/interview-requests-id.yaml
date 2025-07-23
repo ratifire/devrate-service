@@ -37,6 +37,8 @@ patch:
       description: Cannot locate the specific interview request due to incorrect request data.
     '400':
       description: Bad Request. Available dates must be greater than or equal to the desired number of interviews.
+    '422':
+      description: Bad Request. Invalid number of the hard or soft skill.
 
 delete:
   tags:

@@ -23,6 +23,8 @@ get:
               desiredInterview: 0
               matchedInterview: 0
               comment: "string"
+              hardSkillCount: 0
+              softSkillCount: 0
               timeSlots: [
                 {
                   "dateTime": "2025-04-01T08:10:00Z",
@@ -34,6 +36,8 @@ get:
               desiredInterview: 0
               matchedInterview: 0
               comment: "string"
+              hardSkillCount: 0
+              softSkillCount: 0
               timeSlots: [
                 {
                   "dateTime": "2025-04-01T08:10:00Z",
@@ -67,3 +71,5 @@ post:
       description: Interview request created successfully
     '400':
       description: Bad Request. Available dates must be greater than or equal to the desired number of interviews.
+    '422':
+      description: Bad Request. Invalid number of the hard or soft skill.
