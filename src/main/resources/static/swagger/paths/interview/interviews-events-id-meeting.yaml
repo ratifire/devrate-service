@@ -1,16 +1,16 @@
 get:
   tags:
     - Interview
-  summary: Retrieve the interview meeting room url by interview id
+  summary: Retrieve the interview meeting room url by event id
   description: >
-    Retrieve the interview meeting room url by interview id. 
+    Retrieve the interview meeting room url by event id. 
     The endpoint checks if a meeting link exists for the interview and either retrieve 
     or creates a new one and retrieve it.
-  operationId: resolveMeetingUrlByInterviewId
+  operationId: resolveMeetingUrlByEventId
   parameters:
     - in: path
       name: id
-      description: Interview ID
+      description: Event ID
       required: true
       schema:
         type: integer
