@@ -104,13 +104,24 @@ public class InterviewController {
   }
 
   /**
-   * Retrieve the interview meeting room link.
+   * Retrieve the interview meeting room link by interview id.
    *
    * @param id the ID of the event
    * @return A valid meeting room URL.
    */
   @GetMapping("/{id}/meeting")
-  public String resolveMeetingUrl(@PathVariable long id) {
-    return interviewService.resolveMeetingUrl(id);
+  public String resolveMeetingUrlByInterviewId(@PathVariable long id) {
+    return interviewService.resolveMeetingUrlByInterviewId(id);
+  }
+
+  /**
+   * Retrieve the interview meeting room link by event id.
+   *
+   * @param id the ID of the event
+   * @return A valid meeting room URL.
+   */
+  @GetMapping("/events/{id}/meeting")
+  public String resolveMeetingUrlByEventId(@PathVariable long id) {
+    return interviewService.resolveMeetingUrlByEventId(id);
   }
 }

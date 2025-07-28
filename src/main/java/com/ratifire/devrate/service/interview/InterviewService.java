@@ -582,25 +582,43 @@ public class InterviewService {
   }
 
   /**
-   * Retrieves or creates a meeting room link for the interview pair.
+   * Retrieves or creates a meeting room link for the interview pair by interview id.
    *
    * @param id ID of the interview for which the meeting link is requested.
    * @return A valid meeting room URL.
    */
   @Transactional
-  public String resolveMeetingUrl(long id) {
+  public String resolveMeetingUrlByInterviewId(long id) {
     Interview interview =
         interviewRepository.findByIdAndUserId(id, userContextProvider.getAuthenticatedUserId())
         .orElseThrow(() -> new InterviewNotFoundException(id));
 
+    return resolveMeetingUrl(interview);
+  }
+
+  /**
+   * Retrieves or creates a meeting room link for the interview pair by event id.
+   *
+   * @param eventId ID of the event for which the meeting link is requested.
+   * @return A valid meeting room URL.
+   */
+  @Transactional
+  public String resolveMeetingUrlByEventId(long eventId) {
+    Interview interview = interviewRepository
+        .findByEventIdAndUserId(eventId, userContextProvider.getAuthenticatedUserId())
+        .orElseThrow(() ->
+            new InterviewNotFoundException("Interview with event id " + eventId + " not found"));
+
+    return resolveMeetingUrl(interview);
+  }
+
+  private String resolveMeetingUrl(Interview interview) {
     if (interview.getRoomUrl() != null) {
       return interview.getRoomUrl();
     }
 
     String roomUrl = meetingService.createMeeting();
-
     interviewRepository.updateInterviewsRoomUrlByEventId(interview.getEventId(), roomUrl);
-
     return roomUrl;
   }
 }
