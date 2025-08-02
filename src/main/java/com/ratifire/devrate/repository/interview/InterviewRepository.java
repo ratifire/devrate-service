@@ -26,8 +26,6 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
 
   List<Interview> findByEventId(long eventId);
 
-  Optional<Interview> findByEventIdAndUserId(long eventId, long userId);
-
   @Query("SELECT i FROM Interview i WHERE i.eventId = "
       + "(SELECT eventId FROM Interview WHERE id = :id)")
   List<Interview> findInterviewPairById(@Param("id") long id);
