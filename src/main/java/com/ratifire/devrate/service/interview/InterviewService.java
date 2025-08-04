@@ -199,17 +199,21 @@ public class InterviewService {
       return null;
     }
 
-    Long opponentUserId = eventInterviews.stream()
-        .filter(interview -> interview.getUserId() != authUserId)
-        .findFirst()
-        .map(Interview::getUserId)
-        .orElse(null);
+    Interview authInterview = null;
+    Interview opponentInterview = null;
+    for (Interview interview : eventInterviews) {
+      if (interview.getUserId() == authUserId) {
+        authInterview = interview;
+      } else {
+        opponentInterview = interview;
+      }
+    }
 
-    if (opponentUserId == null) {
+    if (authInterview == null || opponentInterview == null) {
       return null;
     }
 
-    User opponent = opponentById.get(opponentUserId);
+    User opponent = opponentById.get(opponentInterview.getUserId());
     if (opponent == null) {
       return null;
     }
@@ -222,6 +226,8 @@ public class InterviewService {
         .hostName(opponent.getFirstName())
         .hostSurname(opponent.getLastName())
         .title(event.getTitle())
+        .interviewId(authInterview.getId())
+        .role(authInterview.getRole())
         .roomUrl(event.getRoomLink())
         .build();
   }

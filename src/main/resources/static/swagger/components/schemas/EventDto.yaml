@@ -13,6 +13,11 @@ properties:
   roomLink:
     type: string
     description: Generated link for the event
+  interviewId:
+    type: integer
+    description: The ID of the user interview
+  role:
+    $ref: './InterviewRequestRole.yaml'
   startTime:
     type: string
     description: Date and time when the event process
