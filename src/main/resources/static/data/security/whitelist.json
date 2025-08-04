@@ -7,5 +7,6 @@
   "/swagger-ui/**",
   "/swagger-config.yaml",
   "/v3/api-docs/**",
-  "/data/user/countries.json"
+  "/data/user/countries.json",
+  "/s3/presign"
 ]
