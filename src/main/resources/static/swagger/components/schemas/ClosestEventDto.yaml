@@ -24,6 +24,11 @@ properties:
   hostSurname:
     type: string
     description: The opponent user last name
+  interviewId:
+    type: integer
+    description: The id of the user interview
+  role:
+    $ref: './InterviewRequestRole.yaml'
   title:
     type: string
     description: The interview title (in general it's mastery level + specialization name of the CANDIDATE interview request)
