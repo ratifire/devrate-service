@@ -60,6 +60,16 @@ public class InterviewController {
   }
 
   /**
+   * Deletes not conducted interview by its ID.
+   *
+   * @param id the ID of the interview to be deleted
+   */
+  @DeleteMapping("/{id}/not-conducted")
+  public void deleteInterviewAsNotConducted(@PathVariable long id) {
+    interviewService.deleteRejected(id);
+  }
+
+  /**
    * Retrieves the details of a specific interview event by its ID.
    *
    * @param id the ID of the event
@@ -91,5 +101,16 @@ public class InterviewController {
   @GetMapping("/status-indicator")
   public InterviewsOverallStatusDto getInterviewStatusIndicator(@RequestParam String userTimeZone) {
     return interviewService.getInterviewStatusIndicator(userTimeZone);
+  }
+
+  /**
+   * Retrieve the interview meeting room link.
+   *
+   * @param id the ID of the event
+   * @return A valid meeting room URL.
+   */
+  @GetMapping("/{id}/meeting")
+  public String resolveMeetingUrl(@PathVariable long id) {
+    return interviewService.resolveMeetingUrl(id);
   }
 }

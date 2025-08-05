@@ -44,7 +44,7 @@ public class AuthenticationService {
    * @return A UserDto object representing the authenticated user.
    */
   public UserDto login(LoginDto loginDto, HttpServletResponse response) {
-    final String providedEmail = loginDto.getEmail();
+    final String providedEmail = loginDto.getEmail().toLowerCase();
     final String providedPassword = loginDto.getPassword();
     try {
       User user = userService.findByEmail(providedEmail);
@@ -69,7 +69,6 @@ public class AuthenticationService {
           e.getMessage());
       throw new AuthenticationException("Authentication process was failed.");
     }
-
   }
 
   /**
@@ -92,5 +91,4 @@ public class AuthenticationService {
       throw new LogoutException("Logout process was failed.");
     }
   }
-
 }

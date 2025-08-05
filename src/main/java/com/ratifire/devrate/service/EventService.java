@@ -3,15 +3,19 @@ package com.ratifire.devrate.service;
 import com.ratifire.devrate.dto.EventDto;
 import com.ratifire.devrate.entity.Event;
 import com.ratifire.devrate.entity.User;
+import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.enums.EventType;
-import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.EventRepository;
+import com.ratifire.devrate.repository.interview.InterviewRepository;
 import com.ratifire.devrate.security.helper.UserContextProvider;
 import com.ratifire.devrate.util.DateTimeUtils;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +29,7 @@ public class EventService {
   private final UserService userService;
   private final UserContextProvider userContextProvider;
   private final EventRepository eventRepository;
-  private final DataMapper<EventDto, Event> eventMapper;
+  private final InterviewRepository interviewRepository;
 
   /**
    * Retrieves a list of events for a specified user that occur within a given time range.
@@ -35,11 +39,52 @@ public class EventService {
    * @return a list of {@link EventDto} objects representing the events for the user
    */
   public List<EventDto> findBetweenDateTime(LocalDate from, LocalDate to) {
-    User user = userService.findById(userContextProvider.getAuthenticatedUserId());
-    return user.getEvents().stream()
+    User authUser = userService.findById(userContextProvider.getAuthenticatedUserId());
+    List<Event> userEvents = authUser.getEvents();
+
+    if (userEvents.isEmpty()) {
+      return List.of();
+    }
+
+    List<Event> filteredEvents = userEvents.stream()
         .filter(event -> DateTimeUtils.isWithinRange(event.getStartTime(), from, to))
-        .map(eventMapper::toDto)
         .toList();
+
+    if (filteredEvents.isEmpty()) {
+      return List.of();
+    }
+
+    Map<Long, Interview> interviewByEventId = interviewRepository
+        .findByEventIdIn(filteredEvents.stream().map(Event::getId).toList())
+        .stream()
+        .filter(interview -> interview.getUserId() == authUser.getId())
+        .collect(Collectors.toMap(
+            Interview::getEventId,
+            interview -> interview,
+            (a, b) -> b
+        ));
+
+    return filteredEvents.stream()
+        .map(event -> buildEventDto(event, interviewByEventId.get(event.getId())))
+        .filter(Objects::nonNull)
+        .toList();
+  }
+
+  private EventDto buildEventDto(Event event, Interview interview) {
+    if (interview == null) {
+      return null;
+    }
+
+    return EventDto.builder()
+        .id(event.getId())
+        .type(event.getType())
+        .hostId(event.getHostId())
+        .roomLink(event.getRoomLink())
+        .startTime(event.getStartTime())
+        .title(event.getTitle())
+        .interviewId(interview.getId())
+        .role(interview.getRole())
+        .build();
   }
 
   /**

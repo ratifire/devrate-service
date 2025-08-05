@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -45,6 +46,20 @@ public class InterviewRequestController {
   @GetMapping("/masteries/{masteryId}")
   public List<InterviewRequestViewDto> getByMasteryId(@PathVariable long masteryId) {
     return interviewRequestService.getByMasteryId(masteryId);
+  }
+
+  /**
+   * Returns the interview ID associated with the given time slot ID.
+   *
+   * @param id the ID of the time slot
+   * @return the ID of the associated interview, or {@code 204 status} if no interview is linked
+   */
+  @GetMapping("/timeslots/{id}/interview-id")
+  public ResponseEntity<Long> getInterviewIdByTimeSlot(@PathVariable long id) {
+    Long interviewId = interviewRequestService.getInterviewIdByTimeSlotId(id);
+    return (interviewId != null)
+        ? ResponseEntity.ok(interviewId)
+        : ResponseEntity.noContent().build();
   }
 
   /**

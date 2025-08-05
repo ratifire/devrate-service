@@ -1,6 +1,7 @@
 package com.ratifire.devrate.dto;
 
 import com.ratifire.devrate.enums.EventType;
+import com.ratifire.devrate.enums.InterviewRequestRole;
 import java.time.ZonedDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,5 +23,6 @@ public class EventDto {
   private String roomLink;
   private ZonedDateTime startTime;
   private String title;
-
+  private long interviewId;
+  private InterviewRequestRole role;
 }

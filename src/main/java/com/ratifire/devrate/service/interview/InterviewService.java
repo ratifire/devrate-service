@@ -200,17 +200,21 @@ public class InterviewService {
       return null;
     }
 
-    Long opponentUserId = eventInterviews.stream()
-        .filter(interview -> interview.getUserId() != authUserId)
-        .findFirst()
-        .map(Interview::getUserId)
-        .orElse(null);
+    Interview authInterview = null;
+    Interview opponentInterview = null;
+    for (Interview interview : eventInterviews) {
+      if (interview.getUserId() == authUserId) {
+        authInterview = interview;
+      } else {
+        opponentInterview = interview;
+      }
+    }
 
-    if (opponentUserId == null) {
+    if (authInterview == null || opponentInterview == null) {
       return null;
     }
 
-    User opponent = opponentById.get(opponentUserId);
+    User opponent = opponentById.get(opponentInterview.getUserId());
     if (opponent == null) {
       return null;
     }
@@ -223,6 +227,8 @@ public class InterviewService {
         .hostName(opponent.getFirstName())
         .hostSurname(opponent.getLastName())
         .title(event.getTitle())
+        .interviewId(authInterview.getId())
+        .role(authInterview.getRole())
         .roomUrl(event.getRoomLink())
         .build();
   }
@@ -240,7 +246,7 @@ public class InterviewService {
     long candidateRequestId = matchedUsers.getCandidateParticipantId();
     ZonedDateTime date = matchedUsers.getDate();
 
-    String joinUrl = meetingService.createMeeting("Topic", "Agenda", date);
+    String joinUrl = meetingService.createMeeting();
 
     Mastery mastery =
         masteryService.getMasteryById(interviewRequestService.findMasteryId(candidateRequestId)
@@ -266,16 +272,20 @@ public class InterviewService {
     ConsentStatus candidateConsentStatus = extractContentStatus(requests, CANDIDATE);
     Interview candidate = buildInterview(candidateId, candidateRequestId, eventId, CANDIDATE,
         joinUrl, date, candidateRequestComment, candidateLanguageCode, candidateConsentStatus);
-    interviewRepository.saveAll(List.of(interviewer, candidate));
+    List<Interview> interviews = interviewRepository.saveAll(List.of(interviewer, candidate));
 
-    interviewRequestService.markTimeSlotsAsBooked(requests, interviewer.getStartTime());
+    // TODO: need refactoring related to the interview list that use only for getting interviewIds
+    //  for each users
+
+    interviewRequestService.updateTimeSlots(interviewerRequestId, candidateRequestId, date,
+        interviews);
     interviewRequestService.incrementMatchedInterviewCount(requests);
 
     Map<Long, InterviewRequest> requestMap = requests.stream()
         .collect(Collectors.toMap(InterviewRequest::getId, request -> request));
 
     sendInterviewScheduledAlerts(
-        requestMap.get(interviewerRequestId), requestMap.get(candidateRequestId), date, joinUrl);
+        requestMap.get(interviewerRequestId), requestMap.get(candidateRequestId), date, interviews);
   }
 
   private String extractCommentForRole(List<InterviewRequest> requests, InterviewRequestRole role) {
@@ -493,12 +503,13 @@ public class InterviewService {
    *                           interviewer
    * @param candidateRequest   the interview request object containing details about the candidate
    * @param date               the date and time of the scheduled interview
-   * @param roomUrl            the URL of the interview room
    */
   private void sendInterviewScheduledAlerts(InterviewRequest interviewerRequest,
-      InterviewRequest candidateRequest, ZonedDateTime date, String roomUrl) {
-    notifyParticipant(candidateRequest, interviewerRequest, date, roomUrl);
-    notifyParticipant(interviewerRequest, candidateRequest, date, roomUrl);
+      InterviewRequest candidateRequest, ZonedDateTime date, List<Interview> interviews) {
+    Map<InterviewRequestRole, Long> roleToId = interviews.stream()
+        .collect(Collectors.toMap(Interview::getRole, Interview::getId));
+    notifyParticipant(candidateRequest, interviewerRequest, date, roleToId.get(CANDIDATE));
+    notifyParticipant(interviewerRequest, candidateRequest, date, roleToId.get(INTERVIEWER));
   }
 
   /**
@@ -509,21 +520,20 @@ public class InterviewService {
    * @param secondParticipantRequest the interview request of the other participant in the
    *                                 interview
    * @param interviewStartTimeInUtc  the start time of the interview in UTC
-   * @param zoomJoinUrl              the join url to the zoom meeting
    */
   private void notifyParticipant(InterviewRequest recipientRequest,
       InterviewRequest secondParticipantRequest, ZonedDateTime interviewStartTimeInUtc,
-      String zoomJoinUrl) {
+      long interviewId) {
 
     User recipient = recipientRequest.getUser();
     String recipientEmail = recipient.getEmail();
     String role = String.valueOf(recipientRequest.getRole());
 
     notificationService.addInterviewScheduled(recipient, role,
-        interviewStartTimeInUtc);
+        interviewStartTimeInUtc, interviewId);
 
     emailService.sendInterviewScheduledEmail(recipient, recipientEmail,
-        interviewStartTimeInUtc, secondParticipantRequest, zoomJoinUrl);
+        interviewStartTimeInUtc, secondParticipantRequest, interviewId);
   }
 
   /**
@@ -575,5 +585,28 @@ public class InterviewService {
     }
 
     return new InterviewsOverallStatusDto(null);
+  }
+
+  /**
+   * Retrieves or creates a meeting room link for the interview pair.
+   *
+   * @param id ID of the interview for which the meeting link is requested.
+   * @return A valid meeting room URL.
+   */
+  @Transactional
+  public String resolveMeetingUrl(long id) {
+    Interview interview =
+        interviewRepository.findByIdAndUserId(id, userContextProvider.getAuthenticatedUserId())
+        .orElseThrow(() -> new InterviewNotFoundException(id));
+
+    if (interview.getRoomUrl() != null) {
+      return interview.getRoomUrl();
+    }
+
+    String roomUrl = meetingService.createMeeting();
+
+    interviewRepository.updateInterviewsRoomUrlByEventId(interview.getEventId(), roomUrl);
+
+    return roomUrl;
   }
 }

@@ -34,3 +34,5 @@ post:
       description: New time slots successfully added.
     '404':
       description: Interview request not found.
+    '422':
+      description: Bad Request. Invalid number of the hard or soft skill.

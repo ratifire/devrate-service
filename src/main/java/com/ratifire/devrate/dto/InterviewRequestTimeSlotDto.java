@@ -11,6 +11,7 @@ import lombok.Getter;
 @Builder
 @Getter
 public class InterviewRequestTimeSlotDto {
+  private long id;
   private ZonedDateTime dateTime;
   private TimeSlotStatus status;
 }

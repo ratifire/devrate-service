@@ -38,6 +38,8 @@ class NotificationServiceTest {
   private DataMapper<NotificationDto, Notification> mapper;
   @Mock
   private SimpMessagingTemplate simpMessagingTemplate;
+  @Mock
+  private WebPushNotificationService webPushNotificationService;
   @InjectMocks
   private NotificationService notificationService;
 
@@ -114,7 +116,7 @@ class NotificationServiceTest {
     notificationService.addGreeting(user);
     notificationService.addInterviewRequestExpiry(user);
     notificationService.addRejectInterview(user, "rejectionUserFirstName", ZonedDateTime.now());
-    notificationService.addInterviewScheduled(user, "role", ZonedDateTime.now());
+    notificationService.addInterviewScheduled(user, "role", ZonedDateTime.now(), 1);
 
     verify(notificationRepository, times(4)).save(any());
   }

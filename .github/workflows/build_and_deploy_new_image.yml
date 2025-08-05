@@ -7,23 +7,19 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Select environment to deploy (prod, dev or qa)'
+        description: 'Select environment to deploy (prod, dev)'
         required: true
         default: 'dev'
         type: choice
         options:
           - dev
           - prod
-          - qa
+
   push:
     branches:
       - main
 
 env:
-  ZOOM_CLIENT_ID: ${{secrets.ZOOM_CLIENT_ID}}
-  ZOOM_CLIENT_SECRET: ${{secrets.ZOOM_CLIENT_SECRET}}
-  ZOOM_ACCOUNT_ID: ${{secrets.ZOOM_ACCOUNT_ID}}
-  ZOOM_SECRET: ${{secrets.ZOOM_SECRET}}
   AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
   AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
   AWS_REGION: ${{vars.AWS_REGION}}
@@ -67,10 +63,6 @@ jobs:
           declare -A REPLACEMENTS=(
             ["<AWS_SES_ACCESS_KEY_ID>"]="${{ secrets.AWS_SES_ACCESS_KEY_ID }}"
             ["<AWS_SES_SECRET_ACCESS_KEY>"]="${{ secrets.AWS_SES_SECRET_ACCESS_KEY }}"
-            ["<ZOOM_CLIENT_ID>"]="${{ env.ZOOM_CLIENT_ID }}"
-            ["<ZOOM_CLIENT_SECRET>"]="${{ env.ZOOM_CLIENT_SECRET }}"
-            ["<ZOOM_ACCOUNT_ID>"]="${{ env.ZOOM_ACCOUNT_ID }}"
-            ["<ZOOM_SECRET>"]="${{ env.ZOOM_SECRET }}"
             ["<DOMAIN>"]="${{ vars.DOMAIN }}"
             ["<AWS_ACCESS_KEY_ID>"]="${{ secrets.AWS_ACCESS_KEY_ID }}"
             ["<AWS_SECRET_ACCESS_KEY>"]="${{ secrets.AWS_SECRET_ACCESS_KEY }}"
@@ -137,6 +129,9 @@ jobs:
           TF_VAR_pg_password: ${{ secrets.PG_PASSWORD }}
           TF_VAR_pg_database: ${{ secrets.PG_DATABASE }}
           ENVIRONMENT: ${{ github.event.inputs.environment }}
+          TF_VAR_vapid_public_key: ${{ secrets.VAPID_PUBLIC_KEY }}
+          TF_VAR_vapid_private_key: ${{ secrets.VAPID_PRIVATE_KEY }}
+          TF_VAR_vapid_subject: ${{ secrets.VAPID_SUBJECT }}
 
         run: |
           # Build a docker container and

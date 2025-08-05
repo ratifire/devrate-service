@@ -2,6 +2,7 @@ package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.exception.FeedbackSubmissionLimitException;
 import com.ratifire.devrate.exception.InterviewRequestDoesntExistException;
+import com.ratifire.devrate.exception.InterviewRequestInvalidSkillCountException;
 import com.ratifire.devrate.exception.InvalidInterviewRequestException;
 import com.ratifire.devrate.exception.MailException;
 import com.ratifire.devrate.exception.ResourceAlreadyExistException;
@@ -19,6 +20,7 @@ import com.ratifire.devrate.security.exception.RefreshTokenException;
 import com.ratifire.devrate.security.exception.RefreshTokenExpiredException;
 import com.ratifire.devrate.security.exception.UserAlreadyExistsException;
 import com.ratifire.devrate.security.exception.UserRegistrationException;
+import com.ratifire.devrate.util.mirotalk.MeetingServiceException;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
@@ -244,5 +246,23 @@ public class HandlerException {
   @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
   @ExceptionHandler(FeedbackSubmissionLimitException.class)
   public void handleFeedbackFrequencyLimitReached(FeedbackSubmissionLimitException e) {
+  }
+
+  /**
+   * Handles {@link MeetingServiceException} thrown during the meeting creation process.
+   */
+  @ExceptionHandler(MeetingServiceException.class)
+  public void handleMeetingException(MeetingServiceException ex) {
+    log.error("Meeting creation failed", ex);
+  }
+
+  /**
+   * Handles InterviewRequestInvalidSkillCountException by returning an HTTP status 422.
+   */
+  @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+  @ExceptionHandler(InterviewRequestInvalidSkillCountException.class)
+  public void handleInterviewRequestInvalidSkillCountException(
+      InterviewRequestInvalidSkillCountException ex) {
+    log.warn("Operation for the Interview request failed: {}", ex.getMessage());
   }
 }

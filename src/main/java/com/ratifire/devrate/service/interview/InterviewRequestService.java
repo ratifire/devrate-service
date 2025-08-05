@@ -2,15 +2,19 @@ package com.ratifire.devrate.service.interview;
 
 import com.ratifire.devrate.dto.InterviewRequestDto;
 import com.ratifire.devrate.dto.InterviewRequestViewDto;
+import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.entity.interview.InterviewRequestTimeSlot;
 import com.ratifire.devrate.enums.InterviewRequestRole;
+import com.ratifire.devrate.enums.SkillType;
 import com.ratifire.devrate.enums.TimeSlotStatus;
 import com.ratifire.devrate.exception.InterviewRequestDoesntExistException;
+import com.ratifire.devrate.exception.InterviewRequestInvalidSkillCountException;
 import com.ratifire.devrate.exception.InterviewRequestNotFoundException;
 import com.ratifire.devrate.exception.InvalidInterviewRequestException;
+import com.ratifire.devrate.exception.ResourceNotFoundException;
 import com.ratifire.devrate.mapper.impl.InterviewRequestMapper;
 import com.ratifire.devrate.mapper.impl.InterviewRequestTimeSlotMapper;
 import com.ratifire.devrate.repository.interview.InterviewRequestRepository;
@@ -22,8 +26,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,6 +43,9 @@ import org.springframework.util.CollectionUtils;
 @RequiredArgsConstructor
 @Slf4j
 public class InterviewRequestService {
+
+  private static final long LOW_SKILL_LIMIT = 3;
+  private static final long HIGH_SKILL_LIMIT = 20;
 
   private final InterviewRequestRepository repository;
   private final InterviewRequestMapper mapper;
@@ -54,20 +63,28 @@ public class InterviewRequestService {
   }
 
   /**
+   * Retrieves the interview ID associated with the given time slot ID.
+   *
+   * @param timeSlotId the ID of the InterviewRequestTimeSlot
+   * @return the ID of the associated interview, or {@code null} if none
+   * @throws ResourceNotFoundException if the time slot is not found
+   */
+  public Long getInterviewIdByTimeSlotId(long timeSlotId) {
+    return timeSlotRepository.findById(timeSlotId).orElseThrow(
+            () -> new ResourceNotFoundException("Time slot not found with ID: " + timeSlotId))
+        .getInterviewId();
+  }
+
+  /**
    * Retrieves all interview requests for the authenticated user.
    *
    * @return a list of {@link InterviewRequestViewDto} containing the details.
    */
   public List<InterviewRequestViewDto> getAll() {
     long userId = userContextProvider.getAuthenticatedUserId();
-
     List<InterviewRequest> interviewRequests = repository.findAllByUser_Id(userId);
-
     updateExpiredTimeSlots(interviewRequests);
-
-    return interviewRequests.stream()
-        .map(this::convertToInterviewRequestViewDto)
-        .toList();
+    return constructInterviewRequestViewDto(interviewRequests);
   }
 
   /**
@@ -78,15 +95,10 @@ public class InterviewRequestService {
    */
   public List<InterviewRequestViewDto> getByMasteryId(long masteryId) {
     long userId = userContextProvider.getAuthenticatedUserId();
-
     List<InterviewRequest> interviewRequests = repository.findAllByMastery_IdAndUser_Id(masteryId,
         userId);
-
     updateExpiredTimeSlots(interviewRequests);
-
-    return interviewRequests.stream()
-        .map(this::convertToInterviewRequestViewDto)
-        .toList();
+    return constructInterviewRequestViewDto(interviewRequests);
   }
 
   private void updateExpiredTimeSlots(List<InterviewRequest> interviewRequests) {
@@ -110,13 +122,29 @@ public class InterviewRequestService {
     }
   }
 
+  private List<InterviewRequestViewDto> constructInterviewRequestViewDto(
+      List<InterviewRequest> interviewRequests) {
+    List<Skill> skills = interviewRequests.stream()
+        .findFirst()
+        .map(ir -> ir.getMastery().getSkills())
+        .orElse(List.of());
+
+    long hardSkillCount = countSkillsByType(skills, SkillType.HARD_SKILL);
+    long softSkillCount = countSkillsByType(skills, SkillType.SOFT_SKILL);
+
+    return interviewRequests.stream()
+        .map(request -> mapToInterviewRequestViewDto(request, hardSkillCount, softSkillCount))
+        .toList();
+  }
+
   /**
    * Converts an InterviewRequest entity to an InterviewRequestViewDto.
    *
    * @param request the InterviewRequest entity to convert.
    * @return the converted {@link InterviewRequestViewDto}.
    */
-  private InterviewRequestViewDto convertToInterviewRequestViewDto(InterviewRequest request) {
+  private InterviewRequestViewDto mapToInterviewRequestViewDto(InterviewRequest request,
+      long hardSkillCount, long softSkillCount) {
     return InterviewRequestViewDto.builder()
         .id(request.getId())
         .role(request.getRole())
@@ -124,6 +152,8 @@ public class InterviewRequestService {
         .matchedInterview(request.getMatchedInterview())
         .comment(request.getComment())
         .languageCode(request.getLanguageCode())
+        .hardSkillCount(hardSkillCount)
+        .softSkillCount(softSkillCount)
         .timeSlots(timeSlotMapper.toDto(request.getTimeSlots()))
         .build();
   }
@@ -135,16 +165,18 @@ public class InterviewRequestService {
    */
   @Transactional
   public void create(InterviewRequestDto requestDto) {
-    validateRequest(requestDto.getTimeSlots(), requestDto.getDesiredInterview());
+    validateTimeSlots(requestDto.getTimeSlots(), requestDto.getDesiredInterview());
 
     long userId = userContextProvider.getAuthenticatedUserId();
-
-    List<InterviewRequestTimeSlot> interviewRequestTimeSlots =
-        createTimeSlots(requestDto.getTimeSlots());
 
     InterviewRequest interviewRequest = mapper.toEntity(requestDto);
     interviewRequest.setUser(User.builder().id(userId).build());
     interviewRequest.setBlackList(new HashSet<>());
+
+    validateSkills(interviewRequest);
+
+    List<InterviewRequestTimeSlot> interviewRequestTimeSlots =
+        createTimeSlots(requestDto.getTimeSlots());
 
     interviewRequestTimeSlots.forEach(slot -> slot.setInterviewRequest(interviewRequest));
 
@@ -176,6 +208,8 @@ public class InterviewRequestService {
     InterviewRequest interviewRequest = repository.findByIdAndUser_Id(id, userId)
         .orElseThrow(() -> new InterviewRequestDoesntExistException(id, userId));
 
+    validateSkills(interviewRequest);
+
     // Check that desiredInterview was changed
     if (requestDto.getDesiredInterview() != interviewRequest.getDesiredInterview()) {
       List<ZonedDateTime> pendingDateTime = interviewRequest.getTimeSlots().stream()
@@ -183,7 +217,7 @@ public class InterviewRequestService {
           .map(InterviewRequestTimeSlot::getDateTime)
           .toList();
 
-      validateRequest(pendingDateTime, requestDto.getDesiredInterview());
+      validateTimeSlots(pendingDateTime, requestDto.getDesiredInterview());
     }
 
     mapper.updateEntity(requestDto, interviewRequest);
@@ -192,7 +226,27 @@ public class InterviewRequestService {
     matcherServiceQueueSender.update(interviewRequest);
   }
 
-  private void validateRequest(List<ZonedDateTime> timeSlots, int desiredInterview) {
+  private void validateSkills(InterviewRequest interviewRequest) {
+    List<Skill> skills = interviewRequest.getMastery().getSkills();
+
+    long hardSkillCount = countSkillsByType(skills, SkillType.HARD_SKILL);
+    long softSkillCount = countSkillsByType(skills, SkillType.SOFT_SKILL);
+
+    if (isInvalidSkillCount(hardSkillCount) || isInvalidSkillCount(softSkillCount)) {
+      throw new InterviewRequestInvalidSkillCountException(interviewRequest.getId(), hardSkillCount,
+          softSkillCount);
+    }
+  }
+
+  private long countSkillsByType(List<Skill> skills, SkillType type) {
+    return skills.stream().filter(s -> s.getType() == type).count();
+  }
+
+  private boolean isInvalidSkillCount(long count) {
+    return count < LOW_SKILL_LIMIT || count > HIGH_SKILL_LIMIT;
+  }
+
+  private void validateTimeSlots(List<ZonedDateTime> timeSlots, int desiredInterview) {
     if (CollectionUtils.isEmpty(timeSlots)) {
       throw new InvalidInterviewRequestException("Time slots is a required parameters.");
     }
@@ -201,23 +255,48 @@ public class InterviewRequestService {
           + "\" must be greater than or equal to the desired number \""
           + desiredInterview + "\" of interviews.");
     }
+
   }
 
   /**
-   * Updates the time slots for the specified interview requests.
+   * Updates the status and interview ID for time slots corresponding to the provided interviewer
+   * and candidate interview requests on the specified scheduled date.
    *
-   * @param scheduledInterviewRequests the list of interview requests
-   * @param scheduledDate              the date to assign to the requests
+   * @param interviewerRequestId the ID of the interviewer's {@link InterviewRequest}
+   * @param candidateRequestId   the ID of the candidate's {@link InterviewRequest}
+   * @param scheduledDate        the scheduled interview date and time
+   * @param interviews           the list of {@link Interview} entities;
    */
   @Transactional
-  public void markTimeSlotsAsBooked(List<InterviewRequest> scheduledInterviewRequests,
-      ZonedDateTime scheduledDate) {
-    if (scheduledInterviewRequests.isEmpty()) {
-      return;
-    }
+  public void updateTimeSlots(long interviewerRequestId, long candidateRequestId,
+      ZonedDateTime scheduledDate, List<Interview> interviews) {
 
-    timeSlotRepository.updateTimeSlotStatus(scheduledInterviewRequests, scheduledDate,
-        TimeSlotStatus.BOOKED);
+    Map<InterviewRequestRole, Long> roleToId = interviews.stream()
+        .collect(Collectors.toMap(Interview::getRole, Interview::getId));
+
+    List<InterviewRequestTimeSlot> slotsToSave = Stream.of(
+            updateTimeSlot(interviewerRequestId, scheduledDate,
+                roleToId.get(InterviewRequestRole.INTERVIEWER)),
+            updateTimeSlot(candidateRequestId, scheduledDate,
+                roleToId.get(InterviewRequestRole.CANDIDATE))).filter(Objects::nonNull)
+        .collect(Collectors.toList());
+
+    timeSlotRepository.saveAll(slotsToSave);
+  }
+
+  private InterviewRequestTimeSlot updateTimeSlot(long requestId, ZonedDateTime scheduledDate,
+      Long interviewId) {
+    return timeSlotRepository
+        .findInterviewRequestTimeSlotsByInterviewRequestIdAndDateTime(requestId, scheduledDate)
+        .map(slot -> {
+          slot.setStatus(TimeSlotStatus.BOOKED);
+          slot.setInterviewId(interviewId);
+          return slot;
+        })
+        .orElseGet(() -> {
+          log.warn("Time slot not found for requestId: {} and date: {}", requestId, scheduledDate);
+          return null;
+        });
   }
 
   /**
@@ -268,7 +347,7 @@ public class InterviewRequestService {
     }
 
     ZonedDateTime interviewStartTime = interviews.getFirst().getStartTime();
-    timeSlotRepository.updateTimeSlotStatus(interviewRequestsToUpdate, interviewStartTime,
+    timeSlotRepository.markTimeSlotsAsPending(interviewRequestsToUpdate, interviewStartTime,
         TimeSlotStatus.PENDING);
 
     // Fetch the latest updated InterviewRequests from DB
@@ -289,6 +368,8 @@ public class InterviewRequestService {
   public void addTimeSlots(long id, List<ZonedDateTime> dateTimes) {
     InterviewRequest interviewRequest = repository.findById(id)
         .orElseThrow(() -> new InterviewRequestNotFoundException(id));
+
+    validateSkills(interviewRequest);
 
     List<InterviewRequestTimeSlot> timeSlotsToAdd = dateTimes.stream()
         .map(dateTime -> InterviewRequestTimeSlot.builder()

@@ -18,5 +18,7 @@ public class InterviewRequestViewDto {
   private int matchedInterview;
   private String comment;
   private String languageCode;
+  private long hardSkillCount;
+  private long softSkillCount;
   private List<InterviewRequestTimeSlotDto> timeSlots;
 }

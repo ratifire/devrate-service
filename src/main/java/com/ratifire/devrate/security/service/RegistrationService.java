@@ -48,7 +48,7 @@ public class RegistrationService {
    */
   @Transactional
   public void registerUser(UserRegistrationDto userRegistrationDto) {
-    String email = userRegistrationDto.getEmail();
+    String email = userRegistrationDto.getEmail().toLowerCase();
     String password = userRegistrationDto.getPassword();
     UserDto userDto = UserDto.builder()
         .firstName(userRegistrationDto.getFirstName())
@@ -82,7 +82,7 @@ public class RegistrationService {
   @Transactional
   public long confirmRegistration(ConfirmRegistrationDto confirmationCodeDto) {
     try {
-      String email = confirmationCodeDto.getEmail();
+      String email = confirmationCodeDto.getEmail().toLowerCase();
       String code = confirmationCodeDto.getConfirmationCode();
       cognitoApiClientService.confirmRegistration(email, code);
       User user = userService.findByEmail(email);
@@ -127,7 +127,7 @@ public class RegistrationService {
    */
   public void resendRegistrationConfirmCode(ResendConfirmCodeDto resendConfirmCodeDto) {
     try {
-      cognitoApiClientService.resendRegistrationCode(resendConfirmCodeDto.getEmail());
+      cognitoApiClientService.resendRegistrationCode(resendConfirmCodeDto.getEmail().toLowerCase());
     } catch (Exception e) {
       log.error("Resend confirmation code process was failed for email {}: {}",
           resendConfirmCodeDto.getEmail(), e.getMessage(), e);

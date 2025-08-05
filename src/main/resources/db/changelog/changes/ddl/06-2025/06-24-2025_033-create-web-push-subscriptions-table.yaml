@@ -1,0 +1,51 @@
+databaseChangeLog:
+  - changeSet:
+      id: 06-24-2025_032
+      author: Ivan Ivashchenko
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: web_push_subscriptions
+      changes:
+        - createTable:
+            tableName: web_push_subscriptions
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: endpoint
+                  type: VARCHAR(1000)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: public_key
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: auth
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: web_push_subscriptions
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_web_push_subscriptions_user_id

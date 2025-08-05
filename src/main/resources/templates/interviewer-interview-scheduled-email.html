@@ -44,15 +44,15 @@
     .no-border {
       border: none;
     }
-    .zoom-info {
+    .calendar-button {
+      display: inline-block;
       margin-top: 20px;
-    }
-    .zoom-info a {
-      color: #007bff;
+      padding: 10px 20px;
+      background-color: #4285F4;
+      color: #ffffff;
+      border-radius: 4px;
       text-decoration: none;
-    }
-    .zoom-info a:hover {
-      text-decoration: underline;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -69,8 +69,8 @@
       <th>Деталі інтерв’ю</th>
     </tr>
     <tr>
-      <td><strong>Дата та час:</strong> <span
-          th:text="${#temporals.format(interviewDateTime, 'yyyy-MM-dd HH:mm')}"></span> (UTC)
+      <td><strong>Дата та час:</strong>
+        <span th:text="${#temporals.format(interviewDateTime, 'yyyy-MM-dd HH:mm')}"></span> (за Києвом)
       </td>
     </tr>
     <tr>
@@ -91,15 +91,19 @@
     </tr>
   </table>
 
-  <div class="zoom-info">
-    <p><strong>Посилання на зустріч:</strong> <a th:href="${zoomJoinUrl}" th:text="${zoomJoinUrl}" target="_blank"></a></p>
-  </div>
-
   <p>Щиро вдячні вам за Вашу відданість та зусилля, які ви докладаєте, залишаючи цінний фідбек.
     Ваші інсайти є надзвичайно важливими для відбору найкращих кандидатів.</p>
 
   <p>Якщо у вас виникли запитання або потрібна допомога, звертайтесь до нашої служби підтримки
-    за адресою <a href="mailto:skillzzy.noreply@gmail.com">support@skillzzy.com</a>.</p>
+    за адресою <a href="mailto:support@skillzzy.com">support@skillzzy.com</a>.</p>
+
+  <div>
+    <a class="calendar-button"
+       th:href="${googleCalendarUrl}"
+       target="_blank">
+      Додати в Google Calendar
+    </a>
+  </div>
 
   <p>Дякуємо, що користуєтесь Skillzzy!</p>
   <p>З повагою,<br/>Команда Ratifire</p>

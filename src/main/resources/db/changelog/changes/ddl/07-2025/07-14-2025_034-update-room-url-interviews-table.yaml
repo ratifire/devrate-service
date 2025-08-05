@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 07-14-2025_001
+      author: Ivan Ivashchenko
+      changes:
+        - dropNotNullConstraint:
+            tableName: interviews
+            columnName: room_url
+            columnDataType: VARCHAR(255)

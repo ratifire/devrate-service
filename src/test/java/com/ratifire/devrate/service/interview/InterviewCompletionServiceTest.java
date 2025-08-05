@@ -17,10 +17,6 @@
 //import com.ratifire.devrate.service.SpecializationService;
 //import com.ratifire.devrate.service.UserService;
 //import com.ratifire.devrate.util.interview.DateTimeUtils;
-//import com.ratifire.devrate.util.zoom.exception.ZoomApiException;
-//import com.ratifire.devrate.util.zoom.service.ZoomApiService;
-//import com.ratifire.devrate.util.zoom.webhook.exception.ZoomWebhookException;
-//import com.ratifire.devrate.util.zoom.webhook.model.WebHookRequest;
 //import java.time.ZonedDateTime;
 //import java.util.List;
 //import java.util.Map;
@@ -58,8 +54,6 @@
 //  @Mock
 //  private NotificationService notificationService;
 //
-//  @Mock
-//  private ZoomApiService zoomApiService;
 //  @Mock
 //  private UserSecurityService userSecurityService;
 //
@@ -99,8 +93,7 @@
 //  }
 //
 //  @Test
-//  void finalizeInterviewProcessWithValidMeetingShouldReturnSuccess()
-//      throws ZoomApiException, ZoomWebhookException {
+//  void finalizeInterviewProcessWithValidMeetingShouldReturnSuccess() {
 //    when(userSecurityService.findEmailByUserId(interviewer.getId()))
 //        .thenReturn("interviewer@example.com");
 //    when(userSecurityService.findEmailByUserId(candidate.getId()))
@@ -125,49 +118,7 @@
 //    verify(notificationService).addInterviewFeedbackDetail(interviewer,
 //        8L, "interviewer@example.com");
 //
-//    verify(zoomApiService).deleteMeeting(MEETING_ID);
 //    verify(interviewService).deleteInterview(interview.getId());
 //    verify(interviewRequestService).deleteInterviewRequests(List.of(4L, 5L));
-//  }
-//
-//  @Test
-//  void finalizeInterviewProcessWhenZoomApiExceptionOccursShouldLogError()
-//  throws ZoomApiException {
-//    when(interviewService.getInterviewByMeetingId(MEETING_ID)).thenReturn(interview);
-//    when(interviewSummaryService.createInterviewSummary(any(Interview.class), any()))
-//        .thenReturn(6L);
-//    when(interviewFeedbackDetailService.saveInterviewFeedbackDetail(any(Interview.class),
-//        anyLong())).thenReturn(
-//        Map.of(InterviewRequestRole.CANDIDATE, 7L, InterviewRequestRole.INTERVIEWER, 8L));
-//    doThrow(new ZoomApiException("Zoom API error", new Throwable())).when(zoomApiService)
-//        .deleteMeeting(MEETING_ID);
-//
-//    assertThrows(ZoomApiException.class,
-//        () -> interviewCompletionService.finalizeInterviewProcess(meeting));
-//  }
-//
-//  @Test
-//  void validateMeetingEndTimeWithInvalidMeetingShouldThrowException() {
-//    meeting.setId(null);
-//
-//    assertThrows(ZoomWebhookException.class,
-//        () -> interviewCompletionService.validateMeetingEndTime(meeting));
-//  }
-//
-//  @Test
-//  void validateMeetingEndTimeWhenWebhookTriggeredTooEarlyShouldReturnFalse()
-//      throws ZoomWebhookException {
-//    when(interviewService.getInterviewByMeetingId(MEETING_ID)).thenReturn(interview);
-//
-//    ZonedDateTime currentDateTime = interview.getStartTime().plusSeconds(9);
-//
-//    try (MockedStatic<DateTimeUtils> mockedStatic = mockStatic(DateTimeUtils.class)) {
-//      mockedStatic.when(() -> DateTimeUtils.convertToUtcTimeZone(any(ZonedDateTime.class)))
-//          .thenReturn(currentDateTime);
-//
-//      boolean isValid = interviewCompletionService.validateMeetingEndTime(meeting);
-//
-//      assertFalse(isValid);
-//    }
 //  }
 //}
