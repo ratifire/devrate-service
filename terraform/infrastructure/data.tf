@@ -15,5 +15,13 @@ data "aws_ami" "aws_linux_latest_ecs" {
 
 data "aws_db_instance" "db_host" {
   db_instance_identifier = var.db_instance_identifier
-  depends_on             = [aws_db_instance.pg_db_backend]
+}
+
+data "aws_vpc" "main" {
+  id = var.main_vpc_id
+}
+
+locals {
+  vpc_id = var.main_vpc_id
+  azs    = slice(data.aws_availability_zones.availability_zones.names, 0, 3)
 }

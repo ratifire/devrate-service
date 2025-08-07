@@ -3,7 +3,7 @@ resource "aws_ecs_cluster" "backend_cluster" {
 }
 
 resource "aws_launch_template" "ecs_back_launch" {
-  name_prefix            = var.ecs_back_launch
+  name_prefix            = "${var.ecs_back_launch}-${var.deploy_profile}"
   image_id               = data.aws_ami.aws_linux_latest_ecs.image_id
   instance_type          = var.instance_type
   vpc_security_group_ids = [data.aws_security_group.vpc_backend_security_group.id]
@@ -31,10 +31,16 @@ resource "aws_launch_template" "ecs_back_launch" {
     }
   }
 
+  network_interfaces {
+    device_index                = 0
+    associate_public_ip_address = false
+    security_groups             = [data.aws_security_group.vpc_backend_security_group.id]
+  }
+
 }
 
 resource "aws_ecs_capacity_provider" "back_capacity_provider" {
-  name = var.back_capacity_provider
+  name = "${var.back_capacity_provider}-${var.deploy_profile}"
 
   auto_scaling_group_provider {
     auto_scaling_group_arn         = aws_autoscaling_group.ecs_back_asg.arn
@@ -48,7 +54,7 @@ resource "aws_ecs_capacity_provider" "back_capacity_provider" {
   }
 
   tags = {
-    Name = var.back-ec2-capacity-provider-tag
+    Name = "${var.back-ec2-capacity-provider-tag}-${var.deploy_profile}"
   }
 }
 
@@ -74,7 +80,7 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
   desired_capacity          = 2
   health_check_type         = "EC2"
   health_check_grace_period = 180
-  vpc_zone_identifier       = data.aws_subnets.default_subnets.ids
+  vpc_zone_identifier       = data.aws_subnets.private_subnets.ids
   force_delete              = true
   termination_policies      = ["OldestInstance"]
   initial_lifecycle_hook {
@@ -104,7 +110,7 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
 }
 
 resource "aws_ecs_service" "back_services" {
-  name                               = var.back_repository_name
+  name                               = "${var.back_repository_name}_${var.deploy_profile}"
   cluster                            = var.back_cluster_name
   task_definition                    = aws_ecs_task_definition.task_definition.arn
   scheduling_strategy                = "REPLICA"
@@ -133,19 +139,19 @@ resource "aws_ecs_service" "back_services" {
 }
 
 resource "aws_lb" "back_ecs_alb" {
-  name               = var.back_ecs_alb
+  name               = "${var.back_ecs_alb}-${var.deploy_profile}"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [data.aws_security_group.vpc_backend_security_group.id]
-  subnets            = data.aws_subnets.default_subnets.ids
+  subnets            = data.aws_subnets.public_subnets.ids
 
 }
 
 resource "aws_lb_target_group" "http_ecs_back_tg" {
-  name                 = var.target_group_name
+  name                 = "${var.target_group_name}-${var.deploy_profile}"
   port                 = var.back_port
   protocol             = "HTTP"
-  vpc_id               = data.aws_vpcs.all_vpcs.ids[0]
+  vpc_id               = var.vpc
   deregistration_delay = "30"
 
   health_check {
@@ -156,3 +162,39 @@ resource "aws_lb_target_group" "http_ecs_back_tg" {
     path                = "/actuator/health"
   }
 }
+
+resource "aws_eip" "nat_eip" {
+  tags = {
+    Name = "nat-eip-${var.deploy_profile}"
+  }
+}
+
+resource "aws_nat_gateway" "nat_gw" {
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id     = data.aws_subnets.public_subnets.ids[0]
+
+  tags = {
+    Name = "nat-gateway-${var.deploy_profile}"
+  }
+}
+
+data "aws_route_table" "private_rt" {
+  filter {
+    name   = "vpc-id"
+    values = [var.vpc]
+  }
+
+  filter {
+    name   = "tag:Type"
+    values = ["private"]
+  }
+}
+
+resource "aws_route" "private_nat_route" {
+  route_table_id         = data.aws_route_table.private_rt.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.nat_gw.id
+
+  depends_on = [aws_nat_gateway.nat_gw]
+}
+

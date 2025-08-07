@@ -5,7 +5,7 @@ data "aws_caller_identity" "current_user" {}
 data "aws_availability_zones" "availability_zones" {}
 
 data "aws_security_group" "vpc_backend_security_group" {
-  name = var.backend_security_group_name
+  name = "${var.backend_security_group_name}-${var.deploy_profile}"
 }
 
 data "aws_key_pair" "keypair" {
@@ -20,10 +20,10 @@ data "aws_vpcs" "all_vpcs" {}
 
 
 data "aws_db_instance" "db_host" {
-  db_instance_identifier = var.db_instance_identifier
+  db_instance_identifier = "${var.db_instance_identifier}-${var.deploy_profile}"
 }
 
-data "aws_subnets" "default_subnets" {
+data "aws_subnets" "private_subnets" {
   filter {
     name   = "vpc-id"
     values = [var.vpc]
@@ -31,11 +31,22 @@ data "aws_subnets" "default_subnets" {
 
 
   filter {
-    name = "tag:Name"
-    values = [
-      "Default subnet for eu-north-1b", "Default subnet for eu-north-1a",
-      "Default subnet for eu-north-1c"
-    ]
+    name   = "tag:Type"
+    values = ["private"]
+  }
+
+}
+
+data "aws_subnets" "public_subnets" {
+  filter {
+    name   = "vpc-id"
+    values = [var.vpc]
+  }
+
+
+  filter {
+    name   = "tag:Type"
+    values = ["public"]
   }
 
 }
@@ -59,7 +70,7 @@ data "aws_ami" "aws_linux_latest_ecs" {
 data "aws_instances" "filtered_instances" {
   filter {
     name   = "tag:Name"
-    values = ["Ecs-Back-Instance-ASG-${var.deploy_profile}"]
+    values = ["Ecs-Back-${var.deploy_profile}"]
   }
 }
 

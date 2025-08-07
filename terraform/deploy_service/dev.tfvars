@@ -4,8 +4,8 @@ domain_name = "skillzzy.com"
 
 subdomain_name = "server.skillzzy.com"
 
-vpc = "vpc-0032e90317069a534"
-
-target_group_name = "http-ecs-back-skillzzy-tg"
+vpc = "vpc-09bb9f9a748f30da4"
 
 instance_type = "t3.micro"
+
+deploy_profile = "dev-private"
