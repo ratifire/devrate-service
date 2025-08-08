@@ -10,7 +10,7 @@ variable "back_container_name" {
 
 variable "back_repository_name" {
   description = "Repository name"
-  default     = "backend-service"
+  default     = "priavte-backend-service-dev-private"
 }
 
 variable "instance_type" {

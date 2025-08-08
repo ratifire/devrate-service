@@ -110,7 +110,7 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
 }
 
 resource "aws_ecs_service" "back_services" {
-  name                               = "${var.back_repository_name}_${var.deploy_profile}"
+  name                               = var.back_repository_name
   cluster                            = var.back_cluster_name
   task_definition                    = aws_ecs_task_definition.task_definition.arn
   scheduling_strategy                = "REPLICA"

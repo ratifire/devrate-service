@@ -5,7 +5,7 @@ resource "aws_ecs_task_definition" "task_definition" {
   container_definitions = jsonencode([
     {
       name              = var.back_container_name,
-      image             = "${data.aws_caller_identity.current_user.account_id}.dkr.ecr.${var.region}.amazonaws.com/${var.back_repository_name}_${var.deploy_profile}:${var.image_tag}",
+      image             = "${data.aws_caller_identity.current_user.account_id}.dkr.ecr.${var.region}.amazonaws.com/${var.back_repository_name}:${var.image_tag}",
       cpu               = 0,
       memory            = 819,
       memoryReservation = 819,
