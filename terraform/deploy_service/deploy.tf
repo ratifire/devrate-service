@@ -176,6 +176,7 @@ resource "aws_nat_gateway" "nat_gw" {
   tags = {
     Name = "nat-gateway-${var.deploy_profile}"
   }
+  depends_on = [data.aws_subnets.public_subnets]
 }
 
 data "aws_route_table" "private_rt" {
