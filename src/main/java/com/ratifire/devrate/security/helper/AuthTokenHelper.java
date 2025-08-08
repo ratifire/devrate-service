@@ -63,7 +63,5 @@ public class AuthTokenHelper {
     if (isSetRefreshTokenNeeded) {
       cookieHelper.setRefreshTokenToCookie(response, refreshToken);
     }
-
   }
-
 }

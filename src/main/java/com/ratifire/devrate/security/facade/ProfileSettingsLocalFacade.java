@@ -34,7 +34,7 @@ public class ProfileSettingsLocalFacade implements ProfileSettingsFacade {
   @Override
   public void changeEmail(HttpServletRequest request, HttpServletResponse response,
       EmailChangeDto emailChangeDto) {
-    final String newEmail = emailChangeDto.getNewEmail();
+    final String newEmail = emailChangeDto.getNewEmail().toLowerCase();
     final long currentUserId = userContextProvider.getAuthenticatedUserId();
     User currentUser = userService.findById(currentUserId);
 
@@ -78,13 +78,15 @@ public class ProfileSettingsLocalFacade implements ProfileSettingsFacade {
       String emailToValidate) {
 
     if (StringUtils.isEmpty(emailToValidate)
-        || !currentUser.getEmail().equals(emailToValidate)) {
+        || !currentUser.getEmail().equals(emailToValidate.toLowerCase())) {
       throw new EmailChangeException(
-          "Email of current authenticated user does not match the provided email.");
+          "Email of current authenticated user does not match the provided email: "
+              + emailToValidate);
     }
 
     if (!RegistrationSourceType.LOCAL.equals(currentUser.getRegistrationSource())) {
-      throw new EmailChangeException("Email change is not allowed for non-local accounts.");
+      throw new EmailChangeException(
+          "Email change is not allowed for non-local accounts. User ID: " + currentUser.getId());
     }
   }
 
@@ -93,11 +95,13 @@ public class ProfileSettingsLocalFacade implements ProfileSettingsFacade {
     if (StringUtils.isEmpty(passwordToValidate)
         || !new BCryptPasswordEncoder().matches(passwordToValidate, user.getPassword())) {
       throw new PasswordChangeException(
-          "Password of current authenticated user does not match the provided password.");
+          "Password of current authenticated user, ID: " + user.getId()
+              + " does not match the provided password.");
     }
 
     if (!RegistrationSourceType.LOCAL.equals(user.getRegistrationSource())) {
-      throw new PasswordChangeException("Password change is not allowed for non-local accounts.");
+      throw new PasswordChangeException(
+          "Password change is not allowed for non-local accounts. User ID: " + user.getId());
     }
   }
 }

@@ -5,6 +5,7 @@ package com.ratifire.devrate.security.exception;
  */
 public class EmailChangeException extends RuntimeException {
 
-  public EmailChangeException(String s) {
+  public EmailChangeException(String message) {
+    super(message);
   }
 }

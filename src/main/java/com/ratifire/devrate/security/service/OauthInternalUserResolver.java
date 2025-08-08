@@ -36,7 +36,7 @@ public class OauthInternalUserResolver {
    * @return the resolved or newly created internal User entity
    */
   public User resolveOrCreateInternalUser(CognitoUserInfo userInfo) {
-    User internalUser = userService.findByEmail(userInfo.email());
+    User internalUser = userService.findByEmail(userInfo.email().toLowerCase());
 
     if (ObjectUtils.isNotEmpty(internalUser)) {
       cognitoUserSyncService.ensureInternalUserLinkedAndSyncedWithCognito(internalUser, userInfo);
@@ -56,7 +56,7 @@ public class OauthInternalUserResolver {
   }
 
   private User createInternalUser(CognitoUserInfo userInfo) {
-    String email = userInfo.email();
+    String email = userInfo.email().toLowerCase();
     UserDto userDto = UserDto.builder()
         .firstName(userInfo.firstName())
         .lastName(userInfo.lastName())

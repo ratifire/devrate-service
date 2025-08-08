@@ -29,5 +29,4 @@ public interface InterviewRequestRepository extends JpaRepository<InterviewReque
 
   List<InterviewRequest> findByMastery_IdInAndRoleIn(List<Long> masteryIds,
       List<InterviewRequestRole> roles);
-
 }

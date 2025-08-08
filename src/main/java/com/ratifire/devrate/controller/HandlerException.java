@@ -167,7 +167,8 @@ public class HandlerException {
    */
   @ResponseStatus(HttpStatus.CONFLICT)
   @ExceptionHandler(UserAlreadyExistsException.class)
-  public void handleUserAlreadyExistsExceptionExceptions() {
+  public void handleUserAlreadyExistsExceptionExceptions(UserAlreadyExistsException ex) {
+    log.warn(ex.getMessage());
   }
 
   /**
@@ -212,7 +213,8 @@ public class HandlerException {
    */
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(EmailChangeException.class)
-  public void handleEmailChangeExceptionException() {
+  public void handleEmailChangeExceptionException(EmailChangeException ex) {
+    log.warn("Change email operation failed: {}", ex.getMessage());
   }
 
   /**
@@ -220,7 +222,8 @@ public class HandlerException {
    */
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(PasswordChangeException.class)
-  public void handlePasswordChangeException() {
+  public void handlePasswordChangeException(PasswordChangeException ex) {
+    log.warn("Change password operation failed: {}", ex.getMessage());
   }
 
   /**

@@ -54,8 +54,8 @@ public class ProfileSettingsService {
    */
   public void changeEmail(HttpServletRequest request, HttpServletResponse response,
       EmailChangeDto emailChangeDto) {
-    final String providedEmail = emailChangeDto.getCurrentEmail();
-    final String newEmail = emailChangeDto.getNewEmail();
+    final String providedEmail = emailChangeDto.getCurrentEmail().toLowerCase();
+    final String newEmail = emailChangeDto.getNewEmail().toLowerCase();
     final long currentUserId = userContextProvider.getAuthenticatedUserId();
     User currentUser = userService.findById(currentUserId);
 
@@ -127,11 +127,13 @@ public class ProfileSettingsService {
     if (StringUtils.isEmpty(emailToValidate)
         || !currentUser.getEmail().equals(emailToValidate)) {
       throw new EmailChangeException(
-          "Email of current authenticated user does not match the provided email.");
+          "Email of current authenticated user does not match the provided email: "
+              + emailToValidate);
     }
 
     if (RegistrationSourceType.FEDERATED_IDENTITY.equals(currentUser.getRegistrationSource())) {
-      throw new EmailChangeException("Email change is not allowed for SSO accounts.");
+      throw new EmailChangeException(
+          "Email change is not allowed for SSO accounts. User ID: " + currentUser.getId());
     }
   }
 
@@ -140,12 +142,13 @@ public class ProfileSettingsService {
     if (StringUtils.isEmpty(passwordToValidate)
         || !passwordEncoder.matches(passwordToValidate, user.getPassword())) {
       throw new PasswordChangeException(
-          "Password of current authenticated user does not match the provided password.");
+          "Password of current authenticated user, ID: " + user.getId()
+              + " does not match the provided password.");
     }
 
     if (RegistrationSourceType.FEDERATED_IDENTITY.equals(user.getRegistrationSource())) {
-      throw new PasswordChangeException("Password change is not allowed for SSO accounts.");
+      throw new PasswordChangeException(
+          "Password change is not allowed for SSO accounts. User ID: " + user.getId());
     }
   }
-
 }

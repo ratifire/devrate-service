@@ -52,7 +52,7 @@ public class AuthenticationService {
 
       if (!passwordEncoder.matches(providedPassword, currentEncodedPassword)) {
         throw new AuthenticationException(
-            "Authentication process was failed due to invalid password.");
+            "Authentication process was failed due to invalid password. Email: " + providedEmail);
       }
 
       AuthenticationResultType result = cognitoApiClientService.login(providedEmail,

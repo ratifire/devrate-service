@@ -41,7 +41,7 @@ public class CognitoUserSyncService {
   public void ensureInternalUserLinkedAndSyncedWithCognito(
       User internalUser,
       CognitoUserInfo userInfo) {
-    final String email = userInfo.email();
+    final String email = userInfo.email().toLowerCase();
     ProviderUserIdentifierType cognitoPrimaryUser = findCognitoPoolPrimaryUser(email)
         .orElseThrow(() -> new OauthException("Primary cognito user not found for email " + email));
     String cognitoPrimaryUserSubject = cognitoPrimaryUser.getProviderAttributeValue();

@@ -91,5 +91,4 @@ public class AuthenticationOauthService {
       throw new OauthException("OAuth authentication process failed.", e);
     }
   }
-
 }
