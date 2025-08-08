@@ -1,5 +1,5 @@
 resource "aws_security_group" "backend_security_group" {
-  name        = var.backend_security_group_name
+  name        = "${var.backend_security_group_name}-${var.deploy_profile}"
   description = "Allow tcp inbound traffic and all outbound traffic"
   vpc_id      = var.main_vpc_id
 
