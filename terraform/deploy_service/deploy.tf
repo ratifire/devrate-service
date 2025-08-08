@@ -222,3 +222,8 @@ resource "aws_route_table_association" "public_subnets_assoc" {
   route_table_id = aws_route_table.public_rt.id
 }
 
+resource "aws_route_table_association" "private_subnets_assoc" {
+  count          = length(data.aws_subnets.private_subnets.ids)
+  subnet_id      = data.aws_subnets.private_subnets.ids[count.index]
+  route_table_id = aws_route_table.private_rt.id
+}
