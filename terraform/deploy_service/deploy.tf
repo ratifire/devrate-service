@@ -195,3 +195,30 @@ resource "aws_route" "private_nat_route" {
   depends_on = [aws_nat_gateway.nat_gw]
 }
 
+resource "aws_internet_gateway" "igw" {
+  vpc_id = var.vpc
+  tags = {
+    Name = "igw-${var.deploy_profile}"
+  }
+}
+
+resource "aws_route_table" "public_rt" {
+  vpc_id = var.vpc
+  tags = {
+    Name = "public-rt"
+    Type = "public"
+  }
+}
+
+resource "aws_route" "public_inet_route" {
+  route_table_id         = aws_route_table.public_rt.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.igw.id
+}
+
+resource "aws_route_table_association" "public_subnets_assoc" {
+  count          = length(data.aws_subnets.public_subnets.ids)
+  subnet_id      = data.aws_subnets.public_subnets.ids[count.index]
+  route_table_id = aws_route_table.public_rt.id
+}
+
