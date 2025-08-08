@@ -4,7 +4,7 @@ domain_name = "skillzzy.com"
 
 subdomain_name = "server.skillzzy.com"
 
-vpc = "vpc-09bb9f9a748f30da4"
+vpc = "vpc-029433628e702ccd1"
 
 instance_type = "t3.micro"
 
