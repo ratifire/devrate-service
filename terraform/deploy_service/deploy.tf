@@ -179,20 +179,16 @@ resource "aws_nat_gateway" "nat_gw" {
   depends_on = [data.aws_subnets.public_subnets]
 }
 
-data "aws_route_table" "private_rt" {
-  filter {
-    name   = "vpc-id"
-    values = [var.vpc]
-  }
-
-  filter {
-    name   = "tag:Type"
-    values = ["private"]
+resource "aws_route_table" "private_rt" {
+  vpc_id = var.vpc
+  tags = {
+    Name = "private-rt"
+    Type = "private"
   }
 }
 
 resource "aws_route" "private_nat_route" {
-  route_table_id         = data.aws_route_table.private_rt.id
+  route_table_id         = aws_route_table.private_rt.id
   destination_cidr_block = "0.0.0.0/0"
   nat_gateway_id         = aws_nat_gateway.nat_gw.id
 
