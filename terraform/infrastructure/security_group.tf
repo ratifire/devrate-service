@@ -26,7 +26,7 @@ resource "aws_subnet" "public_subnet" {
   count                   = 3
   vpc_id                  = local.vpc_id
   availability_zone       = local.azs[count.index]
-  cidr_block              = cidrsubnet("10.0.0.0/16", 8, count.index) # 10.0.0.0/24, 10.0.1.0/24, 10.0.2.0/24
+  cidr_block              = cidrsubnet("10.10.0.0/16", 8, count.index)
   map_public_ip_on_launch = true
 
   tags = {
@@ -39,7 +39,7 @@ resource "aws_subnet" "private_subnet" {
   count             = 3
   vpc_id            = local.vpc_id
   availability_zone = local.azs[count.index]
-  cidr_block        = cidrsubnet("10.0.0.0/16", 8, count.index + 10) # 10.0.10.0/24, 10.0.11.0/24, 10.0.12.0/24
+  cidr_block        = cidrsubnet("10.20.0.0/16", 8, count.index)
 
   tags = {
     Name = "private-subnet-${var.deploy_profile}-${count.index + 1}"
