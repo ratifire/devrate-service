@@ -1,5 +1,7 @@
 package com.ratifire.devrate.dto;
 
+import com.ratifire.devrate.security.model.enums.AccountLanguage;
+import com.ratifire.devrate.security.model.enums.RegistrationSourceType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -61,4 +63,8 @@ public class UserDto {
   private int completedInterviews;
 
   private int conductedInterviews;
+
+  private RegistrationSourceType registrationSource;
+
+  private AccountLanguage accountLanguage;
 }

@@ -12,7 +12,9 @@ import com.ratifire.devrate.exception.SpecializationLinkedToInterviewRequestExce
 import com.ratifire.devrate.exception.UserSearchInvalidInputException;
 import com.ratifire.devrate.security.exception.AuthTokenExpiredException;
 import com.ratifire.devrate.security.exception.AuthenticationException;
+import com.ratifire.devrate.security.exception.EmailChangeException;
 import com.ratifire.devrate.security.exception.LogoutException;
+import com.ratifire.devrate.security.exception.PasswordChangeException;
 import com.ratifire.devrate.security.exception.PasswordResetException;
 import com.ratifire.devrate.security.exception.RefreshTokenException;
 import com.ratifire.devrate.security.exception.RefreshTokenExpiredException;
@@ -165,7 +167,8 @@ public class HandlerException {
    */
   @ResponseStatus(HttpStatus.CONFLICT)
   @ExceptionHandler(UserAlreadyExistsException.class)
-  public void handleUserAlreadyExistsExceptionExceptions() {
+  public void handleUserAlreadyExistsExceptionExceptions(UserAlreadyExistsException ex) {
+    log.warn(ex.getMessage());
   }
 
   /**
@@ -203,6 +206,24 @@ public class HandlerException {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   public void handleMethodArgumentTypeMismatchException() {
+  }
+
+  /**
+   * Handles EmailChangeException by returning an HTTP status 400.
+   */
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(EmailChangeException.class)
+  public void handleEmailChangeExceptionException(EmailChangeException ex) {
+    log.warn("Change email operation failed: {}", ex.getMessage());
+  }
+
+  /**
+   * Handles PasswordChangeException by returning an HTTP status 400.
+   */
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(PasswordChangeException.class)
+  public void handlePasswordChangeException(PasswordChangeException ex) {
+    log.warn("Change password operation failed: {}", ex.getMessage());
   }
 
   /**

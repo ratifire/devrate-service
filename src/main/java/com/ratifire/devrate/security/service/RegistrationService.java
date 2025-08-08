@@ -10,6 +10,8 @@ import com.ratifire.devrate.security.model.dto.ConfirmRegistrationDto;
 import com.ratifire.devrate.security.model.dto.ResendConfirmCodeDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import com.ratifire.devrate.security.model.enums.AccessLevel;
+import com.ratifire.devrate.security.model.enums.AccountLanguage;
+import com.ratifire.devrate.security.model.enums.RegistrationSourceType;
 import com.ratifire.devrate.service.EmailService;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserService;
@@ -51,6 +53,8 @@ public class RegistrationService {
     UserDto userDto = UserDto.builder()
         .firstName(userRegistrationDto.getFirstName())
         .lastName(userRegistrationDto.getLastName())
+        .registrationSource(RegistrationSourceType.COGNITO_USER_POOL)
+        .accountLanguage(AccountLanguage.UKRAINE)
         .build();
 
     if (userService.existsByEmail(email)) {
@@ -134,7 +138,7 @@ public class RegistrationService {
   /**
    * Sends greetings to a user via email and adds a greeting notification.
    *
-   * @param user  The user to whom greetings are sent.
+   * @param user The user to whom greetings are sent.
    */
   private void sendGreetings(User user) {
     notificationService.addGreeting(user);

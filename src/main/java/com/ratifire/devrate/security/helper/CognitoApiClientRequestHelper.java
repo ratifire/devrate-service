@@ -31,10 +31,10 @@ import static com.ratifire.devrate.security.model.constants.CognitoConstant.PARA
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.amazonaws.services.cognitoidp.model.AdminGetUserRequest;
-import com.amazonaws.services.cognitoidp.model.AdminGetUserResult;
 import com.amazonaws.services.cognitoidp.model.AdminLinkProviderForUserRequest;
 import com.amazonaws.services.cognitoidp.model.AdminUpdateUserAttributesRequest;
 import com.amazonaws.services.cognitoidp.model.AttributeType;
+import com.amazonaws.services.cognitoidp.model.ChangePasswordRequest;
 import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordRequest;
 import com.amazonaws.services.cognitoidp.model.ConfirmSignUpRequest;
 import com.amazonaws.services.cognitoidp.model.ForgotPasswordRequest;
@@ -200,44 +200,6 @@ public class CognitoApiClientRequestHelper {
   }
 
   /**
-   * Builds a request to update user attributes in AWS Cognito for a specified user.
-   *
-   * @param subject             the unique identifier (subject) of the user to update.
-   * @param userId              the unique identifier ID of the user.
-   * @param role                the role to be assigned to the user.
-   * @param isPrimaryRecord     a boolean indicating if this is the primary record of the user.
-   * @param linkedRecordSubject the subject of the linked record, if any.
-   * @return an AdminUpdateUserAttributesRequest configured with the provided details.
-   */
-  public AdminUpdateUserAttributesRequest buildAdminUpdateUserAttributesRequest(String subject,
-      long userId, String role, boolean isPrimaryRecord, String linkedRecordSubject) {
-    return new AdminUpdateUserAttributesRequest()
-        .withUserPoolId(cognitoConfig.getUserPoolId())
-        .withUsername(subject)
-        .withUserAttributes(List.of(
-            createAttribute(ATTRIBUTE_USER_ID, String.valueOf(userId)),
-            createAttribute(ATTRIBUTE_ROLE, role),
-            createAttribute(ATTRIBUTE_IS_PRIMARY_RECORD, String.valueOf(isPrimaryRecord)),
-            createAttribute(ATTRIBUTE_LINKED_RECORD_SUBJECT, linkedRecordSubject)
-        ));
-  }
-
-  /**
-   * Builds a request for updating user attributes in AWS Cognito.
-   *
-   * @param attributes the list of AttributeType objects to update for the user
-   * @param subject    the Cognito username
-   * @return a configured AdminUpdateUserAttributesRequest with the specified attributes and user
-   */
-  public AdminUpdateUserAttributesRequest buildAdminUpdateUserAttributesRequest(
-      List<AttributeType> attributes, String subject) {
-    return new AdminUpdateUserAttributesRequest()
-        .withUserPoolId(cognitoConfig.getUserPoolId())
-        .withUsername(subject)
-        .withUserAttributes(attributes);
-  }
-
-  /**
    * Builds a request to get user details from AWS Cognito for a specified user.
    *
    * @param username the username of the user to get.
@@ -320,6 +282,44 @@ public class CognitoApiClientRequestHelper {
   }
 
   /**
+   * Builds a request to update user attributes in AWS Cognito for a specified user.
+   *
+   * @param subject             the unique identifier (subject) of the user to update.
+   * @param userId              the unique identifier ID of the user.
+   * @param role                the role to be assigned to the user.
+   * @param isPrimaryRecord     a boolean indicating if this is the primary record of the user.
+   * @param linkedRecordSubject the subject of the linked record, if any.
+   * @return an AdminUpdateUserAttributesRequest configured with the provided details.
+   */
+  public AdminUpdateUserAttributesRequest buildAdminUpdateUserAttributesRequest(String subject,
+      long userId, String role, boolean isPrimaryRecord, String linkedRecordSubject) {
+    return new AdminUpdateUserAttributesRequest()
+        .withUserPoolId(cognitoConfig.getUserPoolId())
+        .withUsername(subject)
+        .withUserAttributes(List.of(
+            createAttribute(ATTRIBUTE_USER_ID, String.valueOf(userId)),
+            createAttribute(ATTRIBUTE_ROLE, role),
+            createAttribute(ATTRIBUTE_IS_PRIMARY_RECORD, String.valueOf(isPrimaryRecord)),
+            createAttribute(ATTRIBUTE_LINKED_RECORD_SUBJECT, linkedRecordSubject)
+        ));
+  }
+
+  /**
+   * Builds a request for updating user attributes in AWS Cognito.
+   *
+   * @param attributes the list of AttributeType objects to update for the user
+   * @param subject    the Cognito username
+   * @return a configured AdminUpdateUserAttributesRequest with the specified attributes and user
+   */
+  public AdminUpdateUserAttributesRequest buildAdminUpdateUserAttributesRequest(
+      List<AttributeType> attributes, String subject) {
+    return new AdminUpdateUserAttributesRequest()
+        .withUserPoolId(cognitoConfig.getUserPoolId())
+        .withUsername(subject)
+        .withUserAttributes(attributes);
+  }
+
+  /**
    * Builds the OAuth redirect URL based on the specified OAuth2 provider and state.
    *
    * @param provider the name of the OAuth2 identity provider to use for login.
@@ -367,4 +367,23 @@ public class CognitoApiClientRequestHelper {
         .withName(name)
         .withValue(value);
   }
+
+  /**
+   * Builds a ChangePasswordRequest for updating a user's password in AWS Cognito.
+   *
+   * @param accessToken the access token of the user.
+   * @param oldPassword the user's current password.
+   * @param newPassword the new password to set for the user.
+   * @return a configured ChangePasswordRequest with the provided credentials.
+   */
+  public ChangePasswordRequest buildChangePasswordRequest(
+      String accessToken,
+      String oldPassword,
+      String newPassword) {
+    return new ChangePasswordRequest()
+        .withAccessToken(accessToken)
+        .withPreviousPassword(oldPassword)
+        .withProposedPassword(newPassword);
+  }
+
 }

@@ -87,6 +87,7 @@ public class InterviewService {
     return interviewRepository.findByIdAndUserId(id, currentUserId);
   }
 
+
   /**
    * Retrieves a all interviews associated with the currently authenticated user.
    *
@@ -308,13 +309,12 @@ public class InterviewService {
   private ConsentStatus extractContentStatus(List<InterviewRequest> requests,
       InterviewRequestRole role) {
     return requests.stream()
-            .filter(r -> r.getRole() == role)
-            .map(InterviewRequest::getConsentStatus)
-            .filter(Objects::nonNull)
-            .findFirst()
-            .orElse(ConsentStatus.NOT_GIVEN);
+        .filter(r -> r.getRole() == role)
+        .map(InterviewRequest::getConsentStatus)
+        .filter(Objects::nonNull)
+        .findFirst()
+        .orElse(ConsentStatus.NOT_GIVEN);
   }
-
 
   /**
    * Saves the given Interview entity to the repository.

@@ -8,6 +8,7 @@ import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.security.exception.AuthTokenExpiredException;
 import com.ratifire.devrate.security.exception.AuthenticationException;
 import com.ratifire.devrate.security.exception.LogoutException;
+import com.ratifire.devrate.security.helper.AuthTokenHelper;
 import com.ratifire.devrate.security.helper.RefreshTokenCookieHelper;
 import com.ratifire.devrate.security.model.dto.LoginDto;
 import com.ratifire.devrate.security.util.TokenUtil;
@@ -17,6 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -31,6 +33,8 @@ public class AuthenticationService {
   private final CognitoApiClientService cognitoApiClientService;
   private final UserService userService;
   private final RefreshTokenCookieHelper refreshTokenCookieHelper;
+  private final AuthTokenHelper authTokenHelper;
+  private final PasswordEncoder passwordEncoder;
   private final DataMapper<UserDto, User> userMapper;
 
   /**
@@ -40,18 +44,29 @@ public class AuthenticationService {
    * @return A UserDto object representing the authenticated user.
    */
   public UserDto login(LoginDto loginDto, HttpServletResponse response) {
-    String email = loginDto.getEmail().toLowerCase();
-    String password = loginDto.getPassword();
+    final String providedEmail = loginDto.getEmail().toLowerCase();
+    final String providedPassword = loginDto.getPassword();
     try {
-      AuthenticationResultType result = cognitoApiClientService.login(email, password);
-      TokenUtil.setAuthTokensToHeaders(response, result.getAccessToken(), result.getIdToken());
-      refreshTokenCookieHelper.setRefreshTokenToCookie(response, result.getRefreshToken());
-      User user = userService.findByEmail(email);
+      User user = userService.findByEmail(providedEmail);
+      final String currentEncodedPassword = user.getPassword();
+
+      if (!passwordEncoder.matches(providedPassword, currentEncodedPassword)) {
+        throw new AuthenticationException(
+            "Authentication process was failed due to invalid password. Email: " + providedEmail);
+      }
+
+      AuthenticationResultType result = cognitoApiClientService.login(providedEmail,
+          providedPassword);
+
+      authTokenHelper.setAuthTokensToResponse(
+          response, null, result.getAccessToken(), result.getIdToken(), result.getRefreshToken(),
+          false, true);
 
       return userMapper.toDto(user);
 
     } catch (Exception e) {
-      log.error("Authentication process was failed for email {}: {}", email, e.getMessage());
+      log.error("Authentication process was failed for email {}: {}", providedEmail,
+          e.getMessage());
       throw new AuthenticationException("Authentication process was failed.");
     }
   }

@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: 08-08-2025_035
+      author: Dmytro Abalmas
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+              columnExists:
+                tableName: users
+                columnName: account_language
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: account_language
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: registration_source
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true

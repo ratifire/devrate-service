@@ -16,6 +16,8 @@ import com.ratifire.devrate.security.model.dto.OauthAuthorizationDto;
 import com.ratifire.devrate.security.model.dto.PasswordResetDto;
 import com.ratifire.devrate.security.model.dto.ResendConfirmCodeDto;
 import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
+import com.ratifire.devrate.security.model.enums.AccountLanguage;
+import com.ratifire.devrate.security.model.enums.RegistrationSourceType;
 import com.ratifire.devrate.security.util.TokenUtil;
 import com.ratifire.devrate.service.UserService;
 import jakarta.servlet.FilterChain;
@@ -42,6 +44,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
@@ -63,20 +66,29 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
   private final UserService userService;
   private final DataMapper<UserDto, User> userMapper;
   private final RefreshTokenCookieHelper refreshTokenCookieHelper;
+  private final PasswordEncoder passwordEncoder;
 
   @Override
   public UserDto login(LoginDto loginDto, HttpServletResponse response) {
-    String email = loginDto.getEmail().toLowerCase();
+    final String providedEmail = loginDto.getEmail().toLowerCase();
+    final String providedPassword = loginDto.getPassword();
     try {
-      User user = userService.findByEmail(email);
+      User user = userService.findByEmail(providedEmail);
+      final String currentEncodedPassword = user.getPassword();
+
+      if (!passwordEncoder.matches(providedPassword, currentEncodedPassword)) {
+        throw new AuthenticationException(
+            "Authentication process was failed due to invalid password.");
+      }
+
       String encodedUserId =
           Base64.getEncoder().encodeToString(String.valueOf(user.getId()).getBytes());
       TokenUtil.setAuthTokensToHeaders(response, encodedUserId, encodedUserId);
-
       return userMapper.toDto(user);
 
     } catch (Exception e) {
-      log.error("Authentication process was failed for email {}: {}", email, e.getMessage());
+      log.error("Authentication process was failed for email {}: {}",
+          providedEmail, e.getMessage());
       throw new AuthenticationException("Authentication process was failed.");
     }
   }
@@ -110,6 +122,8 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
     UserDto userDto = UserDto.builder()
         .firstName(userRegistrationDto.getFirstName())
         .lastName(userRegistrationDto.getLastName())
+        .accountLanguage(AccountLanguage.UKRAINE)
+        .registrationSource(RegistrationSourceType.LOCAL)
         .build();
 
     if (userService.existsByEmail(email)) {
@@ -196,7 +210,7 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
      */
     @Bean
     public ServletContextInitializer servletContextInitializer(
-            @Value("${server.servlet.session.cookie.domain}") String domain) {
+        @Value("${server.servlet.session.cookie.domain}") String domain) {
       return servletContext -> {
         servletContext.getSessionCookieConfig().setDomain(domain);
         servletContext.getSessionCookieConfig().setPath("/");
@@ -221,6 +235,14 @@ public class AuthenticationLocalFacade implements AuthenticationFacade {
       UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
       source.registerCorsConfiguration("/**", configuration);
       return source;
+    }
+
+    /**
+     * Provides a PasswordEncoder bean that uses BCrypt hashing algorithm.
+     */
+    @Bean
+    public static PasswordEncoder passwordEncoder() {
+      return new BCryptPasswordEncoder();
     }
 
   }

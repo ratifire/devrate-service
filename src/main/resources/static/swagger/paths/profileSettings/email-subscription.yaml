@@ -1,0 +1,23 @@
+patch:
+  tags:
+    - Profile Settings
+  summary: Update email subscription flag
+  description: Enable or disable email notifications for the authenticated user.
+  operationId: updateEmailSubscriptionFlag
+  parameters:
+    - name: enabled
+      in: query
+      required: true
+      description: Indicates whether email notifications are enabled
+      schema:
+        type: boolean
+  security:
+    - accessToken: []
+    - idToken: []
+  responses:
+    '200':
+      description: Email subscription setting updated
+    '400':
+      description: Bad Request. Missing or invalid parameter.
+    '500':
+      description: Internal Server Error
