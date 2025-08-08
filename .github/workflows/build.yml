@@ -119,7 +119,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          ECR_REPOSITORY: backend-service-dev
           ENVIRONMENT: ${{ github.event.inputs.environment }}
         run: |
           # Build a docker container with environment-specific settings
@@ -129,7 +129,7 @@ jobs:
         id: push-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          ECR_REPOSITORY: backend-service-dev
         run: |
           # Push image to ECR.
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
