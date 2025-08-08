@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 08-08-2025_036
+      id: 08-08-2025_037
       author: Dmytro Abalmas
       preConditions:
         - onFail: MARK_RAN
