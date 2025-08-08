@@ -1,5 +1,5 @@
 resource "aws_key_pair" "back_key" {
-  key_name   = var.back_kay
+  key_name   = "${var.back_kay}_${var.deploy_profile}"
   public_key = tls_private_key.rsa-4096-example.public_key_openssh
 }
 

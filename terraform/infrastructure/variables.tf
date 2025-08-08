@@ -15,7 +15,7 @@ variable "instance_type" {
 
 variable "repository_name" {
   description = "Repository name"
-  default     = "backend-service-dev"
+  default     = "priavte-backend-service"
 }
 
 variable "list_of_ports" {
@@ -38,21 +38,6 @@ variable "db_instance_identifier" {
   default     = "pg-backend"
 }
 
-variable "db_name" {
-  description = "Name of database"
-  default     = "backend"
-}
-
-variable "db_username" {
-  description = "Name of database user"
-  default     = "backend"
-}
-
-variable "db_password" {
-  description = "Password of database"
-  default     = "backenddb"
-}
-
 variable "s3_bucket_name" {
   description = "Name of the S3 bucket for the backend"
   type        = string
@@ -67,7 +52,7 @@ variable "back_kay" {
 }
 
 variable "deploy_profile" {
-  default = "dev"
+  default = "dev-private"
 }
 
 variable "matched_participant_name" {
@@ -80,4 +65,8 @@ variable "participant_queue_name" {
 
 variable "participant_queue_name_dlq" {
   type = string
+}
+
+variable "main_vpc_id" {
+  default = "vpc-029433628e702ccd1"
 }

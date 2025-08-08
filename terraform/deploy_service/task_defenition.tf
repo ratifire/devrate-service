@@ -1,6 +1,6 @@
 resource "aws_ecs_task_definition" "task_definition" {
 
-  family = var.td_family
+  family = "${var.td_family}_${var.deploy_profile}"
 
   container_definitions = jsonencode([
     {
