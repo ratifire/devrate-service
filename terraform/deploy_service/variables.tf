@@ -43,7 +43,7 @@ variable "region" {
 }
 
 variable "vpc" {
-  default = "vpc-09bb9f9a748f30da4"
+  default = "vpc-029433628e702ccd1"
 }
 
 variable "target_group_name" {
