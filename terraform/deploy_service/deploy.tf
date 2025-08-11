@@ -187,7 +187,7 @@ resource "aws_lb" "back_ecs_alb" {
 }
 
 resource "aws_lb_target_group" "http_ecs_back_tg" {
-  name                 = "${var.target_group_name}-${var.deploy_profile}"
+  name                 = "${var.target_group_name}--${var.deploy_profile}"
   port                 = var.back_port
   protocol             = "HTTP"
   vpc_id               = var.vpc
