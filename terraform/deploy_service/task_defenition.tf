@@ -10,7 +10,7 @@ resource "aws_ecs_task_definition" "task_definition" {
       memory            = 819,
       memoryReservation = 819,
       healthCheck : {
-        "command" : ["CMD-SHELL", "curl -f https://${var.subdomain_name}/actuator/health || exit 1"],
+        "command" : ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"],
         "interval" : 60,
         "timeout" : 5,
         "retries" : 2
