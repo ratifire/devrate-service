@@ -31,11 +31,11 @@ resource "aws_launch_template" "ecs_back_launch" {
     }
   }
 
-  # network_interfaces {
-  #   device_index                = 0
-  #   associate_public_ip_address = false
-  #   security_groups             = [data.aws_security_group.vpc_backend_security_group.id]
-  # }
+  network_interfaces {
+    device_index                = 0
+    associate_public_ip_address = false
+    security_groups             = [data.aws_security_group.vpc_backend_security_group.id]
+  }
 
 }
 

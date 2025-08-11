@@ -67,8 +67,8 @@ jobs:
         env:
           TF_VAR_back_cluster_name: ${{ vars.ECS_CLUSTER }}
           TF_VAR_back_container_name: ${{ vars.CONTAINER_NAME }}
-          TF_VAR_back_repository_name: ${{ vars.ECR_REPOSITORY_PR }}
-          TF_VAR_back_service_name: ${{ vars.ECR_REPOSITORY_PR }}
+          TF_VAR_back_repository_name: ${{ vars.ECR_REPOSITORY_RP }}
+          TF_VAR_back_service_name: ${{ vars.ECR_REPOSITORY_RP }}
           TF_VAR_db_username: ${{ secrets.DB_USERNAME }}
           TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
           TF_VAR_db_name: ${{ secrets.DB_NAME }}
