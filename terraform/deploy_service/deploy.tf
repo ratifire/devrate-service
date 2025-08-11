@@ -157,7 +157,7 @@ resource "aws_lb_target_group" "http_ecs_back_tg" {
   health_check {
     healthy_threshold   = 2
     unhealthy_threshold = 2
-    interval            = 60
+    interval            = 15
     protocol            = "HTTP"
     path                = "/actuator/health"
   }
