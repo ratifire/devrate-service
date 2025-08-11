@@ -1,6 +1,6 @@
 resource "aws_ecs_task_definition" "task_definition" {
 
-  family = var.td_family
+  family = "${var.td_family}_${var.deploy_profile}"
 
   container_definitions = jsonencode([
     {
@@ -10,10 +10,11 @@ resource "aws_ecs_task_definition" "task_definition" {
       memory            = 819,
       memoryReservation = 819,
       healthCheck : {
-        "command" : ["CMD-SHELL", "curl -f https://${var.subdomain_name}/actuator/health || exit 1"],
-        "interval" : 60,
-        "timeout" : 5,
-        "retries" : 2
+        "command" : ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"],
+        "interval" : 30,
+        "timeout" : 10,
+        "retries" : 5,
+        "startPeriod" : 60
       },
       portMappings = [
         {
@@ -47,27 +48,27 @@ resource "aws_ecs_task_definition" "task_definition" {
           value = var.deploy_profile
         },
         {
-          name  = "NEW_RELIC_APP_NAME"
+          name  = "NEW_RELIC_APP_NAME",
           value = var.new_relic_app_name
         },
         {
-          name  = "NEW_RELIC_LICENSE_KEY"
+          name  = "NEW_RELIC_LICENSE_KEY",
           value = var.new_relic_license_key
         },
         {
-          name  = "NEW_RELIC_LOG_LEVEL"
+          name  = "NEW_RELIC_LOG_LEVEL",
           value = "info"
         },
         {
-          name  = "VAPID_PUBLIC_KEY"
+          name  = "VAPID_PUBLIC_KEY",
           value = var.vapid_public_key
         },
         {
-          name  = "VAPID_PRIVATE_KEY"
+          name  = "VAPID_PRIVATE_KEY",
           value = var.vapid_private_key
         },
         {
-          name  = "VAPID_SUBJECT"
+          name  = "VAPID_SUBJECT",
           value = var.vapid_subject
         }
       ],
@@ -89,7 +90,7 @@ resource "aws_ecs_task_definition" "task_definition" {
 
   task_role_arn      = data.aws_iam_role.ecs_task_execution_role_arn.arn
   execution_role_arn = data.aws_iam_role.ecs_task_execution_role_arn.arn
-  network_mode       = "bridge"
+  network_mode       = "awsvpc"
   requires_compatibilities = [
     "EC2"
   ]

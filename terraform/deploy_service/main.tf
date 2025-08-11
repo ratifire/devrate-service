@@ -3,7 +3,3 @@ terraform {
 }
 
 provider "aws" {}
-
-resource "aws_default_vpc" "default_backend_vpc" {}
-
-

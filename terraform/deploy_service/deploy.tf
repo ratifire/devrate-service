@@ -3,11 +3,11 @@ resource "aws_ecs_cluster" "backend_cluster" {
 }
 
 resource "aws_launch_template" "ecs_back_launch" {
-  name_prefix            = var.ecs_back_launch
-  image_id               = data.aws_ami.aws_linux_latest_ecs.image_id
-  instance_type          = var.instance_type
-  vpc_security_group_ids = [data.aws_security_group.vpc_backend_security_group.id]
-  key_name               = data.aws_key_pair.keypair.key_name
+  name_prefix   = "${var.ecs_back_launch}-${var.deploy_profile}"
+  image_id      = data.aws_ami.aws_linux_latest_ecs.image_id
+  instance_type = var.instance_type
+  # vpc_security_group_ids = [data.aws_security_group.vpc_backend_security_group.id]
+  key_name = data.aws_key_pair.keypair.key_name
   user_data = base64encode(<<-EOF
       #!/bin/bash
       echo ECS_CLUSTER=${aws_ecs_cluster.backend_cluster.name} >> /etc/ecs/ecs.config;
@@ -31,10 +31,16 @@ resource "aws_launch_template" "ecs_back_launch" {
     }
   }
 
+  network_interfaces {
+    device_index                = 0
+    associate_public_ip_address = false
+    security_groups             = [data.aws_security_group.vpc_backend_security_group.id]
+  }
+
 }
 
 resource "aws_ecs_capacity_provider" "back_capacity_provider" {
-  name = var.back_capacity_provider
+  name = "${var.back_capacity_provider}-${var.deploy_profile}"
 
   auto_scaling_group_provider {
     auto_scaling_group_arn         = aws_autoscaling_group.ecs_back_asg.arn
@@ -48,7 +54,7 @@ resource "aws_ecs_capacity_provider" "back_capacity_provider" {
   }
 
   tags = {
-    Name = var.back-ec2-capacity-provider-tag
+    Name = "${var.back-ec2-capacity-provider-tag}-${var.deploy_profile}"
   }
 }
 
@@ -74,7 +80,7 @@ resource "aws_autoscaling_group" "ecs_back_asg" {
   desired_capacity          = 2
   health_check_type         = "EC2"
   health_check_grace_period = 180
-  vpc_zone_identifier       = data.aws_subnets.default_subnets.ids
+  vpc_zone_identifier       = data.aws_subnets.private_subnets.ids
   force_delete              = true
   termination_policies      = ["OldestInstance"]
   initial_lifecycle_hook {
@@ -130,29 +136,102 @@ resource "aws_ecs_service" "back_services" {
   lifecycle {
     create_before_destroy = true
   }
+
+  network_configuration {
+    subnets          = data.aws_subnets.private_subnets.ids
+    security_groups  = [data.aws_security_group.vpc_backend_security_group.id]
+    assign_public_ip = false
+  }
 }
 
 resource "aws_lb" "back_ecs_alb" {
-  name               = var.back_ecs_alb
+  name               = "${var.back_ecs_alb}-${var.deploy_profile}"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [data.aws_security_group.vpc_backend_security_group.id]
-  subnets            = data.aws_subnets.default_subnets.ids
+  subnets            = data.aws_subnets.public_subnets.ids
 
 }
 
 resource "aws_lb_target_group" "http_ecs_back_tg" {
-  name                 = var.target_group_name
+  name                 = "${var.target_group_name}-${var.deploy_profile}"
   port                 = var.back_port
   protocol             = "HTTP"
-  vpc_id               = data.aws_vpcs.all_vpcs.ids[0]
+  vpc_id               = var.vpc
   deregistration_delay = "30"
+  target_type          = "ip"
 
   health_check {
     healthy_threshold   = 2
+    matcher             = "200-399"
     unhealthy_threshold = 2
     interval            = 60
     protocol            = "HTTP"
     path                = "/actuator/health"
   }
+}
+
+resource "aws_eip" "nat_eip" {
+  tags = {
+    Name = "nat-eip-${var.deploy_profile}"
+  }
+}
+
+resource "aws_nat_gateway" "nat_gw" {
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id     = data.aws_subnets.public_subnets.ids[0]
+
+  tags = {
+    Name = "nat-gateway-${var.deploy_profile}"
+  }
+  depends_on = [data.aws_subnets.public_subnets]
+}
+
+resource "aws_route_table" "private_rt" {
+  vpc_id = var.vpc
+  tags = {
+    Name = "private-rt"
+    Type = "private"
+  }
+}
+
+resource "aws_route" "private_nat_route" {
+  route_table_id         = aws_route_table.private_rt.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.nat_gw.id
+
+  depends_on = [aws_nat_gateway.nat_gw]
+}
+
+resource "aws_internet_gateway" "igw" {
+  vpc_id = var.vpc
+  tags = {
+    Name = "igw-${var.deploy_profile}"
+  }
+}
+
+resource "aws_route_table" "public_rt" {
+  vpc_id = var.vpc
+  tags = {
+    Name = "public-rt"
+    Type = "public"
+  }
+}
+
+resource "aws_route" "public_inet_route" {
+  route_table_id         = aws_route_table.public_rt.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.igw.id
+}
+
+resource "aws_route_table_association" "public_subnets_assoc" {
+  count          = length(data.aws_subnets.public_subnets.ids)
+  subnet_id      = data.aws_subnets.public_subnets.ids[count.index]
+  route_table_id = aws_route_table.public_rt.id
+}
+
+resource "aws_route_table_association" "private_subnets_assoc" {
+  count          = length(data.aws_subnets.private_subnets.ids)
+  subnet_id      = data.aws_subnets.private_subnets.ids[count.index]
+  route_table_id = aws_route_table.private_rt.id
 }

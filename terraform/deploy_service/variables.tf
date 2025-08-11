@@ -10,7 +10,7 @@ variable "back_container_name" {
 
 variable "back_repository_name" {
   description = "Repository name"
-  default     = "backend-service-dev"
+  default     = "priavte-backend-service-dev-private"
 }
 
 variable "instance_type" {
@@ -43,7 +43,7 @@ variable "region" {
 }
 
 variable "vpc" {
-  default = "vpc-0032e90317069a534"
+  default = "vpc-029433628e702ccd1"
 }
 
 variable "target_group_name" {
@@ -67,7 +67,7 @@ variable "db_password" {
 
 variable "td_family" {
   description = "Name of TD"
-  default     = "backend_td_dev"
+  default     = "backend-td"
 }
 
 variable "back_ecs_alb" {
@@ -100,7 +100,7 @@ variable "db_instance_identifier" {
 }
 
 variable "deploy_profile" {
-  default = "dev"
+  default = "dev-private"
 }
 
 variable "new_relic_app_name" {

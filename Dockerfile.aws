@@ -7,3 +7,4 @@ COPY ${JAR_FILE} /devRate.jar
 COPY newrelic-${ENVIRONMENT}/newrelic-${ENVIRONMENT}.jar /newrelic-${ENVIRONMENT}.jar
 COPY newrelic-${ENVIRONMENT}/newrelic-${ENVIRONMENT}.yml /newrelic-${ENVIRONMENT}.yml
 ENTRYPOINT ["sh", "-c", "java -javaagent:/newrelic-${ENVIRONMENT}.jar -Dnewrelic.config.file=/newrelic-${ENVIRONMENT}.yml -jar /devRate.jar"]
+я

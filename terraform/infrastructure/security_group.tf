@@ -1,7 +1,7 @@
 resource "aws_security_group" "backend_security_group" {
-  name        = var.backend_security_group_name
+  name        = "${var.backend_security_group_name}-${var.deploy_profile}"
   description = "Allow tcp inbound traffic and all outbound traffic"
-  vpc_id      = aws_default_vpc.default_vpc.id
+  vpc_id      = var.main_vpc_id
 
   dynamic "ingress" {
     for_each = var.list_of_ports
@@ -21,26 +21,28 @@ resource "aws_security_group" "backend_security_group" {
   }
 }
 
-resource "aws_default_subnet" "default_az1" {
-  availability_zone = data.aws_availability_zones.availability_zones.names[0]
+
+resource "aws_subnet" "public_subnet" {
+  count                   = 3
+  vpc_id                  = local.vpc_id
+  availability_zone       = local.azs[count.index]
+  cidr_block              = cidrsubnet("10.1.0.0/16", 8, count.index)
+  map_public_ip_on_launch = true
 
   tags = {
-    Name = "Default subnet for ${data.aws_availability_zones.availability_zones.names[0]}"
+    Name = "public-subnet-${count.index + 1}"
+    Type = "public"
   }
 }
 
-resource "aws_default_subnet" "default_az2" {
-  availability_zone = data.aws_availability_zones.availability_zones.names[1]
-
+resource "aws_subnet" "private_subnet" {
+  count                   = 3
+  vpc_id                  = local.vpc_id
+  availability_zone       = local.azs[count.index]
+  cidr_block              = cidrsubnet("10.1.0.0/16", 8, count.index + 10)
+  map_public_ip_on_launch = false
   tags = {
-    Name = "Default subnet for ${data.aws_availability_zones.availability_zones.names[1]}"
-  }
-}
-
-resource "aws_default_subnet" "default_az3" {
-  availability_zone = data.aws_availability_zones.availability_zones.names[2]
-
-  tags = {
-    Name = "Default subnet for ${data.aws_availability_zones.availability_zones.names[2]}"
+    Name = "private-subnet-${var.deploy_profile}-${count.index + 1}"
+    Type = "private"
   }
 }
