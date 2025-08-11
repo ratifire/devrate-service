@@ -11,5 +11,3 @@ participant_queue_name = "participantQueueDev"
 participant_queue_name_dlq = "participantQueueDev-dlq"
 
 backend_security_group_name = "backend_security_group_dev_private"
-
-back_kay = "terraform_ec2_back_key_pair_dev-private"
