@@ -90,7 +90,7 @@ resource "aws_ecs_task_definition" "task_definition" {
 
   task_role_arn      = data.aws_iam_role.ecs_task_execution_role_arn.arn
   execution_role_arn = data.aws_iam_role.ecs_task_execution_role_arn.arn
-  network_mode       = "bridge"
+  network_mode       = "awsvpc"
   requires_compatibilities = [
     "EC2"
   ]
