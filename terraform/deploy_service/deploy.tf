@@ -136,6 +136,12 @@ resource "aws_ecs_service" "back_services" {
   lifecycle {
     create_before_destroy = true
   }
+
+  network_configuration {
+    subnets          = data.aws_subnets.private_subnets.ids
+    security_groups  = [data.aws_security_group.vpc_backend_security_group.id]
+    assign_public_ip = false
+  }
 }
 
 resource "aws_security_group" "alb_sg" {
