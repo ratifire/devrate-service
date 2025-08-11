@@ -192,6 +192,7 @@ resource "aws_lb_target_group" "http_ecs_back_tg" {
   protocol             = "HTTP"
   vpc_id               = var.vpc
   deregistration_delay = "30"
+  target_type          = "ip"
 
   health_check {
     healthy_threshold   = 2
