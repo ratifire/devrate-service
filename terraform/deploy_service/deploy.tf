@@ -138,11 +138,44 @@ resource "aws_ecs_service" "back_services" {
   }
 }
 
+resource "aws_security_group" "alb_sg" {
+  name        = "${var.deploy_profile}-alb-sg"
+  description = "Security group for ALB"
+  vpc_id      = var.vpc
+
+  ingress {
+    description      = "Allow HTTP from anywhere"
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description      = "Allow HTTPS from anywhere"
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description      = "Allow all outbound traffic"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.deploy_profile}-alb-sg"
+  }
+}
 resource "aws_lb" "back_ecs_alb" {
   name               = "${var.back_ecs_alb}-${var.deploy_profile}"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [data.aws_security_group.vpc_backend_security_group.id]
+  security_groups    = [aws_security_group.alb_sg.id]
   subnets            = data.aws_subnets.public_subnets.ids
 
 }
