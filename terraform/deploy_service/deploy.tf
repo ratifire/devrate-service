@@ -3,11 +3,11 @@ resource "aws_ecs_cluster" "backend_cluster" {
 }
 
 resource "aws_launch_template" "ecs_back_launch" {
-  name_prefix            = "${var.ecs_back_launch}-${var.deploy_profile}"
-  image_id               = data.aws_ami.aws_linux_latest_ecs.image_id
-  instance_type          = var.instance_type
+  name_prefix   = "${var.ecs_back_launch}-${var.deploy_profile}"
+  image_id      = data.aws_ami.aws_linux_latest_ecs.image_id
+  instance_type = var.instance_type
   # vpc_security_group_ids = [data.aws_security_group.vpc_backend_security_group.id]
-  key_name               = data.aws_key_pair.keypair.key_name
+  key_name = data.aws_key_pair.keypair.key_name
   user_data = base64encode(<<-EOF
       #!/bin/bash
       echo ECS_CLUSTER=${aws_ecs_cluster.backend_cluster.name} >> /etc/ecs/ecs.config;
