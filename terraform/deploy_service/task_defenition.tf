@@ -11,9 +11,10 @@ resource "aws_ecs_task_definition" "task_definition" {
       memoryReservation = 819,
       healthCheck : {
         "command" : ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"],
-        "interval" : 15,
-        "timeout" : 5,
-        "retries" : 2
+        "interval" : 30,
+        "timeout" : 10,
+        "retries" : 5,
+        "startPeriod" : 60
       },
       portMappings = [
         {
