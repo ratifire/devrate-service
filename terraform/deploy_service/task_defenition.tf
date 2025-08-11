@@ -48,27 +48,27 @@ resource "aws_ecs_task_definition" "task_definition" {
           value = var.deploy_profile
         },
         {
-          name  = "NEW_RELIC_APP_NAME"
+          name  = "NEW_RELIC_APP_NAME",
           value = var.new_relic_app_name
         },
         {
-          name  = "NEW_RELIC_LICENSE_KEY"
+          name  = "NEW_RELIC_LICENSE_KEY",
           value = var.new_relic_license_key
         },
         {
-          name  = "NEW_RELIC_LOG_LEVEL"
+          name  = "NEW_RELIC_LOG_LEVEL",
           value = "info"
         },
         {
-          name  = "VAPID_PUBLIC_KEY"
+          name  = "VAPID_PUBLIC_KEY",
           value = var.vapid_public_key
         },
         {
-          name  = "VAPID_PRIVATE_KEY"
+          name  = "VAPID_PRIVATE_KEY",
           value = var.vapid_private_key
         },
         {
-          name  = "VAPID_SUBJECT"
+          name  = "VAPID_SUBJECT",
           value = var.vapid_subject
         }
       ],
