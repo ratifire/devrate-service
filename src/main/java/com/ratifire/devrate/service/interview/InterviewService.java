@@ -22,6 +22,7 @@ import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.enums.InterviewStatusIndicator;
 import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.enums.SkillType;
+import com.ratifire.devrate.exception.InterviewJoinTooEarlyException;
 import com.ratifire.devrate.exception.InterviewNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
@@ -32,6 +33,7 @@ import com.ratifire.devrate.service.MasteryService;
 import com.ratifire.devrate.service.MeetingService;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserService;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -598,6 +600,12 @@ public class InterviewService {
     Interview interview =
         interviewRepository.findByIdAndUserId(id, userContextProvider.getAuthenticatedUserId())
         .orElseThrow(() -> new InterviewNotFoundException(id));
+
+    ZonedDateTime startTime = interview.getStartTime().withZoneSameInstant(ZoneId.of("UTC"));
+    Instant allowedFrom = startTime.minusMinutes(5).toInstant();
+    if (Instant.now().isBefore(allowedFrom)) {
+      throw new InterviewJoinTooEarlyException();
+    }
 
     if (interview.getRoomUrl() != null) {
       return interview.getRoomUrl();
