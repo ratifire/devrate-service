@@ -76,6 +76,19 @@ public class InterviewRequestService {
   }
 
   /**
+   * Retrieves the interview history ID associated with the given time slot ID.
+   *
+   * @param timeSlotId the ID of the InterviewRequestTimeSlot
+   * @return the ID of the associated interview history, or {@code null} if none
+   * @throws ResourceNotFoundException if the time slot is not found
+   */
+  public Long getInterviewHistoryIdByTimeSlotId(long timeSlotId) {
+    return timeSlotRepository.findById(timeSlotId).orElseThrow(
+            () -> new ResourceNotFoundException("Time slot not found with ID: " + timeSlotId))
+        .getInterviewHistoryId();
+  }
+
+  /**
    * Retrieves all interview requests for the authenticated user.
    *
    * @return a list of {@link InterviewRequestViewDto} containing the details.
@@ -271,6 +284,7 @@ public class InterviewRequestService {
   public void updateTimeSlots(long interviewerRequestId, long candidateRequestId,
       ZonedDateTime scheduledDate, List<Interview> interviews) {
 
+    // TODO: bad map key, better use Long as key (interviewId)
     Map<InterviewRequestRole, Long> roleToId = interviews.stream()
         .collect(Collectors.toMap(Interview::getRole, Interview::getId));
 

@@ -11,10 +11,12 @@ import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewHistory;
 import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.enums.SkillType;
+import com.ratifire.devrate.enums.TimeSlotStatus;
 import com.ratifire.devrate.exception.InterviewHistoryNotFoundException;
 import com.ratifire.devrate.mapper.impl.InterviewHistoryMapper;
 import com.ratifire.devrate.repository.UserRepository;
 import com.ratifire.devrate.repository.interview.InterviewHistoryRepository;
+import com.ratifire.devrate.repository.interview.InterviewRequestTimeSlotRepository;
 import com.ratifire.devrate.security.helper.UserContextProvider;
 import com.ratifire.devrate.service.EventService;
 import com.ratifire.devrate.service.MasteryService;
@@ -49,6 +51,7 @@ public class InterviewHistoryService {
   private final InterviewHistoryMapper interviewHistoryMapper;
   private final UserRepository userRepository;
   private final EventService eventService;
+  private final InterviewRequestTimeSlotRepository timeSlotRepository;
 
   /**
    * Retrieves an InterviewSummary entity by its identifier.
@@ -138,6 +141,8 @@ public class InterviewHistoryService {
     List<InterviewHistory> interviewHistories = List.of(currentInterviewHistory,
         oppositeInterviewHistory);
     interviewHistoryRepository.saveAll(interviewHistories);
+    timeSlotRepository.markTimeSlotsAsCompleted(oppositeInterviewId,
+        oppositeInterviewHistory.getId(), TimeSlotStatus.COMPLETED);
     interviewService.deleteByIds(List.of(currentInterviewId, oppositeInterviewId));
     eventService.delete(oppositeInterview.getEventId());
 
@@ -196,7 +201,14 @@ public class InterviewHistoryService {
         false
     );
 
-    interviewHistoryRepository.saveAll(List.of(currentInterviewHistory, oppositeInterviewHistory));
+    List<InterviewHistory> savedInterviewHistories = interviewHistoryRepository.saveAll(
+        List.of(currentInterviewHistory, oppositeInterviewHistory));
+
+    Long currentInterviewHistoryId = savedInterviewHistories.stream()
+        .filter(i -> i.getInterviewId() == currentInterviewId)
+        .map(InterviewHistory::getId).findFirst().orElse(null);
+    timeSlotRepository.markTimeSlotsAsCompleted(currentInterviewId,
+        currentInterviewHistoryId, TimeSlotStatus.COMPLETED);
 
     currentInterview.setVisible(false);
     interviewService.save(currentInterview);

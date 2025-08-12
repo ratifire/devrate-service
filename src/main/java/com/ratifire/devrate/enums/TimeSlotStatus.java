@@ -6,5 +6,6 @@ package com.ratifire.devrate.enums;
 public enum TimeSlotStatus {
   PENDING,
   BOOKED,
+  COMPLETED,
   EXPIRED
 }

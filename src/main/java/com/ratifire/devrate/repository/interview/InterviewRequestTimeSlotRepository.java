@@ -21,13 +21,19 @@ import org.springframework.stereotype.Repository;
 public interface InterviewRequestTimeSlotRepository extends
     JpaRepository<InterviewRequestTimeSlot, Long> {
 
-  @Modifying
   @Query("UPDATE InterviewRequestTimeSlot t SET t.status = :updatedStatus, t.interviewId = null "
       + "WHERE t.interviewRequest IN :requests AND t.dateTime = :scheduledDate")
   void markTimeSlotsAsPending(
       @Param("requests") List<InterviewRequest> scheduledInterviewRequests,
       @Param("scheduledDate") ZonedDateTime scheduledDate,
       @Param("updatedStatus") TimeSlotStatus updatedStatus);
+
+  @Query("update InterviewRequestTimeSlot s "
+      + "set s.interviewHistoryId = :interviewHistoryId, s.status = :status "
+      + "where s.interviewId = :interviewId")
+  void markTimeSlotsAsCompleted(@Param("interviewId") long interviewId,
+      @Param("interviewHistoryId") Long interviewHistoryId,
+      @Param("status") TimeSlotStatus status);
 
   Optional<InterviewRequestTimeSlot> findInterviewRequestTimeSlotsByInterviewRequestIdAndDateTime(
       long interviewRequestId, ZonedDateTime dateTime);
