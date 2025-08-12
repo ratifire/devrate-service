@@ -141,8 +141,8 @@ public class InterviewHistoryService {
     List<InterviewHistory> interviewHistories = List.of(currentInterviewHistory,
         oppositeInterviewHistory);
     interviewHistoryRepository.saveAll(interviewHistories);
-    timeSlotRepository.markTimeSlotsAsCompleted(oppositeInterviewId,
-        oppositeInterviewHistory.getId(), TimeSlotStatus.COMPLETED);
+    timeSlotRepository.markTimeSlotsAsCompleted(currentInterviewId,
+        currentInterviewHistory.getId(), TimeSlotStatus.COMPLETED);
     interviewService.deleteByIds(List.of(currentInterviewId, oppositeInterviewId));
     eventService.delete(oppositeInterview.getEventId());
 
