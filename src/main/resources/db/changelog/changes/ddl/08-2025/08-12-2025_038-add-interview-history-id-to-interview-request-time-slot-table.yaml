@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: 08-12-2025_038
+      author: Ivan Ivashchenko
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+              columnExists:
+                tableName: interview_request_time_slots
+                columnName: interview_history_id
+      changes:
+        - addColumn:
+            tableName: interview_request_time_slots
+            columns:
+              - column:
+                  name: interview_history_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true

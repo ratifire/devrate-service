@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 08-12-2025_039-drop-status-time-slots-check-constraint
+      author: Ivan Ivashchenko
+      changes:
+        - sql:
+            sql: |
+              ALTER TABLE public.interview_request_time_slots
+              DROP CONSTRAINT IF EXISTS interview_request_time_slots_status_check;

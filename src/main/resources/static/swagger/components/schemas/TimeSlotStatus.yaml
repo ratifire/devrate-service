@@ -3,4 +3,5 @@ description: Enum representing the status of the interview request time slot
 enum:
   - PENDING
   - BOOKED
+  - COMPLETED
   - EXPIRED

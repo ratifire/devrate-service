@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2025-08-12_040_add_status_check_with_completed
+      author: Ivan Ivashchenko
+      changes:
+        - sql:
+            sql: |
+              ALTER TABLE public.interview_request_time_slots
+              ADD CONSTRAINT interview_request_time_slots_status_check
+              CHECK (status IN ('PENDING','BOOKED','EXPIRED','COMPLETED'));

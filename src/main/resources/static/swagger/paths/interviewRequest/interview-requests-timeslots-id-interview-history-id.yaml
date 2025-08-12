@@ -1,0 +1,29 @@
+get:
+  tags:
+    - Interview Request
+  summary: Retrieves the interview history ID associated with the given time slot ID.
+  description: Retrieves the interview history ID associated with the given time slot ID.
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
+  parameters:
+    - in: path
+      name: id
+      description: ID of the time slot
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: Return specific interview history Id or empty if time slot doesn't have linked interview history.
+    '204':
+      description: Existing time slot doesn't have linked interview history id.
+    '404':
+      description: The time slot is not found.
+    '500':
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'

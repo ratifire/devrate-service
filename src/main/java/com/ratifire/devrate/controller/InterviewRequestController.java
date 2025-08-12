@@ -63,6 +63,20 @@ public class InterviewRequestController {
   }
 
   /**
+   * Returns the interview history ID associated with the given time slot ID.
+   *
+   * @param id the ID of the time slot
+   * @return the ID of the interview history, or {@code 204 status} - no interview history is linked
+   */
+  @GetMapping("/timeslots/{id}/interview-history-id")
+  public ResponseEntity<Long> getInterviewHistoryIdByTimeSlot(@PathVariable long id) {
+    Long interviewId = interviewRequestService.getInterviewHistoryIdByTimeSlotId(id);
+    return (interviewId != null)
+        ? ResponseEntity.ok(interviewId)
+        : ResponseEntity.noContent().build();
+  }
+
+  /**
    * Creates a new interview request and sends it to the matcher-service.
    *
    * @param interviewRequest the interview request data

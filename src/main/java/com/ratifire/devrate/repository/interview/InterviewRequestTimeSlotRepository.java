@@ -29,6 +29,14 @@ public interface InterviewRequestTimeSlotRepository extends
       @Param("scheduledDate") ZonedDateTime scheduledDate,
       @Param("updatedStatus") TimeSlotStatus updatedStatus);
 
+  @Modifying
+  @Query("update InterviewRequestTimeSlot s "
+      + "set s.interviewHistoryId = :interviewHistoryId, s.status = :status "
+      + "where s.interviewId = :interviewId")
+  void markTimeSlotsAsCompleted(@Param("interviewId") long interviewId,
+      @Param("interviewHistoryId") Long interviewHistoryId,
+      @Param("status") TimeSlotStatus status);
+
   Optional<InterviewRequestTimeSlot> findInterviewRequestTimeSlotsByInterviewRequestIdAndDateTime(
       long interviewRequestId, ZonedDateTime dateTime);
 }

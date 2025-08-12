@@ -46,4 +46,7 @@ public class InterviewRequestTimeSlot {
 
   @Column(name = "interview_id")
   private Long interviewId;
+
+  @Column(name = "interview_history_id")
+  private Long interviewHistoryId;
 }
