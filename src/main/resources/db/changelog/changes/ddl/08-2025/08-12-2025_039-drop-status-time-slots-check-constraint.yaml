@@ -2,15 +2,8 @@ databaseChangeLog:
   - changeSet:
       id: 08-12-2025_039-drop-status-time-slots-check-constraint
       author: Ivan Ivashchenko
-      preConditions:
-        - onFail: MARK_RAN
-          and:
-            - tableExists:
-                tableName: interview_request_time_slots
-            - constraintExists:
-                tableName: interview_request_time_slots
-                constraintName: interview_request_time_slots_status_check
       changes:
-        - dropCheckConstraint:
-            tableName: interview_request_time_slots
-            constraintName: interview_request_time_slots_status_check
+        - sql:
+            sql: |
+              ALTER TABLE public.interview_request_time_slots
+              DROP CONSTRAINT IF EXISTS interview_request_time_slots_status_check;
