@@ -59,6 +59,7 @@ import org.springframework.util.CollectionUtils;
 public class InterviewService {
 
   private static final int INTERVIEW_DURATION = 1;    // hours
+  private static final int INTERVIEW_JOIN_EARLY_LIMIT_MINUTES = 5;  //min
 
   private final MeetingService meetingService;
   private final InterviewRequestService interviewRequestService;
@@ -602,7 +603,7 @@ public class InterviewService {
         .orElseThrow(() -> new InterviewNotFoundException(id));
 
     ZonedDateTime startTime = interview.getStartTime().withZoneSameInstant(ZoneId.of("UTC"));
-    Instant allowedFrom = startTime.minusMinutes(5).toInstant();
+    Instant allowedFrom = startTime.minusMinutes(INTERVIEW_JOIN_EARLY_LIMIT_MINUTES).toInstant();
     if (Instant.now().isBefore(allowedFrom)) {
       throw new InterviewJoinTooEarlyException();
     }
