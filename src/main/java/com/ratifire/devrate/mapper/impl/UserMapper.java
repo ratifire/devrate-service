@@ -41,6 +41,8 @@ public abstract class UserMapper implements DataMapper<UserDto, User> {
   @Mapping(target = "interviewHistories", ignore = true)
   @Mapping(target = "feedbacks", ignore = true)
   @Mapping(target = "createdAt", ignore = true)
+  @Mapping(target = "accountLanguage", ignore = true)
+  @Mapping(target = "registrationSource", ignore = true)
   public abstract User updateEntity(UserDto dto, @MappingTarget User entity);
 
   @Mapping(target = "hardSkillMark", expression = "java(java.math.BigDecimal.ZERO)")
