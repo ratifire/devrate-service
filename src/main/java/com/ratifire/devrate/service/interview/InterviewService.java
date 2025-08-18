@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
@@ -355,7 +356,7 @@ public class InterviewService {
     notifyParticipants(
         userMap.get(recipientId),
         userMap.get(rejectorId),
-        interviews.getFirst().getStartTime());
+        interviews);
   }
 
   /**
@@ -541,13 +542,19 @@ public class InterviewService {
    *
    * @param recipient     The user for whom rejected the interview.
    * @param rejector      The user who rejected the interview.
-   * @param scheduledTime The scheduled time of the interview.
    */
-  private void notifyParticipants(User recipient, User rejector, ZonedDateTime scheduledTime) {
+  private void notifyParticipants(User recipient, User rejector, List<Interview> interviews) {
+    Long recipientInterviewId = interviews.stream()
+        .filter(i -> i.getUserId() == recipient.getId())
+        .map(Interview::getId).findFirst().get();
+    Long rejectorInterviewId = interviews.stream()
+        .filter(i -> i.getUserId() == rejector.getId())
+        .map(Interview::getId).findFirst().get();
+    ZonedDateTime scheduledTime = interviews.getFirst().getStartTime();
     notificationService.addRejectInterview(recipient, rejector.getFirstName(),
-        scheduledTime);
+        scheduledTime, rejectorInterviewId);
     notificationService.addRejectInterview(rejector, recipient.getFirstName(),
-        scheduledTime);
+        scheduledTime, recipientInterviewId);
 
     emailService.sendInterviewRejectionMessageEmail(
         recipient, rejector, scheduledTime, recipient.getEmail());
