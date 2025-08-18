@@ -81,3 +81,7 @@ variable "participant_queue_name" {
 variable "participant_queue_name_dlq" {
   type = string
 }
+
+variable "sns_topic_name" {
+  default = "meetingStartingTopic"
+}
