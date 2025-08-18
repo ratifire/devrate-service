@@ -17,3 +17,5 @@ matched_participant_name = "matchedParticipantProd"
 participant_queue_name = "participantQueueProd"
 
 participant_queue_name_dlq = "participantQueueProd-dlq"
+
+sns_topic_name = "meetingStartingTopicProd"
