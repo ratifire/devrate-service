@@ -69,12 +69,14 @@ public class NotificationService {
    * @param recipient              The user for whom the interview was rejected.
    * @param rejectionUserFirstName The first name of the user who rejected the interview.
    * @param scheduleTime           The scheduled time of the interview.
+   * @param recipientInterviewId   The rejected interview Id of the recipient user
    */
   public void addRejectInterview(User recipient,
-      String rejectionUserFirstName, ZonedDateTime scheduleTime) {
+      String rejectionUserFirstName, ZonedDateTime scheduleTime, long recipientInterviewId) {
     InterviewRejectedPayload rejectedPayload = InterviewRejectedPayload.builder()
         .rejectionName(rejectionUserFirstName)
         .scheduledDateTime(scheduleTime.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)))
+        .rejectedInterviewId(Long.toString(recipientInterviewId))
         .build();
 
     Notification notification = create(NotificationType.INTERVIEW_REJECTED,
