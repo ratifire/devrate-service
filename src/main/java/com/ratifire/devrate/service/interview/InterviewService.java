@@ -552,9 +552,9 @@ public class InterviewService {
         .map(Interview::getId).findFirst().get();
     ZonedDateTime scheduledTime = interviews.getFirst().getStartTime();
     notificationService.addRejectInterview(recipient, rejector.getFirstName(),
-        scheduledTime, rejectorInterviewId);
-    notificationService.addRejectInterview(rejector, recipient.getFirstName(),
         scheduledTime, recipientInterviewId);
+    notificationService.addRejectInterview(rejector, recipient.getFirstName(),
+        scheduledTime, rejectorInterviewId);
 
     emailService.sendInterviewRejectionMessageEmail(
         recipient, rejector, scheduledTime, recipient.getEmail());
