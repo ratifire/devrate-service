@@ -22,5 +22,5 @@ public class InterviewRejectedPayload implements NotificationPayload  {
   @JsonProperty
   private String scheduledDateTime;
   @JsonProperty
-  private String oppositeInterviewId;
+  private String rejectedInterviewId;
 }
