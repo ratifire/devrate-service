@@ -33,7 +33,8 @@ public class WebPushSubscriptionService {
   public void saveSubscription(WebPushSubscriptionDto dto) {
     long currentUserId = userContextProvider.getAuthenticatedUserId();
 
-    Optional<WebPushSubscription> existingSub = repository.findByEndpoint(dto.getEndpoint());
+    Optional<WebPushSubscription> existingSub = repository
+        .findByEndpointAndUser_Id(dto.getEndpoint(), currentUserId);
     if (existingSub.isPresent()) {
       WebPushSubscription sub = existingSub.get();
       if (sub.getUser().getId() == currentUserId) {
@@ -59,6 +60,8 @@ public class WebPushSubscriptionService {
    */
   @Transactional
   public void deleteSubscription(String endpoint) {
-    repository.findByEndpoint(endpoint).ifPresent(sub -> repository.deleteByEndpoint(endpoint));
+    long currentUserId = userContextProvider.getAuthenticatedUserId();
+    repository.findByEndpointAndUser_Id(endpoint, currentUserId)
+        .ifPresent(sub -> repository.deleteByEndpoint(endpoint));
   }
 }

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface WebPushSubscriptionRepository extends JpaRepository<WebPushSubscription, Long> {
 
-  Optional<WebPushSubscription> findByEndpoint(String endpoint);
+  Optional<WebPushSubscription> findByEndpointAndUser_Id(String endpoint, long userId);
 
   void deleteByEndpoint(String endpoint);
 
