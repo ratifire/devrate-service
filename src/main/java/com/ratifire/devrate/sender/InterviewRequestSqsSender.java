@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class InterviewRequestSender {
+public class InterviewRequestSqsSender {
 
   private final SqsTemplate sqsTemplate;
 

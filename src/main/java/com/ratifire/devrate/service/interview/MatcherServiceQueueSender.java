@@ -4,7 +4,7 @@ import com.ratifire.devrate.dto.ParticipantRequestDto;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.SqsMessageType;
 import com.ratifire.devrate.mapper.impl.ParticipantRequestMapper;
-import com.ratifire.devrate.sender.InterviewRequestSender;
+import com.ratifire.devrate.sender.InterviewRequestSqsSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class MatcherServiceQueueSender {
 
-  private final InterviewRequestSender interviewRequestSender;
+  private final InterviewRequestSqsSender interviewRequestSqsSender;
   private final ParticipantRequestMapper mapper;
 
   /**
@@ -25,7 +25,7 @@ public class MatcherServiceQueueSender {
    */
   public void create(InterviewRequest request) {
     ParticipantRequestDto dto = mapper.toDto(request);
-    interviewRequestSender.send(SqsMessageType.CREATE.name(), dto);
+    interviewRequestSqsSender.send(SqsMessageType.CREATE.name(), dto);
   }
 
   /**
@@ -35,7 +35,7 @@ public class MatcherServiceQueueSender {
    */
   public void update(InterviewRequest request) {
     ParticipantRequestDto dto = mapper.toDto(request);
-    interviewRequestSender.send(SqsMessageType.UPDATE.name(), dto);
+    interviewRequestSqsSender.send(SqsMessageType.UPDATE.name(), dto);
   }
 
   /**
@@ -47,6 +47,6 @@ public class MatcherServiceQueueSender {
     ParticipantRequestDto dto = ParticipantRequestDto.builder()
         .id((int) interviewRequestId)
         .build();
-    interviewRequestSender.send(SqsMessageType.DELETE.name(), dto);
+    interviewRequestSqsSender.send(SqsMessageType.DELETE.name(), dto);
   }
 }
