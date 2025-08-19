@@ -32,6 +32,3 @@ properties:
   title:
     type: string
     description: The interview title (in general it's mastery level + specialization name of the CANDIDATE interview request)
-  roomUrl:
-    type: string
-    description: The room link url for the event

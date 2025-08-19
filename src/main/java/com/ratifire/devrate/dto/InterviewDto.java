@@ -30,5 +30,4 @@ public class InterviewDto {
   private String hostFirstName;
   private String hostLastName;
   private long hostMasteryId;
-  private String roomUrl;
 }
