@@ -4,6 +4,9 @@ import io.awspring.cloud.sns.core.SnsTemplate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service responsible for publishing messages to the Amazon SNS topic {@code meetingStartingTopic}.
+ */
 @Service
 @RequiredArgsConstructor
 public class SnsPublisherService {
