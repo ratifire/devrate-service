@@ -609,6 +609,7 @@ public class InterviewService {
         .orElseThrow(() -> new InterviewNotFoundException(id));
 
     if (interview.getRoomUrl() != null) {
+      snsPublisherService.publishMeetingStarting(interview.getRoomUrl());
       return interview.getRoomUrl();
     }
 
