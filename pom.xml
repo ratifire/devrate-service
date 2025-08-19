@@ -166,6 +166,12 @@
       <version>3.2.1</version>
     </dependency>
 
+    <dependency>
+      <groupId>io.awspring.cloud</groupId>
+      <artifactId>spring-cloud-aws-sns</artifactId>
+      <version>3.4.0</version>
+    </dependency>
+
     <!-- AWS SDK for Java -->
     <dependency>
       <groupId>software.amazon.awssdk</groupId>

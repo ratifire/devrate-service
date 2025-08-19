@@ -31,6 +31,7 @@ import com.ratifire.devrate.service.EventService;
 import com.ratifire.devrate.service.MasteryService;
 import com.ratifire.devrate.service.MeetingService;
 import com.ratifire.devrate.service.NotificationService;
+import com.ratifire.devrate.service.SnsPublisherService;
 import com.ratifire.devrate.service.UserService;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -69,6 +70,7 @@ public class InterviewService {
   private final InterviewRepository interviewRepository;
   private final UserContextProvider userContextProvider;
   private final DataMapper<InterviewDto, Interview> mapper;
+  private final SnsPublisherService snsPublisherService;
 
   /**
    * Retrieves a single visible interview by id for the auth user.
@@ -613,6 +615,8 @@ public class InterviewService {
     String roomUrl = meetingService.createMeeting();
 
     interviewRepository.updateInterviewsRoomUrlByEventId(interview.getEventId(), roomUrl);
+
+    snsPublisherService.publishMeetingStarting(roomUrl);
 
     return roomUrl;
   }
