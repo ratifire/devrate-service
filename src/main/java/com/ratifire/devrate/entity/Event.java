@@ -34,9 +34,6 @@ public class Event {
   @Enumerated(EnumType.STRING)
   private EventType type;
 
-  @Column(name = "room_link", nullable = false)
-  private String roomLink;
-
   @Column(name = "host_id", nullable = false)
   private long hostId;
 

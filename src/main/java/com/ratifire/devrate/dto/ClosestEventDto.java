@@ -21,7 +21,6 @@ public class ClosestEventDto {
   private ZonedDateTime startTime;
   private String hostName;
   private String hostSurname;
-  private String roomUrl;
   private long interviewId;
   private InterviewRequestRole role;
   private long hostId;    // opponent userId

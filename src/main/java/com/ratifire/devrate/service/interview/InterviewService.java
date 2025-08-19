@@ -39,7 +39,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
@@ -230,7 +229,6 @@ public class InterviewService {
         .title(event.getTitle())
         .interviewId(authInterview.getId())
         .role(authInterview.getRole())
-        .roomUrl(event.getRoomLink())
         .build();
   }
 
@@ -247,8 +245,6 @@ public class InterviewService {
     long candidateRequestId = matchedUsers.getCandidateParticipantId();
     ZonedDateTime date = matchedUsers.getDate();
 
-    String joinUrl = meetingService.createMeeting();
-
     Mastery mastery =
         masteryService.getMasteryById(interviewRequestService.findMasteryId(candidateRequestId)
             .orElseThrow(() -> new IllegalStateException(
@@ -256,7 +252,7 @@ public class InterviewService {
 
     String title = MasteryLevel.fromLevel(mastery.getLevel())
         + " " + mastery.getSpecialization().getName();
-    Event event = eventService.buildEvent(candidateId, interviewerId, joinUrl, date, title);
+    Event event = eventService.buildEvent(candidateId, interviewerId, date, title);
     long eventId = eventService.save(event, List.of(interviewerId, candidateId));
 
     List<InterviewRequest> requests = interviewRequestService.findByIds(
@@ -266,13 +262,13 @@ public class InterviewService {
     String interviewerLanguageCode = extractLanguageCode(requests, INTERVIEWER);
     ConsentStatus interviewerConsentStatus = extractContentStatus(requests, INTERVIEWER);
     Interview interviewer = buildInterview(interviewerId, interviewerRequestId, eventId,
-        INTERVIEWER, joinUrl, date, interviewerRequestComment, interviewerLanguageCode,
+        INTERVIEWER, date, interviewerRequestComment, interviewerLanguageCode,
         interviewerConsentStatus);
     String candidateRequestComment = extractCommentForRole(requests, CANDIDATE);
     String candidateLanguageCode = extractLanguageCode(requests, CANDIDATE);
     ConsentStatus candidateConsentStatus = extractContentStatus(requests, CANDIDATE);
     Interview candidate = buildInterview(candidateId, candidateRequestId, eventId, CANDIDATE,
-        joinUrl, date, candidateRequestComment, candidateLanguageCode, candidateConsentStatus);
+        date, candidateRequestComment, candidateLanguageCode, candidateConsentStatus);
     List<Interview> interviews = interviewRepository.saveAll(List.of(interviewer, candidate));
 
     // TODO: need refactoring related to the interview list that use only for getting interviewIds
@@ -430,8 +426,8 @@ public class InterviewService {
    * @return the built Interview object
    */
   private Interview buildInterview(long userId, long requestId, long eventId,
-      InterviewRequestRole role, String roomUrl, ZonedDateTime date, String requestComment,
-      String languageCode, ConsentStatus consentStatus) {
+      InterviewRequestRole role, ZonedDateTime date, String requestComment, String languageCode,
+      ConsentStatus consentStatus) {
 
     long masteryId = interviewRequestService.findMasteryId(requestId)
         .orElseThrow(() -> new IllegalStateException(
@@ -443,7 +439,6 @@ public class InterviewService {
         .eventId(eventId)
         .role(role)
         .consentStatus(consentStatus)
-        .roomUrl(roomUrl)
         .startTime(date)
         .languageCode(languageCode)
         .requestComment(requestComment)
