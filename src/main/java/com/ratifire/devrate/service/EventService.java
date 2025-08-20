@@ -79,7 +79,6 @@ public class EventService {
         .id(event.getId())
         .type(event.getType())
         .hostId(event.getHostId())
-        .roomLink(event.getRoomLink())
         .startTime(event.getStartTime())
         .title(event.getTitle())
         .interviewId(interview.getId())
@@ -124,16 +123,13 @@ public class EventService {
    *
    * @return an Event object containing the specified details
    */
-  public Event buildEvent(long candidateId, long interviewerId, String roomUrl,
-      ZonedDateTime date, String title) {
+  public Event buildEvent(long candidateId, long interviewerId, ZonedDateTime date, String title) {
     return Event.builder()
         .type(EventType.INTERVIEW)
-        .roomLink(roomUrl)
         .hostId(interviewerId)
         .participantIds(List.of(candidateId))
         .startTime(date)
         .title(title)
         .build();
-
   }
 }

@@ -973,34 +973,34 @@ WHERE NOT EXISTS (
 );
 
 --  Create event records
-INSERT INTO events (id, type, room_link, host_id, participant_id, start_time, title)
+INSERT INTO events (id, type, host_id, participant_id, start_time, title)
 SELECT * FROM (
 VALUES
-    (10001, 'INTERVIEW', 'https://testlink/1', 8882, ARRAY[8881], '2025-02-21T12:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10002, 'INTERVIEW', 'https://testlink/2', 8882, ARRAY[8881], '2025-02-21T14:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10003, 'INTERVIEW', 'https://testlink/3', 8882, ARRAY[8881], '2025-02-21T16:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10004, 'INTERVIEW', 'https://testlink/4', 8882, ARRAY[8881], '2025-02-21T18:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10005, 'INTERVIEW', 'https://testlink/5', 8882, ARRAY[8881], '2025-02-21T20:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10006, 'INTERVIEW', 'https://testlink/6', 8882, ARRAY[8881], '2025-02-21T22:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10007, 'INTERVIEW', 'https://testlink/7', 8882, ARRAY[8881], '2025-02-22T10:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10008, 'INTERVIEW', 'https://testlink/8', 8882, ARRAY[8881], '2025-02-22T15:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10009, 'INTERVIEW', 'https://testlink/9', 8882, ARRAY[8881], '2025-02-22T18:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10010, 'INTERVIEW', 'https://testlink/10', 8882, ARRAY[8881], '2025-02-23T11:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10011, 'INTERVIEW', 'https://testlink/11', 8882, ARRAY[8881], '2025-02-24T14:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10012, 'INTERVIEW', 'https://testlink/12', 8882, ARRAY[8881], '2025-02-05T10:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10013, 'INTERVIEW', 'https://testlink/13', 8882, ARRAY[8881], '2025-03-01T09:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10014, 'INTERVIEW', 'https://testlink/14', 8882, ARRAY[8881], '2025-03-01T11:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10015, 'INTERVIEW', 'https://testlink/15', 8882, ARRAY[8881], '2025-03-01T13:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10016, 'INTERVIEW', 'https://testlink/16', 8882, ARRAY[8881], '2025-03-01T15:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10017, 'INTERVIEW', 'https://testlink/17', 8882, ARRAY[8881], '2025-02-06T17:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10018, 'INTERVIEW', 'https://testlink/18', 8882, ARRAY[8881], '2025-02-06T19:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10019, 'INTERVIEW', 'https://testlink/19', 8882, ARRAY[8881], '2025-03-02T09:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10020, 'INTERVIEW', 'https://testlink/20', 8882, ARRAY[8881], '2025-03-02T11:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10021, 'INTERVIEW', 'https://testlink/21', 8882, ARRAY[8881], '2025-03-02T13:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10022, 'INTERVIEW', 'https://testlink/22', 8882, ARRAY[8881], '2025-03-02T15:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10023, 'INTERVIEW', 'https://testlink/23', 8882, ARRAY[8881], '2025-03-02T17:00:00Z'::timestamptz, 'Junior Frontend Developer'),
-    (10024, 'INTERVIEW', 'https://testlink/24', 8882, ARRAY[8881], '2025-03-02T19:00:00Z'::timestamptz, 'Junior Frontend Developer')
-) AS new_events (id, type, room_link, host_id, participant_id, start_time, title)
+    (10001, 'INTERVIEW', 8882, ARRAY[8881], '2025-02-21T12:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10002, 'INTERVIEW', 8882, ARRAY[8881], '2025-02-21T14:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10003, 'INTERVIEW', 8882, ARRAY[8881], '2025-02-21T16:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10004, 'INTERVIEW', 8882, ARRAY[8881], '2025-02-21T18:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10005, 'INTERVIEW', 8882, ARRAY[8881], '2025-02-21T20:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10006, 'INTERVIEW', 8882, ARRAY[8881], '2025-02-21T22:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10007, 'INTERVIEW', 8882, ARRAY[8881], '2025-02-22T10:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10008, 'INTERVIEW', 8882, ARRAY[8881], '2025-02-22T15:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10009, 'INTERVIEW', 8882, ARRAY[8881], '2025-02-22T18:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10010, 'INTERVIEW', 8882, ARRAY[8881], '2025-02-23T11:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10011, 'INTERVIEW', 8882, ARRAY[8881], '2025-02-24T14:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10012, 'INTERVIEW', 8882, ARRAY[8881], '2025-02-05T10:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10013, 'INTERVIEW', 8882, ARRAY[8881], '2025-03-01T09:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10014, 'INTERVIEW', 8882, ARRAY[8881], '2025-03-01T11:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10015, 'INTERVIEW', 8882, ARRAY[8881], '2025-03-01T13:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10016, 'INTERVIEW', 8882, ARRAY[8881], '2025-03-01T15:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10017, 'INTERVIEW', 8882, ARRAY[8881], '2025-02-06T17:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10018, 'INTERVIEW', 8882, ARRAY[8881], '2025-02-06T19:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10019, 'INTERVIEW', 8882, ARRAY[8881], '2025-03-02T09:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10020, 'INTERVIEW', 8882, ARRAY[8881], '2025-03-02T11:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10021, 'INTERVIEW', 8882, ARRAY[8881], '2025-03-02T13:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10022, 'INTERVIEW', 8882, ARRAY[8881], '2025-03-02T15:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10023, 'INTERVIEW', 8882, ARRAY[8881], '2025-03-02T17:00:00Z'::timestamptz, 'Junior Frontend Developer'),
+    (10024, 'INTERVIEW', 8882, ARRAY[8881], '2025-03-02T19:00:00Z'::timestamptz, 'Junior Frontend Developer')
+) AS new_events (id, type, host_id, participant_id, start_time, title)
 WHERE NOT EXISTS (SELECT 1
                   FROM events
                   WHERE id = new_events.id);
