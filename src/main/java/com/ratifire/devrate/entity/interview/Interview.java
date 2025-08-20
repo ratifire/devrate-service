@@ -61,4 +61,7 @@ public class Interview {
 
   @Column(name = "is_visible", nullable = false)
   private boolean isVisible;
+
+  @Column(name = "video_url")
+  private String videoUrl;
 }

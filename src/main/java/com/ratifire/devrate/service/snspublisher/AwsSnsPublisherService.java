@@ -17,8 +17,8 @@ public class AwsSnsPublisherService implements SnsPublisherService {
   private static final String TOPIC_NAME = "meetingStartingTopic";
 
   @Override
-  public void publishMeetingStarting(String url) {
-    String message = String.format("{\"url\":\"%s\"}", url);
+  public void publishMeetingStarting(String url, String fileName) {
+    String message = String.format("{\"url\":\"%s\", \"fileName\":\"%s\"}", url, fileName);
     snsTemplate.convertAndSend(TOPIC_NAME, message);
   }
 }

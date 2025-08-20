@@ -33,8 +33,8 @@ import com.ratifire.devrate.service.MasteryService;
 import com.ratifire.devrate.service.MeetingService;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserService;
-import java.time.Instant;
 import com.ratifire.devrate.service.snspublisher.SnsPublisherService;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -604,7 +604,7 @@ public class InterviewService {
   public String resolveMeetingUrl(long id) {
     Interview interview =
         interviewRepository.findByIdAndUserId(id, userContextProvider.getAuthenticatedUserId())
-        .orElseThrow(() -> new InterviewNotFoundException(id));
+            .orElseThrow(() -> new InterviewNotFoundException(id));
 
     ZonedDateTime startTime = interview.getStartTime().withZoneSameInstant(ZoneId.of("UTC"));
     Instant allowedFrom = startTime.minusMinutes(INTERVIEW_JOIN_EARLY_LIMIT_MINUTES).toInstant();
@@ -618,9 +618,19 @@ public class InterviewService {
 
     String roomUrl = meetingService.createMeeting();
 
-    interviewRepository.updateInterviewsRoomUrlByEventId(interview.getEventId(), roomUrl);
+    String fileName = String.format("Meeting_%s_%s.mp4", interview.getEventId(),
+        System.currentTimeMillis());
 
-    snsPublisherService.publishMeetingStarting(roomUrl);
+    String videoUrl = String.format(
+        "https://%s.s3.%s.amazonaws.com/%s",
+        "skillzzy-video",
+        "eu-north-1",
+        fileName
+    );
+
+    interviewRepository.updateInterviewsRoomUrlByEventId(interview.getEventId(), roomUrl, videoUrl);
+
+    snsPublisherService.publishMeetingStarting(roomUrl, fileName);
 
     return roomUrl;
   }

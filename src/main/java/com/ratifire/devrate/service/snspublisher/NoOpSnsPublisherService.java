@@ -12,7 +12,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class NoOpSnsPublisherService implements SnsPublisherService {
   @Override
-  public void publishMeetingStarting(String url) {
-    log.info("[LOCAL] SNS publish skipped. Message would be: {\"url\":\"{}\"}", url);
+  public void publishMeetingStarting(String url, String fileName) {
+    log.info("[LOCAL] SNS publish skipped. Message would be: {\"url\":\"{}\", \"fileName\":\"{}\"}",
+        url, fileName);
   }
 }
