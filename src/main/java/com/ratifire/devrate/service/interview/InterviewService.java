@@ -273,8 +273,8 @@ public class InterviewService {
     String candidateRequestComment = extractCommentForRole(requests, CANDIDATE);
     String candidateLanguageCode = extractLanguageCode(requests, CANDIDATE);
     ConsentStatus candidateConsentStatus = extractContentStatus(requests, CANDIDATE);
-    Interview candidateInterview = buildInterview(candidateId, candidateRequestId, eventId, CANDIDATE,
-        date, candidateRequestComment, candidateLanguageCode, candidateConsentStatus);
+    Interview candidateInterview = buildInterview(candidateId, candidateRequestId, eventId,
+        CANDIDATE, date, candidateRequestComment, candidateLanguageCode, candidateConsentStatus);
     List<Interview> interviews = interviewRepository.saveAll(
         List.of(interviewerInterview, candidateInterview));
 
