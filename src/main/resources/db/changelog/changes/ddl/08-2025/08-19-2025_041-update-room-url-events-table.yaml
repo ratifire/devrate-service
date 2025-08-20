@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 08-19-2025_041
+      author: Ivan Ivashchenko
+      changes:
+        - dropColumn:
+            tableName: events
+            columnName: room_link

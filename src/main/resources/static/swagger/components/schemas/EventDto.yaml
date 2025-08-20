@@ -10,9 +10,6 @@ properties:
   hostId:
     type: integer
     description: The host ID
-  roomLink:
-    type: string
-    description: Generated link for the event
   interviewId:
     type: integer
     description: The ID of the user interview

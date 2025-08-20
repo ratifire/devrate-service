@@ -29,6 +29,12 @@ get:
         application/json:
           schema:
             $ref: '../../components/schemas/ErrorResponse.yaml'
+    '403':
+      description: Joining is only permitted 5 minutes prior to the interview starting.
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/ErrorResponse.yaml'
     '500':
       description: Internal server error
       content:

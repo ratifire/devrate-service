@@ -1,6 +1,7 @@
 package com.ratifire.devrate.controller;
 
 import com.ratifire.devrate.exception.FeedbackSubmissionLimitException;
+import com.ratifire.devrate.exception.InterviewJoinTooEarlyException;
 import com.ratifire.devrate.exception.InterviewRequestDoesntExistException;
 import com.ratifire.devrate.exception.InterviewRequestInvalidSkillCountException;
 import com.ratifire.devrate.exception.InvalidInterviewRequestException;
@@ -88,7 +89,7 @@ public class HandlerException {
    * Handles AccessDeniedException by returning an HTTP status 403 (Forbidden).
    */
   @ResponseStatus(HttpStatus.FORBIDDEN)
-  @ExceptionHandler(AccessDeniedException.class)
+  @ExceptionHandler({AccessDeniedException.class, InterviewJoinTooEarlyException.class})
   public void handleAccessDeniedException() {
   }
 

@@ -22,6 +22,7 @@ import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.enums.InterviewStatusIndicator;
 import com.ratifire.devrate.enums.MasteryLevel;
 import com.ratifire.devrate.enums.SkillType;
+import com.ratifire.devrate.exception.InterviewJoinTooEarlyException;
 import com.ratifire.devrate.exception.InterviewNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
@@ -32,6 +33,7 @@ import com.ratifire.devrate.service.MasteryService;
 import com.ratifire.devrate.service.MeetingService;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserService;
+import java.time.Instant;
 import com.ratifire.devrate.service.snspublisher.SnsPublisherService;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -58,6 +60,7 @@ import org.springframework.util.CollectionUtils;
 public class InterviewService {
 
   private static final int INTERVIEW_DURATION = 1;    // hours
+  private static final int INTERVIEW_JOIN_EARLY_LIMIT_MINUTES = 5;
 
   private final MeetingService meetingService;
   private final InterviewRequestService interviewRequestService;
@@ -231,7 +234,6 @@ public class InterviewService {
         .title(event.getTitle())
         .interviewId(authInterview.getId())
         .role(authInterview.getRole())
-        .roomUrl(event.getRoomLink())
         .build();
   }
 
@@ -248,8 +250,6 @@ public class InterviewService {
     long candidateRequestId = matchedUsers.getCandidateParticipantId();
     ZonedDateTime date = matchedUsers.getDate();
 
-    String joinUrl = meetingService.createMeeting();
-
     Mastery mastery =
         masteryService.getMasteryById(interviewRequestService.findMasteryId(candidateRequestId)
             .orElseThrow(() -> new IllegalStateException(
@@ -257,7 +257,7 @@ public class InterviewService {
 
     String title = MasteryLevel.fromLevel(mastery.getLevel())
         + " " + mastery.getSpecialization().getName();
-    Event event = eventService.buildEvent(candidateId, interviewerId, joinUrl, date, title);
+    Event event = eventService.buildEvent(candidateId, interviewerId, date, title);
     long eventId = eventService.save(event, List.of(interviewerId, candidateId));
 
     List<InterviewRequest> requests = interviewRequestService.findByIds(
@@ -267,13 +267,13 @@ public class InterviewService {
     String interviewerLanguageCode = extractLanguageCode(requests, INTERVIEWER);
     ConsentStatus interviewerConsentStatus = extractContentStatus(requests, INTERVIEWER);
     Interview interviewer = buildInterview(interviewerId, interviewerRequestId, eventId,
-        INTERVIEWER, joinUrl, date, interviewerRequestComment, interviewerLanguageCode,
+        INTERVIEWER, date, interviewerRequestComment, interviewerLanguageCode,
         interviewerConsentStatus);
     String candidateRequestComment = extractCommentForRole(requests, CANDIDATE);
     String candidateLanguageCode = extractLanguageCode(requests, CANDIDATE);
     ConsentStatus candidateConsentStatus = extractContentStatus(requests, CANDIDATE);
     Interview candidate = buildInterview(candidateId, candidateRequestId, eventId, CANDIDATE,
-        joinUrl, date, candidateRequestComment, candidateLanguageCode, candidateConsentStatus);
+        date, candidateRequestComment, candidateLanguageCode, candidateConsentStatus);
     List<Interview> interviews = interviewRepository.saveAll(List.of(interviewer, candidate));
 
     // TODO: need refactoring related to the interview list that use only for getting interviewIds
@@ -431,8 +431,8 @@ public class InterviewService {
    * @return the built Interview object
    */
   private Interview buildInterview(long userId, long requestId, long eventId,
-      InterviewRequestRole role, String roomUrl, ZonedDateTime date, String requestComment,
-      String languageCode, ConsentStatus consentStatus) {
+      InterviewRequestRole role, ZonedDateTime date, String requestComment, String languageCode,
+      ConsentStatus consentStatus) {
 
     long masteryId = interviewRequestService.findMasteryId(requestId)
         .orElseThrow(() -> new IllegalStateException(
@@ -444,7 +444,6 @@ public class InterviewService {
         .eventId(eventId)
         .role(role)
         .consentStatus(consentStatus)
-        .roomUrl(roomUrl)
         .startTime(date)
         .languageCode(languageCode)
         .requestComment(requestComment)
@@ -606,6 +605,12 @@ public class InterviewService {
     Interview interview =
         interviewRepository.findByIdAndUserId(id, userContextProvider.getAuthenticatedUserId())
         .orElseThrow(() -> new InterviewNotFoundException(id));
+
+    ZonedDateTime startTime = interview.getStartTime().withZoneSameInstant(ZoneId.of("UTC"));
+    Instant allowedFrom = startTime.minusMinutes(INTERVIEW_JOIN_EARLY_LIMIT_MINUTES).toInstant();
+    if (Instant.now().isBefore(allowedFrom)) {
+      throw new InterviewJoinTooEarlyException();
+    }
 
     if (interview.getRoomUrl() != null) {
       return interview.getRoomUrl();
