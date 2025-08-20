@@ -2,6 +2,7 @@ package com.ratifire.devrate.service.interview;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ratifire.devrate.dto.InterviewCreatedResultDto;
 import com.ratifire.devrate.dto.PairedParticipantDto;
 import io.awspring.cloud.sqs.annotation.SqsListener;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ public class MatcherServiceQueueListener {
 
   private ObjectMapper objectMapper;
   private InterviewService interviewService;
+  private InterviewNotificationService interviewNotificationService;
 
   /**
    * Processes incoming messages from the queue.
@@ -28,6 +30,9 @@ public class MatcherServiceQueueListener {
     PairedParticipantDto pairedParticipantDto = objectMapper.readValue(message,
         PairedParticipantDto.class);
     System.out.println("Interview paired received: " + pairedParticipantDto);
-    interviewService.create(pairedParticipantDto);
+
+    InterviewCreatedResultDto result = interviewService.create(pairedParticipantDto);
+
+    interviewNotificationService.sendScheduledNotifications(result);
   }
 }

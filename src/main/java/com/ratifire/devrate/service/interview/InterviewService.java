@@ -4,9 +4,11 @@ import static com.ratifire.devrate.enums.InterviewRequestRole.CANDIDATE;
 import static com.ratifire.devrate.enums.InterviewRequestRole.INTERVIEWER;
 
 import com.ratifire.devrate.dto.ClosestEventDto;
+import com.ratifire.devrate.dto.InterviewCreatedResultDto;
 import com.ratifire.devrate.dto.InterviewDto;
 import com.ratifire.devrate.dto.InterviewEventDto;
 import com.ratifire.devrate.dto.InterviewFeedbackDetailDto;
+import com.ratifire.devrate.dto.InterviewRequestMailDto;
 import com.ratifire.devrate.dto.InterviewsOverallStatusDto;
 import com.ratifire.devrate.dto.PairedParticipantDto;
 import com.ratifire.devrate.dto.ParticipantDto;
@@ -14,6 +16,7 @@ import com.ratifire.devrate.dto.SkillShortDto;
 import com.ratifire.devrate.dto.projection.InterviewUserMasteryProjection;
 import com.ratifire.devrate.entity.Event;
 import com.ratifire.devrate.entity.Mastery;
+import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
@@ -39,7 +42,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
@@ -240,7 +242,7 @@ public class InterviewService {
    * @param matchedUsers Data transfer object containing the details of paired participant.
    */
   @Transactional
-  public void create(PairedParticipantDto matchedUsers) {
+  public InterviewCreatedResultDto create(PairedParticipantDto matchedUsers) {
     long interviewerId = matchedUsers.getInterviewerId();
     long candidateId = matchedUsers.getCandidateId();
     long interviewerRequestId = matchedUsers.getInterviewerParticipantId();
@@ -249,13 +251,13 @@ public class InterviewService {
 
     String joinUrl = meetingService.createMeeting();
 
-    Mastery mastery =
+    Mastery candidateMastery =
         masteryService.getMasteryById(interviewRequestService.findMasteryId(candidateRequestId)
             .orElseThrow(() -> new IllegalStateException(
                 "Mastery ID not found for interview request with id: " + candidateRequestId)));
 
-    String title = MasteryLevel.fromLevel(mastery.getLevel())
-        + " " + mastery.getSpecialization().getName();
+    String title = MasteryLevel.fromLevel(candidateMastery.getLevel())
+        + " " + candidateMastery.getSpecialization().getName();
     Event event = eventService.buildEvent(candidateId, interviewerId, joinUrl, date, title);
     long eventId = eventService.save(event, List.of(interviewerId, candidateId));
 
@@ -265,15 +267,17 @@ public class InterviewService {
     String interviewerRequestComment = extractCommentForRole(requests, INTERVIEWER);
     String interviewerLanguageCode = extractLanguageCode(requests, INTERVIEWER);
     ConsentStatus interviewerConsentStatus = extractContentStatus(requests, INTERVIEWER);
-    Interview interviewer = buildInterview(interviewerId, interviewerRequestId, eventId,
+    Interview interviewerInterview = buildInterview(interviewerId, interviewerRequestId, eventId,
         INTERVIEWER, joinUrl, date, interviewerRequestComment, interviewerLanguageCode,
         interviewerConsentStatus);
     String candidateRequestComment = extractCommentForRole(requests, CANDIDATE);
     String candidateLanguageCode = extractLanguageCode(requests, CANDIDATE);
     ConsentStatus candidateConsentStatus = extractContentStatus(requests, CANDIDATE);
-    Interview candidate = buildInterview(candidateId, candidateRequestId, eventId, CANDIDATE,
-        joinUrl, date, candidateRequestComment, candidateLanguageCode, candidateConsentStatus);
-    List<Interview> interviews = interviewRepository.saveAll(List.of(interviewer, candidate));
+    Interview candidateInterview = buildInterview(candidateId, candidateRequestId, eventId,
+        CANDIDATE, joinUrl, date, candidateRequestComment, candidateLanguageCode,
+        candidateConsentStatus);
+    List<Interview> interviews = interviewRepository.saveAll(
+        List.of(interviewerInterview, candidateInterview));
 
     // TODO: need refactoring related to the interview list that use only for getting interviewIds
     //  for each users
@@ -282,11 +286,46 @@ public class InterviewService {
         interviews);
     interviewRequestService.incrementMatchedInterviewCount(requests);
 
-    Map<Long, InterviewRequest> requestMap = requests.stream()
-        .collect(Collectors.toMap(InterviewRequest::getId, request -> request));
+    Mastery interviewerMastery =
+        masteryService.getMasteryById(interviewRequestService.findMasteryId(interviewerRequestId)
+            .orElseThrow(() -> new IllegalStateException(
+                "Mastery ID not found for interview request with id: " + interviewerRequestId)));
 
-    sendInterviewScheduledAlerts(
-        requestMap.get(interviewerRequestId), requestMap.get(candidateRequestId), date, interviews);
+    InterviewRequestMailDto interviewerMailDto = buildMailDto(requests, interviewerId,
+        interviewerMastery, INTERVIEWER);
+    InterviewRequestMailDto candidateMailDto = buildMailDto(requests, candidateId,
+        candidateMastery, CANDIDATE);
+
+    return InterviewCreatedResultDto.builder()
+        .interviewerMailDto(interviewerMailDto)
+        .candidateMailDto(candidateMailDto)
+        .date(date)
+        .interviewerInterviewId(interviews.stream()
+            .filter(i -> i.getRole() == INTERVIEWER).findFirst().get().getId())
+        .candidateInterviewId(interviews.stream()
+            .filter(i -> i.getRole() == CANDIDATE).findFirst().get().getId())
+        .build();
+  }
+
+  private InterviewRequestMailDto buildMailDto(List<InterviewRequest> requests, long userId,
+      Mastery interviewMastery, InterviewRequestRole role) {
+    User candidate = requests.stream()
+        .filter(r -> r.getRole() == role)
+        .map(InterviewRequest::getUser)
+        .findFirst().get();
+
+    return InterviewRequestMailDto.builder()
+        .userId(userId)
+        .firstName(candidate.getFirstName())
+        .lastName(candidate.getLastName())
+        .specializationName(interviewMastery.getSpecialization().getName())
+        .softSkillMark(interviewMastery.getSoftSkillMark())
+        .hardSkillMark(interviewMastery.getHardSkillMark())
+        .skillNames(interviewMastery.getSkills().stream()
+            .map(Skill::getName)
+            .toList())
+        .role(role)
+        .build();
   }
 
   private String extractCommentForRole(List<InterviewRequest> requests, InterviewRequestRole role) {
@@ -495,46 +534,6 @@ public class InterviewService {
         .toList();
     return masteryService.findByIds(masteryIds).stream()
         .collect(Collectors.toMap(Mastery::getId, mastery -> mastery));
-  }
-
-  /**
-   * Sends alerts to both the interviewer and candidate about the scheduled interview.
-   *
-   * @param interviewerRequest the interview request object containing details about the
-   *                           interviewer
-   * @param candidateRequest   the interview request object containing details about the candidate
-   * @param date               the date and time of the scheduled interview
-   */
-  private void sendInterviewScheduledAlerts(InterviewRequest interviewerRequest,
-      InterviewRequest candidateRequest, ZonedDateTime date, List<Interview> interviews) {
-    Map<InterviewRequestRole, Long> roleToId = interviews.stream()
-        .collect(Collectors.toMap(Interview::getRole, Interview::getId));
-    notifyParticipant(candidateRequest, interviewerRequest, date, roleToId.get(CANDIDATE));
-    notifyParticipant(interviewerRequest, candidateRequest, date, roleToId.get(INTERVIEWER));
-  }
-
-  /**
-   * Sends a notification and an email to a participant of an interview about the scheduled
-   * interview.
-   *
-   * @param recipientRequest         the interview request of the recipient of the notification
-   * @param secondParticipantRequest the interview request of the other participant in the
-   *                                 interview
-   * @param interviewStartTimeInUtc  the start time of the interview in UTC
-   */
-  private void notifyParticipant(InterviewRequest recipientRequest,
-      InterviewRequest secondParticipantRequest, ZonedDateTime interviewStartTimeInUtc,
-      long interviewId) {
-
-    User recipient = recipientRequest.getUser();
-    String recipientEmail = recipient.getEmail();
-    String role = String.valueOf(recipientRequest.getRole());
-
-    notificationService.addInterviewScheduled(recipient, role,
-        interviewStartTimeInUtc, interviewId);
-
-    emailService.sendInterviewScheduledEmail(recipient, recipientEmail,
-        interviewStartTimeInUtc, secondParticipantRequest, interviewId);
   }
 
   /**

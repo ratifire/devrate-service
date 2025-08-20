@@ -75,17 +75,17 @@
     </tr>
     <tr>
       <td><strong>Ім’я кандидата:</strong> <span
-          th:text="${interviewRequest?.user?.firstName} + ' ' + ${interviewRequest?.user?.lastName}"></span>
+          th:text="${interviewRequest?.firstName} + ' ' + ${interviewRequest?.lastName}"></span>
       </td>
     </tr>
     <tr>
       <td><strong>Спеціалізація кандидата:</strong> <span
-          th:text="${interviewRequest?.mastery?.specialization?.name}"></span></td>
+          th:text="${interviewRequest?.specializationName}"></span></td>
     </tr>
     <tr>
       <td class="no-border"><strong>Hard/Soft навички кандидата:</strong>
         <ul class="skill-list">
-          <li th:each="skill : ${interviewRequest?.mastery?.skills}" th:text="${skill?.name}"></li>
+          <li th:each="skill : ${interviewRequest?.skillNames}" th:text="${skill}"></li>
         </ul>
       </td>
     </tr>

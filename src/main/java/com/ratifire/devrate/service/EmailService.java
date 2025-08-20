@@ -1,5 +1,6 @@
 package com.ratifire.devrate.service;
 
+import com.ratifire.devrate.dto.InterviewRequestMailDto;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.entity.interview.InterviewRequest;
 import com.ratifire.devrate.enums.InterviewRequestRole;
@@ -100,16 +101,15 @@ public class EmailService {
    * @param recipient         the user who will receive the email
    * @param email             the email address of the recipient
    * @param interviewDateTime the date and time of the interview
-   * @param interviewRequest  the interview request containing details about the interview
-   * @param interviewId       the interview id
+   * @param requestMailDto    the interview request mail dto containing details about the interview
    */
   public void sendInterviewScheduledEmail(User recipient, String email,
-      ZonedDateTime interviewDateTime, InterviewRequest interviewRequest, long interviewId) {
+      ZonedDateTime interviewDateTime, InterviewRequestMailDto requestMailDto) {
 
     Map<String, Object> model = new HashMap<>();
     model.put("recipient", recipient);
     model.put("interviewDateTime", interviewDateTime.withZoneSameInstant(ZoneId.of("Europe/Kyiv")));
-    model.put("interviewRequest", interviewRequest);
+    model.put("interviewRequest", requestMailDto);
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'");
 
@@ -121,7 +121,7 @@ public class EmailService {
     model.put("googleCalendarUrl", googleCalendarUrl);
 
     String template =
-        interviewRequest.getRole().equals(InterviewRequestRole.CANDIDATE)
+        requestMailDto.role().equals(InterviewRequestRole.CANDIDATE)
             ? "interviewer-interview-scheduled-email"
             : "candidate-interview-scheduled-email";
     String text = buildTemplateEmailText(template, model);

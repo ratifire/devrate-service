@@ -64,20 +64,20 @@
     </tr>
     <tr>
       <td><strong>Ім’я інтерв’юера:</strong> <span
-          th:text="${interviewRequest?.user?.firstName} + ' ' + ${interviewRequest?.user?.lastName}"></span>
+          th:text="${interviewRequest?.firstName} + ' ' + ${interviewRequest?.lastName}"></span>
       </td>
     </tr>
     <tr>
       <td><strong>Спеціалізація інтерв’юера:</strong> <span
-          th:text="${interviewRequest?.mastery?.specialization?.name}"></span></td>
+          th:text="${interviewRequest?.specializationName}"></span></td>
     </tr>
     <tr>
       <td><strong>Оцінка soft навичок інтерв’юера:</strong> <span
-          th:text="${interviewRequest?.mastery?.softSkillMark}"></span></td>
+          th:text="${interviewRequest?.softSkillMark}"></span></td>
     </tr>
     <tr>
       <td><strong>Оцінка hard навичок інтерв’юера:</strong> <span
-          th:text="${interviewRequest?.mastery?.hardSkillMark}"></span></td>
+          th:text="${interviewRequest?.hardSkillMark}"></span></td>
     </tr>
   </table>
 
