@@ -135,7 +135,6 @@ public class InterviewHistoryService {
     oppositeInterviewHistory.setHardSkills(
         convertEvaluatedSkills(feedbackDto.getSkills(), SkillType.HARD_SKILL));
     oppositeInterviewHistory.setFeedback(feedbackDto.getFeedback());
-    oppositeInterviewHistory.setVideoUrl(oppositeInterview.getVideoUrl());
 
     currentInterviewHistory.setIsVisible(true);
 
@@ -200,7 +199,7 @@ public class InterviewHistoryService {
         convertEvaluatedSkills(feedbackDto.getSkills(), SkillType.SOFT_SKILL),
         convertEvaluatedSkills(feedbackDto.getSkills(), SkillType.HARD_SKILL),
         feedbackDto.getFeedback(),
-        null,
+        oppositeInterview.getVideoUrl(),
         false
     );
 
