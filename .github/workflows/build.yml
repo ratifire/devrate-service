@@ -18,6 +18,7 @@ env:
   OAUTH2_STATE_SECRET: ${{secrets.OAUTH2_STATE_SECRET}}
   AWS_MIROTALK_API_URL: ${{secrets.AWS_MIROTALK_API_URL}}
   AWS_MIROTALK_API_KEY: ${{secrets.AWS_MIROTALK_API_KEY}}
+  AWS_S3_INTERVIEW_VIDEO_BUCKET: ${{secrets.AWS_S3_INTERVIEW_VIDEO_BUCKET}}
 
 on:
   workflow_dispatch:
@@ -76,6 +77,7 @@ jobs:
             ["<OAUTH2_STATE_SECRET>"]="${{ secrets.OAUTH2_STATE_SECRET }}"
             ["<AWS_MIROTALK_API_URL>"]="${{ secrets.AWS_MIROTALK_API_URL }}"
             ["<AWS_MIROTALK_API_KEY>"]="${{ secrets.AWS_MIROTALK_API_KEY }}"
+            ["<AWS_S3_INTERVIEW_VIDEO_BUCKET>"]="${{ secrets.AWS_S3_INTERVIEW_VIDEO_BUCKET }}"
           )
           
           for key in "${!REPLACEMENTS[@]}"; do

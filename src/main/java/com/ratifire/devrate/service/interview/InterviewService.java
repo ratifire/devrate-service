@@ -33,6 +33,7 @@ import com.ratifire.devrate.service.MasteryService;
 import com.ratifire.devrate.service.MeetingService;
 import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserService;
+import com.ratifire.devrate.service.snspublisher.SnsPublisherService;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -43,6 +44,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -61,6 +63,11 @@ public class InterviewService {
   private static final int INTERVIEW_DURATION = 1;    // hours
   private static final int INTERVIEW_JOIN_EARLY_LIMIT_MINUTES = 5;
 
+  @Value("${aws.region}")
+  private String awsRegion;
+  @Value("${aws.s3.interview.video.bucket}")
+  private String awsS3InterviewVideoBucket;
+
   private final MeetingService meetingService;
   private final InterviewRequestService interviewRequestService;
   private final EventService eventService;
@@ -71,6 +78,7 @@ public class InterviewService {
   private final InterviewRepository interviewRepository;
   private final UserContextProvider userContextProvider;
   private final DataMapper<InterviewDto, Interview> mapper;
+  private final SnsPublisherService snsPublisherService;
 
   /**
    * Retrieves a single visible interview by id for the auth user.
@@ -602,7 +610,7 @@ public class InterviewService {
   public String resolveMeetingUrl(long id) {
     Interview interview =
         interviewRepository.findByIdAndUserId(id, userContextProvider.getAuthenticatedUserId())
-        .orElseThrow(() -> new InterviewNotFoundException(id));
+            .orElseThrow(() -> new InterviewNotFoundException(id));
 
     ZonedDateTime startTime = interview.getStartTime().withZoneSameInstant(ZoneId.of("UTC"));
     Instant allowedFrom = startTime.minusMinutes(INTERVIEW_JOIN_EARLY_LIMIT_MINUTES).toInstant();
@@ -616,7 +624,25 @@ public class InterviewService {
 
     String roomUrl = meetingService.createMeeting();
 
-    interviewRepository.updateInterviewsRoomUrlByEventId(interview.getEventId(), roomUrl);
+    String fileName = String.format(
+        "%d/%02d/%02d/Meeting_%d_%d.mp4",
+        startTime.getYear(),
+        startTime.getMonthValue(),
+        startTime.getDayOfMonth(),
+        interview.getEventId(),
+        System.currentTimeMillis()
+    );
+
+    String videoUrl = String.format(
+        "https://%s.s3.%s.amazonaws.com/%s",
+        awsS3InterviewVideoBucket,
+        awsRegion,
+        fileName
+    );
+
+    interviewRepository.updateInterviewsRoomUrlByEventId(interview.getEventId(), roomUrl, videoUrl);
+
+    snsPublisherService.publishMeetingStarting(roomUrl, fileName);
 
     return roomUrl;
   }

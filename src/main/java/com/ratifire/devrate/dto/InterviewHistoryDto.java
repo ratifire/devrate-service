@@ -48,4 +48,6 @@ public class InterviewHistoryDto {
 
   private String feedback;
 
+  private String videoUrl;
+
 }

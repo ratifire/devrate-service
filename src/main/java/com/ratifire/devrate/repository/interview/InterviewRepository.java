@@ -47,7 +47,8 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
   List<Interview> findAllByUserIdAndIsVisibleTrue(long userId);
 
   @Modifying
-  @Query("UPDATE Interview i SET i.roomUrl = :roomUrl WHERE i.eventId = :eventId")
+  @Query("UPDATE Interview i SET i.videoUrl = :videoUrl, i.roomUrl = :roomUrl "
+      + "WHERE i.eventId = :eventId")
   void updateInterviewsRoomUrlByEventId(@Param("eventId") long eventId,
-      @Param("roomUrl") String roomUrl);
+      @Param("roomUrl") String roomUrl, @Param("videoUrl") String videoUrl);
 }
