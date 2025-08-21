@@ -618,8 +618,14 @@ public class InterviewService {
 
     String roomUrl = meetingService.createMeeting();
 
-    String fileName = String.format("Meeting_%s_%s.mp4", interview.getEventId(),
-        System.currentTimeMillis());
+    String fileName = String.format(
+        "%d/%02d/%02d/Meeting_%d_%d.mp4",
+        startTime.getYear(),
+        startTime.getMonthValue(),
+        startTime.getDayOfMonth(),
+        interview.getEventId(),
+        System.currentTimeMillis()
+    );
 
     String videoUrl = String.format(
         "https://%s.s3.%s.amazonaws.com/%s",
