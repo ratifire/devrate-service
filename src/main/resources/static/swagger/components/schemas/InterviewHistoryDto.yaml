@@ -61,3 +61,6 @@ properties:
   feedback:
     type: string
     description: The feedback for the interview
+  videoUrl:
+    type: string
+    description: Interview recording
