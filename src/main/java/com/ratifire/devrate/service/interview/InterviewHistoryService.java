@@ -135,6 +135,7 @@ public class InterviewHistoryService {
     oppositeInterviewHistory.setHardSkills(
         convertEvaluatedSkills(feedbackDto.getSkills(), SkillType.HARD_SKILL));
     oppositeInterviewHistory.setFeedback(feedbackDto.getFeedback());
+    oppositeInterviewHistory.setVideoUrl(oppositeInterview.getVideoUrl());
 
     currentInterviewHistory.setIsVisible(true);
 
@@ -185,6 +186,7 @@ public class InterviewHistoryService {
         null,
         null,
         null,
+        currentInterview.getVideoUrl(),
         true
     );
 
@@ -198,6 +200,7 @@ public class InterviewHistoryService {
         convertEvaluatedSkills(feedbackDto.getSkills(), SkillType.SOFT_SKILL),
         convertEvaluatedSkills(feedbackDto.getSkills(), SkillType.HARD_SKILL),
         feedbackDto.getFeedback(),
+        null,
         false
     );
 
@@ -224,6 +227,7 @@ public class InterviewHistoryService {
       Map<String, BigDecimal> softSkills,
       Map<String, BigDecimal> hardSkills,
       String feedback,
+      String videoUrl,
       boolean isVisible) {
     return InterviewHistory.builder()
         .dateTime(interview.getStartTime())
@@ -244,6 +248,7 @@ public class InterviewHistoryService {
         .feedback(feedback)
         .isVisible(isVisible)
         .interviewId(interview.getId())
+        .videoUrl(videoUrl)
         .build();
   }
 

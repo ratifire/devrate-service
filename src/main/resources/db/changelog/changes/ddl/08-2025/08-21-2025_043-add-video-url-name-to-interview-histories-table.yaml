@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: 08-21-2025_043
+      author: Ivan Ivashchenko
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+              columnExists:
+                tableName: interview_histories
+                columnName: video_url
+      changes:
+        - addColumn:
+            tableName: interview_histories
+            columns:
+              - column:
+                  name: video_url
+                  type: varchar(500)
+                  constraints:
+                    nullable: true

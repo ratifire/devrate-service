@@ -97,4 +97,7 @@ public class InterviewHistory {
 
   @Column(name = "interview_id")
   private long interviewId;
+
+  @Column(name = "video_url")
+  private String videoUrl;
 }
