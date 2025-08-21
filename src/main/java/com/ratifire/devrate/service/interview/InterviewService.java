@@ -44,6 +44,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -61,6 +62,11 @@ public class InterviewService {
 
   private static final int INTERVIEW_DURATION = 1;    // hours
   private static final int INTERVIEW_JOIN_EARLY_LIMIT_MINUTES = 5;
+
+  @Value("${aws.region}")
+  private String awsRegion;
+  @Value("${aws.s3.interview.video.bucket}")
+  private String awsS3InterviewVideoBucket;
 
   private final MeetingService meetingService;
   private final InterviewRequestService interviewRequestService;
@@ -629,8 +635,8 @@ public class InterviewService {
 
     String videoUrl = String.format(
         "https://%s.s3.%s.amazonaws.com/%s",
-        "skillzzy-video",
-        "eu-north-1",
+        awsS3InterviewVideoBucket,
+        awsRegion,
         fileName
     );
 
