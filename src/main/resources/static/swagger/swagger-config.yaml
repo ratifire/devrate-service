@@ -61,6 +61,8 @@ tags:
     description: Endpoints for managing chat messaging
   - name: Profile Settings
     description: Endpoints for managing profile settings
+  - name: Meeting
+    description: Endpoints for managing meeting
 paths:
   /auth/signup:
     $ref: './paths/auth/signup.yaml'
@@ -230,6 +232,8 @@ paths:
     $ref: './paths/profileSettings/account-language.yaml'
   /profile-settings/email-subscription:
     $ref: './paths/profileSettings/email-subscription.yaml'
+  /meetings:
+    $ref: './paths/meetings/meeting-create.yaml'
 components:
   securitySchemes:
     accessToken:

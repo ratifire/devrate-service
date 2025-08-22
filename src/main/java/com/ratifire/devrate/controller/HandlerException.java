@@ -255,6 +255,7 @@ public class HandlerException {
   /**
    * Handles {@link MeetingServiceException} thrown during the meeting creation process.
    */
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   @ExceptionHandler(MeetingServiceException.class)
   public void handleMeetingException(MeetingServiceException ex) {
     log.error("Meeting creation failed", ex);

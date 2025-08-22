@@ -1,0 +1,18 @@
+post:
+  tags:
+    - Meeting
+  summary: Create a new meeting.
+  description: Create a new meeting.
+  security:
+    - accessToken: [ ]
+    - idToken: [ ]
+  responses:
+    '200':
+      description: Return the meeting room link.
+      headers:
+        Location:
+          description: The URL of the meeting room
+          schema:
+            type: string
+    '500':
+      description: Meeting creation failed.
