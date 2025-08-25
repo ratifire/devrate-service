@@ -3,8 +3,8 @@ package com.ratifire.devrate.security.service;
 import com.ratifire.devrate.entity.User;
 import com.ratifire.devrate.security.exception.PasswordResetException;
 import com.ratifire.devrate.security.model.dto.PasswordResetDto;
-import com.ratifire.devrate.service.EmailService;
 import com.ratifire.devrate.service.UserService;
+import com.ratifire.devrate.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
@@ -23,7 +23,7 @@ public class PasswordResetService {
 
   private final CognitoApiClientService cognitoApiClientService;
   private final UserService userService;
-  private final EmailService emailService;
+  private final NotificationService notificationService;
   private final PasswordEncoder passwordEncoder;
 
   /**
@@ -61,7 +61,7 @@ public class PasswordResetService {
       user.setPassword(encodedPassword);
 
       userService.updateByEntity(user);
-      emailService.sendPasswordChangeConfirmationEmail(email);
+      notificationService.sendPasswordChangeConfirmation(email);
     } catch (Exception e) {
       log.error("Confirmation password reset process was failed: {}", e.getMessage());
       throw new PasswordResetException("Confirmation password reset process was failed.");

@@ -19,7 +19,6 @@ import com.ratifire.devrate.entity.Education;
 import com.ratifire.devrate.entity.EmploymentRecord;
 import com.ratifire.devrate.entity.Event;
 import com.ratifire.devrate.entity.LanguageProficiency;
-import com.ratifire.devrate.entity.Notification;
 import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
@@ -28,6 +27,7 @@ import com.ratifire.devrate.exception.UserSearchInvalidInputException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.SpecializationRepository;
 import com.ratifire.devrate.repository.UserRepository;
+import com.ratifire.devrate.service.notification.NotificationService;
 import java.math.BigDecimal;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -498,21 +498,5 @@ public class UserService {
    */
   public List<NotificationDto> getNotificationsByUserId(long userId) {
     return notificationService.getAllByUserId(userId);
-  }
-
-  /**
-   * Sends a test notification to a user.
-   */
-  // TODO: ATTENTION!!! Remove this method after testing is completed.
-  public void sendTestNotification(long userId, NotificationDto notificationDto) {
-    User user = findById(userId);
-    Notification notification = Notification.builder()
-        .user(user)
-        .read(notificationDto.isRead())
-        .payload(notificationDto.getPayload())
-        .type(notificationDto.getType())
-        .createdAt(notificationDto.getCreatedAt())
-        .build();
-    notificationService.sendTestNotification(user, notification);
   }
 }

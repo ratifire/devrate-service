@@ -1,6 +1,6 @@
 package com.ratifire.devrate.controller;
 
-import com.ratifire.devrate.service.NotificationService;
+import com.ratifire.devrate.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -37,6 +37,6 @@ public class NotificationController {
    */
   @DeleteMapping
   public void delete(@RequestParam long userId, @RequestParam long notificationId) {
-    notificationService.delete(notificationId);
+    notificationService.deleteById(notificationId);
   }
 }

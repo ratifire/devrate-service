@@ -27,12 +27,11 @@ import com.ratifire.devrate.exception.InterviewNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
 import com.ratifire.devrate.security.helper.UserContextProvider;
-import com.ratifire.devrate.service.EmailService;
 import com.ratifire.devrate.service.EventService;
 import com.ratifire.devrate.service.MasteryService;
 import com.ratifire.devrate.service.MeetingService;
-import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserService;
+import com.ratifire.devrate.service.notification.NotificationService;
 import com.ratifire.devrate.service.snspublisher.SnsPublisherService;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -73,7 +72,6 @@ public class InterviewService {
   private final EventService eventService;
   private final UserService userService;
   private final MasteryService masteryService;
-  private final EmailService emailService;
   private final NotificationService notificationService;
   private final InterviewRepository interviewRepository;
   private final UserContextProvider userContextProvider;
@@ -533,13 +531,9 @@ public class InterviewService {
       long interviewId) {
 
     User recipient = recipientRequest.getUser();
-    String recipientEmail = recipient.getEmail();
     String role = String.valueOf(recipientRequest.getRole());
 
-    notificationService.addInterviewScheduled(recipient, role,
-        interviewStartTimeInUtc, interviewId);
-
-    emailService.sendInterviewScheduledEmail(recipient, recipientEmail,
+    notificationService.sendInterviewScheduled(recipient, role,
         interviewStartTimeInUtc, secondParticipantRequest, interviewId);
   }
 
@@ -557,13 +551,10 @@ public class InterviewService {
         .filter(i -> i.getUserId() == rejector.getId())
         .map(Interview::getId).findFirst().get();
     ZonedDateTime scheduledTime = interviews.getFirst().getStartTime();
-    notificationService.addRejectInterview(recipient, rejector.getFirstName(),
+    notificationService.sendInterviewRejection(recipient, rejector,
         scheduledTime, recipientInterviewId);
-    notificationService.addRejectInterview(rejector, recipient.getFirstName(),
+    notificationService.sendInterviewRejection(rejector, recipient,
         scheduledTime, rejectorInterviewId);
-
-    emailService.sendInterviewRejectionMessageEmail(
-        recipient, rejector, scheduledTime, recipient.getEmail());
   }
 
   /**
