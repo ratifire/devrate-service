@@ -45,9 +45,7 @@ public class EmailNotificationChannel implements NotificationChannel {
       String emailContent = buildEmailContent(request);
       sendEmail(request.getRecipient().getEmail(), request.getSubject(), emailContent);
 
-      log.debug("Email notification sent successfully to: {}", request.getRecipient().getEmail());
       return true;
-
     } catch (Exception e) {
       log.error("Failed to send email notification to: {}", request.getRecipient().getEmail(), e);
       return false;
