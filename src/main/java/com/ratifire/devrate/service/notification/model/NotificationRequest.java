@@ -50,21 +50,4 @@ public class NotificationRequest {
         .metadata(metadata)
         .build();
   }
-
-  /**
-   * Creates a notification request with both in-app and email data.
-   */
-  public static NotificationRequest forMultiChannelNotification(User recipient,
-      NotificationType type, Object payload, String subject, String templateName,
-      Map<String, Object> templateVariables, NotificationMetadata metadata) {
-    return NotificationRequest.builder()
-        .recipient(recipient)
-        .type(type)
-        .payload(payload)
-        .subject(subject)
-        .content(templateName)
-        .templateVariables(templateVariables)
-        .metadata(metadata)
-        .build();
-  }
 }

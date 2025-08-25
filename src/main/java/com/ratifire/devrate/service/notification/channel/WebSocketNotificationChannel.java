@@ -50,9 +50,7 @@ public class WebSocketNotificationChannel implements NotificationChannel {
 
       // Send real-time notification via WebSocket
       sendWebSocketNotification(request, notification);
-      
-      log.debug("WebSocket notification sent successfully to user: {}",
-          request.getRecipient().getId());
+
       return true;
 
     } catch (Exception e) {
@@ -86,8 +84,7 @@ public class WebSocketNotificationChannel implements NotificationChannel {
     return notificationRepository.save(notification);
   }
 
-  private void sendWebSocketNotification(NotificationRequest request,
-      Notification notification) {
+  private void sendWebSocketNotification(NotificationRequest request, Notification notification) {
     NotificationDto notificationDto;
     
     if (notification != null) {

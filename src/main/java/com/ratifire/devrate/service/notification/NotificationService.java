@@ -194,10 +194,7 @@ public class NotificationService {
 
     for (NotificationChannel channel : channels) {
       try {
-        boolean success = channel.send(request);
-        if (success) {
-          log.debug("Notification sent successfully via {}", channel.getChannelType());
-        } else {
+        if (!channel.send(request)) {
           log.warn("Failed to send notification via {}", channel.getChannelType());
         }
       } catch (Exception e) {

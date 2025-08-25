@@ -32,9 +32,6 @@ public class NotificationChannelFactory {
             NotificationChannel::getChannelType,
             Function.identity()
         ));
-    
-    log.info("Initialized NotificationChannelFactory with {} channels: {}",
-        channelMap.size(), channelMap.keySet());
   }
 
   /**
@@ -47,27 +44,14 @@ public class NotificationChannelFactory {
     NotificationChannel channel = channelMap.get(type);
     
     if (channel == null) {
-      log.warn("No channel found for type: {}", type);
       return Optional.empty();
     }
     
     if (!channel.isAvailable()) {
-      log.warn("Channel {} is not available", type);
       return Optional.empty();
     }
     
     return Optional.of(channel);
-  }
-
-  /**
-   * Gets all available notification channels.
-   *
-   * @return List of available channels
-   */
-  public List<NotificationChannel> getAvailableChannels() {
-    return channelMap.values().stream()
-        .filter(NotificationChannel::isAvailable)
-        .collect(Collectors.toList());
   }
 
   /**
@@ -82,15 +66,5 @@ public class NotificationChannelFactory {
         .filter(Optional::isPresent)
         .map(Optional::get)
         .collect(Collectors.toList());
-  }
-
-  /**
-   * Checks if a specific channel type is available.
-   *
-   * @param type The channel type to check
-   * @return true if the channel is available, false otherwise
-   */
-  public boolean isChannelAvailable(NotificationChannelType type) {
-    return getChannel(type).isPresent();
   }
 }

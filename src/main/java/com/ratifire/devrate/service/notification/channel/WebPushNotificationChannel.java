@@ -36,10 +36,7 @@ public class WebPushNotificationChannel implements NotificationChannel {
       NotificationDto notificationDto = createNotificationDto(request);
       webPushNotificationService.sendNotification(request.getRecipient().getId(), notificationDto);
 
-      log.debug("Web Push notification sent successfully to user: {}",
-          request.getRecipient().getId());
       return true;
-
     } catch (Exception e) {
       log.error("Failed to send Web Push notification to user: {}",
           request.getRecipient().getId(), e);
