@@ -42,16 +42,7 @@ public class NotificationChannelFactory {
    */
   public Optional<NotificationChannel> getChannel(NotificationChannelType type) {
     NotificationChannel channel = channelMap.get(type);
-    
-    if (channel == null) {
-      return Optional.empty();
-    }
-    
-    if (!channel.isAvailable()) {
-      return Optional.empty();
-    }
-    
-    return Optional.of(channel);
+    return channel == null || !channel.isAvailable() ? Optional.empty() : Optional.of(channel);
   }
 
   /**
