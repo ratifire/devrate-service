@@ -4,6 +4,7 @@ import com.ratifire.devrate.dto.ClosestEventDto;
 import com.ratifire.devrate.dto.InterviewDto;
 import com.ratifire.devrate.dto.InterviewEventDto;
 import com.ratifire.devrate.dto.InterviewsOverallStatusDto;
+import com.ratifire.devrate.service.interview.InterviewNotificationService;
 import com.ratifire.devrate.service.interview.InterviewService;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class InterviewController {
 
   private final InterviewService interviewService;
+  private final InterviewNotificationService interviewNotificationService;
 
   /**
    * Retrieves a list of all interviews for the user.
@@ -56,7 +58,7 @@ public class InterviewController {
    */
   @DeleteMapping("/{id}")
   public void deleteRejected(@PathVariable long id) {
-    interviewService.deleteRejected(id);
+    interviewNotificationService.deleteRejectedInterviewWithNotifications(id);
   }
 
   /**
@@ -66,7 +68,7 @@ public class InterviewController {
    */
   @DeleteMapping("/{id}/not-conducted")
   public void deleteInterviewAsNotConducted(@PathVariable long id) {
-    interviewService.deleteRejected(id);
+    interviewNotificationService.deleteRejectedInterviewWithNotifications(id);
   }
 
   /**

@@ -31,7 +31,6 @@ import com.ratifire.devrate.service.EventService;
 import com.ratifire.devrate.service.MasteryService;
 import com.ratifire.devrate.service.MeetingService;
 import com.ratifire.devrate.service.UserService;
-import com.ratifire.devrate.service.notification.NotificationService;
 import com.ratifire.devrate.service.snspublisher.SnsPublisherService;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -72,7 +71,6 @@ public class InterviewService {
   private final EventService eventService;
   private final UserService userService;
   private final MasteryService masteryService;
-  private final NotificationService notificationService;
   private final InterviewRepository interviewRepository;
   private final UserContextProvider userContextProvider;
   private final DataMapper<InterviewDto, Interview> mapper;
@@ -245,9 +243,10 @@ public class InterviewService {
    * Creates interviews and an associated event based on the given paired participant data.
    *
    * @param matchedUsers Data transfer object containing the details of paired participant.
+   * @return the list of created interviews
    */
   @Transactional
-  public void create(PairedParticipantDto matchedUsers) {
+  public List<Interview> create(PairedParticipantDto matchedUsers) {
     long interviewerId = matchedUsers.getInterviewerId();
     long candidateId = matchedUsers.getCandidateId();
     long interviewerRequestId = matchedUsers.getInterviewerParticipantId();
@@ -287,11 +286,7 @@ public class InterviewService {
         interviews);
     interviewRequestService.incrementMatchedInterviewCount(requests);
 
-    Map<Long, InterviewRequest> requestMap = requests.stream()
-        .collect(Collectors.toMap(InterviewRequest::getId, request -> request));
-
-    sendInterviewScheduledAlerts(
-        requestMap.get(interviewerRequestId), requestMap.get(candidateRequestId), date, interviews);
+    return interviews;
   }
 
   private String extractCommentForRole(List<InterviewRequest> requests, InterviewRequestRole role) {
@@ -332,36 +327,21 @@ public class InterviewService {
   }
 
   /**
-   * Deletes a rejected interview by its ID and returns the deleted interview.
+   * Deletes a rejected interview by its ID and returns the deleted interviews.
    *
    * @param id the ID of the interview to be deleted
+   * @return the list of deleted interviews containing user and rejection data
    */
   @Transactional
-  public void deleteRejected(long id) {
+  public List<Interview> deleteRejected(long id) {
     List<Interview> interviews = interviewRepository.findInterviewPairById(id);
 
     interviewRequestService.markRejectedInterviewTimeSlotsAsPending(interviews);
 
     interviewRepository.deleteAll(interviews);
     eventService.delete(interviews.getFirst().getEventId());
-    //TODO: add logic for deleting provider meeting room (if needed)
 
-    long rejectorId = userContextProvider.getAuthenticatedUserId();
-    long recipientId = interviews.stream()
-        .map(Interview::getUserId)
-        .filter(userId -> userId != rejectorId)
-        .findFirst()
-        .orElseThrow(() -> new IllegalStateException(
-            "Could not find other userId in the interview pair"));
-
-    List<User> users = userService.findByIds(List.of(rejectorId, recipientId));
-    Map<Long, User> userMap = users.stream()
-        .collect(Collectors.toMap(User::getId, user -> user));
-
-    notifyParticipants(
-        userMap.get(recipientId),
-        userMap.get(rejectorId),
-        interviews);
+    return interviews;
   }
 
   /**
@@ -382,7 +362,6 @@ public class InterviewService {
   public void deleteByIds(List<Long> ids) {
     interviewRepository.deleteAllById(ids);
   }
-
 
   /**
    * Retrieves detailed feedback information for an interview based on the given ID.
@@ -499,62 +478,6 @@ public class InterviewService {
         .toList();
     return masteryService.findByIds(masteryIds).stream()
         .collect(Collectors.toMap(Mastery::getId, mastery -> mastery));
-  }
-
-  /**
-   * Sends alerts to both the interviewer and candidate about the scheduled interview.
-   *
-   * @param interviewerRequest the interview request object containing details about the
-   *                           interviewer
-   * @param candidateRequest   the interview request object containing details about the candidate
-   * @param date               the date and time of the scheduled interview
-   */
-  private void sendInterviewScheduledAlerts(InterviewRequest interviewerRequest,
-      InterviewRequest candidateRequest, ZonedDateTime date, List<Interview> interviews) {
-    Map<InterviewRequestRole, Long> roleToId = interviews.stream()
-        .collect(Collectors.toMap(Interview::getRole, Interview::getId));
-    notifyParticipant(candidateRequest, interviewerRequest, date, roleToId.get(CANDIDATE));
-    notifyParticipant(interviewerRequest, candidateRequest, date, roleToId.get(INTERVIEWER));
-  }
-
-  /**
-   * Sends a notification and an email to a participant of an interview about the scheduled
-   * interview.
-   *
-   * @param recipientRequest         the interview request of the recipient of the notification
-   * @param secondParticipantRequest the interview request of the other participant in the
-   *                                 interview
-   * @param interviewStartTimeInUtc  the start time of the interview in UTC
-   */
-  private void notifyParticipant(InterviewRequest recipientRequest,
-      InterviewRequest secondParticipantRequest, ZonedDateTime interviewStartTimeInUtc,
-      long interviewId) {
-
-    User recipient = recipientRequest.getUser();
-    String role = String.valueOf(recipientRequest.getRole());
-
-    notificationService.sendInterviewScheduled(recipient, role,
-        interviewStartTimeInUtc, secondParticipantRequest, interviewId);
-  }
-
-  /**
-   * Notifies users involved in the interview rejection.
-   *
-   * @param recipient     The user for whom rejected the interview.
-   * @param rejector      The user who rejected the interview.
-   */
-  private void notifyParticipants(User recipient, User rejector, List<Interview> interviews) {
-    Long recipientInterviewId = interviews.stream()
-        .filter(i -> i.getUserId() == recipient.getId())
-        .map(Interview::getId).findFirst().get();
-    Long rejectorInterviewId = interviews.stream()
-        .filter(i -> i.getUserId() == rejector.getId())
-        .map(Interview::getId).findFirst().get();
-    ZonedDateTime scheduledTime = interviews.getFirst().getStartTime();
-    notificationService.sendInterviewRejection(recipient, rejector,
-        scheduledTime, recipientInterviewId);
-    notificationService.sendInterviewRejection(rejector, recipient,
-        scheduledTime, rejectorInterviewId);
   }
 
   /**

@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 public class MatcherServiceQueueListener {
 
   private ObjectMapper objectMapper;
-  private InterviewService interviewService;
+  private InterviewNotificationService interviewNotificationService;
 
   /**
    * Processes incoming messages from the queue.
@@ -28,6 +28,6 @@ public class MatcherServiceQueueListener {
     PairedParticipantDto pairedParticipantDto = objectMapper.readValue(message,
         PairedParticipantDto.class);
     System.out.println("Interview paired received: " + pairedParticipantDto);
-    interviewService.create(pairedParticipantDto);
+    interviewNotificationService.createInterviewWithNotifications(pairedParticipantDto);
   }
 }
