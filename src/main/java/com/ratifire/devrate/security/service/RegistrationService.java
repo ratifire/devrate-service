@@ -12,9 +12,8 @@ import com.ratifire.devrate.security.model.dto.UserRegistrationDto;
 import com.ratifire.devrate.security.model.enums.AccessLevel;
 import com.ratifire.devrate.security.model.enums.AccountLanguage;
 import com.ratifire.devrate.security.model.enums.RegistrationSourceType;
-import com.ratifire.devrate.service.EmailService;
-import com.ratifire.devrate.service.NotificationService;
 import com.ratifire.devrate.service.UserService;
+import com.ratifire.devrate.service.notification.NotificationService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +36,6 @@ public class RegistrationService {
 
   private final CognitoApiClientService cognitoApiClientService;
   private final UserService userService;
-  private final EmailService emailService;
   private final NotificationService notificationService;
   private final PasswordEncoder passwordEncoder;
 
@@ -141,7 +139,6 @@ public class RegistrationService {
    * @param user The user to whom greetings are sent.
    */
   private void sendGreetings(User user) {
-    notificationService.addGreeting(user);
-    emailService.sendGreetingsEmail(user);
+    notificationService.sendGreeting(user);
   }
 }

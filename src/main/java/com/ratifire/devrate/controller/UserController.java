@@ -321,14 +321,4 @@ public class UserController {
   public List<NotificationDto> getAllNotifications(@PathVariable long userId) {
     return userService.getNotificationsByUserId(userId);
   }
-
-  /**
-   * Sends a test notification to a specified user.
-   */
-  // TODO: ATTENTION!!! Remove this method after testing is completed.
-  @PostMapping("/{userId}/notification/send")
-  public void sendTestNotification(@PathVariable long userId,
-      @Valid @RequestBody NotificationDto notificationDto) {
-    userService.sendTestNotification(userId, notificationDto);
-  }
 }
