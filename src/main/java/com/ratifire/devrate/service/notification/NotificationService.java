@@ -1,20 +1,33 @@
 package com.ratifire.devrate.service.notification;
 
+import static com.ratifire.devrate.enums.InterviewRequestRole.CANDIDATE;
+import static com.ratifire.devrate.enums.InterviewRequestRole.INTERVIEWER;
+
+import com.ratifire.devrate.dto.InterviewRejectedDto;
 import com.ratifire.devrate.dto.NotificationDto;
+import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Notification;
+import com.ratifire.devrate.entity.Skill;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.entity.interview.InterviewRequest;
+import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.entity.notification.payload.InterviewRejectedPayload;
 import com.ratifire.devrate.entity.notification.payload.InterviewRequestExpiredPayload;
 import com.ratifire.devrate.entity.notification.payload.InterviewScheduledPayload;
 import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.enums.NotificationType;
 import com.ratifire.devrate.exception.NotificationNotFoundException;
+import com.ratifire.devrate.exception.ResourceNotFoundException;
+import com.ratifire.devrate.exception.UserNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
+import com.ratifire.devrate.repository.MasteryRepository;
 import com.ratifire.devrate.repository.NotificationRepository;
+import com.ratifire.devrate.repository.UserRepository;
+import com.ratifire.devrate.repository.interview.InterviewRepository;
 import com.ratifire.devrate.service.notification.factory.NotificationChannelFactory;
+import com.ratifire.devrate.service.notification.model.InterviewScheduleNotificationData;
 import com.ratifire.devrate.service.notification.model.NotificationMetadata;
 import com.ratifire.devrate.service.notification.model.NotificationRequest;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -24,13 +37,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
- * Unified notification service that acts as a facade for all notification operations.
- * Implements the Facade pattern to provide a simple interface for complex notification logic.
+ * Unified notification service that acts as a facade for all notification operations. Implements
+ * the Facade pattern to provide a simple interface for complex notification logic.
  */
 @Slf4j
 @Service
@@ -38,10 +52,18 @@ import org.springframework.stereotype.Service;
 public class NotificationService {
 
   private static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSSS";
+  private static final String KIEV_TIMEZONE = "Europe/Kyiv";
+  private static final int INTERVIEW_DURATION_MINUTES = 60;
+  private static final String CANDIDATE_EMAIL_TEMPLATE = "candidate-interview-scheduled-email";
+  private static final String INTERVIEWER_EMAIL_TEMPLATE =
+      "interviewer-interview-scheduled-email.html";
 
   private final NotificationChannelFactory channelFactory;
   private final NotificationRepository notificationRepository;
   private final DataMapper<NotificationDto, Notification> notificationMapper;
+  private final InterviewRepository interviewRepository;
+  private final UserRepository userRepository;
+  private final MasteryRepository masteryRepository;
 
   /**
    * Sends a greeting notification to a new user via multiple channels.
@@ -91,95 +113,238 @@ public class NotificationService {
   }
 
   /**
+   * Sends interview rejection notifications to both the recipient and rejector.
+   *
+   * @param interviewRejectedDto containing user IDs, interview IDs, and scheduled time
+   */
+  public void sendInterviewRejectionNotifications(InterviewRejectedDto interviewRejectedDto) {
+    long recipientUserId = interviewRejectedDto.getRecipientUserId();
+    long rejectorUserId = interviewRejectedDto.getRejectorUserId();
+    ZonedDateTime scheduledTime = interviewRejectedDto.getScheduledTime();
+    long recipientInterviewId = interviewRejectedDto.getRecipientInterviewId();
+    long rejectorInterviewId = interviewRejectedDto.getRejectorInterviewId();
+
+    if (recipientUserId == 0L || rejectorUserId == 0L || recipientInterviewId == 0L
+        || rejectorInterviewId == 0L) {
+      log.error("Failed to send interview rejection notifications for users: {}; {}. "
+          + "Due to invalid interview rejected data.", recipientUserId, rejectorUserId);
+      return;
+    }
+
+    try {
+      List<User> users = userRepository.findByIds(List.of(recipientUserId, rejectorUserId));
+      Map<Long, User> userMap = users.stream().collect(Collectors.toMap(User::getId, user -> user));
+
+      notifyBothPartiesAboutRejection(userMap.get(recipientUserId), userMap.get(rejectorUserId),
+          scheduledTime, recipientInterviewId, rejectorInterviewId);
+    } catch (Exception e) {
+      log.error("Failed to send interview rejection notifications for users: {}; {}",
+          recipientUserId, rejectorUserId, e);
+    }
+  }
+
+  private void notifyBothPartiesAboutRejection(User recipient, User rejector,
+      ZonedDateTime scheduledTime, long recipientInterviewId, long rejectorInterviewId) {
+    sendInterviewRejectionNotification(recipient, rejector, scheduledTime, recipientInterviewId);
+    sendInterviewRejectionNotification(rejector, recipient, scheduledTime, rejectorInterviewId);
+  }
+
+  /**
    * Sends an interview rejection notification.
    *
-   * @param recipient The user who will receive the rejection notification
-   * @param rejectionUser The user who rejected the interview
-   * @param scheduledTime The scheduled time of the rejected interview
+   * @param recipient            The user who will receive the rejection notification
+   * @param rejectorUser         The user who rejected the interview
+   * @param scheduledTime        The scheduled time of the rejected interview
    * @param recipientInterviewId The interview ID for the recipient
    */
-  public void sendInterviewRejection(User recipient, User rejectionUser,
+  private void sendInterviewRejectionNotification(User recipient, User rejectorUser,
       ZonedDateTime scheduledTime, long recipientInterviewId) {
-    
-    NotificationMetadata metadata = NotificationMetadata.withRejection(
-        rejectionUser.getFirstName(), scheduledTime, recipientInterviewId);
+
+    NotificationMetadata metadata = NotificationMetadata.withRejection(rejectorUser.getFirstName(),
+        scheduledTime, recipientInterviewId);
 
     InterviewRejectedPayload payload = InterviewRejectedPayload.builder()
-        .rejectionName(rejectionUser.getFirstName())
-        .scheduledDateTime(
-            scheduledTime.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)))
-        .rejectedInterviewId(String.valueOf(recipientInterviewId))
-        .build();
+        .rejectionName(rejectorUser.getFirstName())
+        .scheduledDateTime(scheduledTime.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)))
+        .rejectedInterviewId(String.valueOf(recipientInterviewId)).build();
 
     // In-app notification
-    NotificationRequest inAppRequest = NotificationRequest.forInAppNotification(
-        recipient, NotificationType.INTERVIEW_REJECTED, payload, metadata);
+    NotificationRequest inAppRequest = NotificationRequest.forInAppNotification(recipient,
+        NotificationType.INTERVIEW_REJECTED, payload, metadata);
 
     sendNotification(inAppRequest, NotificationChannelType.WEBSOCKET,
         NotificationChannelType.WEB_PUSH);
 
     // Email notification
     Map<String, Object> emailVariables = new HashMap<>();
-    emailVariables.put("recipientUser", recipient);
-    emailVariables.put("rejectionUser", rejectionUser);
-    emailVariables.put("scheduledTime",
-        scheduledTime.withZoneSameInstant(ZoneId.of("Europe/Kyiv")));
+    emailVariables.put("recipient_first_name", recipient);
+    emailVariables.put("rejection_user_first_name", rejectorUser);
+    emailVariables.put("scheduled_time",
+        scheduledTime.withZoneSameInstant(ZoneId.of(KIEV_TIMEZONE)));
 
-    NotificationRequest emailRequest = NotificationRequest.forEmailNotification(
-        recipient, "Interview Rejected", "interview-rejected-email",
-        emailVariables, metadata);
+    NotificationRequest emailRequest = NotificationRequest.forEmailNotification(recipient,
+        "Interview Rejected", "interview-rejected-email", emailVariables, metadata);
 
     sendNotification(emailRequest, NotificationChannelType.EMAIL);
   }
 
   /**
-   * Sends an interview scheduled notification.
+   * Sends interview scheduled notifications to both candidate and interviewer.
    *
-   * @param recipient The user who will receive the notification
-   * @param role The role of the recipient in the interview
-   * @param interviewDateTime The scheduled interview date and time
-   * @param interviewRequest The interview request details
-   * @param interviewId The interview ID
+   * @param eventId the event ID containing interview details
    */
-  public void sendInterviewScheduled(User recipient, String role,
-      ZonedDateTime interviewDateTime, InterviewRequest interviewRequest, long interviewId) {
-    
-    NotificationMetadata metadata = NotificationMetadata.withInterview(
-        interviewId, interviewDateTime, role);
+  public void sendInterviewScheduledNotifications(long eventId) {
+    try {
+      List<Interview> interviews = interviewRepository.findByEventId(eventId);
 
-    InterviewScheduledPayload payload = InterviewScheduledPayload.builder()
-        .role(role)
+      ZonedDateTime date = interviews.getFirst().getStartTime();
+
+      Map<InterviewRequestRole, Interview> roleToInterview = interviews.stream()
+          .collect(Collectors.toMap(Interview::getRole, interview -> interview));
+
+      Interview candidateInterview = roleToInterview.get(CANDIDATE);
+      long candidateUserId = candidateInterview.getUserId();
+      User candidate = userRepository.findById(candidateUserId)
+          .orElseThrow(() -> new UserNotFoundException(candidateUserId));
+      long candidateMasteryId = candidateInterview.getMasteryId();
+      Mastery candidateMastery = masteryRepository.findById(candidateMasteryId).orElseThrow(
+          () -> new ResourceNotFoundException("Mastery not found with id: " + candidateMasteryId));
+
+      Interview interviewerInterview = roleToInterview.get(INTERVIEWER);
+      long interviewerUserId = interviewerInterview.getUserId();
+      User interviewer = userRepository.findById(interviewerUserId)
+          .orElseThrow(() -> new UserNotFoundException(interviewerUserId));
+      long interviewerMasteryId = interviewerInterview.getMasteryId();
+      Mastery interviewerMastery = masteryRepository.findById(interviewerMasteryId).orElseThrow(
+          () -> new ResourceNotFoundException(
+              "Mastery not found with id: " + interviewerMasteryId));
+
+      notifyCandidateAboutSchedule(candidate, candidateInterview.getId(), date, CANDIDATE.name(),
+          interviewer.getFirstName(), interviewer.getLastName(),
+          interviewerMastery.getSpecialization().getName(), interviewerMastery.getSoftSkillMark(),
+          interviewerMastery.getHardSkillMark());
+
+      notifyInterviewerAboutSchedule(interviewer, interviewerInterview.getId(), date,
+          INTERVIEWER.name(), candidate.getFirstName(), candidate.getLastName(),
+          candidateMastery.getSpecialization().getName(),
+          candidateMastery.getSkills().stream().map(Skill::getName).toList());
+
+    } catch (Exception e) {
+      log.error("Failed to send interview scheduled notifications for matched users. EventId: {}",
+          eventId, e);
+    }
+  }
+
+  private void notifyCandidateAboutSchedule(User candidate, long candidateInterviewId,
+      ZonedDateTime interviewDateTime, String role, String interviewerFirstName,
+      String interviewerLastName, String interviewerSpecialization,
+      BigDecimal interviewerSoftSkillMark, BigDecimal interviewerHardSkillMark) {
+
+    Map<String, Object> emailVariables = createCandidateInterviewScheduledEmailVariables(candidate,
+        interviewDateTime, interviewerFirstName, interviewerLastName, interviewerSpecialization,
+        interviewerSoftSkillMark, interviewerHardSkillMark);
+
+    InterviewScheduleNotificationData data = new InterviewScheduleNotificationData(candidate,
+        candidateInterviewId, interviewDateTime, role, CANDIDATE_EMAIL_TEMPLATE, emailVariables);
+
+    notifyAboutScheduledInterview(data);
+  }
+
+  private Map<String, Object> createCandidateInterviewScheduledEmailVariables(User recipient,
+      ZonedDateTime interviewDateTime, String interviewerFirstName, String interviewerLastName,
+      String interviewerSpecialization, BigDecimal interviewerSoftSkillMark,
+      BigDecimal interviewerHardSkillMark) {
+
+    Map<String, Object> variables = createBaseEmailVariables(recipient, interviewDateTime);
+    variables.put("interviewer_first_name", interviewerFirstName);
+    variables.put("interviewer_last_name", interviewerLastName);
+    variables.put("interviewer_specialization", interviewerSpecialization);
+    variables.put("interviewer_soft_skill_mark", interviewerSoftSkillMark);
+    variables.put("interviewer_hard_skill_mark", interviewerHardSkillMark);
+
+    return variables;
+  }
+
+  private void notifyInterviewerAboutSchedule(User interviewer, long interviewerInterviewId,
+      ZonedDateTime interviewDateTime, String role, String candidateFirstName,
+      String candidateLastName, String candidateSpecialization, List<String> candidateSkills) {
+
+    Map<String, Object> emailVariables = createInterviewerInterviewScheduledEmailVariables(
+        interviewer, interviewDateTime, candidateFirstName, candidateLastName,
+        candidateSpecialization, candidateSkills);
+
+    InterviewScheduleNotificationData data = new InterviewScheduleNotificationData(interviewer,
+        interviewerInterviewId, interviewDateTime, role, INTERVIEWER_EMAIL_TEMPLATE,
+        emailVariables);
+
+    notifyAboutScheduledInterview(data);
+  }
+
+  /**
+   * Unified method to send interview schedule notifications (in-app and email).
+   */
+  private void notifyAboutScheduledInterview(InterviewScheduleNotificationData data) {
+    NotificationMetadata metadata = NotificationMetadata.withInterview(data.interviewId(),
+        data.interviewDateTime(), data.role());
+
+    InterviewScheduledPayload payload = InterviewScheduledPayload.builder().role(data.role())
         .scheduledDateTime(
-            interviewDateTime.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)))
-        .interviewId(interviewId)
-        .build();
+            data.interviewDateTime().format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)))
+        .interviewId(data.interviewId()).build();
 
     // In-app notification
-    NotificationRequest inAppRequest = NotificationRequest.forInAppNotification(
-        recipient, NotificationType.INTERVIEW_SCHEDULED, payload, metadata);
+    NotificationRequest inAppRequest = NotificationRequest.forInAppNotification(data.recipient(),
+        NotificationType.INTERVIEW_SCHEDULED, payload, metadata);
 
     sendNotification(inAppRequest, NotificationChannelType.WEBSOCKET,
         NotificationChannelType.WEB_PUSH);
 
     // Email notification
-    Map<String, Object> emailVariables = createInterviewScheduledEmailVariables(
-        recipient, interviewDateTime, interviewRequest);
-
-    String templateName = interviewRequest.getRole().equals(InterviewRequestRole.CANDIDATE)
-        ? "interviewer-interview-scheduled-email"
-        : "candidate-interview-scheduled-email";
-
-    NotificationRequest emailRequest = NotificationRequest.forEmailNotification(
-        recipient, "Interview Scheduled Successfully", templateName,
-        emailVariables, metadata);
+    NotificationRequest emailRequest = NotificationRequest.forEmailNotification(data.recipient(),
+        "Interview Scheduled Successfully", data.templateName(), data.emailVariables(), metadata);
 
     sendNotification(emailRequest, NotificationChannelType.EMAIL);
+  }
+
+  private Map<String, Object> createInterviewerInterviewScheduledEmailVariables(User recipient,
+      ZonedDateTime interviewDateTime, String candidateFirstName, String candidateLastName,
+      String candidateSpecialization, List<String> candidateSkills) {
+
+    Map<String, Object> variables = createBaseEmailVariables(recipient, interviewDateTime);
+    variables.put("candidate_first_name", candidateFirstName);
+    variables.put("candidate_last_name", candidateLastName);
+    variables.put("candidate_specialization", candidateSpecialization);
+    variables.put("candidate_skills", candidateSkills);
+
+    return variables;
+  }
+
+  /**
+   * Creates base email variables common to all interview scheduled notifications.
+   */
+  private Map<String, Object> createBaseEmailVariables(User recipient,
+      ZonedDateTime interviewDateTime) {
+    Map<String, Object> variables = new HashMap<>();
+    variables.put("recipient_first_name", recipient.getFirstName());
+    variables.put("interview_datetime",
+        interviewDateTime.withZoneSameInstant(ZoneId.of(KIEV_TIMEZONE)));
+
+    // Google Calendar URL
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'");
+    String googleCalendarUrl =
+        "https://www.google.com/calendar/render?action=TEMPLATE" + "&text=" + URLEncoder.encode(
+            "Інтерв'ю Skillzzy", StandardCharsets.UTF_8) + "&dates=" + formatter.format(
+            interviewDateTime) + "/" + formatter.format(
+            interviewDateTime.plusMinutes(INTERVIEW_DURATION_MINUTES));
+
+    variables.put("google_calendar_url", googleCalendarUrl);
+    return variables;
   }
 
   /**
    * Sends a notification through specified channels.
    *
-   * @param request The notification request
+   * @param request      The notification request
    * @param channelTypes The channels to send through
    */
   public void sendNotification(NotificationRequest request,
@@ -247,15 +412,11 @@ public class NotificationService {
    */
   public void sendPasswordChangeConfirmation(String email) {
     // Create a minimal user object for email sending
-    User emailUser = User.builder()
-        .email(email)
-        .build();
+    User emailUser = User.builder().email(email).build();
 
     LocalDateTime now = LocalDateTime.now();
-    String formattedDateTime = now.format(
-        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-    String content = "Your password has been successfully changed on "
-        + formattedDateTime + ".";
+    String formattedDateTime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    String content = "Your password has been successfully changed on " + formattedDateTime + ".";
 
     NotificationRequest emailRequest = NotificationRequest.builder()
         .recipient(emailUser)
@@ -268,26 +429,5 @@ public class NotificationService {
         .build();
 
     sendNotification(emailRequest, NotificationChannelType.EMAIL);
-  }
-
-  private Map<String, Object> createInterviewScheduledEmailVariables(User recipient,
-      ZonedDateTime interviewDateTime, InterviewRequest interviewRequest) {
-
-    Map<String, Object> variables = new HashMap<>();
-    variables.put("recipient", recipient);
-    variables.put("interviewDateTime",
-        interviewDateTime.withZoneSameInstant(ZoneId.of("Europe/Kyiv")));
-    variables.put("interviewRequest", interviewRequest);
-
-    // Google Calendar URL
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'");
-    String googleCalendarUrl = "https://www.google.com/calendar/render?action=TEMPLATE"
-        + "&text=" + URLEncoder.encode("Інтерв'ю Skillzzy", StandardCharsets.UTF_8)
-        + "&dates=" + formatter.format(interviewDateTime) + "/"
-        + formatter.format(interviewDateTime.plusMinutes(60));
-
-    variables.put("googleCalendarUrl", googleCalendarUrl);
-
-    return variables;
   }
 }

@@ -7,6 +7,7 @@ import com.ratifire.devrate.dto.ClosestEventDto;
 import com.ratifire.devrate.dto.InterviewDto;
 import com.ratifire.devrate.dto.InterviewEventDto;
 import com.ratifire.devrate.dto.InterviewFeedbackDetailDto;
+import com.ratifire.devrate.dto.InterviewRejectedDto;
 import com.ratifire.devrate.dto.InterviewsOverallStatusDto;
 import com.ratifire.devrate.dto.PairedParticipantDto;
 import com.ratifire.devrate.dto.ParticipantDto;
@@ -41,6 +42,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -56,6 +58,7 @@ import org.springframework.util.CollectionUtils;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class InterviewService {
 
   private static final int INTERVIEW_DURATION = 1;    // hours
@@ -243,10 +246,10 @@ public class InterviewService {
    * Creates interviews and an associated event based on the given paired participant data.
    *
    * @param matchedUsers Data transfer object containing the details of paired participant.
-   * @return the list of created interviews
+   * @return created event id
    */
   @Transactional
-  public List<Interview> create(PairedParticipantDto matchedUsers) {
+  public long create(PairedParticipantDto matchedUsers) {
     long interviewerId = matchedUsers.getInterviewerId();
     long candidateId = matchedUsers.getCandidateId();
     long interviewerRequestId = matchedUsers.getInterviewerParticipantId();
@@ -286,7 +289,7 @@ public class InterviewService {
         interviews);
     interviewRequestService.incrementMatchedInterviewCount(requests);
 
-    return interviews;
+    return eventId;
   }
 
   private String extractCommentForRole(List<InterviewRequest> requests, InterviewRequestRole role) {
@@ -333,7 +336,7 @@ public class InterviewService {
    * @return the list of deleted interviews containing user and rejection data
    */
   @Transactional
-  public List<Interview> deleteRejected(long id) {
+  public InterviewRejectedDto deleteRejected(long id) {
     List<Interview> interviews = interviewRepository.findInterviewPairById(id);
 
     interviewRequestService.markRejectedInterviewTimeSlotsAsPending(interviews);
@@ -341,7 +344,26 @@ public class InterviewService {
     interviewRepository.deleteAll(interviews);
     eventService.delete(interviews.getFirst().getEventId());
 
-    return interviews;
+    long rejectorId = userContextProvider.getAuthenticatedUserId();
+    long recipientId = interviews.stream()
+        .map(Interview::getUserId)
+        .filter(userId -> userId != rejectorId)
+        .findFirst()
+        .orElse(0L);
+    long recipientInterviewId = interviews.stream()
+        .filter(i -> i.getUserId() == recipientId)
+        .map(Interview::getId).findFirst().orElse(0L);
+    long rejectorInterviewId = interviews.stream()
+        .filter(i -> i.getUserId() == rejectorId)
+        .map(Interview::getId).findFirst().orElse(0L);
+
+    return InterviewRejectedDto.builder()
+        .recipientUserId(recipientId)
+        .recipientUserId(rejectorId)
+        .recipientInterviewId(recipientInterviewId)
+        .rejectorInterviewId(rejectorInterviewId)
+        .scheduledTime(interviews.getFirst().getStartTime())
+        .build();
   }
 
   /**

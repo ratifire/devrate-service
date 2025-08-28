@@ -9,17 +9,25 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import com.ratifire.devrate.dto.InterviewRejectedDto;
 import com.ratifire.devrate.dto.NotificationDto;
+import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Notification;
+import com.ratifire.devrate.entity.Skill;
+import com.ratifire.devrate.entity.Specialization;
 import com.ratifire.devrate.entity.User;
-import com.ratifire.devrate.entity.interview.InterviewRequest;
+import com.ratifire.devrate.entity.interview.Interview;
 import com.ratifire.devrate.enums.InterviewRequestRole;
 import com.ratifire.devrate.enums.NotificationType;
 import com.ratifire.devrate.exception.NotificationNotFoundException;
 import com.ratifire.devrate.mapper.DataMapper;
+import com.ratifire.devrate.repository.MasteryRepository;
 import com.ratifire.devrate.repository.NotificationRepository;
+import com.ratifire.devrate.repository.UserRepository;
+import com.ratifire.devrate.repository.interview.InterviewRepository;
 import com.ratifire.devrate.service.notification.factory.NotificationChannelFactory;
 import com.ratifire.devrate.service.notification.model.NotificationRequest;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -39,6 +47,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class NotificationServiceTest {
 
+  private static final long CANDIDATE_USER_ID = 1L;
+  private static final long INTERVIEWER_USER_ID = 2L;
+  private static final long EVENT_ID = 1L;
+  private static final long CANDIDATE_INTERVIEW_ID = 123L;
+  private static final long INTERVIEWER_INTERVIEW_ID = 456L;
+  private static final long CANDIDATE_MASTERY_ID = 1L;
+  private static final long INTERVIEWER_MASTERY_ID = 2L;
+  private static final String INTERVIEWER_FIRST_NAME = "Jane";
+  private static final String INTERVIEWER_LAST_NAME = "Smith";
+  private static final String SPECIALIZATION_NAME = "Java Development";
+  private static final String SKILL_NAME = "Spring Boot";
+
   @Mock
   private NotificationChannelFactory channelFactory;
 
@@ -47,6 +67,15 @@ class NotificationServiceTest {
 
   @Mock
   private DataMapper<NotificationDto, Notification> notificationMapper;
+
+  @Mock
+  private InterviewRepository interviewRepository;
+
+  @Mock
+  private UserRepository userRepository;
+
+  @Mock
+  private MasteryRepository masteryRepository;
 
   @Mock
   private NotificationChannel mockChannel;
@@ -89,6 +118,75 @@ class NotificationServiceTest {
         .build();
   }
 
+  private InterviewRejectedDto createInterviewRejectedDto() {
+    return InterviewRejectedDto.builder()
+        .recipientUserId(CANDIDATE_USER_ID)
+        .rejectorUserId(INTERVIEWER_USER_ID)
+        .scheduledTime(ZonedDateTime.now())
+        .recipientInterviewId(CANDIDATE_INTERVIEW_ID)
+        .rejectorInterviewId(INTERVIEWER_INTERVIEW_ID)
+        .build();
+  }
+
+  private User createInterviewerUser() {
+    return User.builder()
+        .id(INTERVIEWER_USER_ID)
+        .firstName(INTERVIEWER_FIRST_NAME)
+        .lastName(INTERVIEWER_LAST_NAME)
+        .build();
+  }
+
+  private Specialization createSpecialization() {
+    return Specialization.builder()
+        .id(1L)
+        .name(SPECIALIZATION_NAME)
+        .build();
+  }
+
+  private Skill createSkill() {
+    return Skill.builder()
+        .id(1L)
+        .name(SKILL_NAME)
+        .build();
+  }
+
+  private Mastery createCandidateMastery() {
+    return Mastery.builder()
+        .id(CANDIDATE_MASTERY_ID)
+        .specialization(createSpecialization())
+        .skills(List.of(createSkill()))
+        .build();
+  }
+
+  private Mastery createInterviewerMastery() {
+    return Mastery.builder()
+        .id(INTERVIEWER_MASTERY_ID)
+        .specialization(createSpecialization())
+        .softSkillMark(BigDecimal.valueOf(4.5))
+        .hardSkillMark(BigDecimal.valueOf(4.8))
+        .build();
+  }
+
+  private Interview createCandidateInterview(ZonedDateTime interviewDateTime) {
+    return Interview.builder()
+        .id(CANDIDATE_INTERVIEW_ID)
+        .userId(CANDIDATE_USER_ID)
+        .masteryId(CANDIDATE_MASTERY_ID)
+        .role(InterviewRequestRole.CANDIDATE)
+        .startTime(interviewDateTime)
+        .build();
+  }
+
+  private Interview createInterviewerInterview(ZonedDateTime interviewDateTime) {
+    return Interview.builder()
+        .id(INTERVIEWER_INTERVIEW_ID)
+        .userId(INTERVIEWER_USER_ID)
+        .masteryId(INTERVIEWER_MASTERY_ID)
+        .role(InterviewRequestRole.INTERVIEWER)
+        .startTime(interviewDateTime)
+        .build();
+  }
+
   @Test
   void testSendGreeting() {
     // Given
@@ -100,17 +198,17 @@ class NotificationServiceTest {
 
     // Then
     verify(channelFactory, times(2)).getChannels(channelTypesCaptor.capture());
-    
+
     List<List<NotificationChannelType>> capturedChannelTypes = channelTypesCaptor.getAllValues();
     // First call: WebSocket and WebPush
     assertEquals(2, capturedChannelTypes.get(0).size());
     assertTrue(capturedChannelTypes.get(0)
         .containsAll(List.of(NotificationChannelType.WEBSOCKET, NotificationChannelType.WEB_PUSH)));
-    
+
     // Second call: Email
     assertEquals(1, capturedChannelTypes.get(1).size());
-    assertEquals(NotificationChannelType.EMAIL, capturedChannelTypes.get(1).getFirst());
-    
+    assertEquals(NotificationChannelType.EMAIL, capturedChannelTypes.get(1).get(0));
+
     verify(mockChannel, times(2)).send(any());
   }
 
@@ -138,93 +236,81 @@ class NotificationServiceTest {
     // Then
     verify(channelFactory, times(2)).getChannels(any());
     verify(mockChannel, times(2)).send(requestCaptor.capture());
-    
+
     List<NotificationRequest> capturedRequests = requestCaptor.getAllValues();
-    
+
     // First request should be in-app notification
     assertEquals(testUser, capturedRequests.get(0).getRecipient());
     assertEquals(NotificationType.INTERVIEW_REQUEST_EXPIRED, capturedRequests.get(0).getType());
-    
+
     // Second request should be email notification
     assertEquals(testUser, capturedRequests.get(1).getRecipient());
     assertEquals("Interview Request Expired", capturedRequests.get(1).getSubject());
   }
 
   @Test
-  void testSendInterviewRejection() {
+  void shouldSendNotificationsToBothPartiesWhenInterviewIsRejected() {
     // Given
-    User rejectionUser = User.builder()
-        .id(2L)
-        .firstName("Jane")
-        .lastName("Smith")
-        .build();
-    
-    ZonedDateTime scheduledTime = ZonedDateTime.now();
-    long interviewId = 123L;
-    
+    User rejectorUser = createInterviewerUser();
+
+    when(userRepository.findByIds(List.of(CANDIDATE_USER_ID, INTERVIEWER_USER_ID)))
+        .thenReturn(List.of(testUser, rejectorUser));
     when(channelFactory.getChannels(any())).thenReturn(List.of(mockChannel));
     when(mockChannel.send(any())).thenReturn(true);
 
+    InterviewRejectedDto rejectedDto = createInterviewRejectedDto();
+
     // When
-    notificationService.sendInterviewRejection(testUser, rejectionUser, scheduledTime, interviewId);
+    notificationService.sendInterviewRejectionNotifications(rejectedDto);
 
     // Then
-    verify(channelFactory, times(2)).getChannels(any());
-    verify(mockChannel, times(2)).send(requestCaptor.capture());
-    
-    List<NotificationRequest> capturedRequests = requestCaptor.getAllValues();
-    
-    // First request should be in-app notification
-    assertEquals(testUser, capturedRequests.get(0).getRecipient());
-    assertEquals(NotificationType.INTERVIEW_REJECTED, capturedRequests.get(0).getType());
-    
-    // Second request should be email notification
-    assertEquals(testUser, capturedRequests.get(1).getRecipient());
-    assertEquals("Interview Rejected", capturedRequests.get(1).getSubject());
-    assertEquals("interview-rejected-email", capturedRequests.get(1).getContent());
+    verify(userRepository).findByIds(List.of(CANDIDATE_USER_ID, INTERVIEWER_USER_ID));
+    verify(channelFactory, times(4)).getChannels(any()); // 2 users × 2 channels each
+    verify(mockChannel, times(4)).send(any()); // 2 users × 2 notifications each
   }
 
   @Test
-  void testSendInterviewScheduled() {
+  void shouldSendScheduledNotificationsToInterviewerAndCandidate() {
     // Given
     ZonedDateTime interviewDateTime = ZonedDateTime.now().plusDays(1);
-    InterviewRequest interviewRequest = InterviewRequest.builder()
-        .id(1L)
-        .role(InterviewRequestRole.CANDIDATE)
-        .build();
-    long interviewId = 456L;
-    String role = "CANDIDATE";
-    
+
+    User interviewer = createInterviewerUser();
+    Mastery candidateMastery = createCandidateMastery();
+    Mastery interviewerMastery = createInterviewerMastery();
+    Interview candidateInterview = createCandidateInterview(interviewDateTime);
+    Interview interviewerInterview = createInterviewerInterview(interviewDateTime);
+
+    when(interviewRepository.findByEventId(EVENT_ID))
+        .thenReturn(List.of(candidateInterview, interviewerInterview));
+    when(userRepository.findById(CANDIDATE_USER_ID)).thenReturn(Optional.of(testUser));
+    when(userRepository.findById(INTERVIEWER_USER_ID)).thenReturn(Optional.of(interviewer));
+    when(masteryRepository.findById(CANDIDATE_MASTERY_ID)).thenReturn(
+        Optional.of(candidateMastery));
+    when(masteryRepository.findById(INTERVIEWER_MASTERY_ID)).thenReturn(
+        Optional.of(interviewerMastery));
     when(channelFactory.getChannels(any())).thenReturn(List.of(mockChannel));
     when(mockChannel.send(any())).thenReturn(true);
 
     // When
-    notificationService.sendInterviewScheduled(testUser, role, interviewDateTime, 
-        interviewRequest, interviewId);
+    notificationService.sendInterviewScheduledNotifications(EVENT_ID);
 
     // Then
-    verify(channelFactory, times(2)).getChannels(any());
-    verify(mockChannel, times(2)).send(requestCaptor.capture());
-    
-    List<NotificationRequest> capturedRequests = requestCaptor.getAllValues();
-    
-    // First request should be in-app notification
-    assertEquals(testUser, capturedRequests.get(0).getRecipient());
-    assertEquals(NotificationType.INTERVIEW_SCHEDULED, capturedRequests.get(0).getType());
-    
-    // Second request should be email notification
-    assertEquals(testUser, capturedRequests.get(1).getRecipient());
-    assertEquals("Interview Scheduled Successfully", capturedRequests.get(1).getSubject());
-    assertEquals("interviewer-interview-scheduled-email", capturedRequests.get(1).getContent());
+    verify(interviewRepository).findByEventId(EVENT_ID);
+    verify(userRepository).findById(CANDIDATE_USER_ID);
+    verify(userRepository).findById(INTERVIEWER_USER_ID);
+    verify(masteryRepository).findById(CANDIDATE_MASTERY_ID);
+    verify(masteryRepository).findById(INTERVIEWER_MASTERY_ID);
+    verify(channelFactory, times(4)).getChannels(any()); // 2 users × 2 channels each
+    verify(mockChannel, times(4)).send(any()); // 2 users × 2 notifications each
   }
 
   @Test
   void testSendNotification_Success() {
     // Given
     NotificationRequest request = NotificationRequest.forInAppNotification(
-        testUser, NotificationType.GREETING, null, 
+        testUser, NotificationType.GREETING, null,
         com.ratifire.devrate.service.notification.model.NotificationMetadata.defaultMetadata());
-    
+
     when(channelFactory.getChannels(any())).thenReturn(List.of(mockChannel));
     when(mockChannel.send(any())).thenReturn(true);
 
@@ -240,9 +326,9 @@ class NotificationServiceTest {
   void testSendNotification_ChannelSendFails() {
     // Given
     NotificationRequest request = NotificationRequest.forInAppNotification(
-        testUser, NotificationType.GREETING, null, 
+        testUser, NotificationType.GREETING, null,
         com.ratifire.devrate.service.notification.model.NotificationMetadata.defaultMetadata());
-    
+
     when(channelFactory.getChannels(any())).thenReturn(List.of(mockChannel));
     when(mockChannel.send(any())).thenReturn(false);
 
@@ -281,7 +367,7 @@ class NotificationServiceTest {
     long userId = 1L;
     List<Notification> notifications = List.of(testNotification);
     List<NotificationDto> expectedDtos = List.of(testNotificationDto);
-    
+
     when(notificationRepository.findNotificationsByUserIdOrderByCreatedAtDesc(userId))
         .thenReturn(Optional.of(notifications));
     when(notificationMapper.toDto(notifications)).thenReturn(expectedDtos);
@@ -305,7 +391,7 @@ class NotificationServiceTest {
     // When & Then
     assertThrows(NotificationNotFoundException.class,
         () -> notificationService.getAllByUserId(userId));
-    
+
     verify(notificationRepository).findNotificationsByUserIdOrderByCreatedAtDesc(userId);
     verifyNoInteractions(notificationMapper);
   }
@@ -335,7 +421,7 @@ class NotificationServiceTest {
     // When & Then
     assertThrows(NotificationNotFoundException.class,
         () -> notificationService.markAsReadById(notificationId));
-    
+
     verify(notificationRepository).findById(notificationId);
     verify(notificationRepository, times(0)).save(any());
   }
