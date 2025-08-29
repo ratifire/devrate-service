@@ -111,27 +111,29 @@ public class InterviewService {
   }
 
   private InterviewDto constructInterviewDto(Interview interview) {
-    Mastery mastery = masteryService.getMasteryById(interview.getMasteryId());
     InterviewUserMasteryProjection projection =
         interviewRepository.findUserIdAndMasterIdByEventIdAndUserIdNot(
             interview.getEventId(),
             interview.getUserId());
 
-    Long hostId = projection.getUserId();
-    Long hostMasterId = projection.getMasteryId();
-    if (ObjectUtils.isEmpty(hostId) || ObjectUtils.isEmpty(hostMasterId)) {
+    Long opponentId = projection.getUserId();
+    Long opponentMasterId = projection.getMasteryId();
+    if (ObjectUtils.isEmpty(opponentId) || ObjectUtils.isEmpty(opponentMasterId)) {
       throw new IllegalStateException("Not enough providing interview data");
     }
 
-    User host = userService.findById(hostId);
+    Mastery candidateMastery = masteryService.getMasteryById(
+        interview.getRole() == CANDIDATE ? interview.getMasteryId() : opponentMasterId);
+
+    User opponent = userService.findById(opponentId);
     return mapper.toDto(
         interview,
-        mastery.getLevel(),
-        mastery.getSpecialization().getName(),
-        hostId,
-        host.getFirstName(),
-        host.getLastName(),
-        hostMasterId);
+        candidateMastery.getLevel(),
+        candidateMastery.getSpecialization().getName(),
+        opponentId,
+        opponent.getFirstName(),
+        opponent.getLastName(),
+        opponentMasterId);
   }
 
   /**

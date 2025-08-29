@@ -17,7 +17,9 @@ public abstract class InterviewHistoryMapper implements
   @Mapping(target = "videoUrl", ignore = true)
   public abstract InterviewHistory toEntity(InterviewHistoryDto interviewHistoryDto);
 
-  @Mapping(source = "dateTime", target = "dateTime")
-  public abstract InterviewHistoryDto toDto(InterviewHistory interviewHistory);
+  @Mapping(source = "interviewHistory.dateTime", target = "dateTime")
+  @Mapping(source = "candidateMasteryLevel", target = "masteryLevel")
+  public abstract InterviewHistoryDto toDto(InterviewHistory interviewHistory,
+      int candidateMasteryLevel);
 
 }
