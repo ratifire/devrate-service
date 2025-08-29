@@ -113,9 +113,9 @@ public class NotificationService {
   /**
    * Sends an interview rejection notification.
    *
-   * @param recipient The user who will receive the rejection notification
-   * @param rejectionUser The user who rejected the interview
-   * @param scheduledTime The scheduled time of the rejected interview
+   * @param recipient            The user who will receive the rejection notification
+   * @param rejectionUser        The user who rejected the interview
+   * @param scheduledTime        The scheduled time of the rejected interview
    * @param recipientInterviewId The interview ID for the recipient
    */
   public void sendInterviewRejection(User recipient, User rejectionUser,
@@ -217,7 +217,8 @@ public class NotificationService {
       String interviewerSpecialization, BigDecimal interviewerSoftSkillMark,
       BigDecimal interviewerHardSkillMark) {
 
-    Map<String, Object> variables = createBaseInterviewScheduledEmailVariables(recipient, interviewDateTime);
+    Map<String, Object> variables = createBaseInterviewScheduledEmailVariables(recipient,
+        interviewDateTime);
     variables.put("interviewer_first_name", interviewerFirstName);
     variables.put("interviewer_last_name", interviewerLastName);
     variables.put("interviewer_specialization", interviewerSpecialization);
@@ -271,7 +272,8 @@ public class NotificationService {
       ZonedDateTime interviewDateTime, String candidateFirstName, String candidateLastName,
       String candidateSpecialization, List<String> candidateSkills) {
 
-    Map<String, Object> variables = createBaseInterviewScheduledEmailVariables(recipient, interviewDateTime);
+    Map<String, Object> variables = createBaseInterviewScheduledEmailVariables(recipient,
+        interviewDateTime);
     variables.put("candidate_first_name", candidateFirstName);
     variables.put("candidate_last_name", candidateLastName);
     variables.put("candidate_specialization", candidateSpecialization);
