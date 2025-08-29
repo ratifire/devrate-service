@@ -42,6 +42,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -57,6 +58,7 @@ import org.springframework.util.CollectionUtils;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class InterviewService {
 
   private static final int INTERVIEW_DURATION = 1;    // hours
@@ -247,9 +249,10 @@ public class InterviewService {
    * Creates interviews and an associated event based on the given paired participant data.
    *
    * @param matchedUsers Data transfer object containing the details of paired participant.
+   * @return created event id
    */
   @Transactional
-  public void create(PairedParticipantDto matchedUsers) {
+  public long create(PairedParticipantDto matchedUsers) {
     long interviewerId = matchedUsers.getInterviewerId();
     long candidateId = matchedUsers.getCandidateId();
     long interviewerRequestId = matchedUsers.getInterviewerParticipantId();
@@ -289,11 +292,7 @@ public class InterviewService {
         interviews);
     interviewRequestService.incrementMatchedInterviewCount(requests);
 
-    Map<Long, InterviewRequest> requestMap = requests.stream()
-        .collect(Collectors.toMap(InterviewRequest::getId, request -> request));
-
-    sendInterviewScheduledAlerts(
-        requestMap.get(interviewerRequestId), requestMap.get(candidateRequestId), date, interviews);
+    return eventId;
   }
 
   private String extractCommentForRole(List<InterviewRequest> requests, InterviewRequestRole role) {
@@ -384,7 +383,6 @@ public class InterviewService {
   public void deleteByIds(List<Long> ids) {
     interviewRepository.deleteAllById(ids);
   }
-
 
   /**
    * Retrieves detailed feedback information for an interview based on the given ID.
@@ -501,42 +499,6 @@ public class InterviewService {
         .toList();
     return masteryService.findByIds(masteryIds).stream()
         .collect(Collectors.toMap(Mastery::getId, mastery -> mastery));
-  }
-
-  /**
-   * Sends alerts to both the interviewer and candidate about the scheduled interview.
-   *
-   * @param interviewerRequest the interview request object containing details about the
-   *                           interviewer
-   * @param candidateRequest   the interview request object containing details about the candidate
-   * @param date               the date and time of the scheduled interview
-   */
-  private void sendInterviewScheduledAlerts(InterviewRequest interviewerRequest,
-      InterviewRequest candidateRequest, ZonedDateTime date, List<Interview> interviews) {
-    Map<InterviewRequestRole, Long> roleToId = interviews.stream()
-        .collect(Collectors.toMap(Interview::getRole, Interview::getId));
-    notifyParticipant(candidateRequest, interviewerRequest, date, roleToId.get(CANDIDATE));
-    notifyParticipant(interviewerRequest, candidateRequest, date, roleToId.get(INTERVIEWER));
-  }
-
-  /**
-   * Sends a notification and an email to a participant of an interview about the scheduled
-   * interview.
-   *
-   * @param recipientRequest         the interview request of the recipient of the notification
-   * @param secondParticipantRequest the interview request of the other participant in the
-   *                                 interview
-   * @param interviewStartTimeInUtc  the start time of the interview in UTC
-   */
-  private void notifyParticipant(InterviewRequest recipientRequest,
-      InterviewRequest secondParticipantRequest, ZonedDateTime interviewStartTimeInUtc,
-      long interviewId) {
-
-    User recipient = recipientRequest.getUser();
-    String role = String.valueOf(recipientRequest.getRole());
-
-    notificationService.sendInterviewScheduled(recipient, role,
-        interviewStartTimeInUtc, secondParticipantRequest, interviewId);
   }
 
   /**

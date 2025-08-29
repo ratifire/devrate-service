@@ -48,7 +48,7 @@
 <body>
 <div class="container">
 
-  <p>Шановний(а)<span th:text="${recipient?.firstName}"></span>, </p>
+  <p>Шановний(а)<span th:text="${recipient_first_name}"></span>, </p>
 
   <p>Раді повідомити, що ми знайшли для вас відповідного інтерв'юера, і ваше інтерв’ю успішно заплановано.
     Нижче наведено деталі:</p>
@@ -59,25 +59,25 @@
     </tr>
     <tr>
       <td><strong>Дата та час:</strong>
-        <span th:text="${#temporals.format(interviewDateTime, 'yyyy-MM-dd HH:mm')}"></span> (за Києвом)
+        <span th:text="${#temporals.format(interview_datetime, 'yyyy-MM-dd HH:mm')}"></span> (за Києвом)
       </td>
     </tr>
     <tr>
       <td><strong>Ім’я інтерв’юера:</strong> <span
-          th:text="${interviewRequest?.user?.firstName} + ' ' + ${interviewRequest?.user?.lastName}"></span>
+          th:text="${interviewer_first_name} + ' ' + ${interviewer_last_name}"></span>
       </td>
     </tr>
     <tr>
       <td><strong>Спеціалізація інтерв’юера:</strong> <span
-          th:text="${interviewRequest?.mastery?.specialization?.name}"></span></td>
+          th:text="${interviewer_specialization}"></span></td>
     </tr>
     <tr>
       <td><strong>Оцінка soft навичок інтерв’юера:</strong> <span
-          th:text="${interviewRequest?.mastery?.softSkillMark}"></span></td>
+          th:text="${interviewer_soft_skill_mark}"></span></td>
     </tr>
     <tr>
       <td><strong>Оцінка hard навичок інтерв’юера:</strong> <span
-          th:text="${interviewRequest?.mastery?.hardSkillMark}"></span></td>
+          th:text="${interviewer_hard_skill_mark}"></span></td>
     </tr>
   </table>
 
@@ -89,7 +89,7 @@
 
   <div>
     <a class="calendar-button"
-       th:href="${googleCalendarUrl}"
+       th:href="${google_calendar_url}"
        target="_blank">
       Додати в Google Calendar
     </a>
