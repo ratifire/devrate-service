@@ -23,7 +23,6 @@ import com.ratifire.devrate.repository.NotificationRepository;
 import com.ratifire.devrate.repository.UserRepository;
 import com.ratifire.devrate.repository.interview.InterviewRepository;
 import com.ratifire.devrate.service.notification.factory.NotificationChannelFactory;
-import com.ratifire.devrate.service.notification.model.InterviewScheduleNotificationData;
 import com.ratifire.devrate.service.notification.model.NotificationMetadata;
 import com.ratifire.devrate.service.notification.model.NotificationRequest;
 import java.math.BigDecimal;
@@ -209,10 +208,8 @@ public class NotificationService {
         interviewDateTime, interviewerFirstName, interviewerLastName, interviewerSpecialization,
         interviewerSoftSkillMark, interviewerHardSkillMark);
 
-    InterviewScheduleNotificationData data = new InterviewScheduleNotificationData(candidate,
-        candidateInterviewId, interviewDateTime, role, CANDIDATE_EMAIL_TEMPLATE, emailVariables);
-
-    notifyAboutScheduledInterview(data);
+    notifyAboutScheduledInterview(candidate, candidateInterviewId, interviewDateTime, role,
+        CANDIDATE_EMAIL_TEMPLATE, emailVariables);
   }
 
   private Map<String, Object> createCandidateInterviewScheduledEmailVariables(User recipient,
@@ -238,35 +235,34 @@ public class NotificationService {
         interviewer, interviewDateTime, candidateFirstName, candidateLastName,
         candidateSpecialization, candidateSkills);
 
-    InterviewScheduleNotificationData data = new InterviewScheduleNotificationData(interviewer,
-        interviewerInterviewId, interviewDateTime, role, INTERVIEWER_EMAIL_TEMPLATE,
-        emailVariables);
-
-    notifyAboutScheduledInterview(data);
+    notifyAboutScheduledInterview(interviewer, interviewerInterviewId, interviewDateTime, role,
+        INTERVIEWER_EMAIL_TEMPLATE, emailVariables);
   }
 
   /**
    * Unified method to send interview schedule notifications (in-app and email).
    */
-  private void notifyAboutScheduledInterview(InterviewScheduleNotificationData data) {
-    NotificationMetadata metadata = NotificationMetadata.withInterview(data.interviewId(),
-        data.interviewDateTime(), data.role());
+  private void notifyAboutScheduledInterview(User recipient, long interviewId,
+      ZonedDateTime startTime, String role, String templateName,
+      Map<String, Object> emailVariables) {
+    NotificationMetadata metadata = NotificationMetadata.withInterview(interviewId,
+        startTime, role);
 
-    InterviewScheduledPayload payload = InterviewScheduledPayload.builder().role(data.role())
+    InterviewScheduledPayload payload = InterviewScheduledPayload.builder().role(role)
         .scheduledDateTime(
-            data.interviewDateTime().format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)))
-        .interviewId(data.interviewId()).build();
+            startTime.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)))
+        .interviewId(interviewId).build();
 
     // In-app notification
-    NotificationRequest inAppRequest = NotificationRequest.forInAppNotification(data.recipient(),
+    NotificationRequest inAppRequest = NotificationRequest.forInAppNotification(recipient,
         NotificationType.INTERVIEW_SCHEDULED, payload, metadata);
 
     sendNotification(inAppRequest, NotificationChannelType.WEBSOCKET,
         NotificationChannelType.WEB_PUSH);
 
     // Email notification
-    NotificationRequest emailRequest = NotificationRequest.forEmailNotification(data.recipient(),
-        "Interview Scheduled Successfully", data.templateName(), data.emailVariables(), metadata);
+    NotificationRequest emailRequest = NotificationRequest.forEmailNotification(recipient,
+        "Interview Scheduled Successfully", templateName, emailVariables, metadata);
 
     sendNotification(emailRequest, NotificationChannelType.EMAIL);
   }

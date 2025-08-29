@@ -364,26 +364,6 @@ public class InterviewService {
   }
 
   /**
-   * Notifies users involved in the interview rejection.
-   *
-   * @param recipient     The user for whom rejected the interview.
-   * @param rejector      The user who rejected the interview.
-   */
-  private void notifyParticipants(User recipient, User rejector, List<Interview> interviews) {
-    Long recipientInterviewId = interviews.stream()
-        .filter(i -> i.getUserId() == recipient.getId())
-        .map(Interview::getId).findFirst().get();
-    Long rejectorInterviewId = interviews.stream()
-        .filter(i -> i.getUserId() == rejector.getId())
-        .map(Interview::getId).findFirst().get();
-    ZonedDateTime scheduledTime = interviews.getFirst().getStartTime();
-    notificationService.sendInterviewRejection(recipient, rejector,
-        scheduledTime, recipientInterviewId);
-    notificationService.sendInterviewRejection(rejector, recipient,
-        scheduledTime, rejectorInterviewId);
-  }
-
-  /**
    * Deletes all interview records associated with the specified ID.
    *
    * @param id the identifier of the interview records to be deleted
@@ -517,6 +497,26 @@ public class InterviewService {
         .toList();
     return masteryService.findByIds(masteryIds).stream()
         .collect(Collectors.toMap(Mastery::getId, mastery -> mastery));
+  }
+
+  /**
+   * Notifies users involved in the interview rejection.
+   *
+   * @param recipient     The user for whom rejected the interview.
+   * @param rejector      The user who rejected the interview.
+   */
+  private void notifyParticipants(User recipient, User rejector, List<Interview> interviews) {
+    Long recipientInterviewId = interviews.stream()
+        .filter(i -> i.getUserId() == recipient.getId())
+        .map(Interview::getId).findFirst().get();
+    Long rejectorInterviewId = interviews.stream()
+        .filter(i -> i.getUserId() == rejector.getId())
+        .map(Interview::getId).findFirst().get();
+    ZonedDateTime scheduledTime = interviews.getFirst().getStartTime();
+    notificationService.sendInterviewRejection(recipient, rejector,
+        scheduledTime, recipientInterviewId);
+    notificationService.sendInterviewRejection(rejector, recipient,
+        scheduledTime, rejectorInterviewId);
   }
 
   /**
