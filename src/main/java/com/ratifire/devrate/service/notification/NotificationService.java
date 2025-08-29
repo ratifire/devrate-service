@@ -217,7 +217,7 @@ public class NotificationService {
       String interviewerSpecialization, BigDecimal interviewerSoftSkillMark,
       BigDecimal interviewerHardSkillMark) {
 
-    Map<String, Object> variables = createBaseEmailVariables(recipient, interviewDateTime);
+    Map<String, Object> variables = createBaseInterviewScheduledEmailVariables(recipient, interviewDateTime);
     variables.put("interviewer_first_name", interviewerFirstName);
     variables.put("interviewer_last_name", interviewerLastName);
     variables.put("interviewer_specialization", interviewerSpecialization);
@@ -271,7 +271,7 @@ public class NotificationService {
       ZonedDateTime interviewDateTime, String candidateFirstName, String candidateLastName,
       String candidateSpecialization, List<String> candidateSkills) {
 
-    Map<String, Object> variables = createBaseEmailVariables(recipient, interviewDateTime);
+    Map<String, Object> variables = createBaseInterviewScheduledEmailVariables(recipient, interviewDateTime);
     variables.put("candidate_first_name", candidateFirstName);
     variables.put("candidate_last_name", candidateLastName);
     variables.put("candidate_specialization", candidateSpecialization);
@@ -283,7 +283,7 @@ public class NotificationService {
   /**
    * Creates base email variables common to all interview scheduled notifications.
    */
-  private Map<String, Object> createBaseEmailVariables(User recipient,
+  private Map<String, Object> createBaseInterviewScheduledEmailVariables(User recipient,
       ZonedDateTime interviewDateTime) {
     Map<String, Object> variables = new HashMap<>();
     variables.put("recipient_first_name", recipient.getFirstName());
