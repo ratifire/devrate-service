@@ -10,7 +10,7 @@ properties:
     description: The mastery identifier of the current user.
   masteryLevel:
     type: integer
-    description: The mastery level of counterpart user.
+    description: The mastery level of interview (candidate mastery level).
   specializationName:
     type: string
     description: The name of the specialization of counterpart user.

@@ -66,7 +66,7 @@ public class InterviewHistoryService {
     InterviewHistory interviewHistory =
         interviewHistoryRepository.findByIdAndUserIdAndIsVisibleTrue(id, userId)
             .orElseThrow(() -> new InterviewHistoryNotFoundException(id));
-    return interviewHistoryMapper.toDto(interviewHistory);
+    return constructInterviewHistoryDto(interviewHistory);
   }
 
   /**
@@ -89,7 +89,13 @@ public class InterviewHistoryService {
     long userId = userContextProvider.getAuthenticatedUserId();
     Pageable pageable = PageRequest.of(page, size, Sort.by("dateTime").descending());
     return interviewHistoryRepository.findAllByUserIdAndIsVisibleTrue(userId, pageable)
-        .map(interviewHistoryMapper::toDto);
+        .map(this::constructInterviewHistoryDto);
+  }
+
+  private InterviewHistoryDto constructInterviewHistoryDto(InterviewHistory interviewHistory) {
+    int candidateMasteryLevel = interviewHistory.getRole() == InterviewRequestRole.CANDIDATE
+        ? interviewHistory.getMasteryLevel() : interviewHistory.getAttendeeMasteryLevel();
+    return interviewHistoryMapper.toDto(interviewHistory, candidateMasteryLevel);
   }
 
   /**

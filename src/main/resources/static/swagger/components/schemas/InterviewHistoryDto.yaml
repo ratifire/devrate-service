@@ -34,7 +34,7 @@ properties:
   masteryLevel:
     type: integer
     format: int64
-    description: The mastery level of the interview
+    description: The mastery level of the interview (candidate mastery level)
   role:
     type: string
     enum:
