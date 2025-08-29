@@ -3,7 +3,6 @@ package com.ratifire.devrate.service.notification;
 import static com.ratifire.devrate.enums.InterviewRequestRole.CANDIDATE;
 import static com.ratifire.devrate.enums.InterviewRequestRole.INTERVIEWER;
 
-import com.ratifire.devrate.dto.InterviewRejectedDto;
 import com.ratifire.devrate.dto.NotificationDto;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Notification;
@@ -113,77 +112,43 @@ public class NotificationService {
   }
 
   /**
-   * Sends interview rejection notifications to both the recipient and rejector.
-   *
-   * @param interviewRejectedDto containing user IDs, interview IDs, and scheduled time
-   */
-  public void sendInterviewRejectionNotifications(InterviewRejectedDto interviewRejectedDto) {
-    long recipientUserId = interviewRejectedDto.getRecipientUserId();
-    long rejectorUserId = interviewRejectedDto.getRejectorUserId();
-    ZonedDateTime scheduledTime = interviewRejectedDto.getScheduledTime();
-    long recipientInterviewId = interviewRejectedDto.getRecipientInterviewId();
-    long rejectorInterviewId = interviewRejectedDto.getRejectorInterviewId();
-
-    if (recipientUserId == 0L || rejectorUserId == 0L || recipientInterviewId == 0L
-        || rejectorInterviewId == 0L) {
-      log.error("Failed to send interview rejection notifications for users: {}; {}. "
-          + "Due to invalid interview rejected data.", recipientUserId, rejectorUserId);
-      return;
-    }
-
-    try {
-      List<User> users = userRepository.findByIds(List.of(recipientUserId, rejectorUserId));
-      Map<Long, User> userMap = users.stream().collect(Collectors.toMap(User::getId, user -> user));
-
-      notifyBothPartiesAboutRejection(userMap.get(recipientUserId), userMap.get(rejectorUserId),
-          scheduledTime, recipientInterviewId, rejectorInterviewId);
-    } catch (Exception e) {
-      log.error("Failed to send interview rejection notifications for users: {}; {}",
-          recipientUserId, rejectorUserId, e);
-    }
-  }
-
-  private void notifyBothPartiesAboutRejection(User recipient, User rejector,
-      ZonedDateTime scheduledTime, long recipientInterviewId, long rejectorInterviewId) {
-    sendInterviewRejectionNotification(recipient, rejector, scheduledTime, recipientInterviewId);
-    sendInterviewRejectionNotification(rejector, recipient, scheduledTime, rejectorInterviewId);
-  }
-
-  /**
    * Sends an interview rejection notification.
    *
-   * @param recipient            The user who will receive the rejection notification
-   * @param rejectorUser         The user who rejected the interview
-   * @param scheduledTime        The scheduled time of the rejected interview
+   * @param recipient The user who will receive the rejection notification
+   * @param rejectionUser The user who rejected the interview
+   * @param scheduledTime The scheduled time of the rejected interview
    * @param recipientInterviewId The interview ID for the recipient
    */
-  private void sendInterviewRejectionNotification(User recipient, User rejectorUser,
+  public void sendInterviewRejection(User recipient, User rejectionUser,
       ZonedDateTime scheduledTime, long recipientInterviewId) {
 
-    NotificationMetadata metadata = NotificationMetadata.withRejection(rejectorUser.getFirstName(),
-        scheduledTime, recipientInterviewId);
+    NotificationMetadata metadata = NotificationMetadata.withRejection(
+        rejectionUser.getFirstName(), scheduledTime, recipientInterviewId);
 
     InterviewRejectedPayload payload = InterviewRejectedPayload.builder()
-        .rejectionName(rejectorUser.getFirstName())
-        .scheduledDateTime(scheduledTime.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)))
-        .rejectedInterviewId(String.valueOf(recipientInterviewId)).build();
+        .rejectionName(rejectionUser.getFirstName())
+        .scheduledDateTime(
+            scheduledTime.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)))
+        .rejectedInterviewId(String.valueOf(recipientInterviewId))
+        .build();
 
     // In-app notification
-    NotificationRequest inAppRequest = NotificationRequest.forInAppNotification(recipient,
-        NotificationType.INTERVIEW_REJECTED, payload, metadata);
+    NotificationRequest inAppRequest = NotificationRequest.forInAppNotification(
+        recipient, NotificationType.INTERVIEW_REJECTED, payload, metadata);
 
     sendNotification(inAppRequest, NotificationChannelType.WEBSOCKET,
         NotificationChannelType.WEB_PUSH);
 
     // Email notification
     Map<String, Object> emailVariables = new HashMap<>();
-    emailVariables.put("recipient_first_name", recipient);
-    emailVariables.put("rejection_user_first_name", rejectorUser);
-    emailVariables.put("scheduled_time",
-        scheduledTime.withZoneSameInstant(ZoneId.of(KIEV_TIMEZONE)));
+    emailVariables.put("recipientUser", recipient);
+    emailVariables.put("rejectionUser", rejectionUser);
+    emailVariables.put("scheduledTime",
+        scheduledTime.withZoneSameInstant(ZoneId.of("Europe/Kyiv")));
 
-    NotificationRequest emailRequest = NotificationRequest.forEmailNotification(recipient,
-        "Interview Rejected", "interview-rejected-email", emailVariables, metadata);
+    NotificationRequest emailRequest = NotificationRequest.forEmailNotification(
+        recipient, "Interview Rejected", "interview-rejected-email",
+        emailVariables, metadata);
 
     sendNotification(emailRequest, NotificationChannelType.EMAIL);
   }

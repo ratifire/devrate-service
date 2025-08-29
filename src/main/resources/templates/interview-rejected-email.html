@@ -6,9 +6,9 @@
 </head>
 <body>
 <div class="container">
-  <p>Шановний(а)<span th:text="${recipient_first_name}"></span>, </p>
+  <p>Шановний(а)<span th:text="${recipientUser.firstName}"></span>, </p>
 
-  <p>Інтерв’ю з <span th:text="${rejection_user_first_name}"></span>, яке було заплановано на <span th:text="${scheduled_time}"></span>,
+  <p>Інтерв’ю з <span th:text="${rejectionUser.firstName}"></span>, яке було заплановано на <span th:text="${scheduledTime}"></span>,
     <span>було скасовано. Але не хвилюйтесь! Ми вже у пошуках нового кандидата саме для вас, найближчим часом нове інтерв’ю буде створено і
       ми оперативно повідомимо вас.</span></p>
 

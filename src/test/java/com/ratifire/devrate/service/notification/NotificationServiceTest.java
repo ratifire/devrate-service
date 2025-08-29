@@ -9,7 +9,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import com.ratifire.devrate.dto.InterviewRejectedDto;
 import com.ratifire.devrate.dto.NotificationDto;
 import com.ratifire.devrate.entity.Mastery;
 import com.ratifire.devrate.entity.Notification;
@@ -118,75 +117,6 @@ class NotificationServiceTest {
         .build();
   }
 
-  private InterviewRejectedDto createInterviewRejectedDto() {
-    return InterviewRejectedDto.builder()
-        .recipientUserId(CANDIDATE_USER_ID)
-        .rejectorUserId(INTERVIEWER_USER_ID)
-        .scheduledTime(ZonedDateTime.now())
-        .recipientInterviewId(CANDIDATE_INTERVIEW_ID)
-        .rejectorInterviewId(INTERVIEWER_INTERVIEW_ID)
-        .build();
-  }
-
-  private User createInterviewerUser() {
-    return User.builder()
-        .id(INTERVIEWER_USER_ID)
-        .firstName(INTERVIEWER_FIRST_NAME)
-        .lastName(INTERVIEWER_LAST_NAME)
-        .build();
-  }
-
-  private Specialization createSpecialization() {
-    return Specialization.builder()
-        .id(1L)
-        .name(SPECIALIZATION_NAME)
-        .build();
-  }
-
-  private Skill createSkill() {
-    return Skill.builder()
-        .id(1L)
-        .name(SKILL_NAME)
-        .build();
-  }
-
-  private Mastery createCandidateMastery() {
-    return Mastery.builder()
-        .id(CANDIDATE_MASTERY_ID)
-        .specialization(createSpecialization())
-        .skills(List.of(createSkill()))
-        .build();
-  }
-
-  private Mastery createInterviewerMastery() {
-    return Mastery.builder()
-        .id(INTERVIEWER_MASTERY_ID)
-        .specialization(createSpecialization())
-        .softSkillMark(BigDecimal.valueOf(4.5))
-        .hardSkillMark(BigDecimal.valueOf(4.8))
-        .build();
-  }
-
-  private Interview createCandidateInterview(ZonedDateTime interviewDateTime) {
-    return Interview.builder()
-        .id(CANDIDATE_INTERVIEW_ID)
-        .userId(CANDIDATE_USER_ID)
-        .masteryId(CANDIDATE_MASTERY_ID)
-        .role(InterviewRequestRole.CANDIDATE)
-        .startTime(interviewDateTime)
-        .build();
-  }
-
-  private Interview createInterviewerInterview(ZonedDateTime interviewDateTime) {
-    return Interview.builder()
-        .id(INTERVIEWER_INTERVIEW_ID)
-        .userId(INTERVIEWER_USER_ID)
-        .masteryId(INTERVIEWER_MASTERY_ID)
-        .role(InterviewRequestRole.INTERVIEWER)
-        .startTime(interviewDateTime)
-        .build();
-  }
-
   @Test
   void testSendGreeting() {
     // Given
@@ -249,36 +179,48 @@ class NotificationServiceTest {
   }
 
   @Test
-  void shouldSendNotificationsToBothPartiesWhenInterviewIsRejected() {
-    // Given
-    User rejectorUser = createInterviewerUser();
-
-    when(userRepository.findByIds(List.of(CANDIDATE_USER_ID, INTERVIEWER_USER_ID)))
-        .thenReturn(List.of(testUser, rejectorUser));
-    when(channelFactory.getChannels(any())).thenReturn(List.of(mockChannel));
-    when(mockChannel.send(any())).thenReturn(true);
-
-    InterviewRejectedDto rejectedDto = createInterviewRejectedDto();
-
-    // When
-    notificationService.sendInterviewRejectionNotifications(rejectedDto);
-
-    // Then
-    verify(userRepository).findByIds(List.of(CANDIDATE_USER_ID, INTERVIEWER_USER_ID));
-    verify(channelFactory, times(4)).getChannels(any()); // 2 users × 2 channels each
-    verify(mockChannel, times(4)).send(any()); // 2 users × 2 notifications each
-  }
-
-  @Test
   void shouldSendScheduledNotificationsToInterviewerAndCandidate() {
     // Given
     ZonedDateTime interviewDateTime = ZonedDateTime.now().plusDays(1);
 
-    User interviewer = createInterviewerUser();
-    Mastery candidateMastery = createCandidateMastery();
-    Mastery interviewerMastery = createInterviewerMastery();
-    Interview candidateInterview = createCandidateInterview(interviewDateTime);
-    Interview interviewerInterview = createInterviewerInterview(interviewDateTime);
+    User interviewer = User.builder()
+        .id(INTERVIEWER_USER_ID)
+        .firstName(INTERVIEWER_FIRST_NAME)
+        .lastName(INTERVIEWER_LAST_NAME)
+        .build();
+    Specialization candidateSpec = Specialization.builder()
+        .id(1L)
+        .name(SPECIALIZATION_NAME)
+        .build();
+    Skill skill = Skill.builder()
+        .id(1L)
+        .name(SKILL_NAME)
+        .build();
+    Mastery candidateMastery = Mastery.builder()
+        .id(CANDIDATE_MASTERY_ID)
+        .specialization(candidateSpec)
+        .skills(List.of(skill))
+        .build();
+    Mastery interviewerMastery = Mastery.builder()
+        .id(INTERVIEWER_MASTERY_ID)
+        .specialization(candidateSpec)
+        .softSkillMark(BigDecimal.valueOf(4.5))
+        .hardSkillMark(BigDecimal.valueOf(4.8))
+        .build();
+    Interview candidateInterview = Interview.builder()
+        .id(CANDIDATE_INTERVIEW_ID)
+        .userId(CANDIDATE_USER_ID)
+        .masteryId(CANDIDATE_MASTERY_ID)
+        .role(InterviewRequestRole.CANDIDATE)
+        .startTime(interviewDateTime)
+        .build();
+    Interview interviewerInterview = Interview.builder()
+        .id(INTERVIEWER_INTERVIEW_ID)
+        .userId(INTERVIEWER_USER_ID)
+        .masteryId(INTERVIEWER_MASTERY_ID)
+        .role(InterviewRequestRole.INTERVIEWER)
+        .startTime(interviewDateTime)
+        .build();
 
     when(interviewRepository.findByEventId(EVENT_ID))
         .thenReturn(List.of(candidateInterview, interviewerInterview));

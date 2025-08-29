@@ -7,7 +7,6 @@ import com.ratifire.devrate.dto.ClosestEventDto;
 import com.ratifire.devrate.dto.InterviewDto;
 import com.ratifire.devrate.dto.InterviewEventDto;
 import com.ratifire.devrate.dto.InterviewFeedbackDetailDto;
-import com.ratifire.devrate.dto.InterviewRejectedDto;
 import com.ratifire.devrate.dto.InterviewsOverallStatusDto;
 import com.ratifire.devrate.dto.PairedParticipantDto;
 import com.ratifire.devrate.dto.ParticipantDto;
@@ -32,6 +31,7 @@ import com.ratifire.devrate.service.EventService;
 import com.ratifire.devrate.service.MasteryService;
 import com.ratifire.devrate.service.MeetingService;
 import com.ratifire.devrate.service.UserService;
+import com.ratifire.devrate.service.notification.NotificationService;
 import com.ratifire.devrate.service.snspublisher.SnsPublisherService;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -74,6 +74,7 @@ public class InterviewService {
   private final EventService eventService;
   private final UserService userService;
   private final MasteryService masteryService;
+  private final NotificationService notificationService;
   private final InterviewRepository interviewRepository;
   private final UserContextProvider userContextProvider;
   private final DataMapper<InterviewDto, Interview> mapper;
@@ -330,40 +331,56 @@ public class InterviewService {
   }
 
   /**
-   * Deletes a rejected interview by its ID and returns the deleted interviews.
+   * Deletes a rejected interview by its ID and returns the deleted interview.
    *
    * @param id the ID of the interview to be deleted
-   * @return the list of deleted interviews containing user and rejection data
    */
   @Transactional
-  public InterviewRejectedDto deleteRejected(long id) {
+  public void deleteRejected(long id) {
     List<Interview> interviews = interviewRepository.findInterviewPairById(id);
 
     interviewRequestService.markRejectedInterviewTimeSlotsAsPending(interviews);
 
     interviewRepository.deleteAll(interviews);
     eventService.delete(interviews.getFirst().getEventId());
+    //TODO: add logic for deleting provider meeting room (if needed)
 
     long rejectorId = userContextProvider.getAuthenticatedUserId();
     long recipientId = interviews.stream()
         .map(Interview::getUserId)
         .filter(userId -> userId != rejectorId)
         .findFirst()
-        .orElse(0L);
-    long recipientInterviewId = interviews.stream()
-        .filter(i -> i.getUserId() == recipientId)
-        .map(Interview::getId).findFirst().orElse(0L);
-    long rejectorInterviewId = interviews.stream()
-        .filter(i -> i.getUserId() == rejectorId)
-        .map(Interview::getId).findFirst().orElse(0L);
+        .orElseThrow(() -> new IllegalStateException(
+            "Could not find other userId in the interview pair"));
 
-    return InterviewRejectedDto.builder()
-        .recipientUserId(recipientId)
-        .recipientUserId(rejectorId)
-        .recipientInterviewId(recipientInterviewId)
-        .rejectorInterviewId(rejectorInterviewId)
-        .scheduledTime(interviews.getFirst().getStartTime())
-        .build();
+    List<User> users = userService.findByIds(List.of(rejectorId, recipientId));
+    Map<Long, User> userMap = users.stream()
+        .collect(Collectors.toMap(User::getId, user -> user));
+
+    notifyParticipants(
+        userMap.get(recipientId),
+        userMap.get(rejectorId),
+        interviews);
+  }
+
+  /**
+   * Notifies users involved in the interview rejection.
+   *
+   * @param recipient     The user for whom rejected the interview.
+   * @param rejector      The user who rejected the interview.
+   */
+  private void notifyParticipants(User recipient, User rejector, List<Interview> interviews) {
+    Long recipientInterviewId = interviews.stream()
+        .filter(i -> i.getUserId() == recipient.getId())
+        .map(Interview::getId).findFirst().get();
+    Long rejectorInterviewId = interviews.stream()
+        .filter(i -> i.getUserId() == rejector.getId())
+        .map(Interview::getId).findFirst().get();
+    ZonedDateTime scheduledTime = interviews.getFirst().getStartTime();
+    notificationService.sendInterviewRejection(recipient, rejector,
+        scheduledTime, recipientInterviewId);
+    notificationService.sendInterviewRejection(rejector, recipient,
+        scheduledTime, rejectorInterviewId);
   }
 
   /**
